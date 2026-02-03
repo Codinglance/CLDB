@@ -32,7 +32,7 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min",
-      "markdown": "In Android, **Context** is an abstract class that provides access to **application-specific resources and system services**. It acts as a **bridge between your app and the Android system**, allowing components to interact with resources like layouts, strings, databases, preferences, and system-level services.\n\n### Context is commonly used to\n\n- Access application **resources** (strings, colors, dimensions)\n- Inflate **layouts** and create views\n- Start **activities** and **services**\n- Access **system services** (LocationManager, NotificationManager, etc.)\n- Show **UI elements** like Toasts, Dialogs, and Snackbars\n- Access **SharedPreferences**, files, and databases\n\n\n### Types of Context in Android\n\nAndroid provides **three main types of Context**, each used for different purposes.\n\n### 1. Application Context\n- Obtained using `getApplicationContext()`\n- Lives as long as the **application is running**\n\n**Used for:**\n- Long-lived objects (singletons, managers)\n- Background operations\n- Accessing resources without UI\n\n### 2. Activity Context\n- Provided by an **Activity**\n- Exists only during the **Activity lifecycle**\n\n**Used for:**\n- UI-related work\n- Showing dialogs or popups\n- Inflating layouts\n\n### 3. Service Context\n- Provided by a **Service**\n- Used for **background processing**\n\n**Used for:**\n- Running background tasks\n- Accessing system services (no UI)"
+      "markdown": "In Android, **Context** is an abstract class that provides access to **application-specific resources and system services**. It allowing components to interact with resources like layouts, strings, databases, preferences, and system-level services.\n\n### Context is commonly used to\n\n- Access application **resources** (strings, colors, dimensions)\n- Inflate **layouts** and create views\n- Start **activities** and **services**\n- Access **system services** (LocationManager, NotificationManager, etc.)\n- Show **UI elements** like Toasts, Dialogs, and Snackbars\n- Access **SharedPreferences**, files, and databases\n\n\n### Types of Context in Android\n\nAndroid provides **three main types of Context**, each used for different purposes.\n\n### 1. Application Context\n- `getApplicationContext()`\n- Lives for the **entire app lifecycle**\n- Used for **singletons, background work, and non-UI resources**\n\n### 2. Activity Context\n- Provided by an **Activity**\n- Tied to the **Activity lifecycle**\n- Used for **UI work** like dialogs and layout inflation\n\n### 3. Service Context\n- Provided by a **Service**\n- Used for **background operations**\n- Not suitable for UI"
     },
     {
       "id": 5,
@@ -112,7 +112,7 @@
         "Amazon"
       ],
       "expectedReadTime": "45 sec",
-      "markdown": "**AAPT (Android Asset Packaging Tool)** is a **build tool** used by Android to **compile, package, and manage app resources** such as layouts, images, and the AndroidManifest.xml file.\n\n---\n### Why It Is Used\nAAPT is used to:\n- Compile **resource files** (XML, images, strings)\n- Generate the **R.java / R class** for resource access\n- Package resources into the **APK or AAB**\n- Validate resource references and manifest entries\n\n---\n\n### Key Responsibilities\n- Converts resources into a **binary format**\n- Links resources with application code\n- Ensures resource IDs are correctly assigned"
+      "markdown": "**AAPT (Android Asset Packaging Tool)** is a **build tool** used by Android to **compile, package, and manage app resources** such as layouts, images, and the AndroidManifest.xml file.\n\n### Why It Is Used\nAAPT is used to:\n- Compile **resource files** (XML, images, strings)\n- Generate the **R.java / R class** for resource access\n- Package resources into the **APK or AAB**\n- Validate resource references and manifest entries\n\n\n### Key Responsibilities\n- Converts resources into a **binary format**\n- Links resources with application code\n- Ensures resource IDs are correctly assigned"
     },
     {
       "id": 10,
@@ -128,7 +128,7 @@
         "Amazon"
       ],
       "expectedReadTime": "30 sec",
-      "markdown": "A **DEX (Dalvik Executable) file** is a compiled file format used by Android to store an app’s **bytecode**. It is generated from Java or Kotlin code and is executed by the **Android Runtime (ART)** on the device.\n\n---\n\n### Why It Is Used\nDEX files are used to:\n- Convert Java/Kotlin bytecode into a format optimized for Android\n- Reduce memory usage on mobile devices\n- Allow efficient execution on Android runtime\n\n---\n\n### Key Characteristics\n- Contains all compiled classes of an app\n- Optimized for low memory and performance\n- Generated during the build process from `.class` files"
+      "markdown": "A **DEX (Dalvik Executable) file** is a compiled file format used by Android to store an app’s **bytecode**. It is generated from Java or Kotlin code and is executed by the **Android Runtime (ART)** on the device.\n\n### Why It Is Used\nDEX files are used to:\n- Convert Java/Kotlin bytecode into a format optimized for Android\n- Reduce memory usage on mobile devices\n- Allow efficient execution on Android runtime\n\n### Key Characteristics\n- Contains all compiled classes of an app\n- Optimized for low memory and performance\n- Generated during the build process from `.class` files"
     },
     {
       "id": 11,
@@ -144,7 +144,7 @@
         "Amazon"
       ],
       "expectedReadTime": "30 sec",
-      "markdown": "**Multidex** is an Android feature that allows an application to **use more than one DEX file**. It is required when an app exceeds the **65,536 method limit** imposed on a single DEX file.\n\n### Why Multidex Is Needed\nAndroid apps are limited to **65K methods per DEX file**. Large apps using:\n- Multiple libraries\n- Google Play Services\n- Dependency-heavy frameworks\n\ncan easily exceed this limit. Multidex splits the app into **multiple DEX files** so it can still run properly.\n\n### Example Scenario\nAn app using many libraries like:\n- Firebase\n- Retrofit\n- Glide\n- Google Maps\n\nmay exceed the method limit and fail to build without Multidex.\n\n### Example Configuration\n\n#### Enable Multidex\n```gradle\nandroid {\n    defaultConfig {\n        multiDexEnabled true\n    }\n}\n\ndependencies {\n    implementation \"androidx.multidex:multidex:2.0.1\"\n}\n```"
+      "markdown": "**Multidex** is an Android feature that allows an application to **use more than one DEX file**. It is required when an app exceeds the **65,536 method limit** imposed on a single DEX file.\n\n### Why Multidex Is Needed\nApps with many libraries (Firebase, Retrofit, Google Play Services, etc.) can cross the **65K method limit**. Multidex splits code into **multiple DEX files** so the app can build and run correctly.\n\n\n### Example Configuration\n\n#### Enable Multidex\n```gradle\nandroid {\n    defaultConfig {\n        multiDexEnabled true\n    }\n}\n\ndependencies {\n    implementation \"androidx.multidex:multidex:2.0.1\"\n}\n```"
     },
     {
       "id": 12,
@@ -160,7 +160,7 @@
         "Amazon"
       ],
       "expectedReadTime": "45 sec",
-      "markdown": "In Android, a **process** is an instance of an application that runs in its **own memory space**. Each Android app usually runs in a **separate Linux process**, which helps keep apps **secure, isolated, and stable**.\n\n---\n\n### Why Processes Are Used\nAndroid uses processes to:\n- Isolate apps from each other for **security**\n- Manage **memory and performance**\n- Kill background apps when resources are low\n- Ensure one app crash does not affect others\n- \n### How Android Manages Processes\nAndroid automatically manages processes based on:\n- App importance\n- User interaction\n- System memory availability\n\nDevelopers usually **do not manage processes manually**.\n\n\n### Types of Android Processes (by Priority)\n\n1. **Foreground Process**\n    - App currently visible to the user\n    - Highest priority (e.g., active Activity)\n\n2. **Visible Process**\n    - App partially visible (e.g., dialog on screen)\n    - Important but not in full focus\n\n3. **Service Process**\n    - Running background work (e.g., music playback)\n\n4. **Background Process**\n    - App not visible to the user\n    - Can be killed when memory is low\n\n5. **Empty Process**\n    - No active components\n    - Lowest priority, killed first"
+      "markdown": "A **process** is a running instance of an app with its **own memory space**. Android runs each app in a **separate Linux process** to ensure security and stability.\n\n### Why Processes Are Used\n- Keeps apps **isolated and secure**\n- Manages **memory and performance**\n- Prevents one app crash from affecting others\n\n### Process Priority Types\n- **Foreground** – App in use (highest priority)\n- **Visible** – Partially visible app\n- **Service** – Background work (e.g., music)\n- **Background** – Not visible\n- **Empty** – No active components (lowest priority)"
     },
     {
       "id": 13,
@@ -208,7 +208,7 @@
         "Amazon"
       ],
       "expectedReadTime": "30 sec",
-      "markdown": "**StrictMode** is a **developer tool** that detects inefficient or unsafe operations, like **disk/network access on the main thread** and **memory leaks**, to improve app performance.\n\n### Why It Is Used\n- Detect bad coding practices  \n- Prevent ANRs (App Not Responding)  \n- Ensure responsive apps\n\n### How It Works\n- **Thread Policy:** Detects disk/network operations on the main thread  \n- **VM Policy:** Detects memory leaks (SQLite, closable resources)\n\n```kotlin\nStrictMode.setThreadPolicy(\n    StrictMode.ThreadPolicy.Builder()\n        .detectAll()\n        .penaltyLog()\n        .build()\n)\n\nStrictMode.setVmPolicy(\n    StrictMode.VmPolicy.Builder()\n        .detectAll()\n        .penaltyLog()\n        .build()\n)\n````\n\n### Key Points\n\n* Only for **development**\n* Not for **production**\n* Improves app **performance and responsiveness**"
+      "markdown": "**StrictMode** is a **debugging tool** that helps detect **performance issues** like disk/network calls on the main thread and **memory leaks**.\n\n### Purpose\n- Catch bad coding practices  \n- Prevent ANRs  \n- Improve app responsiveness  \n\n### How It Works\n- **Thread Policy:** Monitors main-thread operations  \n- **VM Policy:** Detects memory leaks  \n\n### Key Points\n- Used only in **development**\n- Not recommended for **production**"
     },
     {
       "id": 16,
@@ -256,7 +256,7 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min",
-      "markdown": "**Doze Mode** and **App Standby** are **power-saving features** introduced in Android to **extend battery life** by reducing background activity when the device is idle.\n\n---\n\n### Doze Mode\n- Activates when the device is **stationary, screen off, and not charging**\n- Puts the device into a **deep sleep state**\n- Defers background tasks, network access, and syncs\n- **Exceptions:** High-priority messages and alarms can still wake the device\n\n**Example Use:**\n- Background syncs of apps like Gmail are deferred during Doze\n\n---\n\n### App Standby\n- Puts apps into **idle mode** if the user hasn’t used them for a long time\n- Limits **background jobs, alarms, and network access** for these apps\n- Active apps or frequently used apps are **not affected**\n\n**Example Use:**\n- An app not opened for days will have background tasks restricted to save battery\n\n---\n\n### Key Differences\n\n| Feature      | Trigger Condition               | Effect on Apps                  |\n|--------------|--------------------------------|--------------------------------|\n| Doze Mode    | Device idle, screen off        | All apps restricted (except high-priority exceptions) |\n| App Standby  | App not used for long time     | Only idle apps restricted       |\n"
+      "markdown": "Both **Doze Mode** and **App Standby** help **save battery** by limiting background work.\n\n### Doze Mode\n- Activates when device is **idle, screen off**\n- Delays background tasks, syncs, and network\n- Allows **high-priority notifications**\n\n### App Standby\n- Applies to **unused apps**\n- Restricts background jobs and network\n- Active apps are not affected\n\n### In Short\n- **Doze Mode:** Affects the whole device  \n- **App Standby:** Affects unused apps only"
     },
     {
       "id": 19,
@@ -274,7 +274,7 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min",
-      "markdown": "These are basic building blocks of an Android application.\n\n### 1. File\n- A **File** is a unit of storage used to save data on the device.\n- Android apps can use **internal storage, external storage, or cache** to store files.\n- Examples: Text files, images, databases.\n\n```kotlin\nval file = File(context.filesDir, \"example.txt\")\nfile.writeText(\"Hello Android\")\n````\n\n### 2. Class\n* A **Class** is a blueprint in **Kotlin/Java** used to define objects.\n* Contains **properties (variables)** and **methods (functions)**.\n* Every Activity, Service, or utility is implemented as a class.\n\n```kotlin\nclass User(val name: String, val age: Int) {\n    fun greet() = \"Hello $name\"\n}\n```\n\n### 3. Activity\n* An **Activity** is a component that represents a **single screen with a UI**.\n* Handles user interactions and is managed by the Android lifecycle.\n* Every app has at least one Activity (main screen).\n\n```kotlin\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    } }\n```"
+      "markdown": "### File\n- Used to **store data** on the device (internal, external, cache)\n- Examples: text files, images, databases\n\n### Class\n- A **blueprint** written in Kotlin/Java\n- Defines variables and functions\n- All Android components are classes\n\n### Activity\n- Represents **one screen with UI**\n- Handles user interaction\n- Managed by the Android lifecycle"
     },
     {
       "id": 20,
@@ -290,7 +290,7 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min",
-      "markdown": "In Android, you can **modify app behavior or parameters without releasing a new version** using **remote configuration tools**. The app fetches the updated values from a server or cloud service at runtime.\n#### 1. **Firebase Remote Config**\n- Google’s cloud service to **store key-value pairs** for your app.\n- App fetches updated values on launch or periodically.\n- Example:\n```kotlin\nval remoteConfig = Firebase.remoteConfig\nremoteConfig.fetchAndActivate().addOnCompleteListener { task ->\n    if (task.isSuccessful) {\n        val welcomeMsg = remoteConfig.getString(\"welcome_message\")\n    }\n}\n````\n\n* Use cases: Feature flags, UI text changes, color themes.\n\n#### 2. **Backend API**\n\n* Store configurable parameters on your own **server**.\n* App fetches parameters via **API calls**.\n* Example:\n\n```kotlin\nval response = apiService.getAppConfig()\nval themeColor = response.themeColor\n```\n\n\n#### 3. **Dynamic Feature Modules (Play Feature Delivery)**\n\n* Allows you to **enable or disable modules** on the fly.\n* Useful for large features or optional components.\n\n\n### Benefits\n\n* No need to **release a new app version**\n* Enable **A/B testing** and feature toggles\n* Quickly **fix bugs or change content dynamically**"
+      "markdown": "You can update app behavior **without releasing a new version** using **remote configuration**.\n\n### Common Ways\n- **Firebase Remote Config:** Fetch key-value updates at runtime (UI text, feature flags)\n- **Backend API:** Load configurable values from your server\n- **Dynamic Feature Modules:** Enable or disable app features remotely\n\n### Benefits\n- No app update required\n- Easy feature toggles & A/B testing\n- Quick content or behavior changes\n"
     },
     {
       "id": 1,
@@ -312,7 +312,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "- **When Called:**\n    - `onCreate()` is called **once** when the Activity is first created.\n    - `onStart()` is called **every time** the Activity becomes visible.\n\n- **Purpose:**\n    - `onCreate()` is used to **initialize UI, resources, and data**.\n    - `onStart()` prepares the Activity to **interact with the user**.\n\n- **Typical Tasks:**\n    - `onCreate()` → set content view, bind views, initialize variables.\n    - `onStart()` → start animations, refresh UI, resume paused tasks.\n\n- **Lifecycle Position:**\n    - `onCreate()` is the **first method** called in the Activity lifecycle.\n    - `onStart()` follows `onCreate()` or `onRestart()`."
+      "markdown": "- **When Called:**\n    - `onCreate()` is called **once** when the Activity is first created.\n    - `onStart()` is called **every time** the Activity becomes visible.\n---\n\n- **Purpose:**\n    - `onCreate()` is used to **initialize UI, resources, and data**.\n    - `onStart()` prepares the Activity to **interact with the user**.\n---\n\n- **Typical Tasks:**\n    - `onCreate()` → set content view, bind views, initialize variables.\n    - `onStart()` → start animations, refresh UI, resume paused tasks.\n---\n\n- **Lifecycle Position:**\n    - `onCreate()` is the **first method** called in the Activity lifecycle.\n    - `onStart()` follows `onCreate()` or `onRestart()`."
     },
     {
       "id": 3,
@@ -323,7 +323,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "In Android, the **onDestroy()** method is normally preceded by **onPause()** and **onStop()**. However, there are situations where **onDestroy()** can be called **directly**, skipping the other two:\n\n---\n\n### Scenarios\n\n1. **Activity Finishing Abruptly**\n    - If `finish()` is called on an Activity that **has not yet been started or resumed**, `onDestroy()` may be called without `onPause()` or `onStop()`.\n\n2. **System Killing the Process**\n    - In extreme memory pressure, the system can **kill the Activity process directly**. In some cases, `onPause()` and `onStop()` may **not be invoked** before destruction.\n\n3. **Crash or Exception**\n    - If the Activity encounters a **fatal exception** during `onCreate()` or initialization, `onDestroy()` may run (or the process may terminate) without `onPause()` or `onStop()`.\n\n---\n\n### Key Point\n- `onDestroy()` is **guaranteed** only when the Activity is **finishing normally**.\n- **Do not rely** on `onDestroy()` for critical cleanup; use `onPause()` or `onStop()` for saving data.\n"
+      "markdown": "\nNormally, `onPause()` and `onStop()` run before `onDestroy()`, but they can be skipped in rare cases:\n\n- **Activity finishes early** (e.g., `finish()` during `onCreate()`)\n- **System kills the process** due to low memory\n- **App crash or fatal exception**\n\n### Key Point\n- `onDestroy()` is **not always guaranteed**\n- Do important cleanup in `onPause()` or `onStop()`, not `onDestroy()`"
     },
     {
       "id": 4,
@@ -389,7 +389,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "When the user navigates from **Activity A** to **Activity B**, the system manages the lifecycle of both Activities to ensure smooth transitions and resource management.\n\n---\n\n### Activity A (Previous Activity)\n1. **onPause()**  \n   - Called first as Activity A **loses focus**.  \n   - Pause animations, save temporary data.\n\n2. **onStop()**  \n   - Called if Activity B fully covers Activity A.  \n   - Activity A is no longer visible but **remains in memory**.\n\n---\n\n### Activity B (New Activity)\n1. **onCreate()**  \n   - Called to **create Activity B** and initialize UI and resources.\n\n2. **onStart()**  \n   - Activity B **becomes visible**.\n\n3. **onResume()**  \n   - Activity B **gains focus** and becomes interactive.\n\n---\n\n### Lifecycle Flow\n\nActivity A: onPause → onStop\nActivity B: onCreate → onStart → onResume\n\n### Key Points\n- Activity A is **paused/stopped**, but not destroyed.  \n- Activity B starts fresh with `onCreate()`.  \n- Pressing Back from Activity B will **resume Activity A** using `onRestart() → onStart() → onResume()`.\n"
+      "markdown": "**Activity A**\n- `onPause()` → loses focus\n- `onStop()` → no longer visible\n\n**Activity B**\n- `onCreate()` → created\n- `onStart()` → visible\n- `onResume()` → interactive\n\n**Flow**\nA: `onPause → onStop`  \nB: `onCreate → onStart → onResume`\n\n**Note**\n- Activity A stays in memory\n- Pressing Back destroys B and resumes A"
     },
     {
       "id": 10,
@@ -400,7 +400,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "When the user presses the **Back button** on **Activity B**, it is **finished**, and the system returns to **Activity A**. The lifecycle methods of both Activities are called as follows:\n\n---\n\n### Activity B (Current Activity)\n1. **onPause()**  \n   - Called as Activity B **loses focus**.  \n   - Pause ongoing tasks or save temporary data.\n\n2. **onStop()**  \n   - Called if Activity B is no longer visible.\n\n3. **onDestroy()**  \n   - Called when Activity B is **finished** and removed from memory.\n\n---\n\n### Activity A (Previous Activity)\n1. **onRestart()**  \n   - Called because Activity A **is coming back from the stopped state**.\n\n2. **onStart()**  \n   - Activity A becomes **visible** again.\n\n3. **onResume()**  \n   - Activity A **gains focus** and the user can interact with it.\n\n\n### Lifecycle Flow\n\nActivity B: onPause → onStop → onDestroy\nActivity A: onRestart → onStart → onResume\n\n### Key Points\n- Activity B is **destroyed**, freeing memory.  \n- Activity A is **resumed** without recreation.  \n- Allows efficient **resource management** and smooth navigation."
+      "markdown": "When the user presses the **Back button** on **Activity B**, it is **finished**, and the system returns to **Activity A**. The lifecycle methods of both Activities are called as follows:\n\n\n**Activity B**\n- `onPause()` → loses focus  \n- `onStop()` → not visible  \n- `onDestroy()` → finished  \n\n**Activity A**\n- `onRestart()` → coming back  \n- `onStart()` → visible  \n- `onResume()` → interactive  \n\n**Flow**\nB: `onPause → onStop → onDestroy`  \nA: `onRestart → onStart → onResume`"
     },
     {
       "id": 11,
@@ -412,7 +412,7 @@
         "state",
         "rotation"
       ],
-      "markdown": "When an Activity is rotated, it is **destroyed and recreated**. To preserve state:\n\n---\n\n### 1. Using onSaveInstanceState()\n```kotlin\noverride fun onSaveInstanceState(outState: Bundle) {\n    super.onSaveInstanceState(outState)\n    outState.putString(\"username\", editText.text.toString())\n}\n\noverride fun onCreate(savedInstanceState: Bundle?) {\n    super.onCreate(savedInstanceState)\n    setContentView(R.layout.activity_main)\n    editText.setText(savedInstanceState?.getString(\"username\"))\n}\n````\n\n---\n\n### 2. Using ViewModel\n\n* Stores UI data across rotation without recreation.\n\n```kotlin\nval viewModel = ViewModelProvider(this).get(MyViewModel::class.java)\neditText.setText(viewModel.username)\nviewModel.username = editText.text.toString()\n```\n---\n\n### Key Points\n\n* `onSaveInstanceState()` → small UI data\n* `ViewModel` → long-lived UI state\n* Manual handling → avoid recreation (use cautiously)"
+      "markdown": "\nWhen an Activity is rotated, it is **destroyed and recreated**. To preserve state:\n\n\n### Common Ways\n- **onSaveInstanceState():** Save small UI data (text, selections)\n- **ViewModel:** Keeps UI data across rotations\n\n### Key Points\n- `onSaveInstanceState()` → temporary UI state  \n- `ViewModel` → long-lived UI data  \n- Avoid manual config handling unless necessary"
     },
     {
       "id": 12,
@@ -423,7 +423,7 @@
         "activity",
         "state"
       ],
-      "markdown": "In Android, **`savedInstanceState`** is a **Bundle object** passed to `onCreate()` and `onRestoreInstanceState()` that contains **key-value pairs of the Activity's previously saved state**. It is used to **restore UI state** after events like screen rotation, configuration changes, or temporary system-initiated destruction.\n\n---\n\n### How It Works\n1. **Saving State**  \n   - Before the Activity is destroyed, override `onSaveInstanceState()` to store values in the Bundle.\n\n```kotlin\noverride fun onSaveInstanceState(outState: Bundle) {\n    super.onSaveInstanceState(outState)\n    outState.putString(\"username\", editText.text.toString())\n}\n````\n\n2. **Restoring State**\n\n    * Use `savedInstanceState` in `onCreate()` or `onRestoreInstanceState()` to retrieve values.\n\n```kotlin\noverride fun onCreate(savedInstanceState: Bundle?) {\n    super.onCreate(savedInstanceState)\n    setContentView(R.layout.activity_main)\n    editText.setText(savedInstanceState?.getString(\"username\"))\n}\n```\n\n---\n\n### Key Points\n\n* `savedInstanceState` is **null** when Activity is launched for the first time.\n* It only stores **small, serializable data** (strings, ints, booleans, Parcelable objects).\n* Useful for **preserving UI state across rotation or temporary destruction**.\n"
+      "markdown": "`savedInstanceState` is a **Bundle** used to **save and restore UI state** when an Activity is recreated (e.g., screen rotation).\n\n### How It’s Used\n- Save data in `onSaveInstanceState()`\n- Restore it in `onCreate()` or `onRestoreInstanceState()`\n\n### Key Points\n- `null` on first launch\n- Stores **small UI data only**\n- Helps restore state after rotation or system kill"
     },
     {
       "id": 13,
@@ -435,7 +435,7 @@
         "bundle",
         "data-passing"
       ],
-      "markdown": "**Intent** and **Bundle** are related but serve different purposes in Android app development.\n\n---\n\n### 1. **Intent**\n- **Purpose:** Used to **start activities, services, or broadcast messages**.  \n- **Functionality:** Can carry data, action, and target component.  \n- **Usage Example:**\n```kotlin\nval intent = Intent(this, SecondActivity::class.java)\nintent.putExtra(\"username\", \"Aasim\")\nstartActivity(intent)\n````\n\n* Can directly **navigate between components**.\n\n---\n\n### 2. **Bundle**\n\n* **Purpose:** Used to **store and pass key-value data**.\n* **Functionality:** Acts as a **data container**, often used with Intents or `savedInstanceState`.\n* **Usage Example:**\n\n```kotlin\nval bundle = Bundle()\nbundle.putString(\"username\", \"Aasim\")\nintent.putExtras(bundle)\n```\n\n* Cannot navigate between components by itself; needs to be attached to an **Intent** or saved state.\n"
+      "markdown": "**Intent**\n- Used to **start Activities/Services** or send broadcasts\n- Can carry data and navigation info\n\n**Bundle**\n- A **key-value data container**\n- Used to pass data via Intent or save state\n\n**In Short**\n- **Intent** = navigation + data\n- **Bundle** = data only"
     },
     {
       "id": 14,
