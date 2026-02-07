@@ -34,6 +34,218 @@
         ]
       }
     ],
+"courses": [
+      {
+  "courseId": "kotlin_for_android",
+  "courseTitle": "Kotlin for Android (XML-Based)",
+  "phases": [
+    {
+      "phaseId": 1,
+      "phaseTitle": "Kotlin Fundamentals",
+      "topics": [
+        {
+          "topicId": 1,
+          "title": "Introduction to Kotlin",
+          "markdownFile": "kotlin_topic_01_introduction.md",
+          "order": 1
+        },
+        {
+          "topicId": 2,
+          "title": "Variables & Data Types",
+          "markdownFile": "kotlin_topic_02_variables.md",
+          "order": 2
+        },
+        {
+          "topicId": 3,
+          "title": "Null Safety",
+          "markdownFile": "kotlin_topic_03_null_safety.md",
+          "order": 3
+        },
+        {
+          "topicId": 4,
+          "title": "Operators & Control Flow",
+          "markdownFile": "kotlin_topic_04_control_flow.md",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 2,
+      "phaseTitle": "Functions & OOP",
+      "topics": [
+        {
+          "topicId": 5,
+          "title": "Functions",
+          "markdownFile": "kotlin_topic_05_functions.md",
+          "order": 1
+        },
+        {
+          "topicId": 6,
+          "title": "Classes & Objects",
+          "markdownFile": "kotlin_topic_06_classes.md",
+          "order": 2
+        },
+        {
+          "topicId": 7,
+          "title": "Data Classes & Enums",
+          "markdownFile": "kotlin_topic_07_data_classes.md",
+          "order": 3
+        },
+        {
+          "topicId": 8,
+          "title": "Inheritance & Interfaces",
+          "markdownFile": "kotlin_topic_08_inheritance.md",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 3,
+      "phaseTitle": "Collections & Lambdas",
+      "topics": [
+        {
+          "topicId": 9,
+          "title": "Collections",
+          "markdownFile": "kotlin_topic_09_collections.md",
+          "order": 1
+        },
+        {
+          "topicId": 10,
+          "title": "Lambdas & Higher-Order Functions",
+          "markdownFile": "kotlin_topic_10_lambdas.md",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "phaseId": 4,
+      "phaseTitle": "Android-Specific Kotlin",
+      "topics": [
+        {
+          "topicId": 11,
+          "title": "Kotlin + Android Basics",
+          "markdownFile": "kotlin_topic_11_android_basics.md",
+          "order": 1
+        },
+        {
+          "topicId": 12,
+          "title": "Scope Functions (Android Focus)",
+          "markdownFile": "kotlin_topic_12_scope_functions.md",
+          "order": 2
+        },
+        {
+          "topicId": 13,
+          "title": "Extension Functions",
+          "markdownFile": "kotlin_topic_13_extensions.md",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "phaseId": 5,
+      "phaseTitle": "Coroutines (Intro Level)",
+      "topics": [
+        {
+          "topicId": 14,
+          "title": "Coroutines Basics",
+          "markdownFile": "kotlin_topic_14_coroutines_basics.md",
+          "order": 1
+        },
+        {
+          "topicId": 15,
+          "title": "Coroutines in Android",
+          "markdownFile": "kotlin_topic_15_coroutines_android.md",
+          "order": 2
+        },
+        {
+          "topicId": 15,
+          "title": "Coroutines: Jobs, Contexts & Dispatchers",
+          "markdownFile": "kotlin_topic_15_coroutines_deep_dive.md",
+          "order": 1
+        },
+        {
+          "topicId": 15,
+          "title": "Structured Concurrency & Exception Handling",
+          "markdownFile": "kotlin_topic_15_coroutine_cancellation.md",
+          "order": 2
+        },
+        {
+          "topicId": 16,
+          "title": "Asynchronous Data Streams: Kotlin Flow",
+          "markdownFile": "kotlin_topic_16_kotlin_flow.md",
+          "order": 3
+        },
+        {
+          "topicId": 17,
+          "title": "StateFlow vs SharedFlow in Android",
+          "markdownFile": "kotlin_topic_17_stateflow_sharedflow.md",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 6,
+      "phaseTitle": "Advanced Kotlin",
+      "topics": [
+        {
+          "topicId": 16,
+          "title": "Sealed Classes (Deep Dive)",
+          "markdownFile": "kotlin_topic_16_sealed_classes.md",
+          "order": 1
+        },
+        {
+          "topicId": 17,
+          "title": "Generics",
+          "markdownFile": "kotlin_topic_17_generics.md",
+          "order": 2
+        },
+        {
+          "topicId": 18,
+          "title": "Exception Handling",
+          "markdownFile": "kotlin_topic_18_exceptions.md",
+          "order": 3
+        },
+        {
+          "topicId": 20,
+          "title": "Delegation (Property & Class Delegates)",
+          "markdownFile": "kotlin_topic_20_delegation.md",
+          "order": 3
+        },
+        {
+          "topicId": 21,
+          "title": "Inline Classes & Inline Functions",
+          "markdownFile": "kotlin_topic_21_inline.md",
+          "order": 4
+        },
+        {
+          "topicId": 22,
+          "title": "Reflection & Annotations in Android",
+          "markdownFile": "kotlin_topic_22_reflection.md",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "phaseId": 7,
+      "phaseTitle": "Kotlin Best Practices",
+      "topics": [
+        {
+          "topicId": 19,
+          "title": "Kotlin Coding Best Practices",
+          "markdownFile": "kotlin_topic_19_best_practices.md",
+          "order": 1
+        },
+        {
+          "topicId": 20,
+          "title": "Migrating Java to Kotlin",
+          "markdownFile": "kotlin_topic_20_java_to_kotlin.md",
+          "order": 2
+        }
+      ]
+    }
+  ]
+}
+    ],
     "banners": [
       {
         "title": "Linkedin",
