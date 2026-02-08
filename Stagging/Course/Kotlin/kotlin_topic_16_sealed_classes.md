@@ -1,4 +1,5 @@
 
+# Sealed Classes (Deep Dive)
 
 ## 1. What is a Sealed Class?
 
@@ -10,6 +11,7 @@ While an Enum constant is a single instance, a subclass of a sealed class can ha
 ## 2. Sealed Class vs. Enum
 
 The table below highlights the key differences between enum class and sealed class, helping you decide which one fits your design needs.
+
 | Feature            | Enum Class                              | Sealed Class                                           |
 | ------------------ | --------------------------------------- | ------------------------------------------------------ |
 | **Instance State** | Every constant is exactly one instance. | Subclasses can be data classes with different data.    |
