@@ -1,4 +1,3 @@
-# Kotlin Best Practices & Coding Style
 
 ## 1. Favor Immutability
 
