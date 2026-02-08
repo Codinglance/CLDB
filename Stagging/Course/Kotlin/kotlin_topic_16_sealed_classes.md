@@ -1,5 +1,4 @@
 
-# Sealed Classes (Deep Dive)
 
 ## 1. What is a Sealed Class?
 
