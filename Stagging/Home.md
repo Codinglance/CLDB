@@ -37,7 +37,7 @@
 "courses": [
       {
   "courseId": "Kotlin",
-  "courseTitle": "Kotlin for Android (XML-Based)",
+  "courseTitle": "Kotlin",
   "phases": [
     {
       "phaseId": 1,
