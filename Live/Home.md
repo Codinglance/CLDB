@@ -1,6 +1,6 @@
 {
   "data": {
-    "items": [
+    "interview_item": [
       {
         "category_id": "android",
         "title": "Android",
@@ -25,7 +25,6 @@
           
         ]
       },
-     
       {
         "category_id": "Collection",
         "title": "Collection",

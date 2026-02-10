@@ -1,6 +1,4 @@
 
-# Extension Functions
-
 ## 1. What is an Extension Function?
 
 An extension function is a member function of a class that is defined **outside** the class. It allows you to "extend" a class with new abilities.

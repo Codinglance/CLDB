@@ -79,6 +79,8 @@ val hexString = "FF".run {
 
 ## Which one to use?
 
+Here’s a quick comparison to help you choose the right Kotlin scope function for your use case:
+
 | Function  | Reference | Return Value  | Main Use Case                                      |
 | --------- | --------- | ------------- | -------------------------------------------------- |
 | **apply** | **this**  | Object itself | **Configuring** an object (Setting UI properties). |

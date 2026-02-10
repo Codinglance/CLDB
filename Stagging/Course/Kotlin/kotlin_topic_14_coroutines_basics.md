@@ -1,4 +1,3 @@
-# Coroutines Basics
 
 ## 1. What is a Coroutine?
 
