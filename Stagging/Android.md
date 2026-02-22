@@ -240,7 +240,7 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min",
-      "markdown": "The **Android Support Library** is a set of **code libraries** provided by Google to help developers **use newer Android features on older versions** of the platform. It provides **backward-compatible versions of APIs**, UI components, and utilities.\n\n---\n\n#### Why It Was Introduced\n- **Fragmented Android versions:** Not all devices run the latest Android OS.\n- **Backward compatibility:** Allows developers to use modern features on older devices.\n- **Consistent UI and functionality:** Ensures apps behave similarly across different Android versions.\n- **Faster development:** Provides ready-to-use components like RecyclerView, CardView, ViewPager, etc.\n\n---\n\n#### Key Features\n- Backward-compatible UI widgets (RecyclerView, CardView, Toolbar)\n- Support for newer APIs on older devices\n- Utility classes for tasks like notifications, media, and animations"
+      "markdown": "The **Android Support Library** is a set of **code libraries** provided by Google to help developers **use newer Android features on older versions** of the platform. It provides **backward-compatible versions of APIs**, UI components, and utilities.\n\n\n#### Why It Was Introduced\n- **Fragmented Android versions:** Not all devices run the latest Android OS.\n- **Backward compatibility:** Allows developers to use modern features on older devices.\n- **Consistent UI and functionality:** Ensures apps behave similarly across different Android versions.\n- **Faster development:** Provides ready-to-use components like RecyclerView, CardView, ViewPager, etc.\n\n\n#### Key Features\n- Backward-compatible UI widgets (RecyclerView, CardView, Toolbar)\n- Support for newer APIs on older devices\n- Utility classes for tasks like notifications, media, and animations"
     },
     {
       "id": 18,
@@ -312,7 +312,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "- **When Called:**\n    - `onCreate()` is called **once** when the Activity is first created.\n    - `onStart()` is called **every time** the Activity becomes visible.\n---\n\n- **Purpose:**\n    - `onCreate()` is used to **initialize UI, resources, and data**.\n    - `onStart()` prepares the Activity to **interact with the user**.\n---\n\n- **Typical Tasks:**\n    - `onCreate()` → set content view, bind views, initialize variables.\n    - `onStart()` → start animations, refresh UI, resume paused tasks.\n---\n\n- **Lifecycle Position:**\n    - `onCreate()` is the **first method** called in the Activity lifecycle.\n    - `onStart()` follows `onCreate()` or `onRestart()`."
+      "markdown": "- **When Called:**\n    - **onCreate()** is called **once** when the Activity is first created.\n    - **onStart()** is called **every time** the Activity becomes visible.\n\n\n- **Purpose:**\n    - **onCreate()** is used to **initialize UI, resources, and data**.\n    - **onStart()** prepares the Activity to **interact with the user**.\n\n- **Typical Tasks:**\n    - **onCreate()** → set content view, bind views, initialize variables.\n    - **onStart()** → start animations, refresh UI, resume paused tasks.\n\n- **Lifecycle Position:**\n    - **onCreate()** is the **first method** called in the Activity lifecycle.\n    - **onStart()** follows **onCreate()** or **onRestart()**."
     },
     {
       "id": 3,
@@ -323,7 +323,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "\nNormally, `onPause()` and `onStop()` run before `onDestroy()`, but they can be skipped in rare cases:\n\n- **Activity finishes early** (e.g., `finish()` during `onCreate()`)\n- **System kills the process** due to low memory\n- **App crash or fatal exception**\n\n#### Key Point\n- `onDestroy()` is **not always guaranteed**\n- Do important cleanup in `onPause()` or `onStop()`, not `onDestroy()`"
+      "markdown": "\nNormally, **onPause()** and **onStop()** run before **onDestroy()**, but they can be skipped in rare cases:\n\n- **Activity finishes early** (e.g., **finish()** during **onCreate()**)\n- **System kills the process** due to low memory\n- **App crash or fatal exception**\n\n#### Key Point\n- **onDestroy()** is **not always guaranteed**\n- Do important cleanup in **onPause()** or **onStop()**, not **onDestroy()**"
     },
     {
       "id": 4,
@@ -334,7 +334,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "When an Android Activity is launched for the **first time**, it goes through the following lifecycle methods in order:\n\n1. **onCreate()**  \n   - Called when the Activity is **first created**.  \n   - Used to **initialize UI, variables, and resources**.  \n   - Example: `setContentView(R.layout.activity_main)`\n\n2. **onStart()**  \n   - Called when the Activity **becomes visible** to the user.  \n   - Prepares the Activity to **enter the foreground**.\n\n3. **onResume()**  \n   - Called when the Activity **gains focus** and the user can interact with it.  \n   - Activity is now in the **foreground** and fully active."
+      "markdown": "When an Android Activity is launched for the **first time**, it goes through the following lifecycle methods in order:\n\n1. **onCreate()**  \n   Called when the Activity is **first created**.  \n   Used to **initialize UI, variables, and resources**.  \n   Example: **setContentView(R.layout.activity_main)**\n\n2. **onStart()**  \n   Called when the Activity **becomes visible** to the user.  \n   Prepares the Activity to **enter the foreground**.\n\n3. **onResume()**  \n   Called when the Activity **gains focus** and the user can interact with it.  \n   Activity is now in the **foreground** and fully active."
     },
     {
       "id": 5,
@@ -345,7 +345,7 @@
         "activity",
         "lifecycle"
       ],
-      "markdown": "onCreate → onStart → onResume\n#### Key Points\n- The Activity is **fully created and visible** after `onResume()`.  \n- `onPause()` and `onStop()` are called only when the user **leaves or navigates away** from the Activity.  \n\n\n#### Activity Lifecycle When Back Button Is Pressed\n\nWhen the user **presses the Back button**, the current Activity is **finished** and removed from the screen. The system calls the following lifecycle methods in order:\n\n1. **onPause()**  \n   - Called first when the Activity **loses focus**.  \n   - Used to pause ongoing tasks, animations, or save unsaved data.\n\n2. **onStop()**  \n   - Called when the Activity is **no longer visible**.  \n   - Release resources that are not needed while the Activity is hidden.\n\n3. **onDestroy()**  \n   - Called when the Activity is **completely destroyed**.  \n   - Final cleanup of resources occurs here."
+      "markdown": "#### onCreate → onStart → onResume\n\n#### Key Points\n- The Activity is **fully created and visible** after **onResume()**.\n- **onPause()** and **onStop()** are called only when the user **leaves or navigates away** from the Activity.\n\n#### Activity Lifecycle When Back Button Is Pressed\nWhen the user **presses the Back button**, the current Activity is **finished** and removed from the screen. The system calls the following lifecycle methods in order:\n\n#### onPause()  \n- Called first when the Activity **loses focus**.  \n- Used to pause ongoing tasks, animations, or save unsaved data.\n\n#### onStop()  \n- Called when the Activity is **no longer visible**.  \n- Release resources that are not needed while the Activity is hidden.\n\n#### onDestroy()\n- Called when the Activity is **completely destroyed**.  \n- Final cleanup of resources occurs here."
     },
     {
       "id": 6,
