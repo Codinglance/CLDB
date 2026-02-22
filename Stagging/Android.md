@@ -78,7 +78,7 @@
       "markdown": "The **Application class** in Android is a **base class** that represents the **entire application**. It is created **before any Activity, Service, or other app component** and remains alive as long as the application process exists.\n\n **Why It Is Used**:- The Application class is used to:\n- Maintain **global application state**\n- Initialize **app-wide libraries** (Firebase, analytics, DI, etc.)\n- Store objects that need to live throughout the app lifecycle\n- Access a **global context**\n\n#### Key Characteristics\n- Only **one instance** exists per app\n- Created **once** when the app starts\n- Destroyed when the app process is killed\n- Has the **longest lifecycle** in the app\n\n\n**How It Is Used**:- Create a custom Application class and register it in the manifest.\n\n```kotlin\nclass MyApp : Application() {\n    override fun onCreate() {\n        super.onCreate()\n        // App-level initialization\n    }\n}\n```"
     },
     {
-      "id": 6",
+      "id": 6,
       "section": "Android Tools",
       "question": "What is ADB in Android?",
       "difficulty": "Easy",
