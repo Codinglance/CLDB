@@ -28,7 +28,7 @@
       {
         "category_id": "Collection",
         "title": "Collection",
-        "totalQuestions": "25",
+        "totalQuestions": "20",
         "questions": [
           
         ]
