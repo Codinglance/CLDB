@@ -20,7 +20,7 @@
       {
         "category_id": "Compose",
         "title": "Compose",
-        "totalQuestions": "25",
+        "totalQuestions": "20",
         "questions": [
           
         ]
