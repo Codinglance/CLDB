@@ -41,13 +41,9 @@
             ]
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Your First Program: Hello World",
-            "content": "In Kotlin, the entry point of any program is the main function."
-        },
-        {
-            "type": "code",
-            "heading": "Hello World Example",
+            "content": "In Kotlin, the entry point of any program is the main function.",
             "language": "kotlin",
             "code": "fun main() {\n    println(\"Hello, Kotlin!\")\n}"
         },
