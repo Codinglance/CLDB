@@ -130,13 +130,13 @@
               {
                 "topicId": 12,
                 "title": "Scope Functions (Android Focus)",
-                "markdownFile": "kotlin_topic_12_scope_functions.md",
+                "markdownFile": "kotlin_topic_12_scope_functions.json",
                 "order": 2
               },
               {
                 "topicId": 13,
                 "title": "Extension Functions",
-                "markdownFile": "kotlin_topic_13_extensions.md",
+                "markdownFile": "kotlin_topic_13_extensions.json",
                 "order": 3
               }
             ]
@@ -148,37 +148,37 @@
               {
                 "topicId": 14,
                 "title": "Coroutines Basics",
-                "markdownFile": "kotlin_topic_14_coroutines_basics.md",
+                "markdownFile": "kotlin_topic_14_coroutines_basics.json",
                 "order": 1
               },
               {
                 "topicId": 15,
                 "title": "Coroutines in Android",
-                "markdownFile": "kotlin_topic_15_coroutines_android.md",
+                "markdownFile": "kotlin_topic_15_coroutines_android.json",
                 "order": 2
               },
               {
                 "topicId": 15,
                 "title": "Coroutines: Jobs, Contexts & Dispatchers",
-                "markdownFile": "kotlin_topic_15_coroutines_deep_dive.md",
+                "markdownFile": "kotlin_topic_15_coroutines_deep_dive.json",
                 "order": 1
               },
               {
                 "topicId": 15,
                 "title": "Structured Concurrency & Exception Handling",
-                "markdownFile": "kotlin_topic_15_coroutine_cancellation.md",
+                "markdownFile": "kotlin_topic_15_coroutine_cancellation.json",
                 "order": 2
               },
               {
                 "topicId": 16,
                 "title": "Asynchronous Data Streams: Kotlin Flow",
-                "markdownFile": "kotlin_topic_16_kotlin_flow.md",
+                "markdownFile": "kotlin_topic_16_kotlin_flow.json",
                 "order": 3
               },
               {
                 "topicId": 17,
                 "title": "StateFlow vs SharedFlow in Android",
-                "markdownFile": "kotlin_topic_17_stateflow_sharedflow.md",
+                "markdownFile": "kotlin_topic_17_stateflow_sharedflow.json",
                 "order": 4
               }
             ]
@@ -190,37 +190,37 @@
               {
                 "topicId": 16,
                 "title": "Sealed Classes (Deep Dive)",
-                "markdownFile": "kotlin_topic_16_sealed_classes.md",
+                "markdownFile": "kotlin_topic_16_sealed_classes.json",
                 "order": 1
               },
               {
                 "topicId": 17,
                 "title": "Generics",
-                "markdownFile": "kotlin_topic_17_generics.md",
+                "markdownFile": "kotlin_topic_17_generics.json",
                 "order": 2
               },
               {
                 "topicId": 18,
                 "title": "Exception Handling",
-                "markdownFile": "kotlin_topic_18_exceptions.md",
+                "markdownFile": "kotlin_topic_18_exceptions.json",
                 "order": 3
               },
               {
                 "topicId": 20,
                 "title": "Delegation (Property & Class Delegates)",
-                "markdownFile": "kotlin_topic_20_delegation.md",
+                "markdownFile": "kotlin_topic_20_delegation.json",
                 "order": 3
               },
               {
                 "topicId": 21,
                 "title": "Inline Classes & Inline Functions",
-                "markdownFile": "kotlin_topic_21_inline.md",
+                "markdownFile": "kotlin_topic_21_inline.json",
                 "order": 4
               },
               {
                 "topicId": 22,
                 "title": "Reflection & Annotations in Android",
-                "markdownFile": "kotlin_topic_22_reflection.md",
+                "markdownFile": "kotlin_topic_22_reflection.json",
                 "order": 5
               }
             ]
@@ -232,13 +232,13 @@
               {
                 "topicId": 19,
                 "title": "Kotlin Coding Best Practices",
-                "markdownFile": "kotlin_topic_19_best_practices.md",
+                "markdownFile": "kotlin_topic_19_best_practices.json",
                 "order": 1
               },
               {
                 "topicId": 20,
                 "title": "Migrating Java to Kotlin",
-                "markdownFile": "kotlin_topic_20_java_to_kotlin.md",
+                "markdownFile": "kotlin_topic_20_java_to_kotlin.json",
                 "order": 2
               }
             ]
