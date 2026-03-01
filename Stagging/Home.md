@@ -256,7 +256,7 @@
         {
           "topicId": 1,
           "title": "Introduction to Android Development",
-          "markdownFile": "android_topic_01_introduction.md",
+          "markdownFile": "android_topic_01_introduction.json",
           "order": 1
         },
         {
