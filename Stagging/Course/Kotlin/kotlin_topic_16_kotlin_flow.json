@@ -1,0 +1,105 @@
+{
+    "title": "Kotlin Flow Fundamentals",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Introduction",
+            "content": "Flow is Kotlin's solution for handling streams of data that emit multiple values over time. It follows a Producer → Intermediary → Consumer pattern and is fully built on coroutines."
+        },
+        {
+            "type": "text",
+            "heading": "1. What is a Flow?",
+            "content": "A Flow is conceptually like a pipe. A Producer emits values into the pipe, optional Intermediaries transform the values, and a Consumer collects them."
+        },
+        {
+            "type": "bullet",
+            "heading": "The Three Key Players",
+            "items": [
+                "Producer: Emits values into the flow.",
+                "Intermediaries: Transform or filter values before reaching the consumer.",
+                "Consumer: Collects the emitted values."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "2. Creating a Flow",
+            "content": "Use the flow { } builder to create a cold stream. Inside the block, use emit() to send values."
+        },
+        {
+            "type": "text_code",
+            "heading": "Creating a Simple Flow",
+            "content": "This flow emits numbers from 1 to 3 with a delay to simulate background work.",
+            "language": "kotlin",
+            "code": "fun getNumberStream(): Flow<Int> = flow {\n    for (i in 1..3) {\n        delay(1000)\n        emit(i)\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "3. Collecting a Flow",
+            "content": "Flows are cold. The code inside flow { } does not execute until collect() is called. Since collect() is a suspending function, it must be called inside a coroutine."
+        },
+        {
+            "type": "text_code",
+            "heading": "Collecting a Flow",
+            "content": "The flow starts emitting values only when collect() is invoked.",
+            "language": "kotlin",
+            "code": "lifecycleScope.launch {\n    getNumberStream().collect { value ->\n        println(\"Received: $value\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "4. Flow Operators",
+            "content": "Flow operators allow transformation and filtering of emitted values before they reach the consumer."
+        },
+        {
+            "type": "bullet",
+            "heading": "Common Operators",
+            "items": [
+                "filter: Allows only specific values to pass.",
+                "map: Transforms each emitted value.",
+                "debounce: Delays emission until input stabilizes (useful for search)."
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "Using Flow Operators",
+            "content": "This example filters even numbers and transforms them into strings before collecting.",
+            "language": "kotlin",
+            "code": "getNumberStream()\n    .filter { it % 2 == 0 }\n    .map { \"Number: $it\" }\n    .collect { println(it) }"
+        },
+        {
+            "type": "text",
+            "heading": "5. Flow in Android UI",
+            "content": "In Android, flows are typically collected in Activities or Fragments. To prevent background collection when the UI is not visible, use repeatOnLifecycle."
+        },
+        {
+            "type": "text_code",
+            "heading": "Collecting Flow with repeatOnLifecycle",
+            "content": "This ensures the flow is collected only when the lifecycle is at least STARTED and automatically stops when the UI goes to the background.",
+            "language": "kotlin",
+            "code": "viewLifecycleOwner.lifecycleScope.launch {\n    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {\n        viewModel.userFlow.collect { user ->\n            binding.nameTextView.text = user.name\n        }\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "6. Cold vs Hot Flows",
+            "content": "Flows can either be cold or hot depending on how they behave when collected."
+        },
+        {
+            "type": "bullet",
+            "heading": "Types of Flows",
+            "items": [
+                "Cold Flow: Starts fresh for each collector (flow { }).",
+                "Hot Flow: Emits values regardless of collectors (StateFlow, SharedFlow)."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Flow handles streams of data over time.",
+                "Cold flows execute only when collect() is called.",
+                "Operators like map and filter transform data easily.",
+                "repeatOnLifecycle ensures safe UI collection.",
+                "Hot flows share emissions across multiple collectors."
+            ]
+        }
+    ]
+}

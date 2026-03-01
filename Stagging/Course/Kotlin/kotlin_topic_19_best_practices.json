@@ -1,0 +1,104 @@
+{
+    "id": "kt_idiomatic_practices_v1",
+    "title": "Writing Idiomatic Kotlin (Best Practices)",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. Favor Immutability",
+            "content": "Always start with val. Change it to var only when necessary. Prefer listOf() over mutableListOf() unless you truly need mutation. This prevents accidental state changes."
+        },
+        {
+            "type": "text",
+            "heading": "2. Use Expression Bodies",
+            "content": "If a function can be written in a single expression, remove the block body and return keyword. This reduces visual noise."
+        },
+        {
+            "type": "text_code",
+            "heading": "Expression Body Example",
+            "content": "Comparison between non-idiomatic and idiomatic function declaration.",
+            "language": "kotlin",
+            "code": "// ❌ Not Idiomatic\nfun getGreeting(name: String): String {\n    return \"Hello, $name\"\n}\n\n// ✅ Idiomatic\nfun getGreeting(name: String) = \"Hello, $name\""
+        },
+        {
+            "type": "text",
+            "heading": "3. Leverage String Templates",
+            "content": "Avoid using + for string concatenation. Use Kotlin string templates for better readability and performance."
+        },
+        {
+            "type": "text_code",
+            "heading": "String Template Example",
+            "content": "Replacing string concatenation with string templates.",
+            "language": "kotlin",
+            "code": "// ❌ Bad\nprintln(\"The result is: \" + result + \" units\")\n\n// ✅ Good\nprintln(\"The result is: $result units\")"
+        },
+        {
+            "type": "text",
+            "heading": "4. Master Scope Functions",
+            "content": "Use apply for object configuration and let for null-safety transformations. This improves clarity and intent."
+        },
+        {
+            "type": "text_code",
+            "heading": "Apply Example",
+            "content": "Using apply for clean UI configuration.",
+            "language": "kotlin",
+            "code": "val profileImage = ImageView(context).apply {\n    contentScale = ScaleType.CENTER_CROP\n    alpha = 0.5f\n    isVisible = true\n}"
+        },
+        {
+            "type": "text",
+            "heading": "5. Avoid !! (Not-Null Assertion)",
+            "content": "The !! operator can crash your app. Prefer safe calls (?.), the Elvis operator (?:), or explicit null checks for safer code."
+        },
+        {
+            "type": "text",
+            "heading": "6. Meaningful Named Arguments",
+            "content": "When a function has multiple parameters, especially Booleans, use named arguments to make the call self-documenting."
+        },
+        {
+            "type": "text_code",
+            "heading": "Named Arguments Example",
+            "content": "Improves readability and prevents confusion.",
+            "language": "kotlin",
+            "code": "// ❌ Unclear\nupdateUser(\"Alex\", true, false)\n\n// ✅ Clear\nupdateUser(\n    name = \"Alex\",\n    isAdmin = true,\n    isNotificationsEnabled = false\n)"
+        },
+        {
+            "type": "text",
+            "heading": "7. Sealed Classes for UI States",
+            "content": "Avoid multiple Boolean flags like isLoading and isError. Use a sealed class to represent UI states and create a single source of truth."
+        },
+        {
+            "type": "text",
+            "heading": "8. Extension Functions for Utility",
+            "content": "Instead of utility classes like StringUtils, use extension functions to make code more natural and expressive."
+        },
+        {
+            "type": "text_code",
+            "heading": "Extension Property Example",
+            "content": "Adds email validation directly to String.",
+            "language": "kotlin",
+            "code": "val String.isValidEmail: Boolean\n    get() = Patterns.EMAIL_ADDRESS.matcher(this).matches()"
+        },
+        {
+            "type": "text",
+            "heading": "9. Trailing Commas",
+            "content": "Using trailing commas makes Git diffs cleaner and reduces unnecessary changes when adding new items."
+        },
+        {
+            "type": "text_code",
+            "heading": "Trailing Comma Example",
+            "content": "Demonstrates cleaner list updates.",
+            "language": "kotlin",
+            "code": "val colors = listOf(\n    \"Red\",\n    \"Green\",\n    \"Blue\",\n)"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary Checklist",
+            "items": [
+                "Is it val by default?",
+                "Can I use a string template instead of +?",
+                "Did I avoid using !!?",
+                "Is my UI state represented by a sealed class?",
+                "Am I using Dispatchers.IO for background work?"
+            ]
+        }
+    ]
+}

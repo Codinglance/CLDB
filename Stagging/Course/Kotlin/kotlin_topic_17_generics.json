@@ -1,0 +1,103 @@
+{
+    "title": "Generics (Deep Dive)",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. Why Generics?",
+            "content": "Generics allow you to write reusable and type-safe code. Without generics, developers might use Any, which requires unsafe casting and can cause ClassCastException at runtime. Generics move these errors to compile-time."
+        },
+        {
+            "type": "text",
+            "heading": "2. Generic Classes",
+            "content": "A generic class defines a type parameter using angle brackets <T>. The type is specified when creating an instance."
+        },
+        {
+            "type": "text_code",
+            "heading": "Generic Class Example",
+            "content": "The type parameter T allows the Box class to store any type safely.",
+            "language": "kotlin",
+            "code": "class Box<T>(val content: T)\n\nval intBox = Box<Int>(10)\nval stringBox = Box<String>(\"Hello\")"
+        },
+        {
+            "type": "text",
+            "heading": "Real-World Usage",
+            "content": "Generics are widely used in Android development such as ArrayList<String>, LiveData<User>, and Response<T>."
+        },
+        {
+            "type": "text",
+            "heading": "3. Generic Functions",
+            "content": "Functions can also declare their own type parameters. The type parameter is written before the function name."
+        },
+        {
+            "type": "text_code",
+            "heading": "Generic Function Example",
+            "content": "The compiler infers the type automatically when calling the function.",
+            "language": "kotlin",
+            "code": "fun <T> printItem(item: T) {\n    println(\"Item is: $item\")\n}\n\nprintItem(42)\nprintItem(\"Kotlin\")"
+        },
+        {
+            "type": "text",
+            "heading": "4. Generic Constraints (Upper Bounds)",
+            "content": "Upper bounds restrict the allowed types for a generic parameter using a colon (:)."
+        },
+        {
+            "type": "text_code",
+            "heading": "Upper Bound Example",
+            "content": "This function only accepts numeric types.",
+            "language": "kotlin",
+            "code": "fun <T : Number> processPrice(amount: T) {\n    println(amount.toDouble() * 0.10)\n}\n\n// processPrice(\"100\") // Compilation Error"
+        },
+        {
+            "type": "text",
+            "heading": "5. Variance: out and in",
+            "content": "Variance defines how generic types relate to inheritance hierarchies."
+        },
+        {
+            "type": "text",
+            "heading": "Covariance (out)",
+            "content": "Use out when a class only produces values of type T and does not consume them."
+        },
+        {
+            "type": "text_code",
+            "heading": "Producer Example",
+            "content": "Producer can safely return T but cannot accept it as a parameter.",
+            "language": "kotlin",
+            "code": "interface Producer<out T> {\n    fun produce(): T\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Contravariance (in)",
+            "content": "Use in when a class only consumes values of type T."
+        },
+        {
+            "type": "text_code",
+            "heading": "Consumer Example",
+            "content": "Consumer can accept T but cannot return it.",
+            "language": "kotlin",
+            "code": "interface Consumer<in T> {\n    fun consume(item: T)\n}"
+        },
+        {
+            "type": "text",
+            "heading": "6. Real-World Android Example: Generic Base Adapter",
+            "content": "A common Android use case is creating a reusable RecyclerView adapter using generics."
+        },
+        {
+            "type": "text_code",
+            "heading": "BaseAdapter Example",
+            "content": "This adapter can work with any data type such as User, Product, or Notification.",
+            "language": "kotlin",
+            "code": "abstract class BaseAdapter<T>(private val items: List<T>) : RecyclerView.Adapter<MyViewHolder>() {\n    override fun getItemCount() = items.size\n    \n    fun getItem(position: Int): T = items[position]\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Generics (<T>) provide compile-time type safety.",
+                "Generic classes and functions improve code reusability.",
+                "Upper bounds (<T : Type>) restrict allowed types.",
+                "out enables covariance (producer).",
+                "in enables contravariance (consumer)."
+            ]
+        }
+    ]
+}

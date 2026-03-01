@@ -1,0 +1,86 @@
+{
+    "id": "kt_reflection_v1",
+    "title": "Kotlin Reflection & Annotations",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. The Core Components",
+            "content": "To use reflection, you need the kotlin-reflect library. The API revolves around three main classes: KClass, KFunction, and KProperty."
+        },
+        {
+            "type": "bullet",
+            "heading": "Reflection Components",
+            "items": [
+                "KClass: Represents a class reference (User::class).",
+                "KFunction: Represents a function reference (::myFunction).",
+                "KProperty: Represents a property reference (User::name)."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "2. Introspection in Action",
+            "content": "Reflection allows you to inspect a class structure at runtime."
+        },
+        {
+            "type": "text_code",
+            "heading": "Class Introspection Example",
+            "content": "Listing class members dynamically.",
+            "language": "kotlin",
+            "code": "data class User(val name: String, val age: Int)\n\nfun main() {\n    val userClass = User::class\n\n    println(\"Class Name: ${userClass.simpleName}\")\n\n    userClass.members.forEach { member ->\n        println(\"Found member: ${member.name}\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "3. Dynamic Invocation",
+            "content": "You can call functions dynamically using KFunction references."
+        },
+        {
+            "type": "text_code",
+            "heading": "Dynamic Function Call Example",
+            "content": "Calling a method via reflection.",
+            "language": "kotlin",
+            "code": "class Greeter {\n    fun sayHello(name: String) = \"Hello, $name!\"\n}\n\nval greeter = Greeter()\nval function = Greeter::sayHello\n\nval result = function.call(greeter, \"Android Developer\")\nprintln(result)"
+        },
+        {
+            "type": "text",
+            "heading": "4. Annotations & Metadata",
+            "content": "Annotations provide metadata that can be read at runtime using reflection. Retention must be set to RUNTIME."
+        },
+        {
+            "type": "text_code",
+            "heading": "Annotation Reflection Example",
+            "content": "Reading annotation metadata from a property.",
+            "language": "kotlin",
+            "code": "@Target(AnnotationTarget.PROPERTY)\n@Retention(AnnotationRetention.RUNTIME)\nannotation class JsonKey(val name: String)\n\ndata class User(@JsonKey(\"user_full_name\") val name: String)\n\nval property = User::name\nval annotation = property.annotations.find { it is JsonKey } as? JsonKey\nprintln(annotation?.name)"
+        },
+        {
+            "type": "text",
+            "heading": "5. Reflection vs Code Generation (KSP)",
+            "content": "Reflection works at runtime and is flexible but slower. Code generation (KSP/Kapt) works at compile time and generates optimized code."
+        },
+        {
+            "type": "bullet",
+            "heading": "Performance Comparison",
+            "items": [
+                "Reflection: Runtime, flexible, slower, higher memory usage.",
+                "Code Generation (KSP/Kapt): Compile-time, faster, better for production apps.",
+                "Prefer code generation for performance-critical Android features."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "6. Reified Types Connection",
+            "content": "Inline functions with reified types allow access to generic type information at runtime, which normally isn't possible due to type erasure."
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Reflection inspects and manipulates code structure at runtime.",
+                "KClass, KFunction, and KProperty are the main reflection tools.",
+                "Annotations provide metadata readable via reflection.",
+                "Reflection can impact performance; prefer KSP for production.",
+                "Reified types partially overcome generic type erasure."
+            ]
+        }
+    ]
+}

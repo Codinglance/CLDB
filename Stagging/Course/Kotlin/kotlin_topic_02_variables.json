@@ -29,19 +29,16 @@
       ]
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "val vs var Example",
+      "content": "This example shows the difference between immutable (val) and mutable (var) variables.",
       "language": "kotlin",
       "code": "val birthYear = 1995 // Fixed\nvar currentWeight = 70 // Can change\n\n// birthYear = 1996  <-- Compiler Error\ncurrentWeight = 68   // Perfectly fine"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Type Inference",
-      "content": "Kotlin is statically typed, but you don't always have to write the type explicitly. The compiler infers the type based on the assigned value."
-    },
-    {
-      "type": "code",
-      "heading": "Type Inference Example",
+      "content": "Kotlin is statically typed, but you don't always have to write the type explicitly. The compiler infers the type based on the assigned value.",
       "language": "kotlin",
       "code": "val message = \"Hello\" // String\nval age = 25          // Int"
     },
@@ -86,24 +83,16 @@
       ]
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "String Templates",
-      "content": "Kotlin simplifies string concatenation using the $ symbol. No need to use + to join strings and variables."
-    },
-    {
-      "type": "code",
-      "heading": "String Template Example",
+      "content": "Kotlin simplifies string concatenation using the $ symbol. No need to use + to join strings and variables.",
       "language": "kotlin",
       "code": "val name = \"Android\"\nval version = 14\n\nprintln(\"Welcome to $name version $version\")\nprintln(\"The name has ${name.length} characters\")"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Type Conversion",
-      "content": "In Kotlin, smaller types like Int are not implicitly converted to larger types like Long. Explicit conversion is required."
-    },
-    {
-      "type": "code",
-      "heading": "Type Conversion Example",
+      "content": "In Kotlin, smaller types like Int are not implicitly converted to larger types like Long. Explicit conversion is required.",
       "language": "kotlin",
       "code": "val smallInt: Int = 10\n// val bigLong: Long = smallInt // Error\n\nval bigLong: Long = smallInt.toLong()"
     },

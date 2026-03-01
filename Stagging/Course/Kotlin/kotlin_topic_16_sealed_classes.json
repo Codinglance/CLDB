@@ -1,0 +1,90 @@
+{
+    "title": "Sealed Classes (Deep Dive)",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. What is a Sealed Class?",
+            "content": "A sealed class restricts its inheritance hierarchy. All subclasses must be defined in the same package (typically the same file). It behaves like an advanced enum but allows each subclass to hold its own state."
+        },
+        {
+            "type": "text",
+            "heading": "Core Idea",
+            "content": "Unlike enum constants which are single instances, sealed class subclasses can have multiple instances and can store different data."
+        },
+        {
+            "type": "text",
+            "heading": "2. Sealed Class vs Enum",
+            "content": "Sealed classes are more flexible than enums and are commonly used to represent complex states such as API responses or UI states."
+        },
+        {
+            "type": "bullet",
+            "heading": "Key Differences",
+            "items": [
+                "Enum: Each constant is exactly one instance.",
+                "Sealed Class: Subclasses can be data classes with different state.",
+                "Enum: Best for fixed values like Days or Colors.",
+                "Sealed Class: Best for complex states like API Results or UI States."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "3. Real-World Android Example: UI State",
+            "content": "Sealed classes are commonly used in Android to represent UI states such as Loading, Success, and Error."
+        },
+        {
+            "type": "text_code",
+            "heading": "Defining a Result Sealed Class",
+            "content": "Each subclass represents a different possible state of the UI.",
+            "language": "kotlin",
+            "code": "sealed class Result {\n    object Loading : Result()\n    data class Success(val data: String) : Result()\n    data class Error(val message: String, val code: Int) : Result()\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Handling States with when",
+            "content": "The Kotlin compiler knows all subclasses of a sealed class. When using when as an expression, it forces you to handle all possible cases (exhaustive check)."
+        },
+        {
+            "type": "text_code",
+            "heading": "Exhaustive when Example",
+            "content": "Each possible state is handled explicitly without needing an else branch.",
+            "language": "kotlin",
+            "code": "fun updateUI(result: Result) {\n    when (result) {\n        is Result.Loading -> binding.progressBar.show()\n        is Result.Success -> {\n            binding.progressBar.hide()\n            binding.textView.text = result.data\n        }\n        is Result.Error -> {\n            binding.progressBar.hide()\n            showErrorToast(result.message)\n        }\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "4. Sealed Interfaces",
+            "content": "Sealed interfaces work similarly to sealed classes but allow multiple inheritance. Use them when you do not need shared implementation or constructor logic."
+        },
+        {
+            "type": "text_code",
+            "heading": "Sealed Interface Example",
+            "content": "Classes implementing a sealed interface must follow the same restricted hierarchy rules.",
+            "language": "kotlin",
+            "code": "sealed interface NetworkEvent\n\nclass ClickEvent(val id: Int) : NetworkEvent\nclass SwipeEvent(val direction: String) : NetworkEvent"
+        },
+        {
+            "type": "text",
+            "heading": "5. Benefits in Clean Architecture",
+            "content": "Sealed classes improve type safety and clarity in large applications, especially when modeling domain results or UI states."
+        },
+        {
+            "type": "bullet",
+            "heading": "Advantages",
+            "items": [
+                "Type Safety: Compiler enforces exhaustive handling in when expressions.",
+                "Readability: Makes UI state flow clear between ViewModel and UI layer.",
+                "Maintainability: Groups related states in a single structured hierarchy."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Sealed classes provide a closed inheritance hierarchy.",
+                "They allow stateful subclasses unlike enums.",
+                "Commonly used for Result types and UI states.",
+                "Work perfectly with when expressions for exhaustive checks."
+            ]
+        }
+    ]
+}

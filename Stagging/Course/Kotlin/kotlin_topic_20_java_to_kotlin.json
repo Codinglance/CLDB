@@ -1,0 +1,102 @@
+{
+    "id": "kt_java_interoperability_v1",
+    "title": "Kotlin & Java Interoperability",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. Calling Java from Kotlin",
+            "content": "Kotlin can call Java code seamlessly. Kotlin adds syntactic sugar to make Java APIs feel more natural."
+        },
+        {
+            "type": "text",
+            "heading": "Getters and Setters",
+            "content": "Java getter/setter methods are exposed as Kotlin properties."
+        },
+        {
+            "type": "text_code",
+            "heading": "Java Getters/Setters as Properties",
+            "content": "Kotlin treats Java getName()/setName() as a property.",
+            "language": "kotlin",
+            "code": "// Java: user.getName();\nval name = user.name\n\n// Java: user.setName(\"Alex\");\nuser.name = \"Alex\""
+        },
+        {
+            "type": "text",
+            "heading": "Nullability & Platform Types",
+            "content": "Java does not enforce null safety. Kotlin treats Java types as platform types (e.g., String!). Always check @Nullable and @NonNull annotations and treat uncertain types as nullable."
+        },
+        {
+            "type": "text",
+            "heading": "2. Calling Kotlin from Java",
+            "content": "Kotlin provides annotations to improve Java interoperability."
+        },
+        {
+            "type": "text",
+            "heading": "@JvmStatic",
+            "content": "Makes companion object functions appear as true static methods in Java."
+        },
+        {
+            "type": "text_code",
+            "heading": "@JvmStatic Example",
+            "content": "Exposes companion object method as static in Java.",
+            "language": "kotlin",
+            "code": "class Utils {\n    companion object {\n        @JvmStatic fun doWork() { }\n    }\n}\n\n// Java usage:\n// Utils.doWork();"
+        },
+        {
+            "type": "text",
+            "heading": "@JvmOverloads",
+            "content": "Generates overloaded methods for functions with default parameters so Java can call them naturally."
+        },
+        {
+            "type": "text_code",
+            "heading": "@JvmOverloads Example",
+            "content": "Generates multiple overloaded methods for Java.",
+            "language": "kotlin",
+            "code": "@JvmOverloads\nfun draw(width: Int, height: Int = 100) { }\n\n// Java sees:\n// void draw(int width, int height)\n// void draw(int width)"
+        },
+        {
+            "type": "text",
+            "heading": "3. Key Syntax Differences",
+            "content": "Major conceptual shifts when converting Java to Kotlin."
+        },
+        {
+            "type": "bullet",
+            "heading": "Java vs Kotlin",
+            "items": [
+                "Semicolons: Required in Java, optional in Kotlin.",
+                "Variables: String name = \"Alex\"; vs val name: String = \"Alex\"",
+                "Ternary: a ? b : c vs if (a) b else c",
+                "Switch vs When: switch(x) vs when(x)",
+                "Casting: (String) obj vs obj as String",
+                "Static: static keyword vs companion object"
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "4. Any vs Object",
+            "content": "In Kotlin, the root type is Any instead of Object. Any does not include methods like wait() or notify(). Cast to java.lang.Object if needed."
+        },
+        {
+            "type": "text",
+            "heading": "5. SAM Conversions",
+            "content": "If a Java interface has a single abstract method (SAM), Kotlin allows you to pass a lambda instead of an anonymous inner class."
+        },
+        {
+            "type": "text_code",
+            "heading": "SAM Conversion Example",
+            "content": "Replacing anonymous inner class with a lambda.",
+            "language": "kotlin",
+            "code": "// Java:\n// button.setOnClickListener(new View.OnClickListener() {\n//     @Override\n//     public void onClick(View v) {\n//         doSomething();\n//     }\n// });\n\n// Kotlin:\nbutton.setOnClickListener { v -> doSomething() }"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Kotlin and Java can coexist in the same project.",
+                "Java getters/setters become Kotlin properties.",
+                "Use @JvmStatic and @JvmOverloads for Java-friendly Kotlin APIs.",
+                "Be careful with platform types and null safety.",
+                "Use SAM conversions to simplify Java interface usage."
+            ]
+        }
+    ]
+}

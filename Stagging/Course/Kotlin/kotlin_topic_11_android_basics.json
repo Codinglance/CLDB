@@ -2,13 +2,9 @@
     "title": "Android Basics: Activity & View Binding",
     "sections": [
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "The Activity: The Entry Point",
-            "content": "In Android, an Activity represents a single screen with a user interface. Every Activity must inherit from AppCompatActivity."
-        },
-        {
-            "type": "code",
-            "heading": "Basic Activity Structure",
+            "content": "In Android, an Activity represents a single screen with a user interface. Every Activity must inherit from AppCompatActivity.",
             "language": "kotlin",
             "code": "class MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n}"
         },
@@ -26,24 +22,16 @@
             "content": "To interact with UI elements defined in XML, they must be referenced inside Kotlin code."
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "findViewById (Traditional Method)",
-            "content": "This method is built into the Android SDK and manually connects views using their ID."
-        },
-        {
-            "type": "code",
-            "heading": "findViewById Example",
+            "content": "This method is built into the Android SDK and manually connects views using their ID.",
             "language": "kotlin",
             "code": "val myButton: Button = findViewById(R.id.btn_submit)\nmyButton.setOnClickListener {\n    // Handle click\n}"
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "View Binding (Recommended)",
-            "content": "View Binding generates a binding class for each XML layout. It is safer and reduces the risk of NullPointerExceptions."
-        },
-        {
-            "type": "code",
-            "heading": "View Binding Example",
+            "content": "View Binding generates a binding class for each XML layout. It is safer and reduces the risk of NullPointerExceptions.",
             "language": "kotlin",
             "code": "private lateinit var binding: ActivityMainBinding\n\noverride fun onCreate(savedInstanceState: Bundle?) {\n    super.onCreate(savedInstanceState)\n    binding = ActivityMainBinding.inflate(layoutInflater)\n    setContentView(binding.root)\n\n    binding.btnSubmit.text = \"Click Me\"\n}"
         },
@@ -53,35 +41,23 @@
             "content": "lateinit var is used for variables that are initialized later, typically inside onCreate instead of the constructor."
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Handling Click Listeners with Lambdas",
-            "content": "Kotlin allows concise click handling using lambda expressions and trailing lambda syntax."
-        },
-        {
-            "type": "code",
-            "heading": "Click Listener Example",
+            "content": "Kotlin allows concise click handling using lambda expressions and trailing lambda syntax.",
             "language": "kotlin",
             "code": "binding.myButton.setOnClickListener {\n    Toast.makeText(this, \"Button Clicked!\", Toast.LENGTH_SHORT).show()\n}"
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Logcat for Debugging",
-            "content": "The Log class is used to print debug information and track application behavior."
-        },
-        {
-            "type": "code",
-            "heading": "Log Example",
+            "content": "The Log class is used to print debug information and track application behavior.",
             "language": "kotlin",
             "code": "Log.d(\"MainActivity\", \"User clicked the button\")\nLog.e(\"MainActivity\", \"Error loading data\")"
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "String Resources & Context",
-            "content": "Strings should not be hardcoded. Use getString() to retrieve values from strings.xml."
-        },
-        {
-            "type": "code",
-            "heading": "String Resource Example",
+            "content": "Strings should not be hardcoded. Use getString() to retrieve values from strings.xml.",
             "language": "kotlin",
             "code": "val label = getString(R.string.welcome_message)"
         },

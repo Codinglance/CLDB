@@ -20,35 +20,23 @@
       ]
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Lists",
-      "content": "A List is an ordered collection. Elements are accessed by index (starting from 0), and duplicates are allowed."
-    },
-    {
-      "type": "code",
-      "heading": "List Example",
+      "content": "A List is an ordered collection. Elements are accessed by index (starting from 0), and duplicates are allowed.",
       "language": "kotlin",
       "code": "val fruits = listOf(\"Apple\", \"Banana\", \"Cherry\")\nprintln(fruits[1])\n\nval animals = mutableListOf(\"Lion\", \"Tiger\")\nanimals.add(\"Bear\")\nanimals.removeAt(0)"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Sets",
-      "content": "A Set contains unique elements only. Duplicate values are automatically ignored."
-    },
-    {
-      "type": "code",
-      "heading": "Set Example",
+      "content": "A Set contains unique elements only. Duplicate values are automatically ignored.",
       "language": "kotlin",
       "code": "val numbers = setOf(1, 2, 3, 3, 3)\nprintln(numbers.size)\n\nval mutableSet = mutableSetOf(\"A\", \"B\")\nmutableSet.add(\"A\")"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Maps",
-      "content": "A Map stores key-value pairs. Keys must be unique, but values can be duplicated."
-    },
-    {
-      "type": "code",
-      "heading": "Map Example",
+      "content": "A Map stores key-value pairs. Keys must be unique, but values can be duplicated.",
       "language": "kotlin",
       "code": "val airPorts = mapOf(\"LHR\" to \"London\", \"JFK\" to \"New York\")\n\nval userScores = mutableMapOf(\"Alex\" to 10, \"Samy\" to 20)\nuserScores[\"Alex\"] = 15\nuserScores[\"John\"] = 5"
     },
@@ -84,8 +72,9 @@
       ]
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Functional Operations Example",
+      "content": "These operators allow expressive, concise transformations without explicit loops.",
       "language": "kotlin",
       "code": "val numbers = listOf(1, 2, 3, 4, 5, 6)\n\nval evenNumbers = numbers.filter { it % 2 == 0 }\nval doubled = numbers.map { it * 2 }"
     },

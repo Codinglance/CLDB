@@ -7,24 +7,16 @@
       "content": "In many languages, accessing a member of a null reference results in a crash. In Kotlin, the type system distinguishes between references that can hold null (nullable) and those that cannot (non-nullable)."
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Non-Nullable by Default",
-      "content": "In Kotlin, variables are non-nullable by default. If you try to assign null to a standard variable, the code will not compile."
-    },
-    {
-      "type": "code",
-      "heading": "Non-Nullable Example",
+      "content": "In Kotlin, variables are non-nullable by default. If you try to assign null to a standard variable, the code will not compile.",
       "language": "kotlin",
       "code": "var name: String = \"John\"\n// name = null // ❌ Compilation Error"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Nullable Types (?)",
-      "content": "To allow a variable to hold a null value, you must explicitly declare it as nullable by adding a ? after the type."
-    },
-    {
-      "type": "code",
-      "heading": "Nullable Example",
+      "content": "To allow a variable to hold a null value, you must explicitly declare it as nullable by adding a ? after the type.",
       "language": "kotlin",
       "code": "var nullableName: String? = \"John\"\nnullableName = null // ✅ Allowed"
     },
@@ -34,57 +26,37 @@
       "content": "When you have a nullable variable, Kotlin prevents direct usage because it might be null. There are three main ways to handle this safely."
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Safe Call Operator (?.)",
-      "content": "The safe call operator executes the property or method only if the variable is not null. If it is null, it returns null instead of crashing."
-    },
-    {
-      "type": "code",
-      "heading": "Safe Call Example",
+      "content": "The safe call operator executes the property or method only if the variable is not null. If it is null, it returns null instead of crashing.",
       "language": "kotlin",
       "code": "val length = nullableName?.length\n// If nullableName is null, length becomes null."
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Elvis Operator (?:)",
-      "content": "The Elvis operator provides a default value when the expression on the left side is null."
-    },
-    {
-      "type": "code",
-      "heading": "Elvis Operator Example",
+      "content": "The Elvis operator provides a default value when the expression on the left side is null.",
       "language": "kotlin",
       "code": "val length = nullableName?.length ?: 0\n// If nullableName is null, length becomes 0."
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Not-Null Assertion (!!)",
-      "content": "The not-null assertion operator converts a nullable value to non-nullable and throws an exception if the value is null. Use this sparingly as it can cause crashes."
-    },
-    {
-      "type": "code",
-      "heading": "Not-Null Assertion Example",
+      "content": "The not-null assertion operator converts a nullable value to non-nullable and throws an exception if the value is null. Use this sparingly as it can cause crashes.",
       "language": "kotlin",
       "code": "val length = nullableName!!.length\n// Will crash if nullableName is null"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Smart Casts and Null Checks",
-      "content": "When you check a variable for null using an if statement, Kotlin smart casts it to a non-nullable type inside that block."
-    },
-    {
-      "type": "code",
-      "heading": "Smart Cast Example",
+      "content": "When you check a variable for null using an if statement, Kotlin smart casts it to a non-nullable type inside that block.",
       "language": "kotlin",
       "code": "val name: String? = \"Kotlin\"\n\nif (name != null) {\n    println(name.length) // No ?. needed\n}"
     },
     {
-      "type": "text",
+      "type": "text_code",
       "heading": "Safe Casting (as?)",
-      "content": "Using as for casting can throw a ClassCastException. The safe cast operator as? returns null instead of crashing if the cast is not possible."
-    },
-    {
-      "type": "code",
-      "heading": "Safe Cast Example",
+      "content": "Using as for casting can throw a ClassCastException. The safe cast operator as? returns null instead of crashing if the cast is not possible.",
       "language": "kotlin",
       "code": "val message: Any = \"Hello\"\nval safeInt: Int? = message as? Int\n// Returns null instead of crashing"
     },

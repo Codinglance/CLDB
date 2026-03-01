@@ -1,0 +1,84 @@
+{
+    "id": "kt_exceptions1v1",
+    "title": "Exception Handling (Deep Dive)",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. What is an Exception?",
+            "content": "An exception is an event that occurs during program execution that disrupts the normal flow of instructions. If not handled, the application crashes. In Kotlin, all exceptions inherit from the Throwable class and contain a message and an optional cause."
+        },
+        {
+            "type": "text",
+            "heading": "2. Try, Catch, and Finally",
+            "content": "Risky code should be wrapped in a try block, with catch blocks handling specific errors and finally used for cleanup."
+        },
+        {
+            "type": "text_code",
+            "heading": "Basic Try-Catch Example",
+            "content": "This example handles an ArithmeticException caused by division by zero.",
+            "language": "kotlin",
+            "code": "try {\n    val result = 10 / 0\n} catch (e: ArithmeticException) {\n    println(\"Caught a math error: ${e.message}\")\n} finally {\n    println(\"Cleaning up resources...\")\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Block Roles",
+            "items": [
+                "try: Contains code that might throw an exception.",
+                "catch: Handles specific exception types.",
+                "finally: Always executes, ideal for cleanup."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "3. Try as an Expression",
+            "content": "In Kotlin, try is an expression and can return a value, similar to if and when."
+        },
+        {
+            "type": "text_code",
+            "heading": "Try Expression Example",
+            "content": "If parsing fails, null is assigned instead of crashing.",
+            "language": "kotlin",
+            "code": "val input = \"123a\"\nval number = try {\n    input.toInt()\n} catch (e: NumberFormatException) {\n    null\n}"
+        },
+        {
+            "type": "text",
+            "heading": "4. Throwing Exceptions",
+            "content": "Use the throw keyword to manually trigger exceptions when business rules are violated."
+        },
+        {
+            "type": "text_code",
+            "heading": "Throw Example",
+            "content": "Validates age and throws an exception if invalid.",
+            "language": "kotlin",
+            "code": "fun setAge(age: Int) {\n    if (age !in 0..120) {\n        throw IllegalArgumentException(\"Age must be between 0 and 120\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "5. Checked vs Unchecked Exceptions",
+            "content": "Unlike Java, Kotlin does not have checked exceptions. The compiler does not force you to catch exceptions, which keeps code clean but requires developers to be aware of potential failures."
+        },
+        {
+            "type": "text",
+            "heading": "6. Practical Android Example",
+            "content": "When performing network or database operations, always handle exceptions to prevent crashes and provide good user experience."
+        },
+        {
+            "type": "text_code",
+            "heading": "Android Coroutine Example",
+            "content": "Handles network and unexpected errors while ensuring UI cleanup.",
+            "language": "kotlin",
+            "code": "lifecycleScope.launch {\n    try {\n        binding.progressBar.show()\n        val data = repository.getRemoteData()\n        displayData(data)\n    } catch (e: IOException) {\n        showErrorMessage(\"Please check your internet connection\")\n    } catch (e: Exception) {\n        showErrorMessage(\"An unexpected error occurred\")\n    } finally {\n        binding.progressBar.hide()\n    }\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Use try-catch to prevent crashes.",
+                "finally is ideal for cleanup tasks.",
+                "try can return values in Kotlin.",
+                "Kotlin has no checked exceptions.",
+                "Always handle potential failures in Android network/database calls."
+            ]
+        }
+    ]
+}

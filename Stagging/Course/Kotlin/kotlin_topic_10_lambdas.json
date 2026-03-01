@@ -7,46 +7,37 @@
             "content": "A lambda expression is a concise way to represent a function. It is written inside curly braces { }."
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Basic Syntax",
-            "content": "A lambda consists of parameters (before ->) and a body (after ->). Example: val sum = { a: Int, b: Int -> a + b }"
+            "content": "A lambda consists of parameters (before ->) and a body (after ->).",
+            "language": "kotlin",
+            "code": "val sum = { a: Int, b: Int -> a + b }"
         },
         {
-            "type": "code",
+            "type": "text_code",
             "heading": "Simple Lambda Example",
+            "content": "Lambdas can be stored in variables and invoked like regular functions.",
             "language": "kotlin",
             "code": "fun main() {\n    val greeting = { println(\"Hello Lambda!\") }\n    greeting()\n}"
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Higher-Order Functions",
-            "content": "A Higher-Order Function is a function that either takes another function as a parameter or returns a function."
-        },
-        {
-            "type": "code",
-            "heading": "Higher-Order Function Example",
+            "content": "A Higher-Order Function is a function that either takes another function as a parameter or returns a function.",
             "language": "kotlin",
             "code": "fun calculate(a: Int, b: Int, operation: (Int, Int) -> Int): Int {\n    return operation(a, b)\n}\n\nfun main() {\n    val result = calculate(10, 5) { x, y -> x + y }\n    println(result)\n}"
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "The it Keyword",
-            "content": "If a lambda has only one parameter, Kotlin provides an implicit name called 'it', so you do not need to declare the parameter explicitly."
-        },
-        {
-            "type": "code",
-            "heading": "Using it",
+            "content": "If a lambda has only one parameter, Kotlin provides an implicit name called 'it', so you do not need to declare the parameter explicitly.",
             "language": "kotlin",
             "code": "val numbers = listOf(1, 2, 3, 4)\n\nval doubled = numbers.map { it * 2 }"
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Trailing Lambda Syntax",
-            "content": "If the last parameter of a function is a function, the lambda can be placed outside the parentheses for cleaner syntax."
-        },
-        {
-            "type": "code",
-            "heading": "Trailing Lambda Example",
+            "content": "If the last parameter of a function is a function, the lambda can be placed outside the parentheses for cleaner syntax.",
             "language": "kotlin",
             "code": "repeat(3) {\n    println(\"Hello\")\n}"
         },
@@ -74,13 +65,9 @@
             ]
         },
         {
-            "type": "text",
+            "type": "text_code",
             "heading": "Closures",
-            "content": "Lambdas can access and modify variables from the outer scope. This behavior is called a closure."
-        },
-        {
-            "type": "code",
-            "heading": "Closure Example",
+            "content": "Lambdas can access and modify variables from the outer scope. This behavior is called a closure.",
             "language": "kotlin",
             "code": "var counter = 0\nval increment = { counter++ }\n\nincrement()\nincrement()\nprintln(counter)"
         },
