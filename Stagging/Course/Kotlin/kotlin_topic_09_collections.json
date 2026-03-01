@@ -1,0 +1,104 @@
+{
+  "title": "Collections",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Introduction",
+      "content": "A collection contains multiple objects of the same type. Kotlin provides three primary collection types: List, Set, and Map."
+    },
+    {
+      "type": "text",
+      "heading": "Immutable vs Mutable",
+      "content": "Kotlin distinguishes between read-only (immutable) and mutable collections."
+    },
+    {
+      "type": "bullet",
+      "heading": "Collection Mutability",
+      "items": [
+        "Immutable (Read-Only): Data can be accessed but not modified. Created using functions like listOf().",
+        "Mutable: Data can be added, removed, or updated. Created using functions like mutableListOf()."
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Lists",
+      "content": "A List is an ordered collection. Elements are accessed by index (starting from 0), and duplicates are allowed."
+    },
+    {
+      "type": "code",
+      "heading": "List Example",
+      "language": "kotlin",
+      "code": "val fruits = listOf(\"Apple\", \"Banana\", \"Cherry\")\nprintln(fruits[1])\n\nval animals = mutableListOf(\"Lion\", \"Tiger\")\nanimals.add(\"Bear\")\nanimals.removeAt(0)"
+    },
+    {
+      "type": "text",
+      "heading": "Sets",
+      "content": "A Set contains unique elements only. Duplicate values are automatically ignored."
+    },
+    {
+      "type": "code",
+      "heading": "Set Example",
+      "language": "kotlin",
+      "code": "val numbers = setOf(1, 2, 3, 3, 3)\nprintln(numbers.size)\n\nval mutableSet = mutableSetOf(\"A\", \"B\")\nmutableSet.add(\"A\")"
+    },
+    {
+      "type": "text",
+      "heading": "Maps",
+      "content": "A Map stores key-value pairs. Keys must be unique, but values can be duplicated."
+    },
+    {
+      "type": "code",
+      "heading": "Map Example",
+      "language": "kotlin",
+      "code": "val airPorts = mapOf(\"LHR\" to \"London\", \"JFK\" to \"New York\")\n\nval userScores = mutableMapOf(\"Alex\" to 10, \"Samy\" to 20)\nuserScores[\"Alex\"] = 15\nuserScores[\"John\"] = 5"
+    },
+    {
+      "type": "text",
+      "heading": "Common Collection Operations",
+      "content": "Kotlin provides functional operators to transform and filter collections without manual loops."
+    },
+    {
+      "type": "table",
+      "heading": "Functional Operators",
+      "rows": [
+        {
+          "operator": "filter",
+          "description": "Returns elements matching a condition."
+        },
+        {
+          "operator": "map",
+          "description": "Transforms each element."
+        },
+        {
+          "operator": "any",
+          "description": "Returns true if at least one element matches."
+        },
+        {
+          "operator": "count",
+          "description": "Returns the number of matching elements."
+        },
+        {
+          "operator": "firstOrNull",
+          "description": "Returns first element or null if empty."
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Functional Operations Example",
+      "language": "kotlin",
+      "code": "val numbers = listOf(1, 2, 3, 4, 5, 6)\n\nval evenNumbers = numbers.filter { it % 2 == 0 }\nval doubled = numbers.map { it * 2 }"
+    },
+    {
+      "type": "bullet",
+      "heading": "Summary",
+      "items": [
+        "List: Ordered and allows duplicates.",
+        "Set: Unique elements only.",
+        "Map: Key-value pairs.",
+        "Prefer read-only collections unless modification is required.",
+        "Use functional operators like filter and map for cleaner code."
+      ]
+    }
+  ]
+}

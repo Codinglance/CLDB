@@ -1,0 +1,105 @@
+{
+    "title": "Operators & Control Flow",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Introduction",
+            "content": "Control flow determines the order in which your code executes. Kotlin improves upon traditional logic structures by treating almost everything as an expression, meaning it can return a value."
+        },
+        {
+            "type": "text",
+            "heading": "Arithmetic & Comparison Operators",
+            "content": "Kotlin provides standard operators for performing arithmetic operations and logical comparisons."
+        },
+        {
+            "type": "bullet",
+            "heading": "Operator Types",
+            "items": [
+                "Arithmetic operators: +, -, *, /, %",
+                "Comparison operators: ==, !=, <, >, <=, >=",
+                "Assignment operators: =, +=, -=, *=, /=, %="
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "Equality in Kotlin",
+            "content": "In Kotlin, == checks structural equality (calls equals()), while === checks referential equality (whether two references point to the same object)."
+        },
+        {
+            "type": "text",
+            "heading": "Conditional Expressions: if",
+            "content": "In Kotlin, if is an expression rather than just a statement. This means it can return a value that can be assigned directly to a variable."
+        },
+        {
+            "type": "code",
+            "heading": "Using if as an Expression",
+            "language": "kotlin",
+            "code": "val a = 10\nval b = 20\n\nval max = if (a > b) {\n    println(\"Choose a\")\n    a\n} else {\n    println(\"Choose b\")\n    b\n}"
+        },
+        {
+            "type": "text",
+            "heading": "The when Expression",
+            "content": "The when expression is Kotlin's powerful alternative to the traditional switch statement found in languages like Java or C++."
+        },
+        {
+            "type": "code",
+            "heading": "when Expression Example",
+            "language": "kotlin",
+            "code": "val day = 3\n\nval dayName = when (day) {\n    1 -> \"Monday\"\n    2 -> \"Tuesday\"\n    3 -> \"Wednesday\"\n    in 4..5 -> \"Weekday remainder\"\n    6, 7 -> \"Weekend\"\n    else -> \"Invalid day\"\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Loops",
+            "content": "Kotlin provides several looping constructs to iterate over ranges, arrays, or collections."
+        },
+        {
+            "type": "text",
+            "heading": "for Loop",
+            "content": "The for loop works with anything that provides an iterator, such as ranges, arrays, and collections."
+        },
+        {
+            "type": "code",
+            "heading": "for Loop Examples",
+            "language": "kotlin",
+            "code": "// Including 5\nfor (i in 1..5) print(i)\n\n// Excluding 5\nfor (i in 1 until 5) print(i)\n\n// Step\nfor (i in 1..10 step 2) print(i)\n\n// Downward iteration\nfor (i in 5 downTo 1) print(i)"
+        },
+        {
+            "type": "text",
+            "heading": "while and do-while",
+            "content": "The while and do-while loops behave the same way as they do in most programming languages."
+        },
+        {
+            "type": "code",
+            "heading": "while Loop Example",
+            "language": "kotlin",
+            "code": "var x = 5\nwhile (x > 0) {\n    x--\n}"
+        },
+        {
+            "type": "code",
+            "heading": "do-while Loop Example",
+            "language": "kotlin",
+            "code": "var y: String?\ndo {\n    y = retrieveData()\n} while (y != null)"
+        },
+        {
+            "type": "text",
+            "heading": "Ranges and Checks",
+            "content": "Kotlin introduces range operators and the in keyword to make value checks more readable."
+        },
+        {
+            "type": "code",
+            "heading": "Range Checking Example",
+            "language": "kotlin",
+            "code": "val percent = 85\n\nif (percent in 0..100) {\n    println(\"Valid percentage\")\n}\n\nif (percent !in 0..50) {\n    println(\"Passed!\")\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "if and when are expressions and can return values.",
+                "when is the preferred alternative to switch statements.",
+                "Ranges like .., until, and step simplify iteration.",
+                "The in keyword helps check whether a value exists within a range."
+            ]
+        }
+    ]
+}

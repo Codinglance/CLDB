@@ -46,25 +46,25 @@
               {
                 "topicId": 1,
                 "title": "Introduction to Kotlin",
-                "markdownFile": "kotlin_topic_01_introduction.md",
+                "markdownFile": "kotlin_topic_01_introduction.json",
                 "order": 1
               },
               {
                 "topicId": 2,
                 "title": "Variables & Data Types",
-                "markdownFile": "kotlin_topic_02_variables.md",
+                "markdownFile": "kotlin_topic_02_variables.json",
                 "order": 2
               },
               {
                 "topicId": 3,
                 "title": "Null Safety",
-                "markdownFile": "kotlin_topic_03_null_safety.md",
+                "markdownFile": "kotlin_topic_03_null_safety.json",
                 "order": 3
               },
               {
                 "topicId": 4,
                 "title": "Operators & Control Flow",
-                "markdownFile": "kotlin_topic_04_control_flow.md",
+                "markdownFile": "kotlin_topic_04_control_flow.json",
                 "order": 4
               }
             ]
@@ -76,25 +76,25 @@
               {
                 "topicId": 5,
                 "title": "Functions",
-                "markdownFile": "kotlin_topic_05_functions.md",
+                "markdownFile": "kotlin_topic_05_functions.json",
                 "order": 1
               },
               {
                 "topicId": 6,
                 "title": "Classes & Objects",
-                "markdownFile": "kotlin_topic_06_classes.md",
+                "markdownFile": "kotlin_topic_06_classes.json",
                 "order": 2
               },
               {
                 "topicId": 7,
                 "title": "Data Classes & Enums",
-                "markdownFile": "kotlin_topic_07_data_classes.md",
+                "markdownFile": "kotlin_topic_07_data_classes.json",
                 "order": 3
               },
               {
                 "topicId": 8,
                 "title": "Inheritance & Interfaces",
-                "markdownFile": "kotlin_topic_08_inheritance.md",
+                "markdownFile": "kotlin_topic_08_inheritance.json",
                 "order": 4
               }
             ]
@@ -106,13 +106,13 @@
               {
                 "topicId": 9,
                 "title": "Collections",
-                "markdownFile": "kotlin_topic_09_collections.md",
+                "markdownFile": "kotlin_topic_09_collections.json",
                 "order": 1
               },
               {
                 "topicId": 10,
                 "title": "Lambdas & Higher-Order Functions",
-                "markdownFile": "kotlin_topic_10_lambdas.md",
+                "markdownFile": "kotlin_topic_10_lambdas.json",
                 "order": 2
               }
             ]
@@ -124,7 +124,7 @@
               {
                 "topicId": 11,
                 "title": "Kotlin + Android Basics",
-                "markdownFile": "kotlin_topic_11_android_basics.md",
+                "markdownFile": "kotlin_topic_11_android_basics.json",
                 "order": 1
               },
               {

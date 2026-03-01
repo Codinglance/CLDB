@@ -1,0 +1,121 @@
+{
+    "title": "Classes & Objects",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Introduction",
+            "content": "A class is a blueprint for creating objects. An object is an instance of that blueprint."
+        },
+        {
+            "type": "text",
+            "heading": "Class Declaration",
+            "content": "The most basic class consists of the class keyword followed by a name."
+        },
+        {
+            "type": "code",
+            "heading": "Basic Class Example",
+            "language": "kotlin",
+            "code": "class User {\n    // Properties and methods go here\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Creating an Object",
+            "content": "To create an instance, call the constructor like a function. Kotlin does not use the new keyword."
+        },
+        {
+            "type": "code",
+            "heading": "Object Creation Example",
+            "language": "kotlin",
+            "code": "val myUser = User()"
+        },
+        {
+            "type": "text",
+            "heading": "Primary Constructor",
+            "content": "The primary constructor is declared in the class header. It initializes properties directly."
+        },
+        {
+            "type": "code",
+            "heading": "Primary Constructor Example",
+            "language": "kotlin",
+            "code": "class Car(val brand: String, var speed: Int)\n\nval myCar = Car(\"Toyota\", 120)\nprintln(myCar.brand)"
+        },
+        {
+            "type": "text",
+            "heading": "Initializer Block (init)",
+            "content": "The primary constructor cannot contain logic. Use the init block for initialization code."
+        },
+        {
+            "type": "code",
+            "heading": "init Block Example",
+            "language": "kotlin",
+            "code": "class Car(val brand: String) {\n    init {\n        println(\"Car $brand is being created!\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Properties: Getters and Setters",
+            "content": "When you declare a property, Kotlin automatically generates getters and setters. val generates only a getter, while var generates both."
+        },
+        {
+            "type": "code",
+            "heading": "Custom Getter Example",
+            "language": "kotlin",
+            "code": "class Rectangle(val width: Int, val height: Int) {\n    val isSquare: Boolean\n        get() = width == height\n}"
+        },
+        {
+            "type": "table",
+            "heading": "Visibility Modifiers",
+            "rows": [
+                {
+                    "modifier": "public",
+                    "description": "Visible everywhere (default)."
+                },
+                {
+                    "modifier": "private",
+                    "description": "Visible only inside the class."
+                },
+                {
+                    "modifier": "protected",
+                    "description": "Visible in the class and its subclasses."
+                },
+                {
+                    "modifier": "internal",
+                    "description": "Visible only within the same module (project)."
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "Constructors with Default Values",
+            "content": "Constructors can have default parameter values, eliminating the need for multiple overloaded constructors."
+        },
+        {
+            "type": "code",
+            "heading": "Default Constructor Values Example",
+            "language": "kotlin",
+            "code": "class Button(val text: String, val color: String = \"Gray\")\n\nval saveBtn = Button(\"Save\")\nval deleteBtn = Button(\"Delete\", \"Red\")"
+        },
+        {
+            "type": "text",
+            "heading": "Abstract Classes",
+            "content": "An abstract class cannot be instantiated directly. It is meant to be inherited by other classes."
+        },
+        {
+            "type": "code",
+            "heading": "Abstract Class Example",
+            "language": "kotlin",
+            "code": "abstract class Shape {\n    abstract fun calculateArea(): Double\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Use class to define a blueprint.",
+                "Primary constructors are defined in the class header.",
+                "Use init blocks for initialization logic.",
+                "Properties (val / var) automatically generate getters and setters.",
+                "No new keyword is required to create objects.",
+                "Abstract classes cannot be instantiated."
+            ]
+        }
+    ]
+}

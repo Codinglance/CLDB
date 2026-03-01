@@ -1,0 +1,96 @@
+{
+    "title": "Inheritance & Interfaces",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Inheritance",
+            "content": "Inheritance allows a class (subclass) to inherit properties and methods from another class (parent or superclass)."
+        },
+        {
+            "type": "text",
+            "heading": "The open Keyword",
+            "content": "In Kotlin, classes are final by default. You must explicitly mark a class as open to allow inheritance."
+        },
+        {
+            "type": "code",
+            "heading": "Basic Inheritance Example",
+            "language": "kotlin",
+            "code": "open class Vehicle(val brand: String) {\n    fun drive() {\n        println(\"The vehicle is moving\")\n    }\n}\n\nclass ElectricCar(brand: String) : Vehicle(brand)"
+        },
+        {
+            "type": "text",
+            "heading": "Overriding Methods",
+            "content": "To allow subclasses to modify behavior, the parent method must be marked open, and the subclass must use the override keyword."
+        },
+        {
+            "type": "code",
+            "heading": "Method Overriding Example",
+            "language": "kotlin",
+            "code": "open class Vehicle {\n    open fun startEngine() {\n        println(\"Starting standard engine...\")\n    }\n}\n\nclass Tesla : Vehicle() {\n    override fun startEngine() {\n        println(\"Starting electric motor...\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Interfaces",
+            "content": "An interface defines a contract of properties and methods that a class must implement. A class can implement multiple interfaces."
+        },
+        {
+            "type": "code",
+            "heading": "Interface Example",
+            "language": "kotlin",
+            "code": "interface Flyable {\n    val speed: Int\n    fun fly()\n\n    fun logFlight() {\n        println(\"Flight logged at $speed km/h\")\n    }\n}\n\nclass Bird(override val speed: Int) : Flyable {\n    override fun fly() {\n        println(\"Flapping wings...\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Abstract Classes vs Interfaces",
+            "content": "Choosing between an abstract class and an interface depends on design needs."
+        },
+        {
+            "type": "table",
+            "heading": "Comparison Table",
+            "rows": [
+                {
+                    "feature": "State",
+                    "abstractClass": "Can hold state (fields).",
+                    "interface": "Cannot hold state (no backing fields)."
+                },
+                {
+                    "feature": "Inheritance",
+                    "abstractClass": "A class can inherit only one.",
+                    "interface": "A class can implement many."
+                },
+                {
+                    "feature": "Purpose",
+                    "abstractClass": "Defines what an object is.",
+                    "interface": "Defines what an object can do."
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "The super Keyword",
+            "content": "Use the super keyword to call a parent class implementation inside an overridden method."
+        },
+        {
+            "type": "code",
+            "heading": "super Keyword Example",
+            "language": "kotlin",
+            "code": "override fun startEngine() {\n    super.startEngine()\n    println(\"System check complete.\")\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Composition over Inheritance",
+            "content": "Modern Android development often prefers composition over inheritance to avoid deep hierarchies. Use inheritance when there is a true \"is-a\" relationship, and composition when there is a \"has-a\" relationship."
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Classes are final by default; use open to allow inheritance.",
+                "Use override to redefine parent methods.",
+                "Interfaces allow shared behavior across unrelated classes.",
+                "Interfaces can have default method implementations but cannot store state.",
+                "Prefer composition over inheritance when appropriate."
+            ]
+        }
+    ]
+}

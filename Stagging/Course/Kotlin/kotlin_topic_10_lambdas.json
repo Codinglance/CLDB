@@ -1,0 +1,99 @@
+{
+    "title": "Lambdas & Higher-Order Functions",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "What is a Lambda?",
+            "content": "A lambda expression is a concise way to represent a function. It is written inside curly braces { }."
+        },
+        {
+            "type": "text",
+            "heading": "Basic Syntax",
+            "content": "A lambda consists of parameters (before ->) and a body (after ->). Example: val sum = { a: Int, b: Int -> a + b }"
+        },
+        {
+            "type": "code",
+            "heading": "Simple Lambda Example",
+            "language": "kotlin",
+            "code": "fun main() {\n    val greeting = { println(\"Hello Lambda!\") }\n    greeting()\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Higher-Order Functions",
+            "content": "A Higher-Order Function is a function that either takes another function as a parameter or returns a function."
+        },
+        {
+            "type": "code",
+            "heading": "Higher-Order Function Example",
+            "language": "kotlin",
+            "code": "fun calculate(a: Int, b: Int, operation: (Int, Int) -> Int): Int {\n    return operation(a, b)\n}\n\nfun main() {\n    val result = calculate(10, 5) { x, y -> x + y }\n    println(result)\n}"
+        },
+        {
+            "type": "text",
+            "heading": "The it Keyword",
+            "content": "If a lambda has only one parameter, Kotlin provides an implicit name called 'it', so you do not need to declare the parameter explicitly."
+        },
+        {
+            "type": "code",
+            "heading": "Using it",
+            "language": "kotlin",
+            "code": "val numbers = listOf(1, 2, 3, 4)\n\nval doubled = numbers.map { it * 2 }"
+        },
+        {
+            "type": "text",
+            "heading": "Trailing Lambda Syntax",
+            "content": "If the last parameter of a function is a function, the lambda can be placed outside the parentheses for cleaner syntax."
+        },
+        {
+            "type": "code",
+            "heading": "Trailing Lambda Example",
+            "language": "kotlin",
+            "code": "repeat(3) {\n    println(\"Hello\")\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Function Types",
+            "content": "Function types define the input parameters and return type of a function."
+        },
+        {
+            "type": "table",
+            "heading": "Common Function Types",
+            "rows": [
+                {
+                    "type": "() -> Unit",
+                    "description": "Takes no parameters and returns nothing."
+                },
+                {
+                    "type": "(Int, Int) -> Int",
+                    "description": "Takes two Int parameters and returns an Int."
+                },
+                {
+                    "type": "(String) -> Boolean",
+                    "description": "Takes a String and returns a Boolean."
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "Closures",
+            "content": "Lambdas can access and modify variables from the outer scope. This behavior is called a closure."
+        },
+        {
+            "type": "code",
+            "heading": "Closure Example",
+            "language": "kotlin",
+            "code": "var counter = 0\nval increment = { counter++ }\n\nincrement()\nincrement()\nprintln(counter)"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Lambdas are anonymous functions written inside { }.",
+                "Higher-Order Functions accept or return functions.",
+                "The 'it' keyword is used for single-parameter lambdas.",
+                "Trailing lambda syntax improves readability.",
+                "Lambdas can access and modify outer variables (closures)."
+            ]
+        }
+    ]
+}
