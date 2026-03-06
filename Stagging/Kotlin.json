@@ -1,0 +1,1132 @@
+{
+  "category": "Kotlin",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the difference between val and var?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is the difference between val and var?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Kotlin, val and var are used to declare variables, but they differ in mutability."
+        },
+        {
+          "type": "bullet",
+          "heading": "val (Immutable)",
+          "items": [
+            "The value cannot be changed once assigned.",
+            "Helps write safer, predictable code.",
+            "Example:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "val (Immutable)",
+          "content": "",
+          "language": "kotlin",
+          "code": "      val name = \"Aasim\"\n      // name = \"John\" // ❌ Error"
+        },
+        {
+          "type": "bullet",
+          "heading": "var (Mutable)",
+          "items": [
+            "The value can be reassigned anytime.",
+            "Useful when the variable needs to change during program execution.",
+            "Example:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "var (Mutable)",
+          "content": "",
+          "language": "kotlin",
+          "code": "      var age = 25\n      age = 26 // ✅ Allowed"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 2,
+      "question": "What is the advantage of using const in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is the advantage of using const in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Kotlin, const is used to declare compile-time constants. These are immutable values known at compile time, offering several advantages:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Advantages",
+          "items": [
+            "Performance – Since values are determined at compile time, accessing them is faster than regular val.",
+            "Immutability – Ensures the value cannot be changed anywhere in the code.",
+            "Global Access – Can be used at the top level or in object declarations, making them accessible without creating an instance.",
+            "Cleaner Code – Ideal for defining constants like URLs, keys, or fixed numbers."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "const val BASE_URL = \"https://api.example.com/\"\nconst val MAX_RETRY = 3"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 3,
+      "question": "When to use lateinit and how to check if it has been initialized?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "When to use lateinit and how to check if it has been initialized?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "lateinit is used to declare non-null variables without initializing them immediately. It is commonly used for dependencies or properties that will be initialized later, like Android views or injected objects."
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Use lateinit",
+          "items": [
+            "For non-null var properties that cannot be initialized in the constructor.",
+            "Common in Android for views:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "When to Use lateinit",
+          "content": "",
+          "language": "kotlin",
+          "code": "lateinit var textView: TextView"
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Check Initialization",
+          "items": [
+            "Use ::variableName.isInitialized to verify before accessing it:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "How to Check Initialization",
+          "content": "",
+          "language": "kotlin",
+          "code": "if (::textView.isInitialized) {\n    textView.text = \"Hello\"\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 4,
+      "question": "How to do lazy initialization of variables in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "How to do lazy initialization of variables in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Lazy initialization allows you to initialize a variable only when it is accessed for the first time, improving performance and saving resources."
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Use lazy",
+          "items": [
+            "Use the lazy delegate for read-only (val) properties."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "How to Use lazy",
+          "content": "",
+          "language": "kotlin",
+          "code": "val name: String by lazy {\n    println(\"Initializing name\")\n    \"Aasim\"\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Use lazy",
+          "items": [
+            "The block runs only once, on the first access of name."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "lazy is thread-safe by default.",
+            "Ideal for expensive operations or values not needed immediately.",
+            "Only works with val, not var."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 5,
+      "question": "What is an init block in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is an init block in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The init block in Kotlin is an initializer block that runs when an instance of a class is created. It is used to execute code or initialize properties during object creation."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Can have multiple init blocks; they execute in the order defined.",
+            "Runs after primary constructor parameters are passed.",
+            "Often used for validation, logging, or complex property initialization."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "class User(val name: String) {\n    init {\n        println(\"User $name is being created\")\n    }\n}\n\nval user = User(\"Aasim\")\n// Output: User Aasim is being created"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 6,
+      "question": "Explain the difference between == and === in Kotlin.",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "Explain the difference between == and === in Kotlin.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Kotlin, == and === are used for comparison, but they check different things."
+        },
+        {
+          "type": "bullet",
+          "heading": "== (Structural Equality)",
+          "items": [
+            "Checks if values are equal.",
+            "Calls the equals() method internally.",
+            "Example:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "== (Structural Equality)",
+          "content": "",
+          "language": "kotlin",
+          "code": "val a = \"Hello\"\nval b = \"Hello\"\nprintln(a == b) // ✅ true"
+        },
+        {
+          "type": "bullet",
+          "heading": "=== (Referential Equality)",
+          "items": [
+            "Checks if both references point to the same object in memory.",
+            "Example:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "=== (Referential Equality)",
+          "content": "",
+          "language": "kotlin",
+          "code": "val a = \"Hello\"\nval b = \"Hello\"\nprintln(a === b) // ✅ true or false depending on memory reference"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 7,
+      "question": "What are companion objects in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What are companion objects in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A companion object is a singleton inside a class that holds class-level members, similar to Java's static."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Declared with companion object inside a class.",
+            "Can contain constants, factory methods, utilities.",
+            "Accessed without creating an instance."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "class MyClass {\n    companion object {\n        const val VERSION = 1\n        fun create() = MyClass()\n    }\n}\nval version = MyClass.VERSION\nval obj = MyClass.create()"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 8,
+      "question": "What is the equivalent of Java static methods in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What is the equivalent of Java static methods in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin doesn't have static methods. You can achieve similar functionality using:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Companion Object – Class-level functions accessed without an instance:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "class MyClass {\n    companion object {\n        fun greet() = println(\"Hello\")\n    }\n}\nMyClass.greet()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Top-Level Functions – Functions outside a class, accessible directly:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun greet() = println(\"Hello\")\ngreet()"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 9,
+      "question": "How to create a Singleton class in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "How to create a Singleton class in Kotlin?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "In Kotlin, creating a singleton is simple using the object keyword. This ensures only one instance of the class exists.",
+          "language": "kotlin",
+          "code": "object MySingleton {\n    fun greet() = println(\"Hello from Singleton\")\n}\n\n// Usage\nMySingleton.greet()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "object creates a thread-safe singleton automatically.",
+            "No need for private constructor or getInstance() like in Java.",
+            "Can contain properties, methods, and initialization code."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 10,
+      "question": "Explain open, abstract, final, internal, public, and private keywords in Kotlin.",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Explain open, abstract, final, internal, public, and private keywords in Kotlin.",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "open – Class or function can be inherited or overridden.",
+            "abstract – Class or function must be implemented in a subclass; cannot be instantiated.",
+            "final – Default modifier; cannot be inherited or overridden.",
+            "public – Default visibility; accessible from anywhere.",
+            "private – Accessible within the same class only.",
+            "internal – Accessible within the same module."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 11,
+      "question": "What is a data class in Kotlin and what methods are auto-generated?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is a data class in Kotlin and what methods are auto-generated?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A data class in Kotlin is a class designed to hold data. It automatically generates useful methods, reducing boilerplate code."
+        },
+        {
+          "type": "bullet",
+          "heading": "Auto-Generated Methods",
+          "items": [
+            "equals() – Checks equality based on property values.",
+            "hashCode() – Generates hash code based on properties.",
+            "toString() – Returns a string representation of the object.",
+            "copy() – Creates a copy of the object with optional property changes.",
+            "componentN() – Functions for destructuring declarations."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class User(val name: String, val age: Int)\n\nval user1 = User(\"Aasim\", 25)\nval user2 = user1.copy(age = 26)\nprintln(user1) // Output: User(name=Aasim, age=25)"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 12,
+      "question": "Explain inline classes (value classes) in Kotlin.",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "Explain inline classes (value classes) in Kotlin.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Inline classes (value classes) wrap a single value without creating an extra object at runtime, improving performance."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Declared with @JvmInline value class.",
+            "Can have one property and methods.",
+            "Implements interfaces if needed."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Example",
+          "content": "`kotlin @JvmInline value class UserId(val id: String) fun printId(userId: UserId) { println(userId.id) } printId(UserId(\"123\")) // Output: 123"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 13,
+      "question": "What is the purpose of inline, noinline, crossinline, and reified keywords?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "What is the purpose of inline, noinline, crossinline, and reified keywords?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "inline, noinline, crossinline, and reified in Kotlin",
+          "items": [
+            "inline – Inlines the function at the call site to reduce lambda overhead.",
+            "noinline – Prevents a lambda parameter of an inline function from being inlined.",
+            "crossinline – Prevents non-local returns in a lambda passed to an inline function.",
+            "reified – Allows access to a generic type at runtime in an inline function."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "inline fun <reified T> printType(value: Any) {\n    if (value is T) println(\"Value is of type ${T::class}\")\n}\n\nprintType<String>(\"Hello\") // Output: Value is of type class kotlin.String"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 14,
+      "question": "What are higher-order functions and how do you return a function from a function?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "What are higher-order functions and how do you return a function from a function?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "A higher-order function takes a function as a parameter or returns a function.",
+          "language": "kotlin",
+          "code": "fun operate(a: Int, b: Int, op: (Int, Int) -> Int) = op(a, b)\nval sum = operate(5, 3) { x, y -> x + y } // 8"
+        },
+        {
+          "type": "text_code",
+          "heading": "Example: Returning a Function",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun multiplier(factor: Int): (Int) -> Int = { it * factor }\nval double = multiplier(2)\nprintln(double(5)) // 10"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 15,
+      "question": "What are lambda expressions in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "What are lambda expressions in Kotlin?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "A lambda expression is an anonymous function that can be assigned, passed, or returned.",
+          "language": "kotlin",
+          "code": "val sum: (Int, Int) -> Int = { a, b -> a + b }\nprintln(sum(5, 3)) // 8\n\nval square: (Int) -> Int = { it * it }\nprintln(square(4)) // 16"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 16,
+      "question": "What are extension functions and how do you use them?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "What are extension functions and how do you use them?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "Extension functions allow you to add new functions to existing classes without inheriting or modifying them.",
+          "language": "kotlin",
+          "code": "fun String.addExclamation(): String {\n    return this + \"!\"\n}\n\nval message = \"Hello\".addExclamation()\nprintln(message) // Output: Hello!"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Can be called like regular methods on the class.",
+            "Does not actually modify the original class.",
+            "Useful for enhancing library or built-in classes safely."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 17,
+      "question": "Explain scope functions (let, apply, run, with, also) and their use-cases.",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "Explain scope functions (let, apply, run, with, also) and their use-cases.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Scope functions provide a temporary scope for an object, improving readability and conciseness."
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "let – it as context; good for null checks or chaining."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "name?.let { println(it.length) }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "run – this as context; returns lambda result; for computations."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "val result = \"Hello\".run { length + 5 }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "with – this as context; called on object; for grouping operations."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "with(builder) { append(\"Hello\"); append(\"World\") }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "apply – this as context; returns object; for object initialization."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "val person = Person().apply { name=\"Aasim\"; age=25 }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "also – it as context; returns object; for side-effects."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "val numbers = mutableListOf(1,2,3).also { println(it) }"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 18,
+      "question": "Difference between apply and with, and when to use each.",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "Difference between apply and with, and when to use each.",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "apply",
+          "items": [
+            "Called on an object, returns the object.",
+            "Use for object initialization."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "apply",
+          "content": "",
+          "language": "kotlin",
+          "code": "val person = Person().apply { name=\"Aasim\"; age=25 }"
+        },
+        {
+          "type": "bullet",
+          "heading": "with",
+          "items": [
+            "Takes an object as parameter, returns lambda result.",
+            "Use for grouping operations or computing values."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "with",
+          "content": "",
+          "language": "kotlin",
+          "code": "val length = with(\"Hello\") { println(this); length }"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 19,
+      "question": "What are labels in Kotlin and how do you use them?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "What are labels in Kotlin and how do you use them?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "Labels let you control flow in nested loops or lambdas using break, continue, or return.",
+          "language": "kotlin",
+          "code": "outer@ for (i in 1..3) {\n    for (j in 1..3) {\n        if (i * j > 4) break@outer\n        println(\"$i, $j\")\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "break@label – exit a specific loop",
+            "continue@label – continue a specific loop",
+            "return@label – return from a lambda or function"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 20,
+      "question": "Explain sealed classes and common use-cases in Android.",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Explain sealed classes and common use-cases in Android.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Sealed classes represent restricted class hierarchies where all possible subclasses are known at compile time."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Declared using sealed class.",
+            "All subclasses must be defined in the same file.",
+            "Useful with when expressions because it ensures exhaustive checks (no else needed)."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Android Use-Cases",
+          "items": [
+            "UI State Handling – Loading, Success, Error states.",
+            "API Response Wrappers – Success, Failure, Loading results.",
+            "Navigation Events – Different navigation actions.",
+            "ViewModel State Management – Represent screen states clearly."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "sealed class UiState {\n    object Loading : UiState()\n    data class Success(val data: String) : UiState()\n    data class Error(val message: String) : UiState()\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 21,
+      "question": "Difference between List and Array types in Kotlin.",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "collections"
+      ],
+      "title": "Difference between List and Array types in Kotlin.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "List"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Part of Kotlin Collections.",
+            "Usually immutable (listOf()).",
+            "Dynamic size.",
+            "Provides many built-in utility functions."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Array"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Fixed size once created.",
+            "Mutable (elements can be changed).",
+            "Created using arrayOf().",
+            "Closer to low-level memory structure."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Use List → When you need flexible, collection-based operations. Use Array → When size is fixed or performance/memory control is needed."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 22,
+      "question": "How to remove duplicates from an array or collection in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": [
+        "Collections"
+      ],
+      "title": "How to remove duplicates from an array or collection in Kotlin?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Use distinct() → Returns list with unique elements."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "val list = listOf(1, 2, 2, 3, 3)\nval unique = list.distinct()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Use toSet() → Removes duplicates by converting to Set."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "val unique = list.toSet()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "For Array"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "",
+          "language": "kotlin",
+          "code": "val arr = arrayOf(1, 2, 2, 3)\nval unique = arr.distinct()"
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "distinct() keeps order toSet() removes duplicates but may not guarantee order"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 23,
+      "question": "Explain Delegates (lazy, observable, vetoable) in Kotlin.",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": [
+        "Advanced"
+      ],
+      "title": "Explain Delegates (lazy, observable, vetoable) in Kotlin.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Delegates allow you to delegate property behavior to another object."
+        },
+        {
+          "type": "bullet",
+          "heading": "lazy",
+          "items": [
+            "Initializes value only when accessed first time.",
+            "Useful for expensive object creation."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "lazy",
+          "content": "",
+          "language": "kotlin",
+          "code": "  val data by lazy { loadData() }"
+        },
+        {
+          "type": "bullet",
+          "heading": "observable",
+          "items": [
+            "Triggers callback after value changes.",
+            "Useful for tracking or updating UI."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "observable",
+          "content": "",
+          "language": "kotlin",
+          "code": "  var name by Delegates.observable(\"A\") { _, old, new ->\n      println(\"$old -> $new\")\n  }"
+        },
+        {
+          "type": "bullet",
+          "heading": "vetoable",
+          "items": [
+            "Allows validation before value changes.",
+            "Change happens only if condition returns true."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "vetoable",
+          "content": "",
+          "language": "kotlin",
+          "code": "  var age by Delegates.vetoable(18) { _, _, new ->\n      new >= 18\n  }"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 24,
+      "question": "What are coroutines in Kotlin?",
+      "section": "Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Coroutines"
+      ],
+      "title": "What are coroutines in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Coroutines are a lightweight concurrency feature in Kotlin used to perform asynchronous and non-blocking tasks in a simple and efficient way."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Help run background tasks like API calls, database operations, etc.",
+            "More efficient than traditional threads.",
+            "Use suspend functions to pause and resume execution without blocking the main thread.",
+            "Work with CoroutineScope, Dispatchers, and Jobs for lifecycle and threading control."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "CoroutineScope(Dispatchers.IO).launch {\n    val data = fetchData()\n    withContext(Dispatchers.Main) {\n        updateUI(data)\n    }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 25,
+      "question": "Difference between suspending and blocking functions.",
+      "section": "Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Coroutines"
+      ],
+      "title": "Difference between suspending and blocking functions.",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Suspending Functions",
+          "items": [
+            "Use the suspend keyword.",
+            "Pause execution without blocking the thread.",
+            "Allow other tasks to run while waiting (efficient).",
+            "Mainly used with coroutines."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Suspending Functions",
+          "content": "Example",
+          "language": "kotlin",
+          "code": "suspend fun fetchData() {\n    delay(1000) // Non-blocking delay\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Blocking Functions",
+          "items": [
+            "Block the current thread until the task finishes.",
+            "Prevent other tasks from running on that thread.",
+            "Can cause UI freezes if used on the main thread."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Blocking Functions",
+          "content": "Example",
+          "language": "kotlin",
+          "code": "fun fetchData() {\n    Thread.sleep(1000) // Blocks thread\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    }
+  ]
+}

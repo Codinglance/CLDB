@@ -1,0 +1,2130 @@
+{
+  "category": "Android",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is Android?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android is an open-source operating system developed by Google, built on top of the Linux kernel. It is mainly designed for mobile devices, but is also used across a wide range of smart devices. Where Android Is Used :- Android powers multiple types of devices, including:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Smartphones and tablets",
+            "Smart TVs (Android TV)",
+            "Smartwatches (Wear OS)",
+            "Cars (Android Auto)",
+            "IoT and embedded devices such as kiosks, POS systems, and smart displays"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Programming Languages Supported :- Android supports application development using multiple programming languages:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Kotlin – Officially recommended by Google, modern, concise, and safe",
+            "Java – Original Android language with a large existing codebase",
+            "C++ – Used via the Android NDK for performance-critical tasks like games and media processing"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 2,
+      "question": "What is Context? How is it used?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Context? How is it used?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Android, Context is an abstract class that provides access to application-specific resources and system services. It allowing components to interact with resources like layouts, strings, databases, preferences, and system-level services. Types of Context in Android :- Android provides three main types of Context, each used for different purposes."
+        },
+        {
+          "type": "text",
+          "heading": "Application Context",
+          "content": "- getApplicationContext() - Lives for the entire app lifecycle - Used for singletons, background work, and non-UI resources"
+        },
+        {
+          "type": "text",
+          "heading": "Activity Context",
+          "content": "- Provided by an Activity - Tied to the Activity lifecycle - Used for UI work like dialogs and layout inflation"
+        },
+        {
+          "type": "text",
+          "heading": "Service Context",
+          "content": "- Provided by a Service - Used for background operations - Not suitable for UI"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 3,
+      "question": "Tell all Android application components.",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "Tell all Android application components.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android application components are the core building blocks of an app. Each component has a specific role and lifecycle managed by the Android system. There are four main Android application components:"
+        },
+        {
+          "type": "bullet",
+          "heading": "1. Activity",
+          "items": [
+            "Represents a single UI screen",
+            "Handles user interaction",
+            "Manages screen lifecycle"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "2. Service",
+          "items": [
+            "Performs background tasks",
+            "Runs without a user interface",
+            "Used for long-running operations"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "3. Broadcast Receiver",
+          "items": [
+            "Listens for system or app events",
+            "Responds to events like battery change or network status",
+            "Has no UI"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "4. Content Provider",
+          "items": [
+            "Manages and shares app data",
+            "Supports CRUD operations",
+            "Ensures secure data access between apps"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 4,
+      "question": "What is AndroidManifest.xml?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is AndroidManifest.xml?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "AndroidManifest.xml is a mandatory configuration file in every Android app that provides essential information to the Android system."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Declares app components (Activities, Services, Broadcast Receivers, Content Providers)",
+            "Defines required permissions (e.g., Internet, Camera)",
+            "Specifies app metadata (name, icon, theme, version)",
+            "Sets SDK requirements (minSdk, targetSdk)",
+            "Identifies the app's launch Activity"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 5,
+      "question": "What is Application class?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Application class?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Application class in Android is a base class that represents the entire application. It is created before any Activity, Service, or other app component and remains alive as long as the application process exists. Why It Is Used:- The Application class is used to:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Maintain global application state",
+            "Initialize app-wide libraries (Firebase, analytics, DI, etc.)",
+            "Store objects that need to live throughout the app lifecycle",
+            "Access a global context"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Characteristics",
+          "items": [
+            "Only one instance exists per app",
+            "Created once when the app starts",
+            "Destroyed when the app process is killed",
+            "Has the longest lifecycle in the app"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Key Characteristics",
+          "content": "How It Is Used:- Create a custom Application class and register it in the manifest.",
+          "language": "kotlin",
+          "code": "class MyApp : Application() {\n    override fun onCreate() {\n        super.onCreate()\n        // App-level initialization\n    }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 6,
+      "question": "What is ADB in Android?",
+      "section": "Android Tools",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is ADB in Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "ADB (Android Debug Bridge) is a command-line tool that allows developers to communicate with an Android device or emulator from a computer. It is mainly used for debugging, testing, and managing Android applications. Why It Is Used:- ADB helps developers to:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Install and uninstall apps",
+            "Run shell commands on a device",
+            "View logs and debug issues",
+            "Transfer files between device and system",
+            "Control devices during development"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Features",
+          "items": [
+            "Works with real devices and emulators",
+            "Supports app debugging and testing",
+            "Allows direct access to the device shell"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common ADB Commands",
+          "items": [
+            "adb devices – List connected devices",
+            "adb install app.apk – Install an app",
+            "adb logcat – View device logs",
+            "adb shell – Access device shell"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 7,
+      "question": "What is AAPT (Android Asset Packaging Tool)?",
+      "section": "Android Tools",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is AAPT (Android Asset Packaging Tool)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "AAPT (Android Asset Packaging Tool) is a build tool used by Android to compile, package, and manage app resources such as layouts, images, and the AndroidManifest.xml file. Why It Is Used:- AAPT is used to:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Compile resource files (XML, images, strings)",
+            "Generate the R.java / R class for resource access",
+            "Package resources into the APK or AAB",
+            "Validate resource references and manifest entries"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Responsibilities",
+          "items": [
+            "Converts resources into a binary format",
+            "Links resources with application code",
+            "Ensures resource IDs are correctly assigned"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 8,
+      "question": "What is DEX file?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is DEX file?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A DEX (Dalvik Executable) file is a compiled file format used by Android to store an app's bytecode. It is generated from Java or Kotlin code and is executed by the Android Runtime (ART) on the device. Why It Is Used:- DEX files are used to:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Convert Java/Kotlin bytecode into a format optimized for Android",
+            "Reduce memory usage on mobile devices",
+            "Allow efficient execution on Android runtime"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Characteristics",
+          "items": [
+            "Contains all compiled classes of an app",
+            "Optimized for low memory and performance",
+            "Generated during the build process from .class files"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 9,
+      "question": "What is Multidex?",
+      "section": "Android Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Multidex?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Multidex is an Android feature that allows an application to use more than one DEX file. It is required when an app exceeds the 65,536 method limit imposed on a single DEX file."
+        },
+        {
+          "type": "text",
+          "heading": "Why Multidex Is Needed",
+          "content": "Apps with many libraries (Firebase, Retrofit, Google Play Services, etc.) can cross the 65K method limit. Multidex splits code into multiple DEX files so the app can build and run correctly."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example Configuration",
+          "content": "##### Enable Multidex",
+          "language": "gradle",
+          "code": "android {\n    defaultConfig {\n        multiDexEnabled true\n    }\n}\n\ndependencies {\n    implementation \"androidx.multidex:multidex:2.0.1\"\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 10,
+      "question": "What are processes in Android?",
+      "section": "Android Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What are processes in Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A process is a running instance of an app with its own memory space. Android runs each app in a separate Linux process to ensure security and stability."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why Processes Are Used",
+          "items": [
+            "Keeps apps isolated and secure",
+            "Manages memory and performance",
+            "Prevents one app crash from affecting others"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Process Priority Types",
+          "items": [
+            "Foreground – App in use (highest priority)",
+            "Visible – Partially visible app",
+            "Service – Background work (e.g., music)",
+            "Background – Not visible",
+            "Empty – No active components (lowest priority)"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 11,
+      "question": "Is it possible to run an Android app in multiple processes? How?",
+      "section": "Android Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "Is it possible to run an Android app in multiple processes? How?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Yes, an Android application can run in multiple processes. By default, all components of an app run in a single process, but Android allows you to assign different components to different processes using the android:process attribute."
+        },
+        {
+          "type": "text_code",
+          "heading": "How to Run an App in Multiple Processes",
+          "content": "You can specify a custom process name in AndroidManifest.xml for a component.",
+          "language": "xml",
+          "code": "<service\n    android:name=\".MyService\"\n    android:process=\":background\" />"
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "The :background prefix creates a private process for the app",
+            "That component runs in a separate process",
+            "The rest of the app continues to run in the main process"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 12,
+      "question": "How is memory managed in Android OS?",
+      "section": "Android Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "How is memory managed in Android OS?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android manages memory automatically to ensure smooth performance and efficient utilization of system resources. 1. Linux-based Memory Management Android runs on the Linux kernel, which handles low-level memory operations such as paging and allocation. 2. Garbage Collection (GC) Android apps execute on ART (Android Runtime), which automatically frees unused objects through garbage collection, so developers do not need to manually manage memory. 3. Process Priority & Lifecycle Android assigns priority levels to apps based on their state:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Foreground app – highest priority",
+            "Visible app",
+            "Background app",
+            "Cached app – lowest priority"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "4. Low Memory Killer (LMK) When system memory is low, Android automatically terminates low-priority background processes to free memory. 5. Shared Resources Common resources like libraries are shared across apps to reduce overall memory consumption."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 13,
+      "question": "What is StrictMode?",
+      "section": "Android Tools",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is StrictMode?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "StrictMode is a debugging tool that helps detect performance issues like disk/network calls on the main thread and memory leaks."
+        },
+        {
+          "type": "bullet",
+          "heading": "Purpose",
+          "items": [
+            "Catch bad coding practices",
+            "Prevent ANRs",
+            "Improve app responsiveness"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Thread Policy: Monitors main-thread operations",
+            "VM Policy: Detects memory leaks"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Used only in development",
+            "Not recommended for production"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 14,
+      "question": "What is Lint?",
+      "section": "Android Tools",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Lint?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Lint is a static code analysis tool in Android that helps developers identify and fix potential bugs, performance issues, and code quality problems in their apps before runtime."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Is Used",
+          "items": [
+            "Detect common coding mistakes",
+            "Identify performance and usability issues",
+            "Enforce best practices and standards",
+            "Prevent runtime crashes"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Scans Java, Kotlin, XML, and Gradle files",
+            "Provides warnings or errors for:"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "How It Works",
+          "content": "- Unused resources - Hardcoded text (i18n issues) - Missing permissions - Deprecated APIs - Layout performance issues"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Runs at compile-time",
+            "Integrated in Android Studio",
+            "Helps maintain clean and efficient code"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 15,
+      "question": "What is Support Library? Why was it introduced?",
+      "section": "Android Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Support Library? Why was it introduced?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Android Support Library is a set of code libraries provided by Google to help developers use newer Android features on older versions of the platform. It provides backward-compatible versions of APIs, UI components, and utilities."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Was Introduced",
+          "items": [
+            "Fragmented Android versions: Not all devices run the latest Android OS.",
+            "Backward compatibility: Allows developers to use modern features on older devices.",
+            "Consistent UI and functionality: Ensures apps behave similarly across different Android versions.",
+            "Faster development: Provides ready-to-use components like RecyclerView, CardView, ViewPager, etc."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Features",
+          "items": [
+            "Backward-compatible UI widgets (RecyclerView, CardView, Toolbar)",
+            "Support for newer APIs on older devices",
+            "Utility classes for tasks like notifications, media, and animations"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 16,
+      "question": "What is Doze Mode? What is App Standby?",
+      "section": "Battery Optimization",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is Doze Mode? What is App Standby?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both Doze Mode and App Standby help save battery by limiting background work."
+        },
+        {
+          "type": "bullet",
+          "heading": "Doze Mode",
+          "items": [
+            "Activates when device is idle, screen off",
+            "Delays background tasks, syncs, and network",
+            "Allows high-priority notifications"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "App Standby",
+          "items": [
+            "Applies to unused apps",
+            "Restricts background jobs and network",
+            "Active apps are not affected"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "Doze Mode: Affects the whole device",
+            "App Standby: Affects unused apps only"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 17,
+      "question": "What is File, Class, and Activity in Android?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basics"
+      ],
+      "title": "What is File, Class, and Activity in Android?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "File",
+          "items": [
+            "Used to store data on the device (internal, external, cache)",
+            "Examples: text files, images, databases"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Class",
+          "items": [
+            "A blueprint written in Kotlin/Java",
+            "Defines variables and functions",
+            "All Android components are classes"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Activity",
+          "items": [
+            "Represents one screen with UI",
+            "Handles user interaction",
+            "Managed by the Android lifecycle"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 18,
+      "question": "How to change parameters in an app without app update?",
+      "section": "Android Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basics"
+      ],
+      "title": "How to change parameters in an app without app update?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "You can update app behavior without releasing a new version using remote configuration."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Ways",
+          "items": [
+            "Firebase Remote Config: Fetch key-value updates at runtime (UI text, feature flags)",
+            "Backend API: Load configurable values from your server",
+            "Dynamic Feature Modules: Enable or disable app features remotely"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "No app update required",
+            "Easy feature toggles & A/B testing",
+            "Quick content or behavior changes"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 19,
+      "question": "What is Activity and its lifecycle?",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What is Activity and its lifecycle?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "An Activity is a single screen in Android that handles user interaction and displays the UI."
+        },
+        {
+          "type": "bullet",
+          "heading": "Activity Lifecycle",
+          "items": [
+            "onCreate() – Initialize UI and resources when Activity is first created.",
+            "onStart() – Activity becomes visible.",
+            "onResume() – Activity gains focus; user can interact.",
+            "onPause() – Activity loses focus; pause tasks or save data.",
+            "onStop() – Activity no longer visible; release resources.",
+            "onDestroy() – Activity is destroyed; cleanup resources.",
+            "onRestart() – Activity restarts after being stopped."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Manages visibility, focus, and resources.",
+            "Prevents crashes and data loss.",
+            "Lifecycle methods guide proper handling of UI and background tasks."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "question": "Difference between onCreate() and onStart()",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Difference between onCreate() and onStart()",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "onCreate()",
+          "items": [
+            "Called once when the Activity is first created",
+            "Used for initial setup (UI initialization, variables, binding data)",
+            "Executes before the Activity becomes visible"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "onStart()",
+          "items": [
+            "Called when the Activity becomes visible to the user",
+            "May be called multiple times (e.g., returning from background)",
+            "Prepares the Activity to enter the foreground"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "onCreate() → Initialization",
+            "onStart() → Visibility"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "question": "When is only onDestroy() called without onPause() and onStop()?",
+      "section": "Activity Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "When is only onDestroy() called without onPause() and onStop()?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Normally, onPause() and onStop() run before onDestroy(), but they can be skipped in rare cases:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Activity finishes early (e.g., finish() during onCreate())",
+            "System kills the process due to low memory",
+            "App crash or fatal exception"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "onDestroy() is not always guaranteed",
+            "Do important cleanup in onPause() or onStop(), not onDestroy()"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "question": "Activity lifecycle when launched for the first time",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Activity lifecycle when launched for the first time",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "When an Android Activity is launched for the first time, it goes through the following lifecycle methods in order:"
+        },
+        {
+          "type": "text",
+          "heading": "1. onCreate()",
+          "content": "Called when the Activity is first created. Used to initialize UI, variables, and resources. Example: setContentView(R.layout.activity_main)"
+        },
+        {
+          "type": "text",
+          "heading": "2. onStart()",
+          "content": "Called when the Activity becomes visible to the user. Prepares the Activity to enter the foreground."
+        },
+        {
+          "type": "text",
+          "heading": "3. onResume()",
+          "content": "Called when the Activity gains focus and the user can interact with it. Activity is now in the foreground and fully active."
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "question": "Activity lifecycle when back button is pressed",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Activity lifecycle when back button is pressed",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Activity Lifecycle When Back Button Is Pressed",
+          "content": "When the user presses the Back button, the current Activity is finished and removed from the screen. The system calls the following lifecycle methods in order:"
+        },
+        {
+          "type": "text",
+          "heading": "1. onPause()",
+          "content": "- Called when the Activity loses focus - Pause ongoing tasks or save temporary data"
+        },
+        {
+          "type": "text",
+          "heading": "2. onStop()",
+          "content": "- Called when the Activity is no longer visible - Release resources not needed in background"
+        },
+        {
+          "type": "text",
+          "heading": "3. onDestroy()",
+          "content": "- Called before the Activity is completely destroyed - Final cleanup of resources"
+        },
+        {
+          "type": "text",
+          "heading": "In Short",
+          "content": "Back Press → onPause() → onStop() → onDestroy()"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "question": "Activity lifecycle when launched again after back press",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Activity lifecycle when launched again after back press",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Activity Lifecycle When Launched Again After Back Press",
+          "content": "If the user presses the Back button, the Activity is destroyed. When it is launched again, a new instance of the Activity is created. The lifecycle methods are called in this order:"
+        },
+        {
+          "type": "bullet",
+          "heading": "1. onCreate()",
+          "items": [
+            "Activity is created again",
+            "UI and data are initialized"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "2. onStart()",
+          "items": [
+            "Activity becomes visible"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "3. onResume()",
+          "items": [
+            "Activity gains focus and becomes interactive"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "In Short",
+          "content": "After Back Press → Activity destroyed Launch Again → onCreate() → onStart() → onResume()"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "question": "Activity lifecycle when home button is pressed",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Activity lifecycle when home button is pressed",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Activity Lifecycle When Home Button Is Pressed",
+          "content": "When the user presses the Home button, the Activity is not destroyed. It moves to the background. The system calls the following lifecycle methods:"
+        },
+        {
+          "type": "bullet",
+          "heading": "1. onPause()",
+          "items": [
+            "Called when the Activity loses focus",
+            "Pause animations or save temporary data"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "2. onStop()",
+          "items": [
+            "Called when the Activity is no longer visible",
+            "Release resources not needed in background"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "2. onStop()",
+          "content": "The Activity remains in memory and can be resumed later."
+        },
+        {
+          "type": "text",
+          "heading": "In Short",
+          "content": "Home Press → onPause() → onStop() (Activity goes to background)"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "question": "Activity lifecycle when app returns from background",
+      "section": "Activity Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Activity lifecycle when app returns from background",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Activity Lifecycle When App Returns from Background",
+          "content": "When the app returns from the background (after pressing the Home button or switching apps), the existing Activity instance is brought back to the foreground. The system calls the following lifecycle methods:"
+        },
+        {
+          "type": "bullet",
+          "heading": "1. onRestart()",
+          "items": [
+            "Called after the Activity was stopped",
+            "Prepares the Activity to start again"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "2. onStart()",
+          "content": "- Activity becomes visible to the user"
+        },
+        {
+          "type": "text",
+          "heading": "3. onResume()",
+          "content": "- Activity gains focus and becomes interactive"
+        },
+        {
+          "type": "text",
+          "heading": "In Short",
+          "content": "Return from Background → onRestart() → onStart() → onResume()"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "question": "Lifecycle when navigating from Activity A → Activity B",
+      "section": "Activity Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Lifecycle when navigating from Activity A → Activity B",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Activity A"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onPause() → loses focus",
+            "onStop() → no longer visible"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Activity B"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onCreate() → created",
+            "onStart() → visible",
+            "onResume() → interactive"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Flow A: onPause → onStop B: onCreate → onStart → onResume Note"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Activity A stays in memory",
+            "Pressing Back destroys B and resumes A"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "question": "Lifecycle when pressing back from Activity B → Activity A",
+      "section": "Activity Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Lifecycle when pressing back from Activity B → Activity A",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "When the user presses the Back button on Activity B, it is finished, and the system returns to Activity A. The lifecycle methods of both Activities are called as follows: Activity B"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onPause() → loses focus",
+            "onStop() → not visible",
+            "onDestroy() → finished"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Activity A"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onRestart() → coming back",
+            "onStart() → visible",
+            "onResume() → interactive"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Flow B: onPause → onStop → onDestroy A: onRestart → onStart → onResume"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "question": "How to preserve activity state during screen rotation?",
+      "section": "Activity State",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "How to preserve activity state during screen rotation?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "When an Activity is rotated, it is destroyed and recreated. To preserve state:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Ways",
+          "items": [
+            "onSaveInstanceState(): Save small UI data (text, selections)",
+            "ViewModel: Keeps UI data across rotations"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "onSaveInstanceState() → temporary UI state",
+            "ViewModel → long-lived UI data",
+            "Avoid manual config handling unless necessary"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "question": "What is savedInstanceState Bundle?",
+      "section": "Activity State",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What is savedInstanceState Bundle?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "savedInstanceState is a Bundle used to save and restore UI state when an Activity is recreated (e.g., screen rotation)."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It's Used",
+          "items": [
+            "Save data in onSaveInstanceState()",
+            "Restore it in onCreate() or onRestoreInstanceState()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "null on first launch",
+            "Stores small UI data only",
+            "Helps restore state after rotation or system kill"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "question": "Difference between Intent and Bundle",
+      "section": "Activity State",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Difference between Intent and Bundle",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Intent"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Used to start Activities/Services or send broadcasts",
+            "Can carry data and navigation info"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Bundle"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "A key-value data container",
+            "Used to pass data via Intent or save state"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Short"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Intent = navigation + data",
+            "Bundle = data only"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "question": "What are launchModes?",
+      "section": "Activity Launch Modes",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What are launchModes?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "What Are Launch Modes?",
+          "content": "Launch modes control how an Activity is created and managed in the back stack."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types",
+          "items": [
+            "standard – Creates a new instance every time (default)",
+            "singleTop – Reuses the Activity if it is already at the top",
+            "singleTask – Only one instance in a task; brings existing one to front",
+            "singleInstance – Only one instance; runs in a separate task"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "In Short",
+          "content": "Launch modes define how Activity instances behave in the back stack."
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "question": "Explain standard launchMode",
+      "section": "Activity Launch Modes",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Explain standard launchMode",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "standard is the default launch mode for all Activities in Android."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Every time the Activity is started, a new instance is created and pushed onto the back stack.",
+            "Multiple instances of the same Activity can exist simultaneously in the back stack.",
+            "Does not reuse any existing instance."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Start MainActivity multiple times\nval intent = Intent(this, MainActivity::class.java)\nstartActivity(intent)\nstartActivity(intent)"
+        },
+        {
+          "type": "text",
+          "heading": "Example",
+          "content": "`"
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "Result: Two separate instances of MainActivity are now in the back stack."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "question": "Explain singleTop launchMode",
+      "section": "Activity Launch Modes",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Explain singleTop launchMode",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "singleTop is a launch mode that reuses the Activity if it is already at the top of the back stack, instead of creating a new instance."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "If the Activity is not at the top, a new instance is created (like standard mode).",
+            "If the Activity is at the top, no new instance is created; onNewIntent() is called with the new Intent.",
+            "Prevents multiple copies of the same Activity when repeatedly launching it from the top."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Activity A is at the top of the stack\nval intent = Intent(this, ActivityA::class.java)\nstartActivity(intent) // onNewIntent() is called instead of creating a new instance"
+        },
+        {
+          "type": "text",
+          "heading": "Example",
+          "content": "`"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "question": "Explain singleTask launchMode",
+      "section": "Activity Launch Modes",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Explain singleTask launchMode",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "singleTask is a launch mode that ensures only one instance of an Activity exists in the system, and it is reused if it already exists anywhere in the back stack."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "If the Activity already exists in the back stack:"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "How It Works",
+          "content": "- The system brings that instance to the foreground. - All Activities above it in the stack are destroyed. - onNewIntent() is called with the new Intent."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "If the Activity does not exist, a new instance is created."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "// MainActivity is launched with singleTask\nval intent = Intent(this, MainActivity::class.java)\nstartActivity(intent)"
+        },
+        {
+          "type": "text",
+          "heading": "Example",
+          "content": "`"
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "If MainActivity exists anywhere in the stack, it is reused, and other Activities above it are removed."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "question": "Explain singleInstance launchMode",
+      "section": "Activity Launch Modes",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Explain singleInstance launchMode",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "singleInstance is a special launch mode that ensures only one instance of an Activity exists, and it resides in its own separate task. No other Activity can be launched in the same task."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "The Activity runs in a separate task, isolated from other Activities.",
+            "If the Activity already exists:"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "How It Works",
+          "content": "- It is reused, and onNewIntent() is called. - No other Activities can be part of its task."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Useful for Activities that must always be standalone, like a special media player or system-level screen."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "xml",
+          "code": "<activity\n    android:name=\".SpecialActivity\"\n    android:launchMode=\"singleInstance\" />"
+        },
+        {
+          "type": "text",
+          "heading": "Example",
+          "content": "`"
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "Launching SpecialActivity multiple times reuses the same instance in its separate task."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "question": "What are tasks and back stack?",
+      "section": "Tasks & Back Stack",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What are tasks and back stack?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Task: A collection of Activities working toward a goal, organized like a stack."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Example: Opening an email app → reading → composing."
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Back Stack: LIFO stack managing Activity order. Top is the current Activity."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Pressing Back pops the top Activity and resumes the previous one."
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "User opens Activity A → pushed onto stack",
+            "Navigates to Activity B → pushed onto stack",
+            "Presses Back → Activity B popped, Activity A resumes"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "Stack after opening B: [A, B]  (B on top)\nPress Back: [A]  (B removed)"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "question": "What is taskAffinity?",
+      "section": "Tasks & Back Stack",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What is taskAffinity?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "taskAffinity is an attribute of an Activity that defines which task the Activity prefers to belong to. It allows Activities from the same or different apps to be associated with a particular task."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "By default, all Activities of an app share the same taskAffinity (usually the app package name).",
+            "You can set a custom taskAffinity in AndroidManifest.xml to control task behavior.",
+            "When launching an Activity, the system tries to place it in a task with the same taskAffinity."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "xml",
+          "code": "<activity\n    android:name=\".SpecialActivity\"\n    android:taskAffinity=\"com.example.specialtask\" />"
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "SpecialActivity will prefer to run in a task named com.example.specialtask.",
+            "Useful for creating separate tasks for specific Activities (e.g., for multi-window apps or notifications)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "question": "What is installLocation tag?",
+      "section": "Android Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What is installLocation tag?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The installLocation tag in AndroidManifest.xml defines where the app is installed: internal or external storage. Values:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "internalOnly → Install on internal storage (default).",
+            "preferExternal → Prefer SD card, fallback to internal.",
+            "auto → System chooses the best location."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "Example:",
+          "language": "xml",
+          "code": "<application\n    android:installLocation=\"preferExternal\"\n    android:label=\"@string/app_name\" />"
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "` Key Point: Controls storage use; some features may not work on SD card."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 40,
+      "question": "Relationship between Activity and Fragment lifecycle",
+      "section": "Activity & Fragment",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Relationship between Activity and Fragment lifecycle",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Fragments exist inside an Activity, so their lifecycle is closely tied to the host Activity.",
+            "Fragment lifecycle events occur alongside the Activity, but Fragments have extra callbacks like onAttach(), onCreateView(), and onDetach() for managing UI."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Lifecycle Mapping (Simplified):"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Activity onCreate() → Fragment onAttach() → onCreateView()",
+            "Activity onStart() → Fragment onStart()",
+            "Activity onResume() → Fragment onResume()",
+            "Activity onPause() → Fragment onPause()",
+            "Activity onStop() → Fragment onStop()",
+            "Activity onDestroy() → Fragment onDestroyView() → onDestroy() → onDetach()"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Key Points:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Fragment depends on Activity but can manage its own UI.",
+            "Proper lifecycle handling prevents memory leaks and ensures smooth UI updates."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "2 min"
+    },
+    {
+      "id": 41,
+      "question": "How do we save and restore an activity's state during screen rotation?",
+      "section": "Activity & Fragment",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "How do we save and restore an activity's state during screen rotation?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "When an Activity rotates, it is destroyed and recreated. To preserve state:",
+          "language": "kotlin",
+          "code": "override fun onSaveInstanceState(outState: Bundle) {\n    super.onSaveInstanceState(outState)\n    outState.putString(\"username\", editText.text.toString())\n}\noverride fun onCreate(savedInstanceState: Bundle?) {\n    super.onCreate(savedInstanceState)\n    editText.setText(savedInstanceState?.getString(\"username\"))\n}"
+        },
+        {
+          "type": "text",
+          "heading": "2. ViewModel",
+          "content": "`kotlin val viewModel = ViewModelProvider(this).get(MyViewModel::class.java) editText.setText(viewModel.username) viewModel.username = editText.text.toString()"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 42,
+      "question": "What is a Bundle?",
+      "section": "Activity & Fragment",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What is a Bundle?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Android, a Bundle is a key-value data container used to pass information between components like Activities, Fragments, or Services."
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Stores data as primitive types, Strings, Parcelable, or Serializable objects.",
+            "Often used with:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "- Intents to pass data between Activities. - Fragments via setArguments() or getArguments(). - onSaveInstanceState()` to save Activity state.",
+          "language": "kotlin",
+          "code": "val bundle = Bundle()\nbundle.putString(\"username\", \"Aasim\")\n\nval intent = Intent(this, SecondActivity::class.java)\nintent.putExtras(bundle)\nstartActivity(intent)"
+        },
+        {
+          "type": "text_code",
+          "heading": "Example in Fragment",
+          "content": "",
+          "language": "kotlin",
+          "code": "val fragment = MyFragment()\nval bundle = Bundle()\nbundle.putInt(\"userId\", 101)\nfragment.arguments = bundle"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 43,
+      "question": "When Activity A starts Activity B, explain the lifecycle order",
+      "section": "Activity & Fragment",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "When Activity A starts Activity B, explain the lifecycle order",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "When Activity A starts Activity B, both Activities go through specific lifecycle callbacks as the system manages focus and visibility."
+        },
+        {
+          "type": "bullet",
+          "heading": "Activity A (Current Activity)",
+          "items": [
+            "onPause() – Activity A loses focus because Activity B is coming to the foreground.",
+            "onStop() – Called if Activity B fully covers Activity A. Activity A is now in the background."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Activity B (New Activity)",
+          "items": [
+            "onCreate() – Activity B is created and UI is initialized.",
+            "onStart() – Activity B becomes visible.",
+            "onResume() – Activity B gains focus and user can interact with it."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Lifecycle Flow (Simplified)",
+          "content": "",
+          "language": "kotlin",
+          "code": "Activity A: onPause → onStop\nActivity B: onCreate → onStart → onResume"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 44,
+      "question": "How do you declare the launch mode in your application?",
+      "section": "Activity & Fragment",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "How do you declare the launch mode in your application?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Android, you can declare an Activity's launch mode in the AndroidManifest.xml file using the android:launchMode attribute."
+        },
+        {
+          "type": "bullet",
+          "heading": "Steps to Declare Launch Mode",
+          "items": [
+            "Open AndroidManifest.xml.",
+            "Inside the <activity> tag, add android:launchMode with one of the following values:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Steps to Declare Launch Mode",
+          "content": "- standard (default) - singleTop - singleTask - singleInstance",
+          "language": "xml",
+          "code": "<activity\n    android:name=\".MainActivity\"\n    android:launchMode=\"singleTop\" />"
+        },
+        {
+          "type": "bullet",
+          "heading": "Example",
+          "items": [
+            "This ensures that if MainActivity is already at the top of the stack, no new instance is created; onNewIntent() is called instead."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "2 min"
+    },
+    {
+      "id": 45,
+      "question": "How to know configChange happens in onDestroy?",
+      "section": "Activity & Fragment",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "How to know configChange happens in onDestroy?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Android, an Activity may be destroyed either due to user action or a configuration change (like screen rotation). To differentiate in onDestroy(), use isChangingConfigurations()."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "isChangingConfigurations() returns true if the Activity is being destroyed due to a configuration change.",
+            "Returns false if destroyed for other reasons (e.g., user finishing the Activity or system reclaiming memory)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "override fun onDestroy() {\n    super.onDestroy()\n    if (isChangingConfigurations) {\n        Log.d(\"ActivityLifecycle\", \"Destroyed due to configuration change\")\n    } else {\n        Log.d(\"ActivityLifecycle\", \"Destroyed permanently\")\n    }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 46,
+      "question": "What is Fragment?",
+      "section": "Fragment Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Activity"
+      ],
+      "title": "What is Fragment?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Fragment is a modular part of an Activity with its own UI and lifecycle, allowing reusable and flexible screens."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Represents part of a screen",
+            "Can be added, removed, or replaced dynamically",
+            "Has its own lifecycle tied to the Activity",
+            "Supports independent UI and logic"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "supportFragmentManager.beginTransaction()\n    .replace(R.id.container, MyFragment())\n    .commit()"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "2 min"
+    },
+    {
+      "id": 47,
+      "question": "Fragment Lifecycle Methods",
+      "section": "Fragment Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Fragment Lifecycle Methods",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onAttach(Context) – Fragment attached to Activity; use for context-related init",
+            "onCreate(Bundle?) – Initialize Fragment (non-UI tasks)",
+            "onCreateView(LayoutInflater, ViewGroup?, Bundle?) – Inflate UI layout",
+            "onViewCreated(View, Bundle?) – After view is created; bind views & listeners",
+            "onStart() – Fragment becomes visible",
+            "onResume() – Fragment gains focus and is interactive",
+            "onPause() – Fragment loses focus; pause UI updates/animations",
+            "onStop() – Fragment no longer visible; release unnecessary resources",
+            "onDestroyView() – View hierarchy destroyed; clean up bindings",
+            "onDestroy() – Cleanup Fragment instance",
+            "onDetach() – Fragment detached from Activity; final cleanup"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "2 min"
+    },
+    {
+      "id": 48,
+      "question": "Why is it recommended to use only the default constructor in Fragment?",
+      "section": "Fragment Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Why is it recommended to use only the default constructor in Fragment?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "System Recreation: Android recreates Fragments on rotation or low memory; only the default constructor is called.",
+            "Safe Data Passing: Use setArguments() with a Bundle to pass data, preserved across configuration changes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Recommended Approach",
+          "content": "",
+          "language": "kotlin",
+          "code": "class MyFragment : Fragment() {\n    companion object {\n        fun newInstance(userId: Int) = MyFragment().apply {\n            arguments = Bundle().apply { putInt(\"userId\", userId) }\n        }\n    }\n}\n// Access data\nval userId = arguments?.getInt(\"userId\")"
+        },
+        {
+          "type": "text",
+          "heading": "Recommended Approach",
+          "content": "Key Points: Use default constructor + Bundle to ensure safe Fragment recreation."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "2 min"
+    },
+    {
+      "id": 49,
+      "question": "Fragment lifecycle when launched",
+      "section": "Fragment Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Fragment lifecycle when launched",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Sequence:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onAttach() → attached to Activity",
+            "onCreate() → initialize non-UI data",
+            "onCreateView() → inflate UI",
+            "onViewCreated() → setup views/listeners",
+            "onStart() → visible",
+            "onResume() → active and interactive"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Key Points:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Lifecycle tied to host Activity",
+            "Ensures UI readiness and efficient resource use"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 50,
+      "question": "Fragment lifecycle when back button is pressed",
+      "section": "Fragment Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Activity"
+      ],
+      "title": "Fragment lifecycle when back button is pressed",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Sequence:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "onPause() → loses focus",
+            "onStop() → not visible",
+            "onDestroyView() → UI destroyed",
+            "onDestroy() → instance destroyed",
+            "onDetach() → detached from Activity"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Key Points:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Back press removes Fragment UI and instance",
+            "Use ViewModel or savedInstanceState to preserve data",
+            "Proper cleanup prevents memory leaks"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    }
+  ]
+}
