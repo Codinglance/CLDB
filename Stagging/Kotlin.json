@@ -119,7 +119,7 @@
         },
         {
           "type": "text_code",
-          "heading": "When to Use lateinit",
+          "heading": "Example",
           "content": "",
           "language": "kotlin",
           "code": "lateinit var textView: TextView"
@@ -133,7 +133,7 @@
         },
         {
           "type": "text_code",
-          "heading": "How to Check Initialization",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "if (::textView.isInitialized) {\n    textView.text = \"Hello\"\n}"
@@ -169,14 +169,14 @@
         },
         {
           "type": "text_code",
-          "heading": "How to Use lazy",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val name: String by lazy {\n    println(\"Initializing name\")\n    \"Aasim\"\n}"
         },
         {
           "type": "bullet",
-          "heading": "How to Use lazy",
+          "heading": " ",
           "items": [
             "The block runs only once, on the first access of name."
           ]
@@ -343,28 +343,28 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Companion Object",
           "items": [
-            "Companion Object – Class-level functions accessed without an instance:"
+            "Class-level functions accessed without an instance:"
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "class MyClass {\n    companion object {\n        fun greet() = println(\"Hello\")\n    }\n}\nMyClass.greet()"
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": " ",
           "items": [
             "Top-Level Functions – Functions outside a class, accessible directly:"
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": "Example",
           "content": "",
           "language": "kotlin",
           "code": "fun greet() = println(\"Hello\")\ngreet()"
@@ -652,71 +652,36 @@
           "content": "Scope functions provide a temporary scope for an object, improving readability and conciseness."
         },
         {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "let – it as context; good for null checks or chaining."
-          ]
-        },
-        {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": "let – it as context; good for null checks or chaining.",
           "content": "",
           "language": "kotlin",
           "code": "name?.let { println(it.length) }"
         },
         {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "run – this as context; returns lambda result; for computations."
-          ]
-        },
-        {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": "run – this as context; returns lambda result; for computations.",
           "content": "",
           "language": "kotlin",
           "code": "val result = \"Hello\".run { length + 5 }"
         },
         {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "with – this as context; called on object; for grouping operations."
-          ]
-        },
-        {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": "with – this as context; called on object; for grouping operations.",
           "content": "",
           "language": "kotlin",
           "code": "with(builder) { append(\"Hello\"); append(\"World\") }"
         },
         {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "apply – this as context; returns object; for object initialization."
-          ]
-        },
-        {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": "apply – this as context; returns object; for object initialization.",
           "content": "",
           "language": "kotlin",
           "code": "val person = Person().apply { name=\"Aasim\"; age=25 }"
         },
         {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "also – it as context; returns object; for side-effects."
-          ]
-        },
-        {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": "also – it as context; returns object; for side-effects.",
           "content": "",
           "language": "kotlin",
           "code": "val numbers = mutableListOf(1,2,3).also { println(it) }"
@@ -748,7 +713,7 @@
         },
         {
           "type": "text_code",
-          "heading": "apply",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val person = Person().apply { name=\"Aasim\"; age=25 }"
@@ -763,7 +728,7 @@
         },
         {
           "type": "text_code",
-          "heading": "with",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val length = with(\"Hello\") { println(this); length }"
@@ -867,13 +832,8 @@
       "title": "Difference between List and Array types in Kotlin.",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "List"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "List",
           "items": [
             "Part of Kotlin Collections.",
             "Usually immutable (listOf()).",
@@ -882,13 +842,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Array"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Array",
           "items": [
             "Fixed size once created.",
             "Mutable (elements can be changed).",
@@ -920,49 +875,49 @@
       "sections": [
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "distinct()",
           "items": [
             "Use distinct() → Returns list with unique elements."
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val list = listOf(1, 2, 2, 3, 3)\nval unique = list.distinct()"
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "toSet()",
           "items": [
             "Use toSet() → Removes duplicates by converting to Set."
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val unique = list.toSet()"
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Example",
           "items": [
             "For Array"
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val arr = arrayOf(1, 2, 2, 3)\nval unique = arr.distinct()"
         },
         {
           "type": "text",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "distinct() keeps order toSet() removes duplicates but may not guarantee order"
         }
       ],
@@ -997,7 +952,7 @@
         },
         {
           "type": "text_code",
-          "heading": "lazy",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "  val data by lazy { loadData() }"
@@ -1012,7 +967,7 @@
         },
         {
           "type": "text_code",
-          "heading": "observable",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "  var name by Delegates.observable(\"A\") { _, old, new ->\n      println(\"$old -> $new\")\n  }"
@@ -1027,7 +982,7 @@
         },
         {
           "type": "text_code",
-          "heading": "vetoable",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "  var age by Delegates.vetoable(18) { _, _, new ->\n      new >= 18\n  }"
@@ -1100,8 +1055,8 @@
         },
         {
           "type": "text_code",
-          "heading": "Suspending Functions",
-          "content": "Example",
+          "heading": "Example ",
+          "content": " ",
           "language": "kotlin",
           "code": "suspend fun fetchData() {\n    delay(1000) // Non-blocking delay\n}"
         },
@@ -1116,8 +1071,8 @@
         },
         {
           "type": "text_code",
-          "heading": "Blocking Functions",
-          "content": "Example",
+          "heading": "Example",
+          "content": " ",
           "language": "kotlin",
           "code": "fun fetchData() {\n    Thread.sleep(1000) // Blocks thread\n}"
         }

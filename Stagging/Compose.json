@@ -18,7 +18,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Jetpack Compose",
+          "heading": " ",
           "items": [
             "Declarative vs Imperative: Compose describes what UI should look like.",
             "Less boilerplate: No XML layouts.",
@@ -58,14 +58,14 @@
         },
         {
           "type": "bullet",
-          "heading": "Declarative UI",
+          "heading": "Note",
           "items": [
             "Compose automatically updates UI on state changes."
           ]
         },
         {
           "type": "text_code",
-          "heading": "Declarative UI",
+          "heading": "Example",
           "content": "",
           "language": "kotlin",
           "code": "@Composable\nfun Greeting(name: String) {\n    Text(text = \"Hello, $name!\")\n}"
@@ -88,13 +88,8 @@
       "title": "Declarative UI vs Imperative UI",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Imperative UI:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Imperative UI:",
           "items": [
             "Describes how to update UI step-by-step",
             "Used in XML + View system",
@@ -102,13 +97,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Declarative UI:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Declarative UI:",
           "items": [
             "Describes what UI should display based on state",
             "Used in Jetpack Compose",
@@ -116,13 +106,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "In Short:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "In Short:",
           "items": [
             "Imperative = Manual updates",
             "Declarative = State-driven UI"
@@ -166,13 +151,6 @@
           "content": "",
           "language": "kotlin",
           "code": "@Composable\nfun Greeting(name: String) {\n    Text(text = \"Hello $name\")\n}"
-        },
-        {
-          "type": "text_code",
-          "heading": "Example",
-          "content": "",
-          "language": "kotlin",
-          "code": ""
         }
       ],
       "askedIn": [
@@ -355,7 +333,7 @@
         },
         {
           "type": "text_code",
-          "heading": "Lifecycle Handling",
+          "heading": "Example",
           "content": "",
           "language": "kotlin",
           "code": "val lifecycleOwner = LocalLifecycleOwner.current\nDisposableEffect(lifecycleOwner) {\n    val observer = LifecycleEventObserver { _, event -> /* handle */ }\n    lifecycleOwner.lifecycle.addObserver(observer)\n    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }\n}"
@@ -723,49 +701,49 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "remember",
           "items": [
             "remember – Keeps state across recompositions."
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val value = remember { computeValue() }"
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "key",
           "items": [
             "key – Recompose only when the key changes."
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "key(user.id) { UserProfile(user) }"
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "derivedStateOf",
           "items": [
             "derivedStateOf – Recompose only if the derived value changes."
           ]
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "val derivedValue by remember { derivedStateOf { state1 + state2 } }"
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Note",
           "items": [
             "Immutable/Stable Data – Helps Compose skip recomposition if the value is unchanged."
           ]
@@ -926,7 +904,7 @@
         },
         {
           "type": "text_code",
-          "heading": "LaunchedEffect",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "LaunchedEffect(userId) { fetchUserData(userId) }"
@@ -941,7 +919,7 @@
         },
         {
           "type": "text_code",
-          "heading": "DisposableEffect",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "DisposableEffect(lifecycleOwner) {\n    val observer = LifecycleEventObserver { _, _ -> }\n    lifecycleOwner.lifecycle.addObserver(observer)\n    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }\n}"
@@ -985,14 +963,14 @@
         },
         {
           "type": "text_code",
-          "heading": "Use Cases",
+          "heading": " ",
           "content": "",
           "language": "kotlin",
           "code": "  val scope = rememberCoroutineScope()\n  Button(onClick = { \n      scope.launch { fetchData() } \n  })"
         },
         {
           "type": "bullet",
-          "heading": "Use Cases",
+          "heading": "Note",
           "items": [
             "Animations triggered by events",
             "Temporary background work tied to a composable"
@@ -1024,7 +1002,7 @@
         },
         {
           "type": "text",
-          "heading": "Introduction",
+          "heading": "Note",
           "content": "Use Case: Initial data loading, animations, or side effects in composables."
         }
       ],

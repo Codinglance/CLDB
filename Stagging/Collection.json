@@ -15,7 +15,7 @@
       "sections": [
         {
           "type": "text",
-          "heading": "Java Collection Framework",
+          "heading": "Introduction",
           "content": "The Java Collection Framework (JCF) is a set of classes and interfaces that provide a unified architecture to store and manipulate groups of objects. Key Interfaces:"
         },
         {
@@ -29,13 +29,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Java Collection Framework",
-          "content": "Benefits:"
-        },
-        {
           "type": "bullet",
-          "heading": "Java Collection Framework",
+          "heading": "Benefits",
           "items": [
             "Reduces programming effort",
             "Increases performance",
@@ -514,13 +509,8 @@
       "title": "What is ConcurrentModificationException? When does it occur?",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "ConcurrentModificationException (Little Longer):"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "ConcurrentModificationException (Little Longer):",
           "items": [
             "A runtime exception in Java thrown by fail-fast iterators",
             "Occurs when a collection is structurally modified during iteration",
@@ -754,8 +744,8 @@
         },
         {
           "type": "text",
-          "heading": "Introduction",
-          "content": "In short: hashCode() decides where the key goes, equals() decides which key it is."
+          "heading": "In short:",
+          "content": "hashCode() decides where the key goes, equals() decides which key it is."
         }
       ],
       "askedIn": [
