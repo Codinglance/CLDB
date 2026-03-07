@@ -18,7 +18,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Where Android is used",
           "items": [
             "Smartphones and tablets",
             "Smart TVs (Android TV)",
@@ -28,13 +28,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Programming Languages Supported :- Android supports application development using multiple programming languages:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Programming Languages Supported :- Android supports application development using multiple programming languages:",
           "items": [
             "Kotlin – Officially recommended by Google, modern, concise, and safe",
             "Java – Original Android language with a large existing codebase",
@@ -193,7 +188,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Why it is used",
           "items": [
             "Maintain global application state",
             "Initialize app-wide libraries (Firebase, analytics, DI, etc.)",
@@ -213,8 +208,8 @@
         },
         {
           "type": "text_code",
-          "heading": "Key Characteristics",
-          "content": "How It Is Used:- Create a custom Application class and register it in the manifest.",
+          "heading": "How It Is Used:-",
+          "content": "Create a custom Application class and register it in the manifest.",
           "language": "kotlin",
           "code": "class MyApp : Application() {\n    override fun onCreate() {\n        super.onCreate()\n        // App-level initialization\n    }\n}"
         }
@@ -242,7 +237,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Why it is used",
           "items": [
             "Install and uninstall apps",
             "Run shell commands on a device",
@@ -294,7 +289,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Why it is used",
           "items": [
             "Compile resource files (XML, images, strings)",
             "Generate the R.java / R class for resource access",
@@ -335,7 +330,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Why it is used",
           "items": [
             "Convert Java/Kotlin bytecode into a format optimized for Android",
             "Reduce memory usage on mobile devices",
@@ -381,7 +376,7 @@
         {
           "type": "text_code",
           "heading": "Example Configuration",
-          "content": "##### Enable Multidex",
+          "content": "Enable Multidex",
           "language": "gradle",
           "code": "android {\n    defaultConfig {\n        multiDexEnabled true\n    }\n}\n\ndependencies {\n    implementation \"androidx.multidex:multidex:2.0.1\"\n}"
         }
@@ -473,43 +468,6 @@
       "expectedReadTime": "45 sec"
     },
     {
-      "id": 12,
-      "question": "How is memory managed in Android OS?",
-      "section": "Android Basics",
-      "difficulty": "Medium",
-      "tags": [
-        "Basics"
-      ],
-      "title": "How is memory managed in Android OS?",
-      "sections": [
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Android manages memory automatically to ensure smooth performance and efficient utilization of system resources. 1. Linux-based Memory Management Android runs on the Linux kernel, which handles low-level memory operations such as paging and allocation. 2. Garbage Collection (GC) Android apps execute on ART (Android Runtime), which automatically frees unused objects through garbage collection, so developers do not need to manually manage memory. 3. Process Priority & Lifecycle Android assigns priority levels to apps based on their state:"
-        },
-        {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "Foreground app – highest priority",
-            "Visible app",
-            "Background app",
-            "Cached app – lowest priority"
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "4. Low Memory Killer (LMK) When system memory is low, Android automatically terminates low-priority background processes to free memory. 5. Shared Resources Common resources like libraries are shared across apps to reduce overall memory consumption."
-        }
-      ],
-      "askedIn": [
-        "Google",
-        "Amazon"
-      ],
-      "expectedReadTime": "1 min"
-    },
-    {
       "id": 13,
       "question": "What is StrictMode?",
       "section": "Android Tools",
@@ -580,19 +538,6 @@
             "Enforce best practices and standards",
             "Prevent runtime crashes"
           ]
-        },
-        {
-          "type": "bullet",
-          "heading": "How It Works",
-          "items": [
-            "Scans Java, Kotlin, XML, and Gradle files",
-            "Provides warnings or errors for:"
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "How It Works",
-          "content": "- Unused resources - Hardcoded text (i18n issues) - Missing permissions - Deprecated APIs - Layout performance issues"
         },
         {
           "type": "bullet",
@@ -876,7 +821,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Cases",
           "items": [
             "Activity finishes early (e.g., finish() during onCreate())",
             "System kills the process due to low memory",
@@ -1039,7 +984,7 @@
         },
         {
           "type": "text",
-          "heading": "2. onStop()",
+          "heading": "Note",
           "content": "The Activity remains in memory and can be resumed later."
         },
         {
@@ -1099,27 +1044,18 @@
       ],
       "title": "Lifecycle when navigating from Activity A → Activity B",
       "sections": [
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Activity A"
-        },
+
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Activity A",
           "items": [
             "onPause() → loses focus",
             "onStop() → no longer visible"
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Activity B"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Activity B",
           "items": [
             "onCreate() → created",
             "onStart() → visible",
@@ -1128,8 +1064,8 @@
         },
         {
           "type": "text",
-          "heading": "Introduction",
-          "content": "Flow A: onPause → onStop B: onCreate → onStart → onResume Note"
+          "heading": "Flow",
+          "content": "A: onPause → onStop B: onCreate → onStart → onResume Note"
         },
         {
           "type": "bullet",
@@ -1158,7 +1094,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Activity B",
           "items": [
             "onPause() → loses focus",
             "onStop() → not visible",
@@ -1166,13 +1102,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Activity A"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Activity A",
           "items": [
             "onRestart() → coming back",
             "onStart() → visible",
@@ -1181,8 +1112,8 @@
         },
         {
           "type": "text",
-          "heading": "Introduction",
-          "content": "Flow B: onPause → onStop → onDestroy A: onRestart → onStart → onResume"
+          "heading": "Flow",
+          "content": "onPause → onStop → onDestroy A: onRestart → onStart → onResume"
         }
       ]
     },
@@ -1265,39 +1196,24 @@
       "title": "Difference between Intent and Bundle",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Intent"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Intent",
           "items": [
             "Used to start Activities/Services or send broadcasts",
             "Can carry data and navigation info"
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Bundle"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Bundle",
           "items": [
             "A key-value data container",
             "Used to pass data via Intent or save state"
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "In Short"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "In Short",
           "items": [
             "Intent = navigation + data",
             "Bundle = data only"
@@ -1369,13 +1285,8 @@
           "code": "// Start MainActivity multiple times\nval intent = Intent(this, MainActivity::class.java)\nstartActivity(intent)\nstartActivity(intent)"
         },
         {
-          "type": "text",
-          "heading": "Example",
-          "content": "`"
-        },
-        {
           "type": "bullet",
-          "heading": "Example",
+          "heading": "Note",
           "items": [
             "Result: Two separate instances of MainActivity are now in the back stack."
           ]
@@ -1412,174 +1323,6 @@
           "content": "",
           "language": "kotlin",
           "code": "// Activity A is at the top of the stack\nval intent = Intent(this, ActivityA::class.java)\nstartActivity(intent) // onNewIntent() is called instead of creating a new instance"
-        },
-        {
-          "type": "text",
-          "heading": "Example",
-          "content": "`"
-        }
-      ]
-    },
-    {
-      "id": 35,
-      "question": "Explain singleTask launchMode",
-      "section": "Activity Launch Modes",
-      "difficulty": "Medium",
-      "tags": [
-        "Activity"
-      ],
-      "title": "Explain singleTask launchMode",
-      "sections": [
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "singleTask is a launch mode that ensures only one instance of an Activity exists in the system, and it is reused if it already exists anywhere in the back stack."
-        },
-        {
-          "type": "bullet",
-          "heading": "How It Works",
-          "items": [
-            "If the Activity already exists in the back stack:"
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "How It Works",
-          "content": "- The system brings that instance to the foreground. - All Activities above it in the stack are destroyed. - onNewIntent() is called with the new Intent."
-        },
-        {
-          "type": "bullet",
-          "heading": "How It Works",
-          "items": [
-            "If the Activity does not exist, a new instance is created."
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Example",
-          "content": "",
-          "language": "kotlin",
-          "code": "// MainActivity is launched with singleTask\nval intent = Intent(this, MainActivity::class.java)\nstartActivity(intent)"
-        },
-        {
-          "type": "text",
-          "heading": "Example",
-          "content": "`"
-        },
-        {
-          "type": "bullet",
-          "heading": "Example",
-          "items": [
-            "If MainActivity exists anywhere in the stack, it is reused, and other Activities above it are removed."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 36,
-      "question": "Explain singleInstance launchMode",
-      "section": "Activity Launch Modes",
-      "difficulty": "Medium",
-      "tags": [
-        "Activity"
-      ],
-      "title": "Explain singleInstance launchMode",
-      "sections": [
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "singleInstance is a special launch mode that ensures only one instance of an Activity exists, and it resides in its own separate task. No other Activity can be launched in the same task."
-        },
-        {
-          "type": "bullet",
-          "heading": "How It Works",
-          "items": [
-            "The Activity runs in a separate task, isolated from other Activities.",
-            "If the Activity already exists:"
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "How It Works",
-          "content": "- It is reused, and onNewIntent() is called. - No other Activities can be part of its task."
-        },
-        {
-          "type": "bullet",
-          "heading": "How It Works",
-          "items": [
-            "Useful for Activities that must always be standalone, like a special media player or system-level screen."
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Example",
-          "content": "",
-          "language": "xml",
-          "code": "<activity\n    android:name=\".SpecialActivity\"\n    android:launchMode=\"singleInstance\" />"
-        },
-        {
-          "type": "text",
-          "heading": "Example",
-          "content": "`"
-        },
-        {
-          "type": "bullet",
-          "heading": "Example",
-          "items": [
-            "Launching SpecialActivity multiple times reuses the same instance in its separate task."
-          ]
-        }
-      ]
-    },
-    {
-      "id": 37,
-      "question": "What are tasks and back stack?",
-      "section": "Tasks & Back Stack",
-      "difficulty": "Medium",
-      "tags": [
-        "Activity"
-      ],
-      "title": "What are tasks and back stack?",
-      "sections": [
-        {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "Task: A collection of Activities working toward a goal, organized like a stack."
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Example: Opening an email app → reading → composing."
-        },
-        {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "Back Stack: LIFO stack managing Activity order. Top is the current Activity."
-          ]
-        },
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Pressing Back pops the top Activity and resumes the previous one."
-        },
-        {
-          "type": "bullet",
-          "heading": "Example",
-          "items": [
-            "User opens Activity A → pushed onto stack",
-            "Navigates to Activity B → pushed onto stack",
-            "Presses Back → Activity B popped, Activity A resumes"
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Example",
-          "content": "",
-          "language": "kotlin",
-          "code": "Stack after opening B: [A, B]  (B on top)\nPress Back: [A]  (B removed)"
         }
       ]
     },
@@ -1616,7 +1359,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Example",
+          "heading": "Note",
           "items": [
             "SpecialActivity will prefer to run in a task named com.example.specialtask.",
             "Useful for creating separate tasks for specific Activities (e.g., for multi-window apps or notifications)."
@@ -1641,7 +1384,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Values",
           "items": [
             "internalOnly → Install on internal storage (default).",
             "preferExternal → Prefer SD card, fallback to internal.",
@@ -1650,15 +1393,15 @@
         },
         {
           "type": "text_code",
-          "heading": "Introduction",
-          "content": "Example:",
+          "heading": "Example",
+          "content": "",
           "language": "xml",
           "code": "<application\n    android:installLocation=\"preferExternal\"\n    android:label=\"@string/app_name\" />"
         },
         {
           "type": "text",
-          "heading": "Introduction",
-          "content": "` Key Point: Controls storage use; some features may not work on SD card."
+          "heading": "Key Point",
+          "content": " Controls storage use; some features may not work on SD card."
         }
       ],
       "askedIn": [
@@ -1686,13 +1429,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Lifecycle Mapping (Simplified):"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Lifecycle Mapping (Simplified):",
           "items": [
             "Activity onCreate() → Fragment onAttach() → onCreateView()",
             "Activity onStart() → Fragment onStart()",
@@ -1703,13 +1441,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Key Points:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Key Points:",
           "items": [
             "Fragment depends on Activity but can manage its own UI.",
             "Proper lifecycle handling prevents memory leaks and ensures smooth UI updates."
@@ -1721,79 +1454,6 @@
         "Amazon"
       ],
       "expectedReadTime": "2 min"
-    },
-    {
-      "id": 41,
-      "question": "How do we save and restore an activity's state during screen rotation?",
-      "section": "Activity & Fragment",
-      "difficulty": "Medium",
-      "tags": [
-        "Activity"
-      ],
-      "title": "How do we save and restore an activity's state during screen rotation?",
-      "sections": [
-        {
-          "type": "text_code",
-          "heading": "Introduction",
-          "content": "When an Activity rotates, it is destroyed and recreated. To preserve state:",
-          "language": "kotlin",
-          "code": "override fun onSaveInstanceState(outState: Bundle) {\n    super.onSaveInstanceState(outState)\n    outState.putString(\"username\", editText.text.toString())\n}\noverride fun onCreate(savedInstanceState: Bundle?) {\n    super.onCreate(savedInstanceState)\n    editText.setText(savedInstanceState?.getString(\"username\"))\n}"
-        },
-        {
-          "type": "text",
-          "heading": "2. ViewModel",
-          "content": "`kotlin val viewModel = ViewModelProvider(this).get(MyViewModel::class.java) editText.setText(viewModel.username) viewModel.username = editText.text.toString()"
-        }
-      ],
-      "askedIn": [
-        "Google",
-        "Amazon"
-      ],
-      "expectedReadTime": "1 min"
-    },
-    {
-      "id": 42,
-      "question": "What is a Bundle?",
-      "section": "Activity & Fragment",
-      "difficulty": "Easy",
-      "tags": [
-        "Activity"
-      ],
-      "title": "What is a Bundle?",
-      "sections": [
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "In Android, a Bundle is a key-value data container used to pass information between components like Activities, Fragments, or Services."
-        },
-        {
-          "type": "bullet",
-          "heading": "Introduction",
-          "items": [
-            "Stores data as primitive types, Strings, Parcelable, or Serializable objects.",
-            "Often used with:"
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Introduction",
-          "content": "- Intents to pass data between Activities. - Fragments via setArguments() or getArguments(). - onSaveInstanceState()` to save Activity state.",
-          "language": "kotlin",
-          "code": "val bundle = Bundle()\nbundle.putString(\"username\", \"Aasim\")\n\nval intent = Intent(this, SecondActivity::class.java)\nintent.putExtras(bundle)\nstartActivity(intent)"
-        },
-        {
-          "type": "text_code",
-          "heading": "Example in Fragment",
-          "content": "",
-          "language": "kotlin",
-          "code": "val fragment = MyFragment()\nval bundle = Bundle()\nbundle.putInt(\"userId\", 101)\nfragment.arguments = bundle"
-        }
-      ],
-      "askedIn": [
-        "Google",
-        "Amazon"
-      ],
-      "expectedReadTime": "1 min"
     },
     {
       "id": 43,
@@ -1840,50 +1500,6 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min"
-    },
-    {
-      "id": 44,
-      "question": "How do you declare the launch mode in your application?",
-      "section": "Activity & Fragment",
-      "difficulty": "Medium",
-      "tags": [
-        "Activity"
-      ],
-      "title": "How do you declare the launch mode in your application?",
-      "sections": [
-        {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "In Android, you can declare an Activity's launch mode in the AndroidManifest.xml file using the android:launchMode attribute."
-        },
-        {
-          "type": "bullet",
-          "heading": "Steps to Declare Launch Mode",
-          "items": [
-            "Open AndroidManifest.xml.",
-            "Inside the <activity> tag, add android:launchMode with one of the following values:"
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Steps to Declare Launch Mode",
-          "content": "- standard (default) - singleTop - singleTask - singleInstance",
-          "language": "xml",
-          "code": "<activity\n    android:name=\".MainActivity\"\n    android:launchMode=\"singleTop\" />"
-        },
-        {
-          "type": "bullet",
-          "heading": "Example",
-          "items": [
-            "This ensures that if MainActivity is already at the top of the stack, no new instance is created; onNewIntent() is called instead."
-          ]
-        }
-      ],
-      "askedIn": [
-        "Google",
-        "Amazon"
-      ],
-      "expectedReadTime": "2 min"
     },
     {
       "id": 45,
@@ -2043,13 +1659,8 @@
       "title": "Fragment lifecycle when launched",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Sequence:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Sequence:",
           "items": [
             "onAttach() → attached to Activity",
             "onCreate() → initialize non-UI data",
@@ -2060,13 +1671,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Key Points:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Key Points:",
           "items": [
             "Lifecycle tied to host Activity",
             "Ensures UI readiness and efficient resource use"
@@ -2090,13 +1696,8 @@
       "title": "Fragment lifecycle when back button is pressed",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Sequence:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Sequence:",
           "items": [
             "onPause() → loses focus",
             "onStop() → not visible",
@@ -2106,13 +1707,8 @@
           ]
         },
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Key Points:"
-        },
-        {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Key Points:",
           "items": [
             "Back press removes Fragment UI and instance",
             "Use ViewModel or savedInstanceState to preserve data",
