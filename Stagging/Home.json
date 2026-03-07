@@ -48,18 +48,26 @@
         "icon": " "
       }
     ],
-    "cheat_sheet": [
+    "cheat_sheets": [
       {
-        "cheatSheetId": "CheatSheet",
-        "cheatSheetTitle": "CheatSheet",
-        "cheatSheetQuestions": "50",
-        "icon": " "
+        "id": "k1",
+        "categoryId": "kotlin",
+        "title": "Kotlin Basics",
+        "subtitle": "val/var, null safety, lambdas & more",
+        "emoji": "📝",
+        "color": "#2EC4B6",
+        "totalItems": 20,
+        "tag": "Basics"
       },
       {
-        "cheatSheetId": "CheatSheet",
-        "cheatSheetTitle": "CheatSheet",
-        "cheatSheetQuestions": "50",
-        "icon": " "
+        "id": "gi1",
+        "categoryId": "git",
+        "title": "Git Commands",
+        "subtitle": "commit, push, pull, rebase, stash & more",
+        "emoji": "📟",
+        "color": "#0EA5E9",
+        "totalItems": 15,
+        "tag": "Commands"
       }
     ]
   },
