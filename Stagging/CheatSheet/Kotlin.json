@@ -1,6 +1,8 @@
 {
   "title": "Kotlin Cheat Sheet",
   "subTitle": "Basics, Functions, Classes & OOP and more",
+  "emoji": "📝",
+  "tag":"Basics",
   "categories": [
     {
       "id": "basics",
