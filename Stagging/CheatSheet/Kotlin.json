@@ -1,4 +1,6 @@
 {
+  "title": "Kotlin Cheat Sheet",
+  "subTitle": "Basics, Functions, Classes & OOP and more",
   "categories": [
     {
       "id": "basics",
@@ -342,7 +344,7 @@
     },
     {
       "id": "coroutines",
-      "label": "Coroutines",
+      "label": "Basics",
       "emoji": "⚡",
       "items": [
         {
