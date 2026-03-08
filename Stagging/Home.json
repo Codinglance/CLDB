@@ -51,7 +51,7 @@
     "cheat_sheets": [
       {
         "id": "k1",
-        "categoryId": "kotlin",
+        "categoryId": "Kotlin",
         "title": "Kotlin Basics",
         "subtitle": "val/var, null safety, lambdas & more",
         "emoji": "📝",
@@ -61,7 +61,7 @@
       },
       {
         "id": "gi1",
-        "categoryId": "git",
+        "categoryId": "Git",
         "title": "Git Commands",
         "subtitle": "commit, push, pull, rebase, stash & more",
         "emoji": "📟",
