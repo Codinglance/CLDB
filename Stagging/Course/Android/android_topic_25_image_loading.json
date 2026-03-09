@@ -1,0 +1,471 @@
+{
+  "title": "Image Loading with Glide & Coil",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Use an Image Loading Library?",
+      "content": "Loading images in Android sounds simple but is actually one of the most complex tasks in the platform. Images from the network or disk must be decoded from compressed formats (JPEG, PNG, WebP) into raw Bitmap objects that consume enormous amounts of memory — a single 12MP photo can occupy over 48MB of RAM when decoded. Without a specialized library, developers must manually handle network downloads, memory caching, disk caching, Bitmap pooling, downsampling to fit target view sizes, placeholder display, error handling, and lifecycle cancellation. Image loading libraries like Glide and Coil solve all of these problems out of the box with a single line of code."
+    },
+    {
+      "type": "bullet",
+      "heading": "What Image Loading Libraries Handle",
+      "items": [
+        "Network downloading — fetches image bytes from URLs on a background thread",
+        "Memory caching — keeps recently loaded Bitmaps in an LRU memory cache for instant re-display",
+        "Disk caching — persists decoded or original images to disk so network fetches are skipped on subsequent loads",
+        "Downsampling — decodes images at the exact size needed by the target ImageView, not full resolution",
+        "Bitmap pooling — reuses Bitmap objects from a pool to reduce garbage collection pressure",
+        "Placeholder images — shows a loading drawable while the real image downloads",
+        "Error images — shows a fallback drawable when the image fails to load",
+        "Lifecycle awareness — cancels pending image loads when the associated Activity or Fragment is destroyed",
+        "Transformations — applies rounded corners, circular crops, blur, grayscale, and other effects",
+        "Animated GIF and WebP support — plays animated formats natively"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Glide vs Coil",
+      "rows": [
+        {
+          "aspect": "Language",
+          "glide": "Java-based library with Kotlin extensions",
+          "coil": "100% Kotlin — built from the ground up for Kotlin and coroutines"
+        },
+        {
+          "aspect": "Kotlin Coroutines",
+          "glide": "Partial — not natively coroutine-based",
+          "coil": "Native — built on coroutines and OkHttp"
+        },
+        {
+          "aspect": "Library size",
+          "glide": "Larger — ~500KB AAR",
+          "coil": "Smaller — ~300KB; uses system libraries where possible"
+        },
+        {
+          "aspect": "OkHttp integration",
+          "glide": "Optional — add glide-okhttp3-integration",
+          "coil": "Built-in — uses OkHttp by default (shared with Retrofit)"
+        },
+        {
+          "aspect": "Lifecycle awareness",
+          "glide": "Yes — ties requests to Activity/Fragment lifecycle",
+          "coil": "Yes — uses Compose lifecycle or coroutine scope"
+        },
+        {
+          "aspect": "Jetpack Compose support",
+          "glide": "Via compose extension library",
+          "coil": "First-class — AsyncImage composable built in"
+        },
+        {
+          "aspect": "Maturity",
+          "glide": "Very mature — used in Google apps; extensive community",
+          "coil": "Newer but growing rapidly; actively maintained by Instacart"
+        },
+        {
+          "aspect": "Annotation processing",
+          "glide": "Optional — GlideApp via @GlideModule annotation and kapt",
+          "coil": "None — no annotation processing needed"
+        },
+        {
+          "aspect": "Recommendation",
+          "glide": "Excellent for large projects and maximum stability",
+          "coil": "Preferred for new Kotlin-first or Compose projects"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Glide — Setup and Basic Usage",
+      "content": "Glide is developed by Bumptech and used extensively within Google's own apps. It provides a fluent builder API for loading images from URLs, resources, files, and content URIs into ImageViews. Glide automatically manages its own memory and disk caches, handles Bitmap recycling, and ties request lifecycles to Android lifecycle owners. Adding Glide to your project requires a dependency and optionally a GlideModule for custom configuration."
+    },
+    {
+      "type": "bullet",
+      "heading": "Glide Setup and Installation",
+      "items": [
+        "Add dependency: implementation(\"com.github.bumptech.glide:glide:4.16.x\")",
+        "For custom configuration via AppGlideModule, add kapt: kapt(\"com.github.bumptech.glide:compiler:4.16.x\")",
+        "For OkHttp integration: implementation(\"com.github.bumptech.glide:okhttp3-integration:4.16.x\")",
+        "No additional manifest permissions needed — Glide uses the INTERNET permission already declared for networking",
+        "Basic load: Glide.with(context).load(imageUrl).into(imageView)",
+        "Glide.with() accepts Context, Activity, Fragment, FragmentActivity, or View",
+        "Passing a Fragment or Activity to with() ties the request to that component's lifecycle",
+        "Glide.with(applicationContext) loads without lifecycle awareness — use sparingly"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Glide RequestBuilder Options",
+      "rows": [
+        {
+          "method": ".load(url)",
+          "description": "Sets the image source — String URL, Uri, File, resource ID, or ByteArray",
+          "example": ".load(\"https://example.com/photo.jpg\")"
+        },
+        {
+          "method": ".placeholder(drawable)",
+          "description": "Shows a drawable while the image is loading",
+          "example": ".placeholder(R.drawable.ic_image_placeholder)"
+        },
+        {
+          "method": ".error(drawable)",
+          "description": "Shows a drawable when the image fails to load",
+          "example": ".error(R.drawable.ic_broken_image)"
+        },
+        {
+          "method": ".fallback(drawable)",
+          "description": "Shows a drawable when the load URL is null",
+          "example": ".fallback(R.drawable.ic_person)"
+        },
+        {
+          "method": ".centerCrop()",
+          "description": "Scales and crops the image to fill the ImageView — maintains aspect ratio",
+          "example": ".centerCrop()"
+        },
+        {
+          "method": ".fitCenter()",
+          "description": "Scales image to fit within the ImageView — may leave empty space",
+          "example": ".fitCenter()"
+        },
+        {
+          "method": ".circleCrop()",
+          "description": "Applies a circular crop transformation — commonly used for profile photos",
+          "example": ".circleCrop()"
+        },
+        {
+          "method": ".override(width, height)",
+          "description": "Decodes image at specified dimensions — overrides automatic size detection",
+          "example": ".override(200, 200)"
+        },
+        {
+          "method": ".thumbnail(0.1f)",
+          "description": "Loads a low-quality thumbnail first, then replaces with full-quality image",
+          "example": ".thumbnail(0.25f)"
+        },
+        {
+          "method": ".diskCacheStrategy(strategy)",
+          "description": "Controls how the image is cached on disk",
+          "example": ".diskCacheStrategy(DiskCacheStrategy.ALL)"
+        },
+        {
+          "method": ".skipMemoryCache(true)",
+          "description": "Bypasses the memory cache — use for frequently changing images like user avatars",
+          "example": ".skipMemoryCache(true)"
+        },
+        {
+          "method": ".transition(DrawableTransitionOptions.withCrossFade())",
+          "description": "Adds a cross-fade animation when the image replaces the placeholder",
+          "example": ".transition(DrawableTransitionOptions.withCrossFade())"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Glide Disk Cache Strategies",
+      "items": [
+        "DiskCacheStrategy.ALL — caches both the original source image and the downsampled/transformed result",
+        "DiskCacheStrategy.AUTOMATIC — default; Glide decides what to cache based on the source type",
+        "DiskCacheStrategy.DATA — caches only the original compressed source data before decoding",
+        "DiskCacheStrategy.RESOURCE — caches only the transformed, decoded Bitmap result",
+        "DiskCacheStrategy.NONE — disables disk caching entirely — use for real-time or frequently changing images",
+        "Clearing disk cache (must be on background thread): Glide.get(context).clearDiskCache()",
+        "Clearing memory cache (must be on main thread): Glide.get(context).clearMemory()",
+        "Cache size is configurable via a custom AppGlideModule with applyOptions()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Glide Transformations",
+      "rows": [
+        {
+          "transformation": "CenterCrop",
+          "description": "Scales image to fill view, crops excess — no empty space",
+          "usage": ".centerCrop() or .transform(CenterCrop())"
+        },
+        {
+          "transformation": "FitCenter",
+          "description": "Scales image to fit view, may leave empty areas",
+          "usage": ".fitCenter() or .transform(FitCenter())"
+        },
+        {
+          "transformation": "CircleCrop",
+          "description": "Clips image into a circle — profile photos",
+          "usage": ".circleCrop() or .transform(CircleCrop())"
+        },
+        {
+          "transformation": "RoundedCorners",
+          "description": "Applies rounded corners to image",
+          "usage": ".transform(RoundedCorners(radiusInPx))"
+        },
+        {
+          "transformation": "GranularRoundedCorners",
+          "description": "Different corner radius per corner",
+          "usage": ".transform(GranularRoundedCorners(topLeft, topRight, bottomRight, bottomLeft))"
+        },
+        {
+          "transformation": "Multiple transforms",
+          "description": "Apply multiple transformations in sequence",
+          "usage": ".transform(CenterCrop(), RoundedCorners(16))"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Coil — Setup and Basic Usage",
+      "content": "Coil (Coroutine Image Loader) is a modern image loading library built entirely in Kotlin, using coroutines for async operations and OkHttp for networking. Its API is more idiomatic Kotlin than Glide's Java-heritage API. Coil integrates natively with Jetpack Compose through its AsyncImage composable, making it the recommended choice for Compose-based projects. For traditional View-based apps, Coil provides extension functions on ImageView for a clean, concise loading syntax."
+    },
+    {
+      "type": "bullet",
+      "heading": "Coil Setup and Installation",
+      "items": [
+        "For View-based apps: implementation(\"io.coil-kt:coil:2.7.x\")",
+        "For Compose apps: implementation(\"io.coil-kt:coil-compose:2.7.x\")",
+        "For GIF support: implementation(\"io.coil-kt:coil-gif:2.7.x\")",
+        "For SVG support: implementation(\"io.coil-kt:coil-svg:2.7.x\")",
+        "No annotation processing required — Coil works without kapt or KSP",
+        "Coil reuses your app's existing OkHttp instance — no separate HTTP client needed",
+        "Basic load (View): imageView.load(imageUrl)",
+        "Basic load with config: imageView.load(url) { placeholder(R.drawable.loading); error(R.drawable.error) }",
+        "Coil uses a singleton ImageLoader by default — configurable via Coil.setImageLoader()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Coil ImageView Extension Options",
+      "rows": [
+        {
+          "option": "placeholder(drawableRes)",
+          "description": "Drawable shown while image loads",
+          "example": "imageView.load(url) { placeholder(R.drawable.ic_placeholder) }"
+        },
+        {
+          "option": "error(drawableRes)",
+          "description": "Drawable shown when load fails",
+          "example": "imageView.load(url) { error(R.drawable.ic_error) }"
+        },
+        {
+          "option": "fallback(drawableRes)",
+          "description": "Drawable shown when URL is null",
+          "example": "imageView.load(null) { fallback(R.drawable.ic_person) }"
+        },
+        {
+          "option": "crossfade(true)",
+          "description": "Enables cross-fade animation between placeholder and loaded image",
+          "example": "imageView.load(url) { crossfade(true) }"
+        },
+        {
+          "option": "crossfade(durationMs)",
+          "description": "Enables cross-fade with custom duration in milliseconds",
+          "example": "imageView.load(url) { crossfade(400) }"
+        },
+        {
+          "option": "size(width, height)",
+          "description": "Decodes image at specified size — overrides automatic detection",
+          "example": "imageView.load(url) { size(200, 200) }"
+        },
+        {
+          "option": "transformations(vararg)",
+          "description": "Applies one or more transformations to the loaded image",
+          "example": "imageView.load(url) { transformations(CircleCropTransformation()) }"
+        },
+        {
+          "option": "memoryCachePolicy(Policy)",
+          "description": "Controls memory cache behavior: ENABLED, DISABLED, READ_ONLY, WRITE_ONLY",
+          "example": "imageView.load(url) { memoryCachePolicy(CachePolicy.DISABLED) }"
+        },
+        {
+          "option": "diskCachePolicy(Policy)",
+          "description": "Controls disk cache behavior: ENABLED, DISABLED, READ_ONLY, WRITE_ONLY",
+          "example": "imageView.load(url) { diskCachePolicy(CachePolicy.ENABLED) }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Coil Transformations",
+      "items": [
+        "CircleCropTransformation() — clips image into a circle for avatars and profile photos",
+        "RoundedCornersTransformation(radius) — applies uniform rounded corners to all four sides",
+        "BlurTransformation(context, radius, sampling) — applies a blur effect to the image",
+        "GrayscaleTransformation() — converts the image to grayscale",
+        "Apply multiple: imageView.load(url) { transformations(CircleCropTransformation(), BlurTransformation(context, 10f)) }",
+        "Transformations are applied in order — the output of each becomes the input of the next",
+        "Custom transformations implement the Transformation interface and override transform()",
+        "Transformed results are cached with a unique key that includes the transformation parameters"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Coil in Jetpack Compose",
+      "rows": [
+        {
+          "api": "AsyncImage",
+          "description": "Primary Compose composable for loading network images — replaces SubcomposeAsyncImage for most use cases",
+          "example": "AsyncImage(model = imageUrl, contentDescription = \"Profile photo\", modifier = Modifier.size(64.dp))"
+        },
+        {
+          "api": "AsyncImage with request",
+          "description": "Full ImageRequest configuration inside AsyncImage",
+          "example": "AsyncImage(model = ImageRequest.Builder(context).data(url).crossfade(true).build(), contentDescription = null)"
+        },
+        {
+          "api": "SubcomposeAsyncImage",
+          "description": "Compose composable with slots for loading, success, and error states",
+          "example": "SubcomposeAsyncImage(model = url, loading = { CircularProgressIndicator() }, error = { ErrorIcon() }, contentDescription = null)"
+        },
+        {
+          "api": "rememberAsyncImagePainter",
+          "description": "Returns a Painter for use in Image() composable — for custom image composables",
+          "example": "Image(painter = rememberAsyncImagePainter(url), contentDescription = null)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Custom ImageLoader Configuration (Coil)",
+      "items": [
+        "Create a custom ImageLoader: val imageLoader = ImageLoader.Builder(context).okHttpClient(okHttpClient).build()",
+        "Share the app's existing OkHttpClient (with auth interceptors) with Coil: .okHttpClient { okHttpClient }",
+        "Set global ImageLoader in Application class: Coil.setImageLoader(imageLoader)",
+        "Configure memory cache size: .memoryCache { MemoryCache.Builder(context).maxSizePercent(0.25).build() }",
+        "Configure disk cache size: .diskCache { DiskCache.Builder().directory(cacheDir).maxSizeBytes(50L * 1024 * 1024).build() }",
+        "Add a logger for debugging: .logger(DebugLogger())",
+        "Inject the custom ImageLoader via Hilt and pass it to load() calls or AsyncImage",
+        "Use a custom ImageLoader when Coil needs to share auth headers or certificates with your Retrofit OkHttpClient"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Loading Different Image Sources",
+      "rows": [
+        {
+          "source": "Network URL",
+          "glide": "Glide.with(ctx).load(\"https://...\").into(iv)",
+          "coil": "imageView.load(\"https://...\")"
+        },
+        {
+          "source": "Drawable resource",
+          "glide": "Glide.with(ctx).load(R.drawable.image).into(iv)",
+          "coil": "imageView.load(R.drawable.image)"
+        },
+        {
+          "source": "File on disk",
+          "glide": "Glide.with(ctx).load(File(\"/path/to/file.jpg\")).into(iv)",
+          "coil": "imageView.load(File(\"/path/to/file.jpg\"))"
+        },
+        {
+          "source": "Content URI",
+          "glide": "Glide.with(ctx).load(contentUri).into(iv)",
+          "coil": "imageView.load(contentUri)"
+        },
+        {
+          "source": "Bitmap",
+          "glide": "Glide.with(ctx).load(bitmap).into(iv)",
+          "coil": "imageView.load(bitmap)"
+        },
+        {
+          "source": "Byte array",
+          "glide": "Glide.with(ctx).load(byteArray).into(iv)",
+          "coil": "imageView.load(byteArray)"
+        },
+        {
+          "source": "null (show fallback)",
+          "glide": "Glide.with(ctx).load(null as String?).fallback(R.drawable.ic_person).into(iv)",
+          "coil": "imageView.load(null as String?) { fallback(R.drawable.ic_person) }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Image Loading in RecyclerView",
+      "items": [
+        "Call Glide.with(fragment) or imageView.load() inside onBindViewHolder() — both libraries cancel previous loads automatically when a View is recycled",
+        "Glide handles RecyclerView recycling correctly — starting a new load on a recycled ViewHolder cancels the previous in-flight request",
+        "Coil cancels the previous load when a new load() is called on the same ImageView",
+        "Set a fixed size on ImageView in your item layout — avoids Glide/Coil needing to calculate size dynamically",
+        "Use Glide's RecyclerViewPreloader for pre-loading upcoming items before the user scrolls to them",
+        "Use Glide.with(fragment).clear(imageView) to explicitly cancel a load and clear the ImageView",
+        "For placeholder stability: set a consistent placeholder so the ImageView doesn't flash blank between recycles",
+        "Avoid loading very large images in list items — use thumbnail() in Glide or appropriate size() in Coil"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Preloading and Prefetching Images",
+      "rows": [
+        {
+          "approach": "Glide preload into memory",
+          "description": "Preloads an image URL into Glide's cache without displaying it",
+          "usage": "Glide.with(context).load(url).preload(width, height)"
+        },
+        {
+          "approach": "Glide downloadOnly",
+          "description": "Downloads and caches the image file to disk without decoding it",
+          "usage": "Glide.with(context).download(url).into(SimpleTarget<File>())"
+        },
+        {
+          "approach": "Coil prefetch",
+          "description": "Prefetches an image URL into Coil's disk cache",
+          "usage": "val request = ImageRequest.Builder(context).data(url).memoryCachePolicy(DISABLED).build(); imageLoader.enqueue(request)"
+        },
+        {
+          "approach": "Glide RecyclerViewPreloader",
+          "description": "Automatically preloads upcoming RecyclerView items as the user scrolls",
+          "usage": "val preloader = RecyclerViewPreloader(Glide.with(this), preloadProvider, sizeProvider, preloadCount); recyclerView.addOnScrollListener(preloader)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for Image Loading",
+      "items": [
+        "Always use an image loading library — never manually decode Bitmaps in app code",
+        "Set fixed dimensions on ImageViews in XML layouts — prevents the library from needing wrap_content size calculations",
+        "Use circleCrop() / CircleCropTransformation() for profile photos instead of ShapeableImageView clipping",
+        "Always set a placeholder to avoid the blank flash before images load",
+        "Always set an error drawable to handle failed loads gracefully without showing broken image icons",
+        "Use the same OkHttpClient instance for both Retrofit and Coil to share connection pools and interceptors",
+        "Clear image loads when the View is no longer needed to prevent background work after navigation",
+        "Avoid loading full-resolution images into small thumbnails — use override() in Glide or size() in Coil"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Image Loading Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Loading images without placeholder or error drawables",
+          "fix": "Always set .placeholder() and .error() to handle both loading state and failures gracefully"
+        },
+        {
+          "mistake": "Using Glide.with(applicationContext) in a Fragment",
+          "fix": "Use Glide.with(fragment) or Glide.with(viewLifecycleOwner) to tie the load to the Fragment lifecycle"
+        },
+        {
+          "mistake": "Loading images on the main thread manually",
+          "fix": "Never use BitmapFactory.decodeStream() on the main thread — always use Glide or Coil for async loading"
+        },
+        {
+          "mistake": "Loading full-resolution images into small thumbnail views",
+          "fix": "Use .override(width, height) in Glide or .size(width, height) in Coil to downsample at load time"
+        },
+        {
+          "mistake": "Not clearing loads in RecyclerView onViewRecycled()",
+          "fix": "Glide and Coil handle cancellation on rebind automatically but explicit Glide.with(ctx).clear(iv) is cleaner"
+        },
+        {
+          "mistake": "Disabling disk cache for frequently updated images without reason",
+          "fix": "For dynamic images, use skipMemoryCache(true) and append a cache-busting query param to the URL instead"
+        },
+        {
+          "mistake": "Applying heavy transformations in onBindViewHolder()",
+          "fix": "Transformations are cached by Glide and Coil after first application — subsequent loads hit the cache"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Image loading is one of the most performance-sensitive tasks in Android development, and dedicated libraries like Glide and Coil exist precisely because doing it correctly requires solving a dozen interconnected problems simultaneously. Glide is the battle-tested, feature-rich choice with decades of Android experience behind it. Coil is the modern, Kotlin-first alternative that integrates naturally with coroutines and Jetpack Compose. Both libraries handle caching, downsampling, transformations, placeholders, and lifecycle management automatically. Choose Glide for maximum stability and ecosystem compatibility, Coil for Kotlin-first and Compose projects — and in either case, always set placeholders, use lifecycle-aware contexts, and load images at the appropriate size for their target view."
+    }
+  ]
+}

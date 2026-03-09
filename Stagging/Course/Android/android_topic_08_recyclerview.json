@@ -1,0 +1,347 @@
+{
+  "title": "RecyclerView & Adapters",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is RecyclerView?",
+      "content": "RecyclerView is Android's most powerful and flexible widget for displaying large scrollable lists and grids of data. It is the modern replacement for the older ListView and GridView. The name 'RecyclerView' comes from its core optimization: instead of creating a new View for every item in the list, it recycles off-screen item Views and rebinds them with new data as the user scrolls. This makes it extremely memory-efficient and smooth even with thousands of items."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why RecyclerView Over ListView?",
+      "items": [
+        "View recycling is mandatory and built-in — no need for the ViewHolder pattern workaround",
+        "Supports multiple layout managers: vertical list, horizontal list, grid, staggered grid",
+        "Built-in support for item animations — add, remove, and move animations out of the box",
+        "DiffUtil support for efficient, animated list updates without full redraws",
+        "Supports item decorations for dividers, spacing, and custom drawing between items",
+        "Supports multiple view types in the same list (e.g., header + items + footer)",
+        "ItemTouchHelper provides drag-and-drop and swipe-to-dismiss with minimal code",
+        "ConcatAdapter allows combining multiple adapters for complex list structures"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "RecyclerView Core Components",
+      "rows": [
+        {
+          "component": "RecyclerView",
+          "role": "The scrollable container View placed in your XML layout"
+        },
+        {
+          "component": "RecyclerView.Adapter",
+          "role": "Bridges your data source to the RecyclerView; creates and binds ViewHolders"
+        },
+        {
+          "component": "RecyclerView.ViewHolder",
+          "role": "Holds references to the Views for a single list item to avoid repeated findViewById calls"
+        },
+        {
+          "component": "LayoutManager",
+          "role": "Determines how items are arranged: list, grid, or staggered grid"
+        },
+        {
+          "component": "ItemDecoration",
+          "role": "Adds visual decorations like dividers, spacing, or custom drawing around items"
+        },
+        {
+          "component": "ItemAnimator",
+          "role": "Handles animations for item add, remove, and change operations"
+        },
+        {
+          "component": "DiffUtil",
+          "role": "Calculates the minimum set of changes between two lists for efficient updates"
+        },
+        {
+          "component": "ListAdapter",
+          "role": "An Adapter subclass with built-in DiffUtil and submitList() for easy list updates"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Setting Up RecyclerView",
+      "content": "To use RecyclerView, you first add the androidx.recyclerview dependency to your build.gradle.kts. Then you add the RecyclerView widget to your XML layout. In your Activity or Fragment, you create an Adapter, set a LayoutManager, and assign the adapter to the RecyclerView. The LayoutManager and Adapter are the two required components — without both, the RecyclerView will show nothing."
+    },
+    {
+      "type": "bullet",
+      "heading": "Steps to Implement RecyclerView",
+      "items": [
+        "Step 1: Add RecyclerView dependency in build.gradle.kts: implementation(\"androidx.recyclerview:recyclerview:1.3.2\")",
+        "Step 2: Add <RecyclerView> to your activity or fragment XML layout with an ID",
+        "Step 3: Create an item layout XML file (e.g., item_user.xml) for a single list row",
+        "Step 4: Create a data model class (e.g., data class User(val id: Int, val name: String))",
+        "Step 5: Create an Adapter class that extends ListAdapter<YourModel, YourViewHolder>",
+        "Step 6: Create a ViewHolder inner class that holds references to item Views using View Binding",
+        "Step 7: Implement onCreateViewHolder() to inflate the item layout and return a ViewHolder",
+        "Step 8: Implement onBindViewHolder() to bind data from your list to the ViewHolder's Views",
+        "Step 9: In your Activity/Fragment, set layoutManager and adapter on the RecyclerView"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "LayoutManager Types",
+      "rows": [
+        {
+          "layout_manager": "LinearLayoutManager(context)",
+          "arrangement": "Vertical scrolling list (default)",
+          "use_case": "Standard top-to-bottom item lists"
+        },
+        {
+          "layout_manager": "LinearLayoutManager(context, HORIZONTAL, false)",
+          "arrangement": "Horizontal scrolling list",
+          "use_case": "Horizontally scrollable carousels or tag lists"
+        },
+        {
+          "layout_manager": "GridLayoutManager(context, spanCount)",
+          "arrangement": "Grid with fixed number of columns",
+          "use_case": "Photo galleries, product grids, icon grids"
+        },
+        {
+          "layout_manager": "GridLayoutManager(context, spanCount, HORIZONTAL, false)",
+          "arrangement": "Horizontal scrolling grid",
+          "use_case": "Horizontally scrollable grid carousels"
+        },
+        {
+          "layout_manager": "StaggeredGridLayoutManager(spanCount, VERTICAL)",
+          "arrangement": "Grid where items can have different heights",
+          "use_case": "Pinterest-style layouts, masonry image grids"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The ViewHolder Pattern",
+      "content": "The ViewHolder pattern is the cornerstone of RecyclerView performance. A ViewHolder is a class that holds direct references to the Views inside a single list item layout. Without it, Android would have to call findViewById() every time an item is bound — which is expensive because it traverses the entire view tree. By storing references once in the ViewHolder at creation time, binding becomes a simple property assignment operation. Modern ViewHolders use View Binding to eliminate even the manual reference storage."
+    },
+    {
+      "type": "bullet",
+      "heading": "RecyclerView.Adapter — Required Methods",
+      "items": [
+        "onCreateViewHolder(parent, viewType) – Called when RecyclerView needs a new ViewHolder; inflate your item layout here",
+        "onBindViewHolder(holder, position) – Called to bind data to a recycled ViewHolder; set text, images, and click listeners here",
+        "getItemCount() – Returns the total number of items in the list; RecyclerView won't show anything if this returns 0",
+        "getItemViewType(position) – Override to return different view types for different item positions (optional)",
+        "onViewRecycled(holder) – Called when a ViewHolder is recycled; useful for releasing resources like image loads",
+        "onViewAttachedToWindow(holder) – Called when a ViewHolder's View is added to the window",
+        "onViewDetachedFromWindow(holder) – Called when a ViewHolder's View is removed from the window"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ListAdapter vs RecyclerView.Adapter",
+      "rows": [
+        {
+          "aspect": "DiffUtil",
+          "list_adapter": "Built-in — pass a DiffUtil.ItemCallback in the constructor",
+          "recyclerview_adapter": "Manual — must call DiffUtil.calculateDiff() yourself"
+        },
+        {
+          "aspect": "Updating list",
+          "list_adapter": "Call submitList(newList) — handles diffing and animation automatically",
+          "recyclerview_adapter": "Must call notifyDataSetChanged() or granular notify methods manually"
+        },
+        {
+          "aspect": "Animation",
+          "list_adapter": "Automatic — adds, removes, and moves are animated",
+          "recyclerview_adapter": "Manual — must call notifyItemInserted/Removed/Moved"
+        },
+        {
+          "aspect": "Performance",
+          "list_adapter": "Better — only rebinds changed items",
+          "recyclerview_adapter": "Worse if using notifyDataSetChanged() — redraws all items"
+        },
+        {
+          "aspect": "Recommended",
+          "list_adapter": "Yes — use for almost all cases",
+          "recyclerview_adapter": "Only when you need very custom diffing logic"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "DiffUtil & ItemCallback",
+      "content": "DiffUtil is a utility class that calculates the difference between two lists using the Myers diff algorithm. It figures out which items were added, removed, moved, or changed and applies only the necessary updates to the RecyclerView with animations. When using ListAdapter, you provide a DiffUtil.ItemCallback that tells DiffUtil how to compare items. You must implement two methods: areItemsTheSame() to check identity (usually by ID) and areContentsTheSame() to check if the visual content has changed."
+    },
+    {
+      "type": "bullet",
+      "heading": "Implementing DiffUtil.ItemCallback",
+      "items": [
+        "areItemsTheSame(oldItem, newItem) – Returns true if both items represent the same object (compare by unique ID, not content)",
+        "areContentsTheSame(oldItem, newItem) – Returns true if the items have identical visual content (compare all displayed fields)",
+        "getChangePayload(oldItem, newItem) – Optional; returns a payload object for partial bind updates (avoids full rebind)",
+        "With Kotlin data classes, areContentsTheSame can simply use oldItem == newItem (structural equality)",
+        "Never compare items by reference (===) in areContentsTheSame — this will always return false for new list instances",
+        "DiffUtil runs on the main thread in ListAdapter by default — for very large lists, use AsyncListDiffer",
+        "Provide stable, unique IDs for your items to help DiffUtil correctly identify moved items"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "notify Methods for RecyclerView.Adapter",
+      "rows": [
+        {
+          "method": "notifyDataSetChanged()",
+          "description": "Redraws all visible items — no animations; avoid for performance",
+          "when_to_use": "Last resort when you cannot determine what changed"
+        },
+        {
+          "method": "notifyItemInserted(position)",
+          "description": "Animates insertion of a single item at the given position",
+          "when_to_use": "When adding one item to a known position"
+        },
+        {
+          "method": "notifyItemRemoved(position)",
+          "description": "Animates removal of a single item from the given position",
+          "when_to_use": "When deleting one item from a known position"
+        },
+        {
+          "method": "notifyItemChanged(position)",
+          "description": "Triggers rebind of a single item without animation",
+          "when_to_use": "When one item's data changes without structural list changes"
+        },
+        {
+          "method": "notifyItemMoved(from, to)",
+          "description": "Animates movement of an item from one position to another",
+          "when_to_use": "When reordering a single item"
+        },
+        {
+          "method": "notifyItemRangeInserted(start, count)",
+          "description": "Animates insertion of multiple consecutive items",
+          "when_to_use": "When appending a page of results (pagination)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Handling Click Events in RecyclerView",
+      "items": [
+        "Set click listeners inside onBindViewHolder() on the item root View or specific child Views",
+        "Pass a lambda callback from the Activity/Fragment to the Adapter constructor for click handling",
+        "Example: class UserAdapter(private val onItemClick: (User) -> Unit) : ListAdapter<User, ...>()",
+        "In onBindViewHolder: holder.itemView.setOnClickListener { onItemClick(getItem(position)) }",
+        "Use holder.bindingAdapterPosition instead of position in async callbacks to avoid stale positions",
+        "For long-click: holder.itemView.setOnLongClickListener { onItemLongClick(item); true }",
+        "Avoid creating new lambda objects in onBindViewHolder for every bind — define them at creation time where possible",
+        "Use sealed classes or interfaces for click event types when items have multiple clickable zones"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ItemDecoration — Adding Spacing & Dividers",
+      "rows": [
+        {
+          "decoration": "DividerItemDecoration",
+          "description": "Built-in decoration that draws a line divider between items",
+          "usage": "recyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))"
+        },
+        {
+          "decoration": "Custom ItemDecoration",
+          "description": "Extend RecyclerView.ItemDecoration and override getItemOffsets() to add spacing around items",
+          "usage": "Override getItemOffsets(outRect, view, parent, state) and set outRect.bottom = 16 (in px)"
+        },
+        {
+          "decoration": "Multiple decorations",
+          "description": "You can add multiple ItemDecorations to the same RecyclerView",
+          "usage": "Call addItemDecoration() multiple times with different decoration instances"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Multiple View Types in RecyclerView",
+      "items": [
+        "Override getItemViewType(position) in your Adapter to return different Int constants for different item types",
+        "Create separate ViewHolder classes for each view type (e.g., HeaderViewHolder, ItemViewHolder, FooterViewHolder)",
+        "In onCreateViewHolder(), use a when(viewType) block to inflate the correct layout for each type",
+        "In onBindViewHolder(), cast the holder to the appropriate type using when(holder) or is checks",
+        "Use sealed classes for your data model to represent different item types cleanly",
+        "ConcatAdapter is the modern approach: create separate adapters for header, list, and footer and concatenate them",
+        "Define view type constants as companion object properties (e.g., companion object { const val TYPE_HEADER = 0 })"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "RecyclerView Performance Optimizations",
+      "rows": [
+        {
+          "optimization": "Use ListAdapter with DiffUtil",
+          "benefit": "Only rebinds changed items — avoids full redraws on every update"
+        },
+        {
+          "optimization": "setHasFixedSize(true)",
+          "benefit": "Tells RecyclerView its size won't change — skips unnecessary layout passes"
+        },
+        {
+          "optimization": "Use View Binding in ViewHolder",
+          "benefit": "Eliminates repeated findViewById calls — references are cached at ViewHolder creation"
+        },
+        {
+          "optimization": "Avoid heavy work in onBindViewHolder",
+          "benefit": "Keep binding fast — pre-compute data transformations before passing to the adapter"
+        },
+        {
+          "optimization": "setItemViewCacheSize(n)",
+          "benefit": "Increases the off-screen view cache to reduce rebinding for recently scrolled items"
+        },
+        {
+          "optimization": "RecycledViewPool sharing",
+          "benefit": "Share ViewHolder pool between nested RecyclerViews of the same type to reduce inflation"
+        },
+        {
+          "optimization": "Load images asynchronously",
+          "benefit": "Use Glide or Coil to load images off the main thread — never decode bitmaps in onBindViewHolder"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Swipe to Dismiss & Drag to Reorder with ItemTouchHelper",
+      "items": [
+        "ItemTouchHelper is a utility class that handles swipe-to-dismiss and drag-to-reorder gestures",
+        "Create an ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) subclass",
+        "dragDirs — combination of UP, DOWN, LEFT, RIGHT for drag directions (0 to disable drag)",
+        "swipeDirs — LEFT and/or RIGHT for swipe directions (0 to disable swipe)",
+        "Override onMove(recyclerView, viewHolder, target) to handle drag-and-drop reordering",
+        "Override onSwiped(viewHolder, direction) to handle swipe actions (e.g., delete item)",
+        "Attach with: ItemTouchHelper(callback).attachToRecyclerView(recyclerView)",
+        "Update your data list and call adapter.notifyItemRemoved() or submitList() after swipe or move"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common RecyclerView Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Using notifyDataSetChanged() for every update",
+          "fix": "Use ListAdapter with submitList() or granular notify methods for animated updates"
+        },
+        {
+          "mistake": "Setting click listeners in onCreateViewHolder",
+          "fix": "Set them in onBindViewHolder so they capture the correct current item data"
+        },
+        {
+          "mistake": "Using position directly in async callbacks",
+          "fix": "Use holder.bindingAdapterPosition — position parameter can be stale after animations"
+        },
+        {
+          "mistake": "Calling setLayoutManager or setAdapter in onBindViewHolder of a nested RecyclerView",
+          "fix": "Only set LayoutManager once; check if it's already set before reassigning"
+        },
+        {
+          "mistake": "Not implementing DiffUtil properly",
+          "fix": "areItemsTheSame must compare by ID, areContentsTheSame by all displayed fields"
+        },
+        {
+          "mistake": "Inflating complex layouts in onCreateViewHolder on the main thread",
+          "fix": "Keep item layouts simple; consider pre-inflation or AsyncLayoutInflater for heavy layouts"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "RecyclerView is the cornerstone of data-driven Android UIs. Its combination of mandatory view recycling, flexible LayoutManagers, and powerful DiffUtil-based updates makes it the right tool for displaying any list or grid of data. Always use ListAdapter with a proper DiffUtil.ItemCallback for clean, efficient, animated updates. Use View Binding in your ViewHolder for type-safe view access, and keep onBindViewHolder fast and lightweight for a smooth 60fps scrolling experience."
+    }
+  ]
+}

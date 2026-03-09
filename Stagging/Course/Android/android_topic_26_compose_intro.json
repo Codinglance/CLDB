@@ -1,0 +1,363 @@
+{
+  "title": "Introduction to Jetpack Compose",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Jetpack Compose?",
+      "content": "Jetpack Compose is Android's modern, fully declarative UI toolkit, released as stable by Google in 2021. It replaces the traditional View-based XML UI system with a Kotlin-only approach where you describe what the UI should look like for a given state, and Compose handles rendering and updating it automatically. Instead of inflating XML layouts, finding views by ID, and imperatively updating them, you write composable functions that return UI descriptions — and whenever the underlying state changes, Compose efficiently re-executes only the affected composables and updates the screen. Compose is now the recommended approach for building new Android UI."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Jetpack Compose?",
+      "items": [
+        "Declarative — describe what the UI looks like for a given state; Compose handles the how",
+        "Kotlin-only — no XML, no View inflation, no findViewById; everything is Kotlin code",
+        "Less code — typical Compose UI requires significantly fewer lines than equivalent View-based XML",
+        "Powerful — custom layouts, animations, and gestures that were complex in Views are straightforward in Compose",
+        "Reactive — UI automatically updates when state changes; no manual notifyDataSetChanged() or setText()",
+        "Interoperable — Compose works alongside existing View-based code; migrate incrementally",
+        "Testable — composables are plain Kotlin functions; easy to unit test and UI test in isolation",
+        "Single source of truth — UI logic and UI structure live together in the same composable function",
+        "Google recommended — all new Android UI development guidance from Google uses Compose"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Compose vs View System",
+      "rows": [
+        {
+          "aspect": "UI definition",
+          "compose": "Kotlin composable functions — UI and logic in one place",
+          "view_system": "XML layout files inflated at runtime; logic in separate Activity/Fragment"
+        },
+        {
+          "aspect": "UI updates",
+          "compose": "Automatic — Compose recomposes when state changes",
+          "view_system": "Manual — call setText(), setVisibility(), notifyDataSetChanged() explicitly"
+        },
+        {
+          "aspect": "View references",
+          "compose": "None needed — UI is rebuilt from state",
+          "view_system": "findViewById or View Binding to get references to update"
+        },
+        {
+          "aspect": "Theming",
+          "compose": "MaterialTheme composable with typed color, typography, and shape tokens",
+          "view_system": "XML styles, themes, and attribute resolution"
+        },
+        {
+          "aspect": "Lists",
+          "compose": "LazyColumn / LazyRow — built-in efficient list composables",
+          "view_system": "RecyclerView with Adapter, ViewHolder, DiffUtil"
+        },
+        {
+          "aspect": "Animations",
+          "compose": "animate*AsState, AnimatedVisibility, Transition APIs — all Kotlin",
+          "view_system": "Animators, XML animation resources, MotionLayout"
+        },
+        {
+          "aspect": "Custom drawing",
+          "compose": "Canvas in Compose — DrawScope API with Kotlin DSL",
+          "view_system": "Override onDraw() in a custom View subclass"
+        },
+        {
+          "aspect": "Testing",
+          "compose": "ComposeTestRule — semantics-based; no View hierarchy traversal needed",
+          "view_system": "Espresso — brittle View hierarchy traversal"
+        },
+        {
+          "aspect": "Previews",
+          "compose": "@Preview annotation — instant previews in Android Studio without running the app",
+          "view_system": "XML layout editor — limited fidelity; requires custom View attributes"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Composable Functions",
+      "content": "The building block of Compose UI is the composable function — an ordinary Kotlin function annotated with @Composable. A composable function describes a piece of UI by calling other composable functions. It does not return a View; instead it emits UI elements into the composition. Composable functions can be called only from other composable functions or from a Compose entry point. They can read state, accept parameters, and contain logic, but they should be side-effect free — their output should depend only on their inputs and the state they observe."
+    },
+    {
+      "type": "bullet",
+      "heading": "Composable Function Rules and Conventions",
+      "items": [
+        "Annotate with @Composable — required for any function that emits UI or calls other composables",
+        "Name with PascalCase — composable functions follow the same naming convention as classes: Greeting(), UserCard()",
+        "No return value for UI composables — they emit UI, they don't return View objects",
+        "Can accept parameters — pass data down from parent to child composables as function parameters",
+        "Can read state — access remembered state or ViewModel StateFlow within composables",
+        "Should be idempotent — calling the same composable with the same inputs should produce the same UI",
+        "Should be side-effect free — avoid writing to global state, launching coroutines, or performing I/O directly in the composable body",
+        "Can contain control flow — if/else and when expressions naturally control which composables are emitted",
+        "Composables can call any regular Kotlin function — they are just functions",
+        "Only composable functions can call other composable functions — the @Composable annotation is viral"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Compose Composables",
+      "rows": [
+        {
+          "composable": "Text",
+          "description": "Displays a string of text with optional styling",
+          "example": "Text(text = \"Hello World\", style = MaterialTheme.typography.bodyLarge)"
+        },
+        {
+          "composable": "Button",
+          "description": "A Material Design button with click handling",
+          "example": "Button(onClick = { doSomething() }) { Text(\"Click Me\") }"
+        },
+        {
+          "composable": "Image",
+          "description": "Displays an image from a painter resource",
+          "example": "Image(painter = painterResource(R.drawable.logo), contentDescription = \"App logo\")"
+        },
+        {
+          "composable": "TextField",
+          "description": "An editable text input field",
+          "example": "TextField(value = text, onValueChange = { text = it }, label = { Text(\"Name\") })"
+        },
+        {
+          "composable": "Column",
+          "description": "Arranges children vertically — equivalent to vertical LinearLayout",
+          "example": "Column(modifier = Modifier.fillMaxWidth()) { Text(\"One\"); Text(\"Two\") }"
+        },
+        {
+          "composable": "Row",
+          "description": "Arranges children horizontally — equivalent to horizontal LinearLayout",
+          "example": "Row(verticalAlignment = Alignment.CenterVertically) { Icon(...); Text(...) }"
+        },
+        {
+          "composable": "Box",
+          "description": "Stacks children on top of each other — equivalent to FrameLayout",
+          "example": "Box(contentAlignment = Alignment.Center) { Image(...); Text(\"Overlay\") }"
+        },
+        {
+          "composable": "LazyColumn",
+          "description": "Efficiently renders a vertical scrollable list — equivalent to RecyclerView",
+          "example": "LazyColumn { items(userList) { user -> UserCard(user) } }"
+        },
+        {
+          "composable": "Spacer",
+          "description": "An empty composable that takes up space — adds padding/gap between elements",
+          "example": "Spacer(modifier = Modifier.height(16.dp))"
+        },
+        {
+          "composable": "Icon",
+          "description": "Renders a Material Design vector icon",
+          "example": "Icon(Icons.Default.Favorite, contentDescription = \"Favorite\")"
+        },
+        {
+          "composable": "Scaffold",
+          "description": "Implements the Material Design visual layout structure with TopBar, BottomBar, FAB, and content slots",
+          "example": "Scaffold(topBar = { TopAppBar(title = { Text(\"Home\") }) }) { padding -> Content(padding) }"
+        },
+        {
+          "composable": "Surface",
+          "description": "A Material surface with elevation, shape, and color — wraps content in a styled container",
+          "example": "Surface(shape = RoundedCornerShape(8.dp), tonalElevation = 4.dp) { CardContent() }"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Modifier System",
+      "content": "In Compose, layout and appearance properties are applied through the Modifier system rather than XML attributes or View properties. A Modifier is a chain of immutable transformations applied to a composable — controlling its size, padding, click behavior, background, border, scroll behavior, and much more. Modifiers are passed as a parameter to virtually every composable, and the order in which you chain modifier operations matters significantly — padding before size has a different result than size before padding."
+    },
+    {
+      "type": "bullet",
+      "heading": "Essential Modifier Operations",
+      "items": [
+        "Modifier.fillMaxSize() — makes the composable fill its parent's width and height",
+        "Modifier.fillMaxWidth() — fills the parent's full width",
+        "Modifier.fillMaxHeight() — fills the parent's full height",
+        "Modifier.size(dp) — sets exact width and height",
+        "Modifier.width(dp) / Modifier.height(dp) — sets width or height independently",
+        "Modifier.padding(dp) — adds uniform padding on all sides",
+        "Modifier.padding(horizontal = dp, vertical = dp) — sets horizontal and vertical padding separately",
+        "Modifier.padding(start = dp, top = dp, end = dp, bottom = dp) — sets each side independently",
+        "Modifier.background(color) — sets background color",
+        "Modifier.background(color, shape = RoundedCornerShape(8.dp)) — sets background with shape",
+        "Modifier.border(width, color, shape) — draws a border around the composable",
+        "Modifier.clip(shape) — clips the composable to a shape (circle, rounded rect)",
+        "Modifier.clickable { action } — makes the composable respond to click events",
+        "Modifier.wrapContentSize() — sizes the composable to wrap its content"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Modifier Order Matters",
+      "rows": [
+        {
+          "scenario": "Padding then clickable",
+          "code": "Modifier.padding(16.dp).clickable { }",
+          "result": "Click target is the inner area (padding is outside the clickable region)"
+        },
+        {
+          "scenario": "Clickable then padding",
+          "code": "Modifier.clickable { }.padding(16.dp)",
+          "result": "Click target includes the padding area (padding is inside the clickable region)"
+        },
+        {
+          "scenario": "Background then padding",
+          "code": "Modifier.background(Color.Blue).padding(16.dp)",
+          "result": "Background fills the full size; content is inset by padding"
+        },
+        {
+          "scenario": "Padding then background",
+          "code": "Modifier.padding(16.dp).background(Color.Blue)",
+          "result": "Background only covers the inner area (padding is outside the background)"
+        },
+        {
+          "scenario": "Size then fillMaxWidth",
+          "code": "Modifier.size(100.dp).fillMaxWidth()",
+          "result": "size(100.dp) wins — fillMaxWidth is constrained by the preceding size"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "State in Compose",
+      "content": "State is the engine that drives Compose's reactivity. When state changes, Compose automatically re-executes (recomposes) the composables that read that state. The primary way to hold local UI state inside a composable is with remember { mutableStateOf(initialValue) }. remember preserves the value across recompositions of the same composable. mutableStateOf creates an observable state holder — any composable that reads it will recompose when it changes. For state that must survive configuration changes (screen rotation), use rememberSaveable instead of remember."
+    },
+    {
+      "type": "bullet",
+      "heading": "State Fundamentals",
+      "items": [
+        "var count by remember { mutableStateOf(0) } — declares local state that triggers recomposition when changed",
+        "by keyword — Kotlin property delegation; lets you read/write the state value directly without .value",
+        "val state = remember { mutableStateOf(0) } — without by; must use state.value to read and write",
+        "remember { } — runs its lambda only on first composition; returns the cached value on recompositions",
+        "rememberSaveable { mutableStateOf(0) } — survives recomposition AND configuration changes (rotation)",
+        "State hoisting — move state up to the parent composable when multiple children need to share or modify it",
+        "Stateless composable — takes values and callbacks as parameters, holds no internal state",
+        "Stateful composable — owns and manages its own state internally with remember",
+        "Prefer stateless composables for reusability and testability; manage state at the highest needed level"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "State Types in Compose",
+      "rows": [
+        {
+          "state_type": "mutableStateOf(value)",
+          "description": "Observable state holder — triggers recomposition when value changes",
+          "example": "var name by remember { mutableStateOf(\"\") }"
+        },
+        {
+          "state_type": "mutableStateListOf()",
+          "description": "Observable list — triggers recomposition when items are added, removed, or changed",
+          "example": "val items = remember { mutableStateListOf<String>() }"
+        },
+        {
+          "state_type": "mutableStateMapOf()",
+          "description": "Observable map — triggers recomposition when entries change",
+          "example": "val selections = remember { mutableStateMapOf<Int, Boolean>() }"
+        },
+        {
+          "state_type": "collectAsState()",
+          "description": "Converts a Flow or StateFlow into Compose State — recomposes on each emission",
+          "example": "val uiState by viewModel.uiState.collectAsState()"
+        },
+        {
+          "state_type": "collectAsStateWithLifecycle()",
+          "description": "Like collectAsState() but lifecycle-aware — stops collecting when composable is not active",
+          "example": "val uiState by viewModel.uiState.collectAsStateWithLifecycle()"
+        },
+        {
+          "state_type": "rememberSaveable { }",
+          "description": "Like remember but survives configuration changes by writing to the saved instance state Bundle",
+          "example": "var query by rememberSaveable { mutableStateOf(\"\") }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setting Up Compose in a Project",
+      "items": [
+        "Compose requires compileSdk 34+ and minSdk 21+ in build.gradle.kts",
+        "Enable Compose in the android block: buildFeatures { compose = true }",
+        "Set composeOptions: composeOptions { kotlinCompilerExtensionVersion = \"1.5.x\" }",
+        "Use the Compose BOM for consistent library versions: implementation(platform(\"androidx.compose:compose-bom:2024.x.x\"))",
+        "Add UI dependencies: implementation(\"androidx.compose.ui:ui\"), implementation(\"androidx.compose.material3:material3\")",
+        "Add tooling: debugImplementation(\"androidx.compose.ui:ui-tooling\"), implementation(\"androidx.compose.ui:ui-tooling-preview\")",
+        "Add Activity Compose: implementation(\"androidx.activity:activity-compose:1.9.x\")",
+        "Entry point in Activity: setContent { MaterialTheme { YourRootComposable() } }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Compose Entry Points",
+      "rows": [
+        {
+          "entry_point": "ComponentActivity.setContent { }",
+          "description": "Primary entry point — sets the root Compose content for a full Compose screen",
+          "example": "class MainActivity : ComponentActivity() { override fun onCreate(...) { setContent { AppTheme { NavHost(...) } } } }"
+        },
+        {
+          "entry_point": "ComposeView in XML",
+          "description": "Embeds a Compose composable inside a traditional View-based layout",
+          "example": "<androidx.compose.ui.platform.ComposeView android:id=\"@+id/compose_view\" /> then composeView.setContent { MyComposable() }"
+        },
+        {
+          "entry_point": "AbstractComposeView",
+          "description": "Create a custom View subclass that renders Compose content — for library authors",
+          "example": "class MyComposeView : AbstractComposeView(context) { @Composable override fun Content() { MyComposable() } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "@Preview — Iterating Without Running the App",
+      "items": [
+        "Annotate a composable with @Preview to see it rendered in Android Studio's Design panel instantly",
+        "@Preview only works on composables that take no required parameters or have all defaults provided",
+        "Use @Preview(showBackground = true) to render on a white background instead of transparent",
+        "Use @Preview(widthDp = 360, heightDp = 640) to simulate a specific screen size",
+        "Use @Preview(uiMode = UI_MODE_NIGHT_YES) to preview in dark mode",
+        "Add multiple @Preview annotations to a single composable to see multiple configurations at once",
+        "@PreviewParameter — pass sample data to a composable preview without a ViewModel",
+        "Previews never run real code (network, database) — use hardcoded or fake data"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Compose Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Performing side effects directly in the composable body",
+          "fix": "Use LaunchedEffect, SideEffect, or DisposableEffect for side effects — never launch coroutines or write to state directly in the body"
+        },
+        {
+          "mistake": "Holding state in a ViewModel inside a composable with remember",
+          "fix": "ViewModel state belongs in the ViewModel — collect it with collectAsStateWithLifecycle(); use remember only for local transient UI state"
+        },
+        {
+          "mistake": "Creating objects or lambdas directly inside composable body without remember",
+          "fix": "Use remember { } for objects that should not be recreated on every recomposition — prevents unnecessary allocations"
+        },
+        {
+          "mistake": "Not providing contentDescription on Image and Icon",
+          "fix": "Always provide contentDescription for accessibility; use null explicitly for purely decorative images"
+        },
+        {
+          "mistake": "Using Modifier.fillMaxSize() on a child inside a LazyColumn item",
+          "fix": "LazyColumn has infinite height — use Modifier.fillMaxWidth() for items, not fillMaxSize()"
+        },
+        {
+          "mistake": "Using mutableListOf() instead of mutableStateListOf()",
+          "fix": "Compose cannot observe changes to a regular mutableListOf — use mutableStateListOf() or a SnapshotStateList for observable lists"
+        },
+        {
+          "mistake": "Ignoring the padding parameter passed by Scaffold",
+          "fix": "Always apply the PaddingValues from Scaffold's content lambda: Modifier.padding(paddingValues) — otherwise content is hidden behind system bars"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Jetpack Compose is a paradigm shift in Android UI development — from imperative XML manipulation to declarative Kotlin-only UI description. Composable functions are the atomic unit of Compose UI, the Modifier system replaces XML attributes, and state drives all UI updates automatically. Setting up Compose requires enabling it in the build configuration and using the BOM for version management. The @Preview annotation enables rapid iteration without running the app. As you progress through the following Compose topics, these fundamentals — composables, modifiers, and state — will be the foundation everything else builds upon."
+    }
+  ]
+}

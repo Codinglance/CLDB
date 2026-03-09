@@ -1,0 +1,343 @@
+{
+  "title": "Android Studio & Project Structure",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Android Studio?",
+      "content": "Android Studio is the official Integrated Development Environment (IDE) for Android development, built by Google on top of IntelliJ IDEA. It provides everything you need to build, test, debug, and publish Android apps — including a code editor, layout designer, emulator, profiler, and build tools — all in one place."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Android Studio?",
+      "items": [
+        "Official IDE recommended by Google for Android development",
+        "Intelligent code editor with Kotlin & Java support",
+        "Built-in Android Emulator for testing without a physical device",
+        "Visual Layout Editor to design UIs with drag-and-drop",
+        "Integrated Gradle build system for dependency management",
+        "Real-time Logcat for debugging and monitoring logs",
+        "Profiler tools for CPU, memory, and network performance",
+        "Direct APK/AAB generation and Google Play publishing support"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Android Studio System Requirements",
+      "rows": [
+        {
+          "requirement": "OS",
+          "windows": "Windows 8/10/11 (64-bit)",
+          "mac": "macOS 10.14+",
+          "linux": "Linux (64-bit, GNOME or KDE)"
+        },
+        {
+          "requirement": "RAM",
+          "windows": "8 GB minimum, 16 GB recommended",
+          "mac": "8 GB minimum, 16 GB recommended",
+          "linux": "8 GB minimum, 16 GB recommended"
+        },
+        {
+          "requirement": "Disk Space",
+          "windows": "8 GB+ free space",
+          "mac": "8 GB+ free space",
+          "linux": "8 GB+ free space"
+        },
+        {
+          "requirement": "Screen Resolution",
+          "windows": "1280 x 800 minimum",
+          "mac": "1280 x 800 minimum",
+          "linux": "1280 x 800 minimum"
+        },
+        {
+          "requirement": "JDK",
+          "windows": "Bundled JDK (no separate install needed)",
+          "mac": "Bundled JDK (no separate install needed)",
+          "linux": "Bundled JDK (no separate install needed)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Installing Android Studio",
+      "content": "Download Android Studio from https://developer.android.com/studio. Run the installer and follow the setup wizard. During setup, Android Studio will automatically install the Android SDK, Android Emulator, and required SDK tools. Once installed, launch Android Studio and complete the first-time setup to download the latest SDK components."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Windows & Panels in Android Studio",
+      "items": [
+        "Project Panel – Shows your project files and folder structure on the left side",
+        "Editor Window – Central area where you write and edit code or XML layouts",
+        "Layout Editor – Visual designer for XML UI files with a live preview",
+        "Logcat – Displays real-time device/emulator logs for debugging",
+        "Terminal – Built-in terminal for running ADB and Gradle commands",
+        "Build Output – Shows Gradle build results and any compilation errors",
+        "Device Manager – Manage and launch Android Virtual Devices (AVDs)",
+        "Profiler – Monitor CPU, memory, energy, and network usage in real time"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Creating Your First Android Project",
+      "content": "To create a new project: open Android Studio → click 'New Project' → select a template (e.g., 'Empty Activity') → configure your project name, package name, save location, language (Kotlin), and minimum SDK → click 'Finish'. Android Studio will generate a starter project with all necessary files and open it in the editor."
+    },
+    {
+      "type": "table",
+      "heading": "New Project Configuration Fields",
+      "rows": [
+        {
+          "field": "Project Name",
+          "description": "Human-readable name of your app (e.g., MyFirstApp)"
+        },
+        {
+          "field": "Package Name",
+          "description": "Unique identifier for your app (e.g., com.example.myfirstapp)"
+        },
+        {
+          "field": "Save Location",
+          "description": "Directory on your computer where the project will be saved"
+        },
+        {
+          "field": "Language",
+          "description": "Choose Kotlin (recommended) or Java"
+        },
+        {
+          "field": "Minimum SDK",
+          "description": "Lowest Android version your app will support (e.g., API 24 / Android 7.0)"
+        },
+        {
+          "field": "Build Configuration Language",
+          "description": "Kotlin DSL (recommended) or Groovy DSL for Gradle scripts"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Understanding the Project Structure",
+      "items": [
+        "app/ – Main module containing all your app's source code and resources",
+        "app/src/main/java/ – Kotlin/Java source files (Activities, ViewModels, etc.)",
+        "app/src/main/res/ – All resource files: layouts, drawables, strings, themes",
+        "app/src/main/AndroidManifest.xml – App configuration, permissions, and component declarations",
+        "app/src/test/ – Unit test files (run on JVM, no device needed)",
+        "app/src/androidTest/ – Instrumented test files (run on device/emulator)",
+        "Gradle Scripts/ – build.gradle files for project and app-level build config",
+        ".gradle/ & .idea/ – Auto-generated IDE and build cache files (do not edit manually)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Important Project Files Explained",
+      "rows": [
+        {
+          "file": "MainActivity.kt",
+          "location": "src/main/java/.../",
+          "purpose": "Entry point of the app; the first screen displayed to the user"
+        },
+        {
+          "file": "activity_main.xml",
+          "location": "res/layout/",
+          "purpose": "XML layout file defining the UI of MainActivity"
+        },
+        {
+          "file": "AndroidManifest.xml",
+          "location": "src/main/",
+          "purpose": "Declares app components, permissions, and app metadata"
+        },
+        {
+          "file": "build.gradle.kts (app)",
+          "location": "app/",
+          "purpose": "App-level build config: dependencies, SDK versions, plugins"
+        },
+        {
+          "file": "build.gradle.kts (project)",
+          "location": "root/",
+          "purpose": "Project-level build config: repositories and global plugins"
+        },
+        {
+          "file": "strings.xml",
+          "location": "res/values/",
+          "purpose": "Stores all text strings used in the app for easy localization"
+        },
+        {
+          "file": "themes.xml",
+          "location": "res/values/",
+          "purpose": "Defines the visual theme, colors, and styles for the app"
+        },
+        {
+          "file": "gradle.properties",
+          "location": "root/",
+          "purpose": "Project-wide Gradle settings like JVM args and AndroidX flags"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The res/ Directory in Detail",
+      "content": "The res/ (resources) directory is where all non-code assets live. Android separates resources from code to support different screen sizes, languages, and configurations automatically. Each subfolder has a specific purpose, and Android selects the appropriate resource at runtime based on the device configuration."
+    },
+    {
+      "type": "table",
+      "heading": "res/ Subdirectories and Their Purpose",
+      "rows": [
+        {
+          "folder": "res/layout/",
+          "purpose": "XML files that define the UI structure of screens and components"
+        },
+        {
+          "folder": "res/drawable/",
+          "purpose": "Images, icons, shapes, and vector XML drawables"
+        },
+        {
+          "folder": "res/mipmap/",
+          "purpose": "App launcher icons in different resolutions (hdpi, xhdpi, xxhdpi, etc.)"
+        },
+        {
+          "folder": "res/values/strings.xml",
+          "purpose": "All user-facing text strings for easy localization"
+        },
+        {
+          "folder": "res/values/colors.xml",
+          "purpose": "Color hex values used throughout the app"
+        },
+        {
+          "folder": "res/values/themes.xml",
+          "purpose": "App-wide style and theme definitions"
+        },
+        {
+          "folder": "res/menu/",
+          "purpose": "XML files defining action bar and context menus"
+        },
+        {
+          "folder": "res/anim/",
+          "purpose": "XML animation definitions for view transitions"
+        },
+        {
+          "folder": "res/raw/",
+          "purpose": "Raw files like audio, JSON, or other assets accessed via R.raw"
+        },
+        {
+          "folder": "res/xml/",
+          "purpose": "Misc XML config files (e.g., network security config, backup rules)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Understanding the Gradle Build System",
+      "items": [
+        "Gradle is the build system Android Studio uses to compile, link, and package your app",
+        "The project-level build.gradle defines repositories and plugins available to all modules",
+        "The app-level build.gradle defines dependencies, compileSdk, minSdk, targetSdk, and versionCode",
+        "dependencies {} block is where you add third-party libraries like Retrofit, Room, Hilt",
+        "Sync Project with Gradle Files (elephant icon) must be clicked after any build.gradle change",
+        "Gradle generates the R.java/R.kt file mapping all resources to integer IDs for use in code"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Gradle (build.gradle.kts) Settings",
+      "rows": [
+        {
+          "setting": "compileSdk",
+          "description": "The Android API level to compile your app against (e.g., 35)"
+        },
+        {
+          "setting": "minSdk",
+          "description": "The minimum Android API level the app supports (e.g., 24)"
+        },
+        {
+          "setting": "targetSdk",
+          "description": "The Android API level the app is optimized and tested for"
+        },
+        {
+          "setting": "versionCode",
+          "description": "Internal integer version number, incremented for each release"
+        },
+        {
+          "setting": "versionName",
+          "description": "Human-readable version string shown to users (e.g., \"1.0.0\")"
+        },
+        {
+          "setting": "dependencies {}",
+          "description": "Block listing all external libraries your app depends on"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Running Your App on an Emulator",
+      "items": [
+        "Open Device Manager from the toolbar or Tools menu",
+        "Click 'Create Device' and choose a hardware profile (e.g., Pixel 6)",
+        "Select a system image (download a recent API level like API 34)",
+        "Click 'Finish' to create the Android Virtual Device (AVD)",
+        "Press the green Run button (▶) or Shift+F10 to build and launch the app",
+        "The emulator will boot and your app will be installed and opened automatically",
+        "Use the emulator toolbar to simulate rotation, GPS, battery, and network conditions"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Useful Android Studio Keyboard Shortcuts",
+      "rows": [
+        {
+          "shortcut": "Shift + F10",
+          "action": "Run the app"
+        },
+        {
+          "shortcut": "Shift + F9",
+          "action": "Debug the app"
+        },
+        {
+          "shortcut": "Ctrl + Alt + L (Win) / Cmd + Alt + L (Mac)",
+          "action": "Reformat/auto-format code"
+        },
+        {
+          "shortcut": "Alt + Enter",
+          "action": "Quick fix / show suggestions"
+        },
+        {
+          "shortcut": "Ctrl + Click / Cmd + Click",
+          "action": "Navigate to declaration or definition"
+        },
+        {
+          "shortcut": "Shift + Shift",
+          "action": "Search everywhere (files, classes, actions)"
+        },
+        {
+          "shortcut": "Ctrl + F (Win) / Cmd + F (Mac)",
+          "action": "Find in current file"
+        },
+        {
+          "shortcut": "Ctrl + Shift + F (Win) / Cmd + Shift + F (Mac)",
+          "action": "Find in entire project"
+        },
+        {
+          "shortcut": "Alt + J (Win) / Ctrl + G (Mac)",
+          "action": "Select next occurrence of current word"
+        },
+        {
+          "shortcut": "Ctrl + Z / Cmd + Z",
+          "action": "Undo last action"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Android Studio Tips for Beginners",
+      "items": [
+        "Always sync Gradle after modifying build.gradle to avoid build errors",
+        "Use 'Android' view in the Project panel (not 'Project' view) for a cleaner file tree",
+        "Enable 'Auto Import' in Settings → Editor → General → Auto Import for Kotlin",
+        "Use Logcat filters (by tag or package) to reduce noise when debugging",
+        "Invalidate Caches (File → Invalidate Caches) if you see unexplained red errors",
+        "Keep Android Studio and SDK tools updated via the SDK Manager for the latest features"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Android Studio is the cornerstone of Android development. Understanding its layout, the project structure it generates, and how Gradle ties everything together will make you productive from the start. Take time to explore the IDE panels, create a sample project, and run it on the emulator before moving on to building real app features."
+    }
+  ]
+}

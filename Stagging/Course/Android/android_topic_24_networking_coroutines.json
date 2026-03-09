@@ -1,0 +1,429 @@
+{
+  "title": "Networking with Coroutines",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Coroutines for Networking?",
+      "content": "Android strictly prohibits network operations on the main thread — attempting one throws a NetworkOnMainThreadException and crashes the app. Before coroutines, developers used callbacks, RxJava, or AsyncTask to move network calls to background threads. Kotlin coroutines revolutionized this by allowing you to write asynchronous networking code that looks and reads like sequential synchronous code — no callbacks, no thread management, no complex chaining. Combined with Retrofit's suspend function support, coroutines make Android networking clean, readable, and safe."
+    },
+    {
+      "type": "bullet",
+      "heading": "Coroutines Networking Advantages",
+      "items": [
+        "Sequential code style — network calls look synchronous but execute asynchronously without blocking the main thread",
+        "No callback hell — eliminates deeply nested callbacks that make code hard to read and maintain",
+        "Structured concurrency — coroutines are scoped to a lifecycle (viewModelScope); cancellation is automatic",
+        "Easy error handling — use try-catch blocks exactly as you would with synchronous code",
+        "Parallel requests — launch multiple network calls concurrently with async/await or combine with Flow operators",
+        "Automatic thread switching — withContext(Dispatchers.IO) cleanly moves work off the main thread",
+        "Integration with Retrofit — just mark API functions as suspend; Retrofit handles the thread switching internally",
+        "Cancellation propagation — if the ViewModel is cleared, all running network coroutines are cancelled automatically"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Coroutines vs Callbacks vs RxJava for Networking",
+      "rows": [
+        {
+          "aspect": "Code style",
+          "coroutines": "Sequential — looks like synchronous code",
+          "callbacks": "Nested — deeply nested callback chains",
+          "rxjava": "Declarative chains — complex operator chaining"
+        },
+        {
+          "aspect": "Error handling",
+          "coroutines": "try-catch — familiar and straightforward",
+          "callbacks": "Error callbacks — must be handled in every callback",
+          "rxjava": "onError — propagated through the chain"
+        },
+        {
+          "aspect": "Cancellation",
+          "coroutines": "Automatic — tied to CoroutineScope lifecycle",
+          "callbacks": "Manual — must track and cancel each callback",
+          "rxjava": "CompositeDisposable — must be disposed manually"
+        },
+        {
+          "aspect": "Learning curve",
+          "coroutines": "Low-medium — Kotlin-native, familiar syntax",
+          "callbacks": "Low initially, painful as complexity grows",
+          "rxjava": "High — many operators and concepts to learn"
+        },
+        {
+          "aspect": "Kotlin integration",
+          "coroutines": "Native — first-class Kotlin feature",
+          "callbacks": "Works but verbose",
+          "rxjava": "Works but adds Java-style API on top of Kotlin"
+        },
+        {
+          "aspect": "Google recommendation",
+          "coroutines": "Yes — officially recommended",
+          "callbacks": "No — outdated pattern",
+          "rxjava": "No — Kotlin coroutines preferred"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Coroutine Dispatchers for Networking",
+      "content": "Coroutine dispatchers control which thread or thread pool a coroutine runs on. For Android networking, the three most important dispatchers are Dispatchers.Main (the UI thread), Dispatchers.IO (optimized for I/O operations like network calls and disk reads), and Dispatchers.Default (optimized for CPU-intensive work like JSON parsing or sorting). Retrofit automatically moves network calls to its own thread pool when using suspend functions — you do not need to manually switch to Dispatchers.IO for Retrofit calls. However, Room database calls and manual file I/O do require explicit Dispatchers.IO."
+    },
+    {
+      "type": "table",
+      "heading": "Coroutine Dispatchers",
+      "rows": [
+        {
+          "dispatcher": "Dispatchers.Main",
+          "thread": "Android main (UI) thread",
+          "use_for": "Updating UI, reading LiveData, navigating, showing dialogs",
+          "notes": "Default in viewModelScope — do not perform blocking work here"
+        },
+        {
+          "dispatcher": "Dispatchers.IO",
+          "thread": "Shared pool of background threads (up to 64)",
+          "use_for": "Network calls (manual OkHttp), Room queries, file I/O, DataStore",
+          "notes": "Retrofit suspend functions switch threads automatically — IO is needed for manual calls"
+        },
+        {
+          "dispatcher": "Dispatchers.Default",
+          "thread": "Shared pool of CPU-bound threads",
+          "use_for": "JSON parsing large payloads, sorting, filtering large lists, image processing",
+          "notes": "Number of threads equals CPU core count — for compute-heavy work"
+        },
+        {
+          "dispatcher": "Dispatchers.Unconfined",
+          "thread": "Starts on caller thread; resumes on whatever thread resumes it",
+          "use_for": "Testing and special cases — rarely used in production code",
+          "notes": "Avoid in production — unpredictable thread behavior"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "viewModelScope — The Right Scope for Networking",
+      "items": [
+        "viewModelScope is a CoroutineScope tied to the ViewModel lifecycle",
+        "All coroutines launched in viewModelScope are automatically cancelled when onCleared() is called",
+        "This means network calls are automatically cancelled when the user navigates away — no memory leaks",
+        "Launch a network call: viewModelScope.launch { val users = repository.getUsers(); _uiState.value = UiState.Success(users) }",
+        "viewModelScope runs on Dispatchers.Main by default — Retrofit handles thread switching internally for suspend calls",
+        "For Room or manual I/O in the ViewModel: viewModelScope.launch { withContext(Dispatchers.IO) { dao.insert(entity) } }",
+        "Never launch coroutines in GlobalScope from a ViewModel — they outlive the ViewModel and leak",
+        "Fragment and Activity have their own scopes: lifecycleScope — use for UI-only coroutines, not networking"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "CoroutineScope Options in Android",
+      "rows": [
+        {
+          "scope": "viewModelScope",
+          "lifecycle": "Cancelled when ViewModel is cleared",
+          "best_for": "All networking, data loading, and business logic in the ViewModel"
+        },
+        {
+          "scope": "lifecycleScope",
+          "lifecycle": "Cancelled when Activity/Fragment is destroyed",
+          "best_for": "UI animations, one-shot UI operations, collecting StateFlow in the View"
+        },
+        {
+          "scope": "repeatOnLifecycle",
+          "lifecycle": "Pauses/resumes with lifecycle state (STARTED, RESUMED)",
+          "best_for": "Collecting Flow/StateFlow from ViewModel safely in Fragment"
+        },
+        {
+          "scope": "GlobalScope",
+          "lifecycle": "Never cancelled — lives for app lifetime",
+          "best_for": "Avoid — leaks memory; use viewModelScope or lifecycleScope instead"
+        },
+        {
+          "scope": "rememberCoroutineScope (Compose)",
+          "lifecycle": "Cancelled when the composable leaves composition",
+          "best_for": "Launching coroutines from Compose UI event handlers"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Sequential Network Calls",
+      "content": "The most common networking pattern is a sequential call — fetch some data, process it, then update the UI. With coroutines, this is expressed as straightforward top-to-bottom code inside a launch or async block. Each suspend function call suspends the coroutine (freeing the thread) until the network response arrives, then resumes exactly where it left off. The result is clean, readable code that behaves asynchronously but reads as if it were synchronous."
+    },
+    {
+      "type": "bullet",
+      "heading": "Sequential Network Call Patterns",
+      "items": [
+        "Basic sequential call: viewModelScope.launch { val user = api.getUser(id); val orders = api.getOrders(user.id); _uiState.value = UiState.Success(user, orders) }",
+        "Each await suspends until the previous call completes before the next one starts",
+        "Use this pattern when the second call depends on the result of the first call",
+        "Wrap in try-catch for error handling: try { val result = api.getData() } catch (e: IOException) { } catch (e: HttpException) { }",
+        "Set loading state before the call: _uiState.value = UiState.Loading",
+        "Set success or error state after: _uiState.value = UiState.Success(result) or UiState.Error(message)",
+        "For Repository pattern: the ViewModel launches the coroutine; the Repository contains the suspend function; the API call is in the suspend function",
+        "Suspend functions in the Repository execute on whichever dispatcher the calling coroutine is on — Retrofit handles its own threading"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Parallel Network Calls with async/await",
+      "rows": [
+        {
+          "pattern": "Basic parallel with async",
+          "code_description": "val usersDeferred = async { api.getUsers() }; val productsDeferred = async { api.getProducts() }; val users = usersDeferred.await(); val products = productsDeferred.await()",
+          "benefit": "Both calls execute simultaneously — total time = max(call1, call2) instead of call1 + call2"
+        },
+        {
+          "pattern": "Parallel inside coroutineScope",
+          "code_description": "coroutineScope { val u = async { api.getUsers() }; val p = async { api.getProducts() }; combine(u.await(), p.await()) }",
+          "benefit": "coroutineScope ensures both complete or both are cancelled on error"
+        },
+        {
+          "pattern": "awaitAll for same-type results",
+          "code_description": "val results = awaitAll(async { api.getUser(1) }, async { api.getUser(2) }, async { api.getUser(3) })",
+          "benefit": "Fetches multiple resources of the same type in parallel — returns a List"
+        },
+        {
+          "pattern": "Parallel with error handling",
+          "code_description": "try { coroutineScope { val a = async { api.getA() }; val b = async { api.getB() }; Pair(a.await(), b.await()) } } catch (e: Exception) { handleError(e) }",
+          "benefit": "If either async fails, coroutineScope cancels the other and propagates the exception"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Error Handling in Coroutine Networking",
+      "items": [
+        "Use try-catch directly around suspend function calls — coroutines use standard Kotlin exception handling",
+        "catch (e: IOException) — network connectivity issue, DNS failure, or timeout",
+        "catch (e: HttpException) — server returned a non-2xx status code; e.code() gives the HTTP status",
+        "catch (e: Exception) — catch-all for unexpected errors; log but don't use as primary handler",
+        "Use runCatching { api.getUsers() } for a concise Result<T> wrapper: .onSuccess { }.onFailure { }",
+        "CoroutineExceptionHandler can be set on a scope for unhandled exceptions but does not replace try-catch",
+        "For Flow-based repositories, use the catch operator: flow.catch { e -> emit(ErrorState(e.message)) }",
+        "Always propagate errors to the UI as a UiState.Error — never silently swallow exceptions"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Error Handling Patterns",
+      "rows": [
+        {
+          "pattern": "try-catch in ViewModel",
+          "code_description": "viewModelScope.launch { try { _state.value = UiState.Loading; val data = repo.getData(); _state.value = UiState.Success(data) } catch (e: IOException) { _state.value = UiState.Error(\"No internet\") } catch (e: HttpException) { _state.value = UiState.Error(\"Server error: ${e.code()}\") } }",
+          "use_case": "Standard pattern — handles all error types with specific messages"
+        },
+        {
+          "pattern": "Result wrapper in Repository",
+          "code_description": "suspend fun getData(): Result<Data> = runCatching { api.getData() }",
+          "use_case": "Clean boundary — Repository returns Result; ViewModel handles success/failure without try-catch"
+        },
+        {
+          "pattern": "Sealed class Result in Repository",
+          "code_description": "suspend fun getData(): ApiResult<Data> { return try { ApiResult.Success(api.getData()) } catch (e: Exception) { ApiResult.Error(e) } }",
+          "use_case": "Custom Result type with domain-specific error handling"
+        },
+        {
+          "pattern": "Flow catch operator",
+          "code_description": "repo.getDataFlow().catch { e -> emit(emptyList()) }.stateIn(viewModelScope, WhileSubscribed(5000), emptyList())",
+          "use_case": "Reactive Flow pipeline — errors are caught and replaced with a fallback value"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Timeout and Retry with Coroutines",
+      "content": "Mobile networks are unreliable — connections time out, servers are temporarily unavailable, and transient errors occur regularly. Coroutines provide built-in tools for handling these scenarios: withTimeout() cancels a coroutine if it takes too long, and retry logic is easy to implement with loops or the retry Flow operator. For network-specific timeouts, OkHttp's timeout settings are usually the first line of defense, with coroutine-level timeouts as an additional safety net."
+    },
+    {
+      "type": "bullet",
+      "heading": "Implementing Timeout and Retry",
+      "items": [
+        "withTimeout(5000L) { api.getData() } — cancels the call if it takes more than 5 seconds; throws TimeoutCancellationException",
+        "withTimeoutOrNull(5000L) { api.getData() } — returns null on timeout instead of throwing",
+        "Basic retry loop: repeat(3) { attempt -> try { return api.getData() } catch (e: IOException) { if (attempt == 2) throw e } }",
+        "Exponential backoff: delay(1000L * 2.0.pow(attempt).toLong()) between retry attempts",
+        "Flow retry operator: flow.retry(3) { cause -> cause is IOException } — retries up to 3 times on IOException",
+        "Flow retryWhen operator: flow.retryWhen { cause, attempt -> cause is IOException && attempt < 3 } — conditional retry",
+        "Combine delay with retry: flow.retryWhen { cause, attempt -> if (cause is IOException && attempt < 3) { delay(1000L * attempt); true } else false }",
+        "Never retry on 4xx client errors — the request is wrong; only retry on 5xx or network failures"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Flow Operators for Networking",
+      "rows": [
+        {
+          "operator": "map { }",
+          "description": "Transforms each emission — convert API response to domain model",
+          "example": "api.getUsersFlow().map { response -> response.users.map { it.toDomain() } }"
+        },
+        {
+          "operator": "catch { }",
+          "description": "Catches exceptions in the Flow — emit a fallback value or error state",
+          "example": "flow.catch { e -> emit(emptyList()) }"
+        },
+        {
+          "operator": "retry(n) { }",
+          "description": "Retries the upstream on failure up to n times with optional condition",
+          "example": "flow.retry(3) { it is IOException }"
+        },
+        {
+          "operator": "debounce(ms)",
+          "description": "Waits before emitting — prevents rapid-fire search queries on every keystroke",
+          "example": "searchQueryFlow.debounce(300).flatMapLatest { repo.search(it) }"
+        },
+        {
+          "operator": "flatMapLatest { }",
+          "description": "Cancels previous inner Flow when a new value arrives — essential for search",
+          "example": "queryFlow.flatMapLatest { query -> repo.searchFlow(query) }"
+        },
+        {
+          "operator": "distinctUntilChanged()",
+          "description": "Only emits when value actually changes — prevents redundant network calls",
+          "example": "filterFlow.distinctUntilChanged().flatMapLatest { repo.getFiltered(it) }"
+        },
+        {
+          "operator": "onStart { }",
+          "description": "Emits a value before the first upstream emission — ideal for showing loading state",
+          "example": "flow.onStart { emit(UiState.Loading) }"
+        },
+        {
+          "operator": "onEach { }",
+          "description": "Performs a side effect on each emission without changing the value",
+          "example": "flow.onEach { Timber.d(\"Received: $it\") }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Polling — Repeated Network Calls at Intervals",
+      "items": [
+        "Use a while(true) loop with delay() for simple polling: while(isActive) { refreshData(); delay(30_000L) }",
+        "isActive checks if the coroutine is still active — exits the loop when cancelled",
+        "For Flow-based polling: flow { while(true) { emit(api.getData()); delay(30_000L) } }",
+        "Use conflate() on polling Flows to drop emissions if the collector is slow",
+        "Cancel polling by cancelling the coroutine or scope — no special cleanup needed",
+        "For WorkManager-based periodic polling (e.g., background sync every hour), use PeriodicWorkRequest instead",
+        "Respect device battery — avoid short polling intervals; use push notifications (FCM) where possible",
+        "Combine polling with exponential backoff on failures to avoid hammering a struggling server"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Combining Multiple Network Sources",
+      "rows": [
+        {
+          "pattern": "combine() — merge two Flows",
+          "description": "Emits a combined value whenever either source Flow emits",
+          "example": "combine(repo.getUsers(), repo.getProducts()) { users, products -> UiState(users, products) }.stateIn(...)"
+        },
+        {
+          "pattern": "zip() — pair emissions",
+          "description": "Pairs emissions from two Flows one-to-one — waits for both to emit before combining",
+          "example": "flowA.zip(flowB) { a, b -> Pair(a, b) }"
+        },
+        {
+          "pattern": "merge() — flatten multiple Flows",
+          "description": "Merges multiple Flows into one — emits from whichever source emits first",
+          "example": "merge(localFlow, remoteFlow).collect { update(it) }"
+        },
+        {
+          "pattern": "flatMapMerge() — parallel inner Flows",
+          "description": "Subscribes to all inner Flows concurrently — does not cancel previous inner Flow",
+          "example": "userIds.flatMapMerge { id -> api.getUser(id).asFlow() }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing Coroutine Networking",
+      "items": [
+        "Use runTest { } from kotlinx-coroutines-test for testing suspend functions and Flow collection",
+        "MockWebServer (from OkHttp) provides a real local HTTP server — enqueue mock responses for testing",
+        "enqueueResponse: server.enqueue(MockResponse().setBody(json).setResponseCode(200))",
+        "Provide the MockWebServer's base URL to Retrofit: server.url(\"/\").toString()",
+        "Use TestCoroutineDispatcher or UnconfinedTestDispatcher for immediate coroutine execution in tests",
+        "Test error scenarios by enqueuing error responses: server.enqueue(MockResponse().setResponseCode(500))",
+        "Use Turbine library for Flow testing: flow.test { assertEquals(expected, awaitItem()) }",
+        "Inject fake Repository implementations in ViewModel tests to isolate from real network calls"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Network State Awareness",
+      "rows": [
+        {
+          "approach": "ConnectivityManager",
+          "description": "System service for checking current network status and capabilities",
+          "usage": "val cm = context.getSystemService(ConnectivityManager::class.java); cm.activeNetwork"
+        },
+        {
+          "approach": "NetworkCallback",
+          "description": "Callback-based listener for network connectivity changes",
+          "usage": "cm.registerNetworkCallback(NetworkRequest.Builder().build(), callback)"
+        },
+        {
+          "approach": "Flow-based connectivity",
+          "description": "Wrap NetworkCallback in a callbackFlow for reactive connectivity monitoring",
+          "usage": "callbackFlow { registerNetworkCallback(...); awaitClose { unregisterNetworkCallback(...) } }"
+        },
+        {
+          "approach": "Retry on reconnect",
+          "description": "Combine connectivity Flow with data Flow — retry network call when connection is restored",
+          "usage": "connectivityFlow.filter { it }.flatMapLatest { repo.getDataFlow() }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for Coroutine Networking",
+      "items": [
+        "Always launch network coroutines from viewModelScope — never GlobalScope",
+        "Put network calls in the Repository as suspend functions — ViewModel only orchestrates, Repository executes",
+        "Use withContext(Dispatchers.IO) only for non-Retrofit I/O — Retrofit handles thread switching internally",
+        "Always handle both IOException (network error) and HttpException (server error) separately",
+        "Never perform network calls in onCreate(), onStart(), or onResume() directly — use ViewModel",
+        "Use StateFlow with WhileSubscribed(5000) for network-driven state — prevents unnecessary re-fetching on rotation",
+        "Implement loading, success, and error states as a sealed UiState class — expose all three to the View",
+        "Use coroutineScope { } for parallel calls — it ensures all child coroutines complete or fail together"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Coroutine Networking Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Making network calls on the main thread",
+          "fix": "Retrofit suspend functions run on OkHttp's background thread pool automatically; Room needs explicit Dispatchers.IO"
+        },
+        {
+          "mistake": "Using GlobalScope for network calls",
+          "fix": "Use viewModelScope — it ties the coroutine lifetime to the ViewModel and cancels automatically"
+        },
+        {
+          "mistake": "Only catching generic Exception",
+          "fix": "Catch IOException and HttpException separately — they have different causes and require different recovery strategies"
+        },
+        {
+          "mistake": "Not cancelling coroutines when ViewModel is cleared",
+          "fix": "viewModelScope handles this automatically — avoid launching coroutines outside viewModelScope in the ViewModel"
+        },
+        {
+          "mistake": "Running async calls sequentially instead of in parallel",
+          "fix": "Use async { } and await() for independent calls that can run simultaneously to reduce total wait time"
+        },
+        {
+          "mistake": "Collecting Flow in lifecycleScope without repeatOnLifecycle",
+          "fix": "Use repeatOnLifecycle(STARTED) to stop collecting when Fragment is in background — prevents wasted updates"
+        },
+        {
+          "mistake": "Using delay() to wait for a network result",
+          "fix": "Use await() on Deferred or collect() on Flow — never guess timing with delay()"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Kotlin coroutines transform Android networking from a complex, callback-driven challenge into clean, sequential, readable code. By combining Retrofit's suspend function support with viewModelScope for lifecycle management, structured error handling with try-catch, and Flow operators for reactive pipelines, you get a networking architecture that is safe, cancellable, testable, and easy to reason about. Master the patterns of sequential calls, parallel async/await, Flow-based reactive networking, and retry strategies, and you will handle virtually every real-world networking scenario in Android apps with confidence."
+    }
+  ]
+}

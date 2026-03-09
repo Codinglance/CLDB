@@ -1,0 +1,434 @@
+{
+  "title": "Material Design Components",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Material Design?",
+      "content": "Material Design is Google's open-source design system for building beautiful, consistent, and accessible user interfaces across Android, iOS, and the web. It provides a comprehensive set of guidelines, components, and theming tools that help developers and designers create apps that feel native to Android while expressing their own brand identity. The Material Components for Android (MDC-Android) library is the official implementation of Material Design in Android, and it is the recommended replacement for the older AppCompat widgets."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Material Components?",
+      "items": [
+        "Consistent, polished UI that follows Google's design guidelines out of the box",
+        "Accessible by default — components are built with accessibility in mind",
+        "Themeable — customize colors, typography, and shapes across the entire app from one place",
+        "Rich set of components not available in base Android: BottomNavigationView, ChipGroup, MaterialCardView, and more",
+        "Material You (Material 3) supports dynamic color — adapts to the user's wallpaper colors on Android 12+",
+        "Regular updates from Google aligned with Android platform updates",
+        "Replaces older AppCompat widgets with more feature-rich, visually refined equivalents",
+        "Supports both Material 2 (com.google.android.material) and Material 3 (Material You) theming"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Material Design 2 vs Material Design 3 (Material You)",
+      "rows": [
+        {
+          "aspect": "Release",
+          "material_2": "2018 — used in most existing Android apps",
+          "material_3": "2021 — recommended for new projects targeting Android 12+"
+        },
+        {
+          "aspect": "Color system",
+          "material_2": "Primary, secondary, surface, background colors",
+          "material_3": "Expanded tonal palette with dynamic color support from wallpaper"
+        },
+        {
+          "aspect": "Dynamic Color",
+          "material_2": "Not supported",
+          "material_3": "Supported on Android 12+ — adapts to user's wallpaper"
+        },
+        {
+          "aspect": "Theme parent",
+          "material_2": "Theme.MaterialComponents.*",
+          "material_3": "Theme.Material3.*"
+        },
+        {
+          "aspect": "Components",
+          "material_2": "Buttons, Cards, TextFields, BottomNav, FAB, etc.",
+          "material_3": "All M2 components updated with new shapes, colors, and variants"
+        },
+        {
+          "aspect": "Shape system",
+          "material_2": "Small, medium, large shape categories",
+          "material_3": "Refined shape scale with more expressive rounded corners"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Setting Up Material Components",
+      "content": "To use Material Components in your Android project, add the Material Components dependency to your app-level build.gradle.kts. Then update your app's theme in res/values/themes.xml to extend a Material theme instead of an AppCompat theme. Once your theme extends a Material theme, all widgets in your layouts automatically receive the Material styling, and you can use the full range of Material Components in your XML."
+    },
+    {
+      "type": "bullet",
+      "heading": "Material Theme Attributes You Can Customize",
+      "items": [
+        "colorPrimary – The main brand color used for key UI elements like the AppBar and FAB",
+        "colorOnPrimary – Color of content drawn on top of colorPrimary (e.g., icons, text on AppBar)",
+        "colorSecondary – Accent color for interactive elements like checkboxes and switches",
+        "colorSurface – Background color of surfaces like cards, sheets, and menus",
+        "colorOnSurface – Color of content drawn on top of colorSurface",
+        "colorError – Color used for error states in TextFields, snackbars, and form validation",
+        "textAppearance* – Typography styles (headline, body, label, display) applied globally",
+        "shapeAppearance* – Corner radius and shape style (rounded, cut) applied to small/medium/large components"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Material Components Overview",
+      "rows": [
+        {
+          "component": "MaterialButton",
+          "description": "Styled button with ripple, elevation, and icon support",
+          "xml_tag": "com.google.android.material.button.MaterialButton"
+        },
+        {
+          "component": "MaterialCardView",
+          "description": "Card container with elevation, corner radius, and stroke support",
+          "xml_tag": "com.google.android.material.card.MaterialCardView"
+        },
+        {
+          "component": "TextInputLayout + TextInputEditText",
+          "description": "Floating label text field with error, helper text, and icon support",
+          "xml_tag": "com.google.android.material.textfield.TextInputLayout"
+        },
+        {
+          "component": "Chip / ChipGroup",
+          "description": "Compact interactive elements for tags, filters, and multi-select",
+          "xml_tag": "com.google.android.material.chip.Chip"
+        },
+        {
+          "component": "BottomNavigationView",
+          "description": "Bottom navigation bar with icons and labels for top-level destinations",
+          "xml_tag": "com.google.android.material.bottomnavigation.BottomNavigationView"
+        },
+        {
+          "component": "NavigationView",
+          "description": "Side navigation drawer with menu items and header",
+          "xml_tag": "com.google.android.material.navigation.NavigationView"
+        },
+        {
+          "component": "FloatingActionButton (FAB)",
+          "description": "Prominent circular action button with icon and optional label",
+          "xml_tag": "com.google.android.material.floatingactionbutton.FloatingActionButton"
+        },
+        {
+          "component": "ExtendedFloatingActionButton",
+          "description": "FAB with text label that can expand and collapse",
+          "xml_tag": "com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton"
+        },
+        {
+          "component": "Snackbar",
+          "description": "Brief message shown at the bottom of the screen with optional action",
+          "xml_tag": "Created in code: Snackbar.make(view, message, duration)"
+        },
+        {
+          "component": "MaterialAlertDialog",
+          "description": "Material-styled dialog with title, message, and action buttons",
+          "xml_tag": "MaterialAlertDialogBuilder(context)"
+        },
+        {
+          "component": "BottomSheetDialog / BottomSheetDialogFragment",
+          "description": "Sheet that slides up from the bottom of the screen",
+          "xml_tag": "BottomSheetDialogFragment subclass"
+        },
+        {
+          "component": "TabLayout",
+          "description": "Horizontal tab strip for switching between views or Fragments",
+          "xml_tag": "com.google.android.material.tabs.TabLayout"
+        },
+        {
+          "component": "AppBarLayout + MaterialToolbar",
+          "description": "Top app bar with title, navigation icon, and action menu items",
+          "xml_tag": "com.google.android.material.appbar.AppBarLayout"
+        },
+        {
+          "component": "CollapsingToolbarLayout",
+          "description": "Toolbar that collapses into a smaller toolbar as the user scrolls",
+          "xml_tag": "com.google.android.material.appbar.CollapsingToolbarLayout"
+        },
+        {
+          "component": "NavigationRailView",
+          "description": "Vertical navigation rail for medium-sized screens (tablets, foldables)",
+          "xml_tag": "com.google.android.material.navigationrail.NavigationRailView"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "MaterialButton",
+      "content": "MaterialButton is the Material Components replacement for the standard Android Button. It offers built-in support for icons (start, end, or icon-only), ripple effects, stroke borders, corner radius customization, and elevation. MaterialButton comes in several styles out of the box: filled (default), outlined, text (flat), elevated, and tonal — all controlled by the style attribute."
+    },
+    {
+      "type": "bullet",
+      "heading": "MaterialButton Styles & Attributes",
+      "items": [
+        "style=\"@style/Widget.Material3.Button\" – Filled button (default) with solid background",
+        "style=\"@style/Widget.Material3.Button.OutlinedButton\" – Outlined button with border and transparent background",
+        "style=\"@style/Widget.Material3.Button.TextButton\" – Flat text-only button with no background or border",
+        "style=\"@style/Widget.Material3.Button.ElevatedButton\" – Button with elevation shadow",
+        "style=\"@style/Widget.Material3.Button.TonalButton\" – Filled tonal button using secondary container color",
+        "app:icon – Drawable resource for an icon displayed inside the button",
+        "app:iconGravity – Position of the icon: start, end, top, textStart, textEnd",
+        "app:strokeColor and app:strokeWidth – Border color and thickness for outlined style",
+        "app:cornerRadius – Overrides the default corner radius for this specific button"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "TextInputLayout Styles",
+      "rows": [
+        {
+          "style": "Widget.Material3.TextInputLayout.FilledBox",
+          "appearance": "Filled background with floating label — default and most common",
+          "use_case": "Forms, login screens, search inputs"
+        },
+        {
+          "style": "Widget.Material3.TextInputLayout.OutlinedBox",
+          "appearance": "Bordered box with floating label above the border",
+          "use_case": "When a cleaner, outlined look is preferred"
+        },
+        {
+          "style": "Widget.Material3.TextInputLayout.FilledBox.Dense",
+          "appearance": "Compact version of the filled style with reduced height",
+          "use_case": "Dense forms where vertical space is limited"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "TextInputLayout Key Features",
+      "items": [
+        "android:hint on the inner TextInputEditText becomes the floating label when the field is focused",
+        "app:helperText – Persistent helper text shown below the field to guide the user",
+        "app:errorText (or setError() in code) – Shows red error message below the field",
+        "app:counterEnabled and app:counterMaxLength – Shows a character counter below the field",
+        "app:startIconDrawable – Icon placed at the start (left) of the input field",
+        "app:endIconMode – Controls the end icon: password_toggle, clear_text, custom, or none",
+        "app:boxStrokeColor – Overrides the border/underline color (supports ColorStateList for focused state)",
+        "Always wrap TextInputEditText inside TextInputLayout — never use EditText directly with TextInputLayout"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Chip Types & Use Cases",
+      "rows": [
+        {
+          "chip_type": "Action Chip",
+          "style": "Widget.Material3.Chip.Action",
+          "use_case": "Triggers an action (e.g., Add to calendar, Share)"
+        },
+        {
+          "chip_type": "Filter Chip",
+          "style": "Widget.Material3.Chip.Filter",
+          "use_case": "Multi-select filter options (e.g., category filters in a search screen)"
+        },
+        {
+          "chip_type": "Choice Chip",
+          "style": "Widget.Material3.Chip.Choice",
+          "use_case": "Single-select options within a ChipGroup (e.g., size selector)"
+        },
+        {
+          "chip_type": "Input Chip",
+          "style": "Widget.Material3.Chip.Input",
+          "use_case": "Represents user-entered input (e.g., email recipients, tags)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "BottomNavigationView Setup",
+      "items": [
+        "Add BottomNavigationView to the bottom of your Activity layout, outside any scrollable content",
+        "Create a menu XML file in res/menu/ with <item> entries for each tab (max 5 items recommended)",
+        "Each menu item needs an android:id, android:title, and android:icon attribute",
+        "Set app:menu=\"@menu/bottom_nav_menu\" on the BottomNavigationView",
+        "Listen for tab selection: bottomNav.setOnItemSelectedListener { item -> ... }",
+        "Pair with Jetpack Navigation Component using NavigationUI.setupWithNavController() for automatic Fragment switching",
+        "app:labelVisibilityMode controls label display: labeled, unlabeled, selected, or auto",
+        "Use app:itemActiveIndicatorStyle to customize the active tab indicator shape (Material 3)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Snackbar vs Toast",
+      "rows": [
+        {
+          "aspect": "Appearance",
+          "snackbar": "Bar at the bottom of the screen with optional action button",
+          "toast": "Floating bubble message — no action button"
+        },
+        {
+          "aspect": "Action button",
+          "snackbar": "Yes — supports a single clickable action (e.g., Undo)",
+          "toast": "No"
+        },
+        {
+          "aspect": "Duration",
+          "snackbar": "LENGTH_SHORT, LENGTH_LONG, or LENGTH_INDEFINITE",
+          "toast": "Toast.LENGTH_SHORT or Toast.LENGTH_LONG"
+        },
+        {
+          "aspect": "Dismissal",
+          "snackbar": "User can swipe to dismiss; also auto-dismisses",
+          "toast": "Cannot be dismissed by the user"
+        },
+        {
+          "aspect": "Customization",
+          "snackbar": "Background color, text color, action color customizable",
+          "toast": "Limited — custom layout possible but complex"
+        },
+        {
+          "aspect": "Recommendation",
+          "snackbar": "Preferred — richer UX, Material design compliant",
+          "toast": "Use only for simple, non-actionable messages"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "MaterialCardView Key Attributes",
+      "items": [
+        "app:cardCornerRadius – Rounds the corners of the card (e.g., 12dp)",
+        "app:cardElevation – Sets the shadow depth below the card",
+        "app:strokeColor and app:strokeWidth – Adds a border/outline to the card",
+        "app:cardBackgroundColor – Sets the card's background color",
+        "android:checkable=\"true\" – Makes the card checkable (toggles a checked overlay on click)",
+        "app:checkedIconDrawable – Icon shown on the card when it is in checked state",
+        "Wrap content in MaterialCardView instead of plain CardView for Material theming support",
+        "Use MaterialCardView as item containers in RecyclerView for consistent list item styling"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "AppBar Scroll Behaviors with AppBarLayout",
+      "rows": [
+        {
+          "behavior": "scroll",
+          "effect": "Toolbar scrolls off screen as the user scrolls down",
+          "attribute": "app:layout_scrollFlags=\"scroll|enterAlways\""
+        },
+        {
+          "behavior": "enterAlways",
+          "effect": "Toolbar reappears immediately when the user scrolls up",
+          "attribute": "Combined with scroll flag"
+        },
+        {
+          "behavior": "enterAlwaysCollapsed",
+          "effect": "Toolbar only fully expands when scrolled to the top",
+          "attribute": "Combined with scroll and minHeight"
+        },
+        {
+          "behavior": "snap",
+          "effect": "Toolbar snaps to fully shown or fully hidden — no partial states",
+          "attribute": "Combined with scroll flag"
+        },
+        {
+          "behavior": "exitUntilCollapsed",
+          "effect": "Toolbar collapses to its minimum height when scrolling down — used with CollapsingToolbarLayout",
+          "attribute": "app:layout_scrollFlags=\"scroll|exitUntilCollapsed\""
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Material Design Color System",
+      "items": [
+        "Primary — the main brand color; used for key components like the app bar, FAB, and filled buttons",
+        "Secondary — accent color for less prominent interactive elements like checkboxes and progress indicators",
+        "Tertiary — optional third color for additional contrast and visual interest",
+        "Surface — background color for components like cards, sheets, and dialogs",
+        "Background — the page/screen background color behind all content",
+        "Error — used consistently for all error states in input fields, snackbars, and icons",
+        "On* colors (onPrimary, onSurface, etc.) — colors for content drawn on top of the corresponding color",
+        "In Material 3, use the Material Theme Builder tool at m3.material.io to generate a full color scheme"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Material Design Typography Scale (Material 3)",
+      "rows": [
+        {
+          "style": "displayLarge / displayMedium / displaySmall",
+          "size": "57sp / 45sp / 36sp",
+          "use_case": "Hero text, large splash screen headings"
+        },
+        {
+          "style": "headlineLarge / headlineMedium / headlineSmall",
+          "size": "32sp / 28sp / 24sp",
+          "use_case": "Screen titles, section headings"
+        },
+        {
+          "style": "titleLarge / titleMedium / titleSmall",
+          "size": "22sp / 16sp / 14sp",
+          "use_case": "Toolbar title, card titles, dialog titles"
+        },
+        {
+          "style": "bodyLarge / bodyMedium / bodySmall",
+          "size": "16sp / 14sp / 12sp",
+          "use_case": "Main body text, descriptions, helper text"
+        },
+        {
+          "style": "labelLarge / labelMedium / labelSmall",
+          "size": "14sp / 12sp / 11sp",
+          "use_case": "Button labels, chip text, tab labels, captions"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Shape System in Material Design",
+      "items": [
+        "Material Design defines shape categories: Extra Small, Small, Medium, Large, Extra Large, Full",
+        "Each shape category has a default corner style (rounded or cut) and corner size",
+        "Components are assigned a default shape category: Chips use Extra Small, Cards use Medium, Dialogs use Extra Large",
+        "Override shape globally in your theme: <item name=\"shapeAppearanceMediumComponent\">@style/MyShape</item>",
+        "Override shape per component using app:shapeAppearanceOverlay in XML",
+        "Corner styles: RoundedCornerTreatment (circular) or CutCornerTreatment (45° cut)",
+        "Material 3 uses a more expressive shape scale with fully rounded components by default",
+        "Use ShapeableImageView for images with Material shape clipping (rounded, cut, diamond)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Material Components Best Practices",
+      "rows": [
+        {
+          "practice": "Extend Theme.Material3.* or Theme.MaterialComponents.*",
+          "reason": "Ensures all components receive correct Material styling automatically"
+        },
+        {
+          "practice": "Use TextInputLayout + TextInputEditText (not plain EditText)",
+          "reason": "Enables floating labels, error messages, helper text, and icons"
+        },
+        {
+          "practice": "Use MaterialAlertDialogBuilder instead of AlertDialog.Builder",
+          "reason": "Applies Material theme to dialog automatically"
+        },
+        {
+          "practice": "Use Snackbar instead of Toast for user feedback",
+          "reason": "More accessible, supports undo action, follows Material guidelines"
+        },
+        {
+          "practice": "Define all colors in theme attributes, not hardcoded",
+          "reason": "Enables dynamic color, dark mode support, and easy rebranding"
+        },
+        {
+          "practice": "Use NavigationUI with BottomNavigationView",
+          "reason": "Automatic Fragment switching and back stack management with Navigation Component"
+        },
+        {
+          "practice": "Test with dark mode enabled",
+          "reason": "Material themes provide dark mode variants — verify all components look correct"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Material Design Components provide a rich, polished, and accessible UI foundation for Android apps. By extending a Material theme and using MDC widgets — MaterialButton, TextInputLayout, MaterialCardView, BottomNavigationView, Snackbar, and more — you get a professional look and feel with minimal effort. Invest time in understanding the color system, typography scale, and shape system, as these theme attributes cascade through your entire app and give it a cohesive, branded identity that adapts to dark mode and Material You dynamic color."
+    }
+  ]
+}

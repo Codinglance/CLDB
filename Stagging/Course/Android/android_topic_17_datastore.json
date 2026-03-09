@@ -1,0 +1,376 @@
+{
+  "title": "SharedPreferences & DataStore",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Key-Value Storage in Android?",
+      "content": "Android provides lightweight key-value storage mechanisms for persisting small amounts of data — user preferences, session tokens, app settings, onboarding completion flags, and similar simple values. There are two primary options: the older SharedPreferences API and the modern Jetpack DataStore library. Both store data as key-value pairs, but DataStore is built on Kotlin coroutines and Flow, making it asynchronous, safe, and far more aligned with modern Android architecture. Google officially recommends DataStore over SharedPreferences for all new development."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use Key-Value Storage",
+      "items": [
+        "User preferences — dark mode toggle, notification settings, language selection",
+        "Session data — auth tokens, user ID of the logged-in user",
+        "App state flags — is_onboarding_complete, has_rated_app, first_launch_date",
+        "UI state — last selected tab, last scroll position, last search query",
+        "Simple configuration — base URL for debug builds, feature flags",
+        "Do NOT use for complex relational data — use Room Database instead",
+        "Do NOT use for large binary data — use file storage or Room with blob columns",
+        "Do NOT use for sensitive data like passwords — use Android Keystore or EncryptedSharedPreferences"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "SharedPreferences vs Preferences DataStore vs Proto DataStore",
+      "rows": [
+        {
+          "aspect": "API type",
+          "shared_preferences": "Synchronous (blocking) — runs on calling thread",
+          "preferences_datastore": "Asynchronous — built on Kotlin coroutines and Flow",
+          "proto_datastore": "Asynchronous — uses Protocol Buffers for typed schema"
+        },
+        {
+          "aspect": "Thread safety",
+          "shared_preferences": "Partially — apply() is async but get() is synchronous; can cause ANR on main thread",
+          "preferences_datastore": "Fully thread-safe — all operations are non-blocking coroutine-based",
+          "proto_datastore": "Fully thread-safe"
+        },
+        {
+          "aspect": "Type safety",
+          "shared_preferences": "No — keys are strings; wrong type crashes at runtime",
+          "preferences_datastore": "Partial — uses typed Preferences.Key<T> objects",
+          "proto_datastore": "Full — schema defined in .proto file; compile-time type checking"
+        },
+        {
+          "aspect": "Error handling",
+          "shared_preferences": "No built-in error handling — silently fails or returns defaults",
+          "preferences_datastore": "Exceptions thrown as Flow errors — catchable with catch operator",
+          "proto_datastore": "Same as Preferences DataStore"
+        },
+        {
+          "aspect": "Data consistency",
+          "shared_preferences": "Risk of data corruption under concurrent writes",
+          "preferences_datastore": "Transactional — uses DataStore's atomic write mechanism",
+          "proto_datastore": "Transactional"
+        },
+        {
+          "aspect": "Complexity",
+          "shared_preferences": "Low — simple get/put API",
+          "preferences_datastore": "Medium — requires coroutine knowledge",
+          "proto_datastore": "High — requires .proto schema definition and code generation"
+        },
+        {
+          "aspect": "Google recommendation",
+          "shared_preferences": "Deprecated for new projects",
+          "preferences_datastore": "Recommended for simple key-value preferences",
+          "proto_datastore": "Recommended when typed schema and complex objects are needed"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "SharedPreferences — Overview",
+      "content": "SharedPreferences is Android's original key-value storage API. It stores data in an XML file on the device's internal storage. While simple to use, SharedPreferences has significant drawbacks: its read and write operations can block the main thread causing ANR (Application Not Responding) errors, it has no built-in error handling, it is not safe for concurrent access, and it does not integrate with Kotlin's type system or coroutines. Despite these issues, understanding SharedPreferences is important because it is still widely used in existing codebases."
+    },
+    {
+      "type": "bullet",
+      "heading": "SharedPreferences — Basic Usage",
+      "items": [
+        "Get instance: val prefs = context.getSharedPreferences(\"my_prefs\", Context.MODE_PRIVATE)",
+        "Read a value: val isDarkMode = prefs.getBoolean(\"dark_mode\", false)",
+        "Read a String: val token = prefs.getString(\"auth_token\", null)",
+        "Write values using an Editor: prefs.edit() { putBoolean(\"dark_mode\", true) }",
+        "apply() — writes asynchronously to disk in the background (preferred over commit())",
+        "commit() — writes synchronously and returns a Boolean success result (avoid on main thread)",
+        "Remove a key: prefs.edit() { remove(\"auth_token\") }",
+        "Clear all keys: prefs.edit() { clear() }",
+        "Listen for changes: prefs.registerOnSharedPreferenceChangeListener(listener)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "SharedPreferences Data Types",
+      "rows": [
+        {
+          "type": "Boolean",
+          "write": "putBoolean(\"key\", value)",
+          "read": "getBoolean(\"key\", defaultValue)"
+        },
+        {
+          "type": "Int",
+          "write": "putInt(\"key\", value)",
+          "read": "getInt(\"key\", defaultValue)"
+        },
+        {
+          "type": "Long",
+          "write": "putLong(\"key\", value)",
+          "read": "getLong(\"key\", defaultValue)"
+        },
+        {
+          "type": "Float",
+          "write": "putFloat(\"key\", value)",
+          "read": "getFloat(\"key\", defaultValue)"
+        },
+        {
+          "type": "String",
+          "write": "putString(\"key\", value)",
+          "read": "getString(\"key\", defaultValue)"
+        },
+        {
+          "type": "Set<String>",
+          "write": "putStringSet(\"key\", setOf(\"a\", \"b\"))",
+          "read": "getStringSet(\"key\", emptySet())"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Jetpack DataStore — The Modern Replacement",
+      "content": "Jetpack DataStore is Google's modern replacement for SharedPreferences. It is built entirely on Kotlin coroutines and Flow, making it fully asynchronous and safe to use on any thread — including the main thread — without risking ANR errors. DataStore comes in two flavors: Preferences DataStore (key-value, no schema) and Proto DataStore (strongly typed with Protocol Buffers). For most use cases, Preferences DataStore is the right choice. It stores data in a file on disk, accessed safely through a Flow that emits the entire preferences snapshot whenever any value changes."
+    },
+    {
+      "type": "bullet",
+      "heading": "Setting Up Preferences DataStore",
+      "items": [
+        "Add dependency: implementation(\"androidx.datastore:datastore-preferences:1.1.x\")",
+        "Create a DataStore instance at the top level (outside any class): val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = \"settings\")",
+        "The preferencesDataStore delegate creates a singleton DataStore tied to the application context",
+        "Define keys using typed Preferences.Key objects: val DARK_MODE_KEY = booleanPreferencesKey(\"dark_mode\")",
+        "Other key types: intPreferencesKey, longPreferencesKey, floatPreferencesKey, stringPreferencesKey, stringSetPreferencesKey",
+        "Read data as a Flow: context.dataStore.data.map { prefs -> prefs[DARK_MODE_KEY] ?: false }",
+        "Write data using edit(): context.dataStore.edit { prefs -> prefs[DARK_MODE_KEY] = true }",
+        "edit() is a suspend function — must be called from a coroutine scope"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Preferences DataStore Key Types",
+      "rows": [
+        {
+          "type": "Boolean",
+          "key_creator": "booleanPreferencesKey(\"key_name\")",
+          "read_example": "prefs[DARK_MODE_KEY] ?: false"
+        },
+        {
+          "type": "Int",
+          "key_creator": "intPreferencesKey(\"key_name\")",
+          "read_example": "prefs[LAUNCH_COUNT_KEY] ?: 0"
+        },
+        {
+          "type": "Long",
+          "key_creator": "longPreferencesKey(\"key_name\")",
+          "read_example": "prefs[LAST_SYNC_KEY] ?: 0L"
+        },
+        {
+          "type": "Float",
+          "key_creator": "floatPreferencesKey(\"key_name\")",
+          "read_example": "prefs[FONT_SIZE_KEY] ?: 14f"
+        },
+        {
+          "type": "String",
+          "key_creator": "stringPreferencesKey(\"key_name\")",
+          "read_example": "prefs[AUTH_TOKEN_KEY] ?: \"\""
+        },
+        {
+          "type": "Set<String>",
+          "key_creator": "stringSetPreferencesKey(\"key_name\")",
+          "read_example": "prefs[SELECTED_TAGS_KEY] ?: emptySet()"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Reading Data from DataStore",
+      "items": [
+        "DataStore exposes data as Flow<Preferences> — the entire preferences object emitted on every change",
+        "Use map operator to extract a specific value: dataStore.data.map { prefs -> prefs[DARK_MODE_KEY] ?: false }",
+        "The resulting Flow<Boolean> can be collected in a ViewModel or converted to StateFlow",
+        "Handle errors with the catch operator: .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }",
+        "In the ViewModel: val isDarkMode = repo.darkModeFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)",
+        "stateIn() converts a cold Flow into a hot StateFlow with an initial value — safe to collect in the UI",
+        "The Flow automatically emits the latest value to new collectors immediately upon subscription",
+        "Each time any preference changes, the entire Preferences object is re-emitted — use map to extract only what you need"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Writing Data to DataStore",
+      "rows": [
+        {
+          "operation": "Write a single value",
+          "code": "dataStore.edit { prefs -> prefs[DARK_MODE_KEY] = true }",
+          "notes": "edit() is atomic and transactional — all changes in the block are written together"
+        },
+        {
+          "operation": "Write multiple values",
+          "code": "dataStore.edit { prefs -> prefs[DARK_MODE_KEY] = true; prefs[FONT_SIZE_KEY] = 16f }",
+          "notes": "All changes in one edit() block are written atomically — no partial writes"
+        },
+        {
+          "operation": "Remove a key",
+          "code": "dataStore.edit { prefs -> prefs.remove(AUTH_TOKEN_KEY) }",
+          "notes": "Key is removed from the preferences file entirely"
+        },
+        {
+          "operation": "Clear all preferences",
+          "code": "dataStore.edit { prefs -> prefs.clear() }",
+          "notes": "Removes all key-value pairs — use for logout or factory reset scenarios"
+        },
+        {
+          "operation": "Conditional write",
+          "code": "dataStore.edit { prefs -> if (prefs[COUNT_KEY] == null) prefs[COUNT_KEY] = 0 }",
+          "notes": "Read current value inside edit() block for conditional writes"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Wrapping DataStore in a Repository",
+      "content": "Following the Repository pattern, DataStore should not be accessed directly from a ViewModel. Instead, create a dedicated repository class — for example, UserPreferencesRepository — that wraps the DataStore instance and exposes clean, typed Flow properties and suspend functions. This keeps the ViewModel unaware of the DataStore implementation details and makes the preferences layer easy to test by injecting a fake repository."
+    },
+    {
+      "type": "bullet",
+      "heading": "UserPreferencesRepository Pattern",
+      "items": [
+        "Create a class: class UserPreferencesRepository @Inject constructor(private val dataStore: DataStore<Preferences>)",
+        "Define keys as companion object constants inside the repository class",
+        "Expose typed Flow properties: val darkModeFlow: Flow<Boolean> = dataStore.data.map { it[DARK_MODE_KEY] ?: false }",
+        "Expose suspend write functions: suspend fun setDarkMode(enabled: Boolean) { dataStore.edit { it[DARK_MODE_KEY] = enabled } }",
+        "Inject DataStore in a Hilt module: @Provides @Singleton fun provideDataStore(@ApplicationContext context: Context) = context.dataStore",
+        "Inject the repository into the ViewModel: @HiltViewModel class SettingsViewModel @Inject constructor(private val repo: UserPreferencesRepository)",
+        "In the ViewModel: val isDarkMode = repo.darkModeFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)",
+        "Handle user action: fun setDarkMode(enabled: Boolean) { viewModelScope.launch { repo.setDarkMode(enabled) } }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "DataStore Integration with ViewModel and UI",
+      "rows": [
+        {
+          "step": "1. Define DataStore singleton",
+          "description": "val Context.dataStore by preferencesDataStore(name = \"user_prefs\") — top-level extension"
+        },
+        {
+          "step": "2. Create Repository",
+          "description": "UserPreferencesRepository wraps DataStore; exposes Flow<Boolean> darkModeFlow and suspend fun setDarkMode()"
+        },
+        {
+          "step": "3. Provide with Hilt",
+          "description": "@Provides @Singleton fun provideDataStore(@ApplicationContext ctx: Context): DataStore<Preferences> = ctx.dataStore"
+        },
+        {
+          "step": "4. Inject into ViewModel",
+          "description": "@HiltViewModel class SettingsViewModel @Inject constructor(private val prefs: UserPreferencesRepository)"
+        },
+        {
+          "step": "5. Expose as StateFlow",
+          "description": "val isDarkMode = prefs.darkModeFlow.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)"
+        },
+        {
+          "step": "6. Collect in Fragment",
+          "description": "viewLifecycleOwner.lifecycleScope.launch { repeatOnLifecycle(STARTED) { viewModel.isDarkMode.collect { applyTheme(it) } } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Proto DataStore — Typed Schema Storage",
+      "items": [
+        "Proto DataStore uses Protocol Buffers (protobuf) to define a strict typed schema for stored data",
+        "Add dependencies: datastore and protobuf-javalite; configure the protobuf Gradle plugin",
+        "Define a .proto schema file in src/main/proto/ with message definitions for your data",
+        "Proto DataStore generates Kotlin classes from the .proto file — access fields with full type safety",
+        "Create a Serializer class implementing Serializer<YourProtoType> to handle reading and writing",
+        "Create with: val Context.settingsDataStore by dataStore(fileName = \"settings.pb\", serializer = SettingsSerializer)",
+        "Read: context.settingsDataStore.data.map { settings -> settings.darkMode }",
+        "Write: context.settingsDataStore.updateData { current -> current.toBuilder().setDarkMode(true).build() }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Preferences DataStore vs Proto DataStore",
+      "rows": [
+        {
+          "aspect": "Schema",
+          "preferences_datastore": "No schema — keys defined in code with Preferences.Key",
+          "proto_datastore": "Strict schema defined in a .proto file"
+        },
+        {
+          "aspect": "Type safety",
+          "preferences_datastore": "Partial — key type is enforced but schema can drift",
+          "proto_datastore": "Full — schema is the contract; compile-time enforcement"
+        },
+        {
+          "aspect": "Setup complexity",
+          "preferences_datastore": "Low — one dependency, no schema file",
+          "proto_datastore": "High — requires protobuf plugin, .proto file, and Serializer class"
+        },
+        {
+          "aspect": "Complex objects",
+          "preferences_datastore": "Not supported — only primitives and String sets",
+          "proto_datastore": "Supported — nested messages, lists, and enums"
+        },
+        {
+          "aspect": "Migration from SharedPreferences",
+          "preferences_datastore": "Easy — SharedPreferencesMigration helper available",
+          "proto_datastore": "Manual — must define schema and migration manually"
+        },
+        {
+          "aspect": "Best for",
+          "preferences_datastore": "Simple app settings and flags",
+          "proto_datastore": "Complex user profile data, typed configuration objects"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Migrating from SharedPreferences to DataStore",
+      "items": [
+        "DataStore provides SharedPreferencesMigration to automatically migrate existing SharedPreferences data",
+        "Pass migration in the preferencesDataStore delegate: preferencesDataStore(name = \"settings\", produceMigrations = { context -> listOf(SharedPreferencesMigration(context, \"old_prefs_name\")) })",
+        "Migration runs automatically the first time DataStore is accessed — SharedPreferences data is copied over",
+        "After migration, SharedPreferences file is deleted to avoid duplicate state",
+        "Keys are migrated by name — SharedPreferences key \"dark_mode\" maps to a DataStore key named \"dark_mode\"",
+        "Test migration thoroughly — especially for keys with type differences between the two systems",
+        "Migration is a one-time operation — once complete, always read and write via DataStore going forward",
+        "Keep the old SharedPreferences name in the migration call even after the file is deleted — the migration code handles this"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common DataStore Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Creating multiple DataStore instances with the same file name",
+          "fix": "Use a singleton DataStore via the preferencesDataStore delegate at the top level — one instance per file name"
+        },
+        {
+          "mistake": "Calling edit() from the main thread without a coroutine",
+          "fix": "edit() is a suspend function — always call it inside viewModelScope.launch or another coroutine scope"
+        },
+        {
+          "mistake": "Catching IOException in the ViewModel instead of the Repository",
+          "fix": "Handle IOException in the Repository's Flow with catch { e -> if (e is IOException) emit(emptyPreferences()) }"
+        },
+        {
+          "mistake": "Using DataStore for large or complex objects",
+          "fix": "DataStore is for simple key-value preferences — use Room for complex relational data"
+        },
+        {
+          "mistake": "Accessing DataStore.data directly in the UI",
+          "fix": "Always wrap DataStore in a Repository and expose typed Flow properties — never access DataStore directly from Fragment"
+        },
+        {
+          "mistake": "Not providing an initial value to stateIn()",
+          "fix": "Always provide a sensible default initial value in stateIn() so the UI has something to show before the first emission"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "SharedPreferences served Android developers well for over a decade, but its synchronous API, lack of error handling, and thread safety issues make it unsuitable for modern Android development. Jetpack DataStore replaces it with a fully asynchronous, coroutine-based, Flow-driven alternative that integrates naturally with MVVM architecture. Wrap DataStore in a Repository, expose preferences as typed Flow properties, convert to StateFlow in the ViewModel, and collect safely in the UI — this pattern gives you a clean, testable, and reactive preferences layer for any Android app."
+    }
+  ]
+}

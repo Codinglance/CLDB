@@ -1,0 +1,335 @@
+{
+  "title": "App Performance & Profiling",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why App Performance Matters",
+      "content": "App performance directly impacts user retention, ratings, and revenue. Android targets 60 frames per second (fps), giving each frame just 16ms to complete all rendering work. Frames that take longer cause 'jank' — visible stuttering that degrades the user experience. Beyond UI smoothness, performance encompasses startup time, memory usage, battery consumption, and network efficiency. Android provides a suite of profiling tools built into Android Studio — including the CPU Profiler, Memory Profiler, Network Profiler, and Energy Profiler — to help you identify and fix bottlenecks. Performance optimization should be data-driven: always measure first, then optimize, then measure again."
+    },
+    {
+      "type": "table",
+      "heading": "Performance Problem Categories",
+      "rows": [
+        {
+          "category": "Jank / UI Stuttering",
+          "cause": "Too much work on the main thread — layout inflation, disk I/O, network calls, heavy computation",
+          "symptom": "Dropped frames, stuttering scrolling, unresponsive touch",
+          "tool": "CPU Profiler, Systrace, Perfetto"
+        },
+        {
+          "category": "Slow App Startup",
+          "cause": "Heavy work in Application.onCreate() or Activity.onCreate() before first frame",
+          "symptom": "Long splash screen, high TTID (Time To Initial Display)",
+          "tool": "Android Studio App Startup profiler, Logcat timing"
+        },
+        {
+          "category": "Memory Leaks",
+          "cause": "Long-lived objects holding references to Activities, Contexts, or Views",
+          "symptom": "Growing memory usage, OutOfMemoryError, frequent GC pauses",
+          "tool": "Memory Profiler, LeakCanary"
+        },
+        {
+          "category": "Excessive Battery Drain",
+          "cause": "Wakelocks, frequent alarms, background network polling, GPS overuse",
+          "symptom": "App appears in battery usage list, device drains faster than expected",
+          "tool": "Energy Profiler, Battery Historian"
+        },
+        {
+          "category": "Network Inefficiency",
+          "cause": "Redundant API calls, large uncompressed payloads, no caching",
+          "symptom": "Slow data loading, high data usage",
+          "tool": "Network Profiler, OkHttp logging interceptor"
+        },
+        {
+          "category": "Overdraw",
+          "cause": "Pixels rendered multiple times per frame due to overlapping views",
+          "symptom": "GPU pressure, reduced frame rate on lower-end devices",
+          "tool": "GPU Overdraw tool in Developer Options"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Android Studio Profilers Overview",
+      "items": [
+        "Open profilers: Run > Profile app, or click the Profiler tab in Android Studio",
+        "CPU Profiler — records method traces and system traces to identify slow or blocking code on any thread",
+        "Memory Profiler — shows real-time heap usage, GC events, and lets you capture heap dumps to find leaks",
+        "Network Profiler — shows network requests timeline, payload sizes, and response times",
+        "Energy Profiler — shows estimated energy usage and highlights wakelocks, alarms, and jobs",
+        "All profilers work on physical devices and emulators running API 26+",
+        "Use Profile with low overhead for production-like profiling — minimal instrumentation impact",
+        "Heap dumps can be captured and analyzed inline or exported as .hprof files"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "CPU Profiler & Tracing",
+      "content": "The CPU Profiler in Android Studio lets you record two types of traces: method traces (Java/Kotlin instrumented or sampled) and system traces (based on Perfetto/Systrace). Method traces show exactly which methods are called and how long each takes, but add overhead. System traces have very low overhead and show thread states, rendering frames, and system-level events like garbage collection. For UI jank investigation, system traces are preferred because they show the full rendering pipeline — including Choreographer frames, RenderThread, and GPU work. Use the Flame Chart view to find the hottest methods consuming the most CPU time."
+    },
+    {
+      "type": "bullet",
+      "heading": "Tracing Your Own Code",
+      "items": [
+        "Add custom trace sections to annotate your code in profiler timelines",
+        "Kotlin/Java API: android.os.Trace.beginSection(\"MyOperation\"); // ... work; android.os.Trace.endSection()",
+        "AndroidX API (safer): androidx.tracing.Trace.beginSection(\"MyOperation\"); // ... work; androidx.tracing.Trace.endSection()",
+        "Use try/finally to guarantee endSection() is always called: try { Trace.beginSection(\"load\") /* work */ } finally { Trace.endSection() }",
+        "Trace sections appear as labeled blocks in the System Trace timeline",
+        "Add the tracing dependency: implementation(\"androidx.tracing:tracing:1.2.0\")",
+        "Keep section names short and descriptive — they appear directly in the profiler UI",
+        "Nest trace sections to drill into sub-operations within a larger operation"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Main Thread Rules",
+      "rows": [
+        {
+          "rule": "Never do disk I/O on the main thread",
+          "reason": "Disk reads can block for 10–200ms, causing dropped frames",
+          "fix": "Use coroutines with Dispatchers.IO or Room's built-in async support"
+        },
+        {
+          "rule": "Never do network calls on the main thread",
+          "reason": "Network latency is unpredictable — Android throws NetworkOnMainThreadException",
+          "fix": "Use Retrofit with coroutines or RxJava on a background thread"
+        },
+        {
+          "rule": "Never do heavy computation on the main thread",
+          "reason": "CPU-bound work blocks the UI thread, causing ANR (App Not Responding) if > 5 seconds",
+          "fix": "Use coroutines with Dispatchers.Default for CPU-intensive work"
+        },
+        {
+          "rule": "Avoid blocking calls in the main thread",
+          "reason": "Thread.sleep(), synchronized locks, or blocking queues stall the event loop",
+          "fix": "Use non-blocking coroutines and suspending functions instead"
+        },
+        {
+          "rule": "Enable StrictMode during development",
+          "reason": "StrictMode detects accidental disk and network access on the main thread at runtime",
+          "fix": "Add StrictMode policy in Application.onCreate() for debug builds only"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "StrictMode — Catching Violations Early",
+      "items": [
+        "StrictMode is a developer tool that detects and reports policy violations at runtime",
+        "Enable only in debug builds — never in production",
+        "Thread policy — detects disk reads/writes and network access on the main thread",
+        "VM policy — detects memory leaks of Activities, SQLite objects, Closeable objects not closed",
+        "Enable in Application.onCreate(): if (BuildConfig.DEBUG) { StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build()); StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().build()) }",
+        "penaltyLog() — logs violations to Logcat",
+        "penaltyDeath() — crashes the app on violation — useful for enforcing strict discipline",
+        "penaltyDialog() — shows a dialog on violation — useful during manual QA testing"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Memory Management & Leak Detection",
+      "content": "Memory leaks in Android occur when an object that should be garbage collected is still held by a long-lived reference. The most common cause is passing an Activity or View reference to something that outlives it — such as a static field, a singleton, a running coroutine, or a callback. Each leaked Activity retains its entire view hierarchy, which can be several megabytes. Over time, leaks cause heap growth, increased GC pressure, and eventually OutOfMemoryError crashes. LeakCanary is the industry-standard open-source library for automatic leak detection in debug builds — it hooks into the lifecycle and alerts you with a detailed leak trace whenever a leak is detected."
+    },
+    {
+      "type": "bullet",
+      "heading": "Memory Leak Prevention",
+      "items": [
+        "Never store Activity or View references in static fields or singletons",
+        "Use WeakReference<Activity> if you must hold a reference to an Activity from a long-lived object",
+        "In Fragments, always clear View references in onDestroyView(): private var _binding: FragmentHomeBinding? = null; override fun onDestroyView() { super.onDestroyView(); _binding = null }",
+        "Cancel coroutines in onDestroy() or use viewModelScope / lifecycleScope which cancel automatically",
+        "Unregister BroadcastReceivers, listeners, and callbacks in the appropriate lifecycle method",
+        "Use applicationContext instead of Activity context for singletons and long-lived objects",
+        "Add LeakCanary for automatic leak detection: debugImplementation(\"com.squareup.leakcanary:leakcanary-android:2.x\")",
+        "LeakCanary requires zero configuration — it auto-installs itself in debug builds"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "App Startup Optimization",
+      "rows": [
+        {
+          "metric": "TTID (Time To Initial Display)",
+          "description": "Time from app launch to the first frame being displayed — shown in Logcat as 'Displayed' log",
+          "optimization": "Defer all non-critical initialization out of Application.onCreate() and Activity.onCreate()"
+        },
+        {
+          "metric": "TTFD (Time To Full Display)",
+          "description": "Time until all content is fully loaded and displayed to the user",
+          "optimization": "Load data asynchronously — show skeleton/placeholder UI immediately, populate when data arrives"
+        },
+        {
+          "metric": "Application.onCreate() overhead",
+          "description": "Heavy SDK initialization in Application.onCreate() blocks the UI before the first frame",
+          "optimization": "Use App Startup library (androidx.startup) to initialize SDKs lazily or in parallel"
+        },
+        {
+          "metric": "Layout inflation time",
+          "description": "Complex view hierarchies take longer to inflate, delaying first frame",
+          "optimization": "Flatten layouts, use ConstraintLayout, defer off-screen views with ViewStub"
+        },
+        {
+          "metric": "Splash screen",
+          "description": "Custom splash screens built with a separate Activity add an extra launch step",
+          "optimization": "Use the SplashScreen API (androidx.core:core-splashscreen) — zero-overhead system-driven splash"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Layout Performance Optimization",
+      "items": [
+        "Flatten view hierarchies — deep nesting increases measure/layout passes exponentially",
+        "Prefer ConstraintLayout — expresses complex layouts in a single flat hierarchy",
+        "Avoid nested LinearLayouts with layout_weight — each weighted child triggers an extra measurement pass",
+        "Use ViewStub for views that are rarely shown — they are inflated only when made visible: <ViewStub android:id=\"@+id/stub\" android:layout=\"@layout/error_view\" />; stub.inflate()",
+        "Use merge tag to eliminate redundant root ViewGroups when including layouts: <merge xmlns:android=\"...\">",
+        "Enable GPU Overdraw visualization in Developer Options — blue = 1x overdraw (OK), red = 4x overdraw (bad)",
+        "Remove unnecessary backgrounds — if a parent and child both have the same background, remove the parent's",
+        "Use Lint's layout inspector and the Layout Inspector tool in Android Studio to analyze view hierarchies"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "RecyclerView Performance Tips",
+      "rows": [
+        {
+          "tip": "Use DiffUtil",
+          "description": "Calculate list differences on a background thread and dispatch only the changed items — avoids full notifyDataSetChanged()",
+          "implementation": "Extend ListAdapter<T, VH> which uses AsyncListDiffer internally"
+        },
+        {
+          "tip": "setHasStableIds(true)",
+          "description": "Tells RecyclerView that item IDs don't change — enables better animation and view recycling",
+          "implementation": "Override getItemId() in your adapter to return a stable unique ID per item"
+        },
+        {
+          "tip": "Avoid creating objects in onBindViewHolder()",
+          "description": "Object allocation in onBindViewHolder() runs on every bind — triggers GC pressure during fast scrolling",
+          "implementation": "Pre-allocate formatters, listeners, and drawables outside onBindViewHolder()"
+        },
+        {
+          "tip": "Use setRecycledViewPool()",
+          "description": "Share a RecycledViewPool between multiple RecyclerViews with the same item types",
+          "implementation": "val pool = RecyclerView.RecycledViewPool(); recyclerView1.setRecycledViewPool(pool); recyclerView2.setRecycledViewPool(pool)"
+        },
+        {
+          "tip": "Prefetch with LinearLayoutManager",
+          "description": "RecyclerView automatically prefetches items during idle time — ensure onBindViewHolder() is fast enough to benefit",
+          "implementation": "Enabled by default — avoid blocking work in onBindViewHolder() to allow prefetch to work"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Coroutines & Threading Best Practices",
+      "items": [
+        "Use Dispatchers.Main for UI updates only — never for I/O or computation",
+        "Use Dispatchers.IO for disk, network, and database operations — backed by a thread pool sized for I/O blocking",
+        "Use Dispatchers.Default for CPU-intensive work — backed by a thread pool sized to the number of CPU cores",
+        "Use withContext(Dispatchers.IO) { } inside a suspend function to switch context for a block of work",
+        "Avoid GlobalScope — use viewModelScope, lifecycleScope, or a custom CoroutineScope that is cancelled appropriately",
+        "viewModelScope is cancelled automatically when the ViewModel is cleared",
+        "lifecycleScope is cancelled automatically when the lifecycle owner (Activity/Fragment) is destroyed",
+        "Use flow { }.flowOn(Dispatchers.IO) to emit items on a background thread and collect on the main thread"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Battery Optimization",
+      "rows": [
+        {
+          "practice": "Use WorkManager for deferrable background work",
+          "description": "WorkManager respects battery saver, Doze mode, and device idle constraints",
+          "example": "Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).setRequiresBatteryNotLow(true)"
+        },
+        {
+          "practice": "Avoid frequent alarms",
+          "description": "Polling with AlarmManager wakes the CPU repeatedly — use push notifications instead",
+          "example": "Replace polling with FCM data messages that trigger a sync only when needed"
+        },
+        {
+          "practice": "Batch network requests",
+          "description": "Multiple small requests keep the radio active longer than one larger request",
+          "example": "Combine API calls; use HTTP/2 multiplexing via OkHttp"
+        },
+        {
+          "practice": "Release wakelocks promptly",
+          "description": "Unreleased wakelocks prevent the CPU from sleeping, draining battery",
+          "example": "Always release in finally block: wakeLock.release() in try/finally"
+        },
+        {
+          "practice": "Use Doze-aware APIs",
+          "description": "Doze mode restricts background activity — use APIs that work within Doze windows",
+          "example": "WorkManager, FCM high-priority messages for time-sensitive wakeups"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Baseline Profiles",
+      "items": [
+        "Baseline Profiles are a Jetpack feature that pre-compiles critical code paths to native code at install time",
+        "They reduce JIT compilation overhead at runtime — improving startup time and scrolling smoothness",
+        "Generated using the Macrobenchmark library: implementation(\"androidx.benchmark:benchmark-macro-junit4:1.x\")",
+        "Define startup and interaction journeys in a BaselineProfileRule test",
+        "Output a baseline-prof.txt file placed in src/main/ — bundled into the APK/AAB",
+        "Google Play uses Baseline Profiles to pre-compile apps during install via Cloud Profile Installation",
+        "Compose apps benefit greatly from Baseline Profiles — Compose has significant JIT overhead on first run",
+        "Combine with Macrobenchmark to measure the before/after impact of your Baseline Profile"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Key Performance Tools Summary",
+      "rows": [
+        {
+          "tool": "Android Studio CPU Profiler",
+          "use_for": "Finding slow methods, jank, and thread contention",
+          "access": "Android Studio > Profiler tab > CPU"
+        },
+        {
+          "tool": "Android Studio Memory Profiler",
+          "use_for": "Heap analysis, GC events, memory leak investigation",
+          "access": "Android Studio > Profiler tab > Memory"
+        },
+        {
+          "tool": "LeakCanary",
+          "use_for": "Automatic memory leak detection in debug builds",
+          "access": "Add debugImplementation dependency — zero config"
+        },
+        {
+          "tool": "StrictMode",
+          "use_for": "Detecting disk/network access on main thread and VM policy violations",
+          "access": "Enable in Application.onCreate() for debug builds"
+        },
+        {
+          "tool": "Layout Inspector",
+          "use_for": "Inspecting live view hierarchy and finding overdraw",
+          "access": "Android Studio > Tools > Layout Inspector"
+        },
+        {
+          "tool": "GPU Overdraw",
+          "use_for": "Visualizing overdraw in the UI — pixel-level rendering cost",
+          "access": "Developer Options > Debug GPU Overdraw > Show overdraw areas"
+        },
+        {
+          "tool": "Macrobenchmark",
+          "use_for": "Measuring startup time, scrolling performance, and interaction latency",
+          "access": "androidx.benchmark:benchmark-macro-junit4 library"
+        },
+        {
+          "tool": "Battery Historian",
+          "use_for": "Analyzing battery usage, wakelocks, and alarms over time",
+          "access": "Capture bugreport via adb; upload to Battery Historian web tool"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "App performance optimization starts with measurement — use Android Studio Profilers, LeakCanary, StrictMode, and Macrobenchmark to identify real bottlenecks before optimizing. Keep the main thread free of disk I/O, network calls, and heavy computation by using coroutines with the appropriate Dispatcher. Prevent memory leaks by clearing View references in onDestroyView(), using lifecycle-scoped coroutines, and adding LeakCanary to your debug build. Optimize startup time by deferring non-critical initialization, flattening layouts, and adopting Baseline Profiles. Reduce battery drain by using WorkManager for background tasks, avoiding polling, and batching network requests. Performance is an ongoing discipline — profile regularly, especially after adding new features."
+    }
+  ]
+}

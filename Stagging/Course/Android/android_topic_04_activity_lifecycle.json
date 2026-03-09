@@ -1,0 +1,315 @@
+{
+  "title": "Activities & Activity Lifecycle",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is an Activity?",
+      "content": "An Activity is one of the core building blocks of an Android app. It represents a single screen with a user interface — for example, a login screen, a home feed, or a settings page. Every screen the user sees is typically backed by an Activity (or a Fragment inside one). Activities are managed by the Android system, which creates, pauses, resumes, and destroys them based on user actions and system conditions."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Characteristics of an Activity",
+      "items": [
+        "Represents one screen of your app with a visual UI",
+        "Must be declared in AndroidManifest.xml to be recognized by the system",
+        "Extends the AppCompatActivity (or ComponentActivity) base class",
+        "Has a defined lifecycle managed entirely by the Android OS",
+        "Communicates with other Activities using Intents",
+        "Can host multiple Fragments to build complex UIs",
+        "Has its own back stack entry — pressing Back destroys or pauses the current Activity",
+        "Can save and restore its UI state across configuration changes (e.g., screen rotation)"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is the Activity Lifecycle?",
+      "content": "The Activity lifecycle is a set of states an Activity passes through from the moment it is created to the moment it is destroyed. Android calls specific callback methods at each transition so your app can respond correctly — for example, pausing media playback when the app goes to the background, or saving data before the Activity is destroyed. Understanding and implementing these callbacks correctly is essential to building stable, efficient Android apps."
+    },
+    {
+      "type": "table",
+      "heading": "Activity Lifecycle Callback Methods",
+      "rows": [
+        {
+          "method": "onCreate()",
+          "called_when": "Activity is first created",
+          "typical_use": "Initialize UI, set content view, set up ViewModel, bind views"
+        },
+        {
+          "method": "onStart()",
+          "called_when": "Activity becomes visible to the user",
+          "typical_use": "Start animations or UI updates that should be visible"
+        },
+        {
+          "method": "onResume()",
+          "called_when": "Activity is in the foreground and interactive",
+          "typical_use": "Start camera, sensors, or resume media playback"
+        },
+        {
+          "method": "onPause()",
+          "called_when": "Activity is partially obscured or losing focus",
+          "typical_use": "Pause camera, sensors, animations, or ongoing playback"
+        },
+        {
+          "method": "onStop()",
+          "called_when": "Activity is completely hidden from the user",
+          "typical_use": "Release heavy resources, stop network calls, save draft data"
+        },
+        {
+          "method": "onRestart()",
+          "called_when": "Activity is returning to the foreground after being stopped",
+          "typical_use": "Re-initialize resources released in onStop()"
+        },
+        {
+          "method": "onDestroy()",
+          "called_when": "Activity is being permanently destroyed",
+          "typical_use": "Release all remaining resources, cancel coroutines, clean up"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "The Lifecycle Flow Step by Step",
+      "items": [
+        "App launched → onCreate() → onStart() → onResume() [Activity is running]",
+        "User presses Home → onPause() → onStop() [Activity is in background]",
+        "User returns to app → onRestart() → onStart() → onResume() [Activity is running again]",
+        "Another Activity opens on top → onPause() [partially visible] → onStop() [fully hidden]",
+        "User presses Back → onPause() → onStop() → onDestroy() [Activity is finished]",
+        "System kills app due to low memory → onPause() → onStop() → (process killed)",
+        "Screen rotated → onPause() → onStop() → onDestroy() → onCreate() → onStart() → onResume()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Activity States & Visibility",
+      "rows": [
+        {
+          "state": "Running / Resumed",
+          "visibility": "Fully visible and interactive",
+          "lifecycle_position": "After onResume()"
+        },
+        {
+          "state": "Paused",
+          "visibility": "Partially visible (e.g., dialog on top)",
+          "lifecycle_position": "After onPause()"
+        },
+        {
+          "state": "Stopped",
+          "visibility": "Completely hidden (in background)",
+          "lifecycle_position": "After onStop()"
+        },
+        {
+          "state": "Destroyed",
+          "visibility": "Not visible, removed from memory",
+          "lifecycle_position": "After onDestroy()"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "onCreate() — The Most Important Callback",
+      "content": "onCreate() is called once when the Activity is first created. This is where you do all one-time initialization: calling setContentView() to inflate your layout, initializing your ViewModel, setting up RecyclerView adapters, and attaching click listeners. It receives a savedInstanceState Bundle that contains previously saved state data if the Activity is being recreated after a configuration change or system kill."
+    },
+    {
+      "type": "bullet",
+      "heading": "What to Do in Each Lifecycle Method",
+      "items": [
+        "onCreate() – setContentView(), ViewModel init, click listeners, RecyclerView setup, observe LiveData",
+        "onStart() – Register listeners that need to be active while the Activity is visible",
+        "onResume() – Start camera preview, resume audio/video playback, re-register sensors",
+        "onPause() – Pause playback, release camera, stop sensor updates (keep it fast — no heavy work)",
+        "onStop() – Save user data drafts, stop background tasks, release network connections",
+        "onRestart() – Refresh data that may have changed while the Activity was stopped",
+        "onDestroy() – Release all remaining resources, cancel all coroutines and observers"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Saving & Restoring Instance State",
+      "content": "When the system destroys and recreates an Activity (e.g., on screen rotation), it gives you a chance to save temporary UI state using onSaveInstanceState(). The saved Bundle is then passed back to onCreate() and onRestoreInstanceState() so you can restore the UI exactly as it was. For more complex or persistent state, use ViewModel which survives configuration changes automatically."
+    },
+    {
+      "type": "table",
+      "heading": "onSaveInstanceState vs ViewModel",
+      "rows": [
+        {
+          "aspect": "Purpose",
+          "onsaveinstancestate": "Save small, transient UI state (e.g., scroll position, text input)",
+          "viewmodel": "Hold and survive UI-related data across configuration changes"
+        },
+        {
+          "aspect": "Survives rotation",
+          "onsaveinstancestate": "Yes",
+          "viewmodel": "Yes"
+        },
+        {
+          "aspect": "Survives process death",
+          "onsaveinstancestate": "Yes (stored by system)",
+          "viewmodel": "No (unless using SavedStateHandle)"
+        },
+        {
+          "aspect": "Data size limit",
+          "onsaveinstancestate": "Small (Bundle, ~1MB limit)",
+          "viewmodel": "No practical limit"
+        },
+        {
+          "aspect": "Best for",
+          "onsaveinstancestate": "Primitive values, strings, parcelables",
+          "viewmodel": "Lists, objects, LiveData, StateFlow"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Configuration Changes & Activity Recreation",
+      "items": [
+        "Rotating the screen is the most common configuration change that triggers Activity recreation",
+        "Other changes: language change, keyboard attach/detach, window resize (multi-window mode)",
+        "By default, Android destroys and recreates the Activity on every configuration change",
+        "Use ViewModel to retain data across recreation without re-fetching from network or database",
+        "Declare android:configChanges in manifest to handle changes manually (generally not recommended)",
+        "Use onSaveInstanceState() for lightweight UI state like selected tab, scroll position, or typed text",
+        "Fragments with setRetainInstance(true) is deprecated — use ViewModel instead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Activity Launch Modes",
+      "rows": [
+        {
+          "mode": "standard",
+          "description": "Default. A new instance is created every time the Activity is launched, even if one already exists",
+          "use_case": "Most Activities — email compose, product detail screen"
+        },
+        {
+          "mode": "singleTop",
+          "description": "Reuses the existing instance if it is already at the top of the back stack; calls onNewIntent()",
+          "use_case": "Notification-launched screens, search results"
+        },
+        {
+          "mode": "singleTask",
+          "description": "Only one instance exists in the entire system; brings it to front and clears tasks above it",
+          "use_case": "Main/home screen of the app, browser-like apps"
+        },
+        {
+          "mode": "singleInstance",
+          "description": "Like singleTask but the Activity occupies its own separate task entirely",
+          "use_case": "Standalone activities like a dialer or alarm screen"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "The Back Stack",
+      "items": [
+        "Android maintains a back stack (Last In, First Out) of Activities for each task",
+        "When you start a new Activity, it is pushed onto the top of the back stack",
+        "When the user presses Back, the current Activity is popped off and destroyed",
+        "The previous Activity is resumed from its onStop() state (onRestart → onStart → onResume)",
+        "finish() can be called programmatically to remove the current Activity from the stack",
+        "Use FLAG_ACTIVITY_CLEAR_TOP or FLAG_ACTIVITY_NEW_TASK in Intents to control stack behavior",
+        "The Jetpack Navigation Component manages the back stack automatically for Fragment-based apps"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Activity Lifecycle Scenarios",
+      "rows": [
+        {
+          "scenario": "User opens the app",
+          "callbacks_called": "onCreate → onStart → onResume"
+        },
+        {
+          "scenario": "User presses the Home button",
+          "callbacks_called": "onPause → onStop"
+        },
+        {
+          "scenario": "User returns to the app from Home",
+          "callbacks_called": "onRestart → onStart → onResume"
+        },
+        {
+          "scenario": "User presses the Back button",
+          "callbacks_called": "onPause → onStop → onDestroy"
+        },
+        {
+          "scenario": "Phone call received (partial overlay)",
+          "callbacks_called": "onPause"
+        },
+        {
+          "scenario": "Screen rotated",
+          "callbacks_called": "onPause → onStop → onDestroy → onCreate → onStart → onResume"
+        },
+        {
+          "scenario": "App killed by system (low memory)",
+          "callbacks_called": "onPause → onStop → (process killed, no onDestroy guaranteed)"
+        },
+        {
+          "scenario": "Dialog appears on top of Activity",
+          "callbacks_called": "onPause (Activity partially visible, does NOT call onStop)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Using Lifecycle-Aware Components",
+      "items": [
+        "Lifecycle-aware components from Jetpack observe the Activity lifecycle automatically",
+        "Implement LifecycleObserver (or DefaultLifecycleObserver) to tie custom logic to lifecycle events",
+        "LiveData is lifecycle-aware — it only delivers updates when the Activity is in STARTED or RESUMED state",
+        "ViewModel is scoped to the Activity lifecycle and survives configuration changes",
+        "Use lifecycleScope.launch {} to run coroutines that are automatically cancelled on Activity destroy",
+        "Use repeatOnLifecycle(Lifecycle.State.STARTED) to collect Flows safely in Activities",
+        "ProcessLifecycleOwner tracks the lifecycle of the entire app process (foreground vs background)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Activity Lifecycle vs Fragment Lifecycle",
+      "rows": [
+        {
+          "aspect": "Scope",
+          "activity": "Represents a full screen",
+          "fragment": "Represents a portion of a screen inside an Activity"
+        },
+        {
+          "aspect": "Back stack",
+          "activity": "Managed by the system's Activity task stack",
+          "fragment": "Managed by the FragmentManager back stack"
+        },
+        {
+          "aspect": "Extra callbacks",
+          "activity": "onRestart()",
+          "fragment": "onAttach(), onCreateView(), onViewCreated(), onDestroyView(), onDetach()"
+        },
+        {
+          "aspect": "Configuration change",
+          "activity": "Fully recreated by default",
+          "fragment": "Also recreated, but ViewModel retains data"
+        },
+        {
+          "aspect": "Best practice",
+          "activity": "Use as a container; keep logic minimal",
+          "fragment": "Put most UI logic here for modularity and reuse"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for Activity Lifecycle",
+      "items": [
+        "Keep onCreate() focused on initialization only — avoid doing heavy work here",
+        "Always release resources in the matching opposite callback (acquire in onResume, release in onPause)",
+        "Use ViewModel + LiveData/StateFlow to separate UI state from lifecycle callbacks",
+        "Never perform long-running operations directly in lifecycle callbacks — use coroutines or WorkManager",
+        "Test lifecycle behavior by rotating the screen, backgrounding the app, and using 'Don't keep activities' in Developer Options",
+        "Use lifecycleScope and repeatOnLifecycle for safe coroutine and Flow collection",
+        "Avoid storing Context in ViewModel — it can cause memory leaks"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "The Activity lifecycle is fundamental to Android development. Every callback exists for a reason, and using them correctly ensures your app is stable, memory-efficient, and provides a smooth user experience. Always pair resource acquisition with proper release, use ViewModel for data survival across rotations, and leverage Jetpack's lifecycle-aware components to write clean, reactive code."
+    }
+  ]
+}

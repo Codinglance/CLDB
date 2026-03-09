@@ -1,0 +1,241 @@
+{
+  "title": "Permissions (Runtime & Special)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Android Permissions?",
+      "content": "Android permissions are a security mechanism that protects sensitive user data and device features from unauthorized access. Apps must declare which permissions they need in the AndroidManifest.xml, and for dangerous permissions, must also request them at runtime from the user. Permissions are grouped into three categories: normal permissions (granted automatically at install), dangerous permissions (require explicit user approval at runtime), and special permissions (require the user to navigate to system settings to grant). Since Android 6.0 (API 23), dangerous permissions must be requested at runtime — users can grant or deny them individually and revoke them at any time from device settings."
+    },
+    {
+      "type": "table",
+      "heading": "Permission Categories",
+      "rows": [
+        {
+          "category": "Normal Permissions",
+          "granted_at": "Install time — automatically",
+          "user_prompt": "No prompt shown to user",
+          "examples": "INTERNET, ACCESS_NETWORK_STATE, RECEIVE_BOOT_COMPLETED",
+          "revokable": "No"
+        },
+        {
+          "category": "Dangerous Permissions",
+          "granted_at": "Runtime — user must approve",
+          "user_prompt": "System dialog shown to user",
+          "examples": "CAMERA, READ_CONTACTS, ACCESS_FINE_LOCATION, READ_MEDIA_IMAGES",
+          "revokable": "Yes — from app settings at any time"
+        },
+        {
+          "category": "Special Permissions",
+          "granted_at": "User navigates to system settings",
+          "user_prompt": "No standard dialog — app redirects user to Settings",
+          "examples": "MANAGE_OVERLAY_PERMISSION, WRITE_SETTINGS, MANAGE_EXTERNAL_STORAGE",
+          "revokable": "Yes — from system settings"
+        },
+        {
+          "category": "Signature Permissions",
+          "granted_at": "Automatically if apps share the same signing certificate",
+          "user_prompt": "No prompt — system enforced",
+          "examples": "Custom permissions defined between apps from the same developer",
+          "revokable": "No"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Declaring Permissions in the Manifest",
+      "items": [
+        "All permissions must be declared in AndroidManifest.xml using <uses-permission>",
+        "Example: <uses-permission android:name=\"android.permission.CAMERA\" />",
+        "Normal permissions are automatically granted — no runtime request needed",
+        "Dangerous permissions declared in manifest still require runtime request on API 23+",
+        "Use android:maxSdkVersion to restrict permission declaration to specific API levels",
+        "Example: <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" android:maxSdkVersion=\"32\" />",
+        "For Android 13+, use granular media permissions: READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO instead of READ_EXTERNAL_STORAGE"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Requesting Runtime Permissions",
+      "content": "Runtime permissions must be requested using the Activity Result API introduced in AndroidX. The recommended approach is to use ActivityResultContracts.RequestPermission() for a single permission or ActivityResultContracts.RequestMultiplePermissions() for multiple permissions at once. Always check if the permission is already granted before requesting it using ContextCompat.checkSelfPermission(). If the user has previously denied the permission, use shouldShowRequestPermissionRationale() to determine if you should show an explanation before requesting again."
+    },
+    {
+      "type": "bullet",
+      "heading": "Runtime Permission Request Flow",
+      "items": [
+        "Step 1: Check if permission is already granted: ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED",
+        "Step 2: If granted, proceed with the feature directly",
+        "Step 3: If not granted, check if rationale should be shown: ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)",
+        "Step 4: If rationale needed, show a dialog explaining why the permission is needed before requesting",
+        "Step 5: Register launcher: val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted -> if (isGranted) openCamera() else handleDenied() }",
+        "Step 6: Launch the request: cameraPermissionLauncher.launch(Manifest.permission.CAMERA)",
+        "Step 7: Handle the result in the callback — isGranted: Boolean",
+        "Step 8: If permanently denied (shouldShowRequestPermissionRationale returns false after denial), guide user to app settings: Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Dangerous Permissions",
+      "rows": [
+        {
+          "permission": "CAMERA",
+          "group": "Camera",
+          "use_case": "Taking photos or videos"
+        },
+        {
+          "permission": "ACCESS_FINE_LOCATION",
+          "group": "Location",
+          "use_case": "Precise GPS location"
+        },
+        {
+          "permission": "ACCESS_COARSE_LOCATION",
+          "group": "Location",
+          "use_case": "Approximate network-based location"
+        },
+        {
+          "permission": "READ_CONTACTS / WRITE_CONTACTS",
+          "group": "Contacts",
+          "use_case": "Reading or modifying the user's contact list"
+        },
+        {
+          "permission": "READ_MEDIA_IMAGES",
+          "group": "Media (API 33+)",
+          "use_case": "Accessing images from the media store"
+        },
+        {
+          "permission": "READ_MEDIA_VIDEO",
+          "group": "Media (API 33+)",
+          "use_case": "Accessing video files from the media store"
+        },
+        {
+          "permission": "READ_MEDIA_AUDIO",
+          "group": "Media (API 33+)",
+          "use_case": "Accessing audio files from the media store"
+        },
+        {
+          "permission": "RECORD_AUDIO",
+          "group": "Microphone",
+          "use_case": "Recording audio via microphone"
+        },
+        {
+          "permission": "BLUETOOTH_SCAN / BLUETOOTH_CONNECT",
+          "group": "Bluetooth (API 31+)",
+          "use_case": "Scanning for and connecting to Bluetooth devices"
+        },
+        {
+          "permission": "POST_NOTIFICATIONS",
+          "group": "Notifications (API 33+)",
+          "use_case": "Displaying push notifications to the user"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Requesting Multiple Permissions",
+      "items": [
+        "Use ActivityResultContracts.RequestMultiplePermissions() to request several permissions at once",
+        "val multiplePermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions -> val cameraGranted = permissions[Manifest.permission.CAMERA] == true; val audioGranted = permissions[Manifest.permission.RECORD_AUDIO] == true }",
+        "Launch with an array: multiplePermissionsLauncher.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO))",
+        "The result is a Map<String, Boolean> — each permission mapped to its grant status",
+        "Check each permission individually in the result map",
+        "Group related permissions logically — only request permissions needed for the current user action",
+        "Avoid requesting all permissions at app launch — this is a common UX anti-pattern"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Special Permissions",
+      "rows": [
+        {
+          "permission": "SYSTEM_ALERT_WINDOW",
+          "description": "Draw over other apps (overlay)",
+          "check": "Settings.canDrawOverlays(context)",
+          "request": "Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(\"package:$packageName\"))"
+        },
+        {
+          "permission": "WRITE_SETTINGS",
+          "description": "Modify system settings",
+          "check": "Settings.System.canWrite(context)",
+          "request": "Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse(\"package:$packageName\"))"
+        },
+        {
+          "permission": "MANAGE_EXTERNAL_STORAGE",
+          "description": "Full access to external storage (API 30+)",
+          "check": "Environment.isExternalStorageManager()",
+          "request": "Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse(\"package:$packageName\"))"
+        },
+        {
+          "permission": "REQUEST_INSTALL_PACKAGES",
+          "description": "Install APKs from unknown sources",
+          "check": "context.packageManager.canRequestPackageInstalls()",
+          "request": "Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse(\"package:$packageName\"))"
+        },
+        {
+          "permission": "SCHEDULE_EXACT_ALARM",
+          "description": "Schedule exact alarms (API 31+)",
+          "check": "(getSystemService(ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()",
+          "request": "Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Permission Best Practices",
+      "items": [
+        "Request permissions in context — ask when the user triggers the feature that needs it, not at app launch",
+        "Explain why — use a rationale dialog before requesting if shouldShowRequestPermissionRationale() returns true",
+        "Fail gracefully — if permission is denied, degrade functionality rather than crashing or blocking the user",
+        "Never block the UI indefinitely waiting for permission — provide a fallback path",
+        "Handle permanent denial — if the user selects 'Don't ask again', guide them to Settings to manually grant",
+        "Re-check permissions in onResume() — users can revoke permissions while the app is backgrounded",
+        "Use the principle of least privilege — only request permissions that are strictly necessary",
+        "Prefer scoped storage APIs and media picker over broad storage permissions",
+        "Use the Photo Picker (ActivityResultContracts.PickVisualMedia) — grants access to selected media without needing READ_MEDIA_IMAGES"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Permission Denied — Handling Scenarios",
+      "rows": [
+        {
+          "scenario": "First time denied",
+          "shouldShowRationale": "true (usually)",
+          "action": "Show rationale explaining the benefit of the permission, then re-request"
+        },
+        {
+          "scenario": "Permanently denied ('Don't ask again')",
+          "shouldShowRationale": "false",
+          "action": "Show a dialog explaining the situation and provide a button to open app Settings"
+        },
+        {
+          "scenario": "Permission revoked while app is running",
+          "shouldShowRationale": "N/A",
+          "action": "Re-check in onResume() — SecurityException will be thrown if you use a revoked permission"
+        },
+        {
+          "scenario": "Permission granted",
+          "shouldShowRationale": "false",
+          "action": "Proceed with the feature — no action needed"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Location Permission — Special Considerations",
+      "items": [
+        "ACCESS_FINE_LOCATION (GPS) and ACCESS_COARSE_LOCATION (network) are in the same permission group",
+        "Request both together to let the user choose the precision level on Android 12+",
+        "Background location (ACCESS_BACKGROUND_LOCATION) must be requested separately — after foreground location is granted",
+        "Background location requires a strong justification for Play Store approval",
+        "On Android 10+ (API 29+), always request foreground location first, then background separately",
+        "Android 12 (API 31+) introduced approximate location — users can grant approximate even if you request precise",
+        "Always handle the case where the user grants only approximate location instead of precise",
+        "Use FusedLocationProviderClient from Google Play Services for efficient, battery-friendly location access"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Android's permission system protects sensitive user data and device features by requiring explicit user consent for dangerous permissions at runtime. Always declare permissions in the manifest, check before requesting using ContextCompat.checkSelfPermission(), use the Activity Result API for requesting, and handle all outcomes — granted, denied, and permanently denied. Request permissions contextually when the user triggers the relevant feature, provide clear rationale when needed, and gracefully degrade functionality when permissions are denied. For special permissions like overlay or full storage access, redirect users to the relevant system settings screen. Follow the principle of least privilege and prefer privacy-preserving alternatives like the Photo Picker wherever possible."
+    }
+  ]
+}

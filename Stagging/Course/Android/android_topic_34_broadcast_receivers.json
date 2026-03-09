@@ -1,0 +1,317 @@
+{
+  "title": "Broadcast Receivers",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is a Broadcast Receiver?",
+      "content": "A Broadcast Receiver is an Android component that allows your app to subscribe to and respond to system-wide or app-specific broadcast messages. Broadcasts are asynchronous messages sent by the Android system or other apps when events of interest occur — the battery is low, the network connectivity changes, the device boots, a file download completes, or your app sends a custom event. A BroadcastReceiver's onReceive() callback is called on the main thread and must complete quickly — within approximately 10 seconds on most devices — otherwise the system will show an ANR dialog. For longer work triggered by a broadcast, delegate immediately to WorkManager or a coroutine."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common System Broadcast Events",
+      "items": [
+        "Intent.ACTION_BOOT_COMPLETED — device has finished booting; requires RECEIVE_BOOT_COMPLETED permission",
+        "Intent.ACTION_BATTERY_LOW — battery has dropped to a critically low level",
+        "Intent.ACTION_BATTERY_OKAY — battery has recovered from low level",
+        "Intent.ACTION_POWER_CONNECTED — device has been plugged into a charger",
+        "Intent.ACTION_POWER_DISCONNECTED — device has been unplugged from charger",
+        "ConnectivityManager.CONNECTIVITY_ACTION — network connectivity has changed (deprecated for apps targeting API 28+; use NetworkCallback instead)",
+        "Intent.ACTION_AIRPLANE_MODE_CHANGED — airplane mode has been toggled",
+        "Intent.ACTION_LOCALE_CHANGED — user has changed the device language",
+        "Intent.ACTION_TIME_CHANGED — system time has been set manually",
+        "Intent.ACTION_PACKAGE_ADDED / REMOVED — an app has been installed or uninstalled",
+        "Intent.ACTION_SCREEN_ON / ACTION_SCREEN_OFF — screen turned on or off (runtime registration only)",
+        "Intent.ACTION_HEADSET_PLUG — wired headset plugged or unplugged"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Broadcast Receiver Registration Types",
+      "rows": [
+        {
+          "type": "Static (Manifest) Registration",
+          "how": "Declared in AndroidManifest.xml with <receiver> tag and <intent-filter>",
+          "lifecycle": "Receiver exists even when the app is not running — system creates it to deliver broadcasts",
+          "use_for": "Boot completed, package installed/removed, system events that must wake the app",
+          "limitations": "Most implicit broadcasts are blocked for API 26+ (Oreo) due to background execution limits"
+        },
+        {
+          "type": "Dynamic (Runtime) Registration",
+          "how": "Registered in code with context.registerReceiver() and unregistered with unregisterReceiver()",
+          "lifecycle": "Only active while the registering component (Activity, Fragment, Service) is alive",
+          "use_for": "Screen on/off, battery changes, connectivity — events only relevant while app is in foreground",
+          "limitations": "Receiver is destroyed when the component unregisters — cannot receive broadcasts when app is closed"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Creating a BroadcastReceiver",
+      "content": "A BroadcastReceiver is created by extending the BroadcastReceiver abstract class and overriding the onReceive(context, intent) method. The context passed to onReceive() should never be used to start an asynchronous task that outlives onReceive() itself — if you need to do longer work, use goAsync() to get a PendingResult that keeps the receiver alive, or better yet, enqueue a WorkManager task immediately. The receiver's class must be public for static registration to work, as the system instantiates it via reflection."
+    },
+    {
+      "type": "bullet",
+      "heading": "BroadcastReceiver Implementation Pattern",
+      "items": [
+        "Extend BroadcastReceiver: class MyReceiver : BroadcastReceiver() { override fun onReceive(context: Context, intent: Intent) { } }",
+        "Check the action: when (intent.action) { Intent.ACTION_BOOT_COMPLETED -> { } ConnectivityManager.CONNECTIVITY_ACTION -> { } }",
+        "Extract extras: val message = intent.getStringExtra(\"key\")",
+        "For short work (< 10 seconds): execute directly in onReceive()",
+        "For longer work: immediately enqueue WorkManager: WorkManager.getInstance(context).enqueue(myWorkRequest)",
+        "Do NOT start AsyncTask, create threads, or launch coroutines directly — they may be killed before completing",
+        "Use goAsync() for slightly longer but still bounded work: val result = goAsync(); coroutineScope.launch { doWork(); result.finish() }",
+        "Never show a Dialog from onReceive() — receivers do not have a window token",
+        "Never bind to a Service from onReceive() — the binding is asynchronous and onReceive() may return first"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Static Registration in AndroidManifest.xml",
+      "rows": [
+        {
+          "step": "1. Declare receiver",
+          "description": "<receiver android:name=\".MyReceiver\" android:exported=\"false\"> — exported=\"false\" prevents other apps from sending broadcasts to your receiver"
+        },
+        {
+          "step": "2. Add intent filter",
+          "description": "<intent-filter><action android:name=\"android.intent.action.BOOT_COMPLETED\" /></intent-filter> — inside the <receiver> tag"
+        },
+        {
+          "step": "3. Add permission if needed",
+          "description": "<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\" /> — required for BOOT_COMPLETED broadcast"
+        },
+        {
+          "step": "4. Restrict with permission (optional)",
+          "description": "android:permission=\"com.example.MY_PERMISSION\" on the <receiver> tag — only senders with this permission can trigger it"
+        },
+        {
+          "step": "5. Handle in onReceive()",
+          "description": "Check intent.action and handle accordingly; enqueue WorkManager for any non-trivial work"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Dynamic Registration and Unregistration",
+      "items": [
+        "Create receiver instance: val receiver = MyBroadcastReceiver()",
+        "Create IntentFilter: val filter = IntentFilter(Intent.ACTION_BATTERY_LOW).apply { addAction(Intent.ACTION_BATTERY_OKAY) }",
+        "Register in onStart(): registerReceiver(receiver, filter) — or ContextCompat.registerReceiver() on API 33+",
+        "Unregister in onStop(): unregisterReceiver(receiver) — always pair register/unregister to avoid leaks",
+        "For API 33+, specify export flag: ContextCompat.registerReceiver(this, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)",
+        "RECEIVER_NOT_EXPORTED — only your app can send broadcasts to this receiver",
+        "RECEIVER_EXPORTED — any app can send broadcasts to this receiver",
+        "In a Fragment: register in onViewCreated() / onStart() and unregister in onDestroyView() / onStop()",
+        "In Compose: use DisposableEffect to register and unregister with the composable lifecycle"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Background Execution Limits — API 26+ Restrictions",
+      "rows": [
+        {
+          "aspect": "Implicit broadcast restriction",
+          "description": "Apps targeting API 26+ cannot register most implicit broadcasts in the manifest — they are silently ignored",
+          "exceptions": "A small set of broadcasts are still deliverable: BOOT_COMPLETED, LOCKED_BOOT_COMPLETED, PACKAGE_REPLACED, MY_PACKAGE_REPLACED, etc."
+        },
+        {
+          "aspect": "Explicit broadcasts",
+          "description": "Broadcasts sent directly to your app's receiver (by component name) still work with manifest registration",
+          "exceptions": "Always works — these are targeted specifically at your receiver"
+        },
+        {
+          "aspect": "Dynamic registration",
+          "description": "Dynamically registered receivers work normally for any broadcast action — not subject to implicit broadcast restrictions",
+          "exceptions": "None — runtime registration is the recommended approach for most broadcasts"
+        },
+        {
+          "aspect": "Workarounds",
+          "description": "For events previously handled via implicit broadcasts, use: JobScheduler, WorkManager with constraints, or NetworkCallback for connectivity changes",
+          "exceptions": "Connectivity: use ConnectivityManager.registerNetworkCallback() instead of CONNECTIVITY_ACTION broadcast"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Sending Custom Broadcasts",
+      "content": "In addition to receiving system broadcasts, your app can send its own custom broadcasts — either to itself or to other apps. Local broadcasts (within your own app) should use LocalBroadcastManager (now deprecated) or modern alternatives like SharedFlow in a ViewModel or EventBus. For inter-app broadcasts, use sendBroadcast() with an explicit component name or a custom permission to restrict who can receive it. Always use explicit intents or permission-restricted broadcasts for security — never send sensitive data in a broadcast that any app could intercept."
+    },
+    {
+      "type": "bullet",
+      "heading": "Sending Broadcasts",
+      "items": [
+        "Send a global broadcast: sendBroadcast(Intent(\"com.example.MY_CUSTOM_ACTION\"))",
+        "Send with data: val intent = Intent(\"com.example.ACTION\").apply { putExtra(\"key\", value) }; sendBroadcast(intent)",
+        "Restrict to receivers with a permission: sendBroadcast(intent, \"com.example.MY_PERMISSION\")",
+        "Send an ordered broadcast: sendOrderedBroadcast(intent, null) — receivers are called in priority order",
+        "Send explicitly to a specific receiver: intent.component = ComponentName(packageName, \"com.example.MyReceiver\"); sendBroadcast(intent)",
+        "LocalBroadcastManager is deprecated — use SharedFlow or EventBus for in-process events instead",
+        "For in-app communication: prefer LiveData, SharedFlow, or StateFlow over broadcasts entirely",
+        "System broadcasts (like ACTION_BATTERY_LOW) cannot be sent by apps — they are system-protected"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Ordered Broadcasts",
+      "rows": [
+        {
+          "concept": "What it is",
+          "description": "A broadcast delivered to one receiver at a time, in priority order — each receiver can pass data to the next or abort the broadcast"
+        },
+        {
+          "concept": "sendOrderedBroadcast()",
+          "description": "Sends an ordered broadcast; receivers are invoked in descending order of their declared android:priority in the intent-filter"
+        },
+        {
+          "concept": "setResult() in receiver",
+          "description": "Pass data to the next receiver in the chain: setResult(resultCode, resultData, resultExtras)"
+        },
+        {
+          "concept": "getResultData() in receiver",
+          "description": "Read the data set by the previous receiver in the chain"
+        },
+        {
+          "concept": "abortBroadcast()",
+          "description": "Prevents lower-priority receivers from receiving the broadcast — only works in ordered broadcasts"
+        },
+        {
+          "concept": "Priority declaration",
+          "description": "<intent-filter android:priority=\"100\"> — higher number = higher priority; default is 0; range is -1000 to 1000"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Boot Completed Receiver — Common Pattern",
+      "items": [
+        "Register in manifest with BOOT_COMPLETED action and RECEIVE_BOOT_COMPLETED permission",
+        "android:directBootAware=\"true\" — allows receipt before the user unlocks the device after reboot (direct boot mode)",
+        "Use LOCKED_BOOT_COMPLETED for direct boot aware receivers — fires before user authentication",
+        "In onReceive(), re-schedule WorkManager periodic tasks that were cleared when the app was killed before reboot",
+        "In onReceive(), restart foreground services that need to run after boot",
+        "Keep onReceive() fast — enqueue WorkManager immediately and return",
+        "BOOT_COMPLETED is still delivered on API 26+ via manifest registration — it is one of the exempt broadcasts",
+        "Do not perform heavy initialization in a boot receiver — defer to WorkManager or lazy initialization"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Connectivity Changes — Modern Approach",
+      "rows": [
+        {
+          "approach": "Legacy (deprecated)",
+          "description": "Register for ConnectivityManager.CONNECTIVITY_ACTION in manifest — blocked on API 26+ for background apps",
+          "code": "<action android:name=\"android.net.conn.CONNECTIVITY_CHANGE\" />"
+        },
+        {
+          "approach": "NetworkCallback (recommended)",
+          "description": "Register a NetworkCallback with ConnectivityManager for precise, lifecycle-aware connectivity monitoring",
+          "code": "connectivityManager.registerNetworkCallback(NetworkRequest.Builder().addCapability(NET_CAPABILITY_INTERNET).build(), callback)"
+        },
+        {
+          "approach": "WorkManager constraint",
+          "description": "Use NetworkType.CONNECTED constraint in WorkManager — work runs when network is available without manual monitoring",
+          "code": "Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()"
+        },
+        {
+          "approach": "Flow-based connectivity",
+          "description": "Wrap NetworkCallback in a callbackFlow for reactive connectivity state that integrates with coroutines",
+          "code": "callbackFlow { registerNetworkCallback(request, object : NetworkCallback() { override fun onAvailable(n) { trySend(true) } }); awaitClose { unregisterNetworkCallback(this) } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Security Best Practices for Broadcasts",
+      "items": [
+        "Use android:exported=\"false\" on <receiver> in the manifest unless other apps need to send broadcasts to it",
+        "For API 33+ dynamic registration, always specify RECEIVER_NOT_EXPORTED unless cross-app communication is required",
+        "Use custom permissions to restrict who can send broadcasts to your receiver: android:permission on <receiver>",
+        "Use custom permissions to restrict who can receive your broadcasts: pass permissionString to sendBroadcast()",
+        "Never include sensitive data (passwords, tokens, PII) in a broadcast Intent — other apps with matching intent-filters could receive it",
+        "Use explicit intents (specify component name) when communicating within your own app",
+        "Validate the intent action and extras in onReceive() — malicious apps could send spoofed broadcasts",
+        "For in-app events, avoid broadcasts entirely — use SharedFlow, StateFlow, or LiveData"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "goAsync() — Extending Receiver Lifetime",
+      "rows": [
+        {
+          "concept": "Problem",
+          "description": "onReceive() must complete within ~10 seconds; work that takes longer causes ANR"
+        },
+        {
+          "concept": "goAsync()",
+          "description": "Extends the receiver's lifetime beyond onReceive() by returning a PendingResult token that must be finished explicitly"
+        },
+        {
+          "concept": "Usage pattern",
+          "description": "val pendingResult = goAsync(); coroutineScope.launch(Dispatchers.IO) { try { doWork() } finally { pendingResult.finish() } }"
+        },
+        {
+          "concept": "Limitation",
+          "description": "goAsync() extends the deadline but does not remove it — still subject to background process killing"
+        },
+        {
+          "concept": "Recommended alternative",
+          "description": "For work exceeding a few seconds, enqueue WorkManager immediately and return — more robust than goAsync()"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Broadcast Receiver in Compose with DisposableEffect",
+      "items": [
+        "Use DisposableEffect to register and unregister a BroadcastReceiver with the composable's lifecycle",
+        "val context = LocalContext.current",
+        "DisposableEffect(context) { val receiver = MyBroadcastReceiver(); val filter = IntentFilter(Intent.ACTION_BATTERY_LOW); context.registerReceiver(receiver, filter); onDispose { context.unregisterReceiver(receiver) } }",
+        "This ensures the receiver is unregistered when the composable leaves the composition — no leaks",
+        "The DisposableEffect key should be context or a stable value — changing the key unregisters and re-registers",
+        "Combine with a state variable to expose broadcast data to the composable: var batteryLow by remember { mutableStateOf(false) }",
+        "Set state inside onReceive(): batteryLow = true — triggers recomposition to update UI",
+        "Use this pattern for battery, screen on/off, headset plug, and other UI-relevant system events"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common BroadcastReceiver Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Performing long-running work directly in onReceive()",
+          "fix": "Enqueue WorkManager immediately in onReceive() and return — never block the main thread beyond a few milliseconds"
+        },
+        {
+          "mistake": "Registering a manifest receiver for implicit broadcasts targeting API 26+",
+          "fix": "Most implicit broadcasts are blocked — use dynamic registration or WorkManager constraints instead"
+        },
+        {
+          "mistake": "Forgetting to unregister a dynamically registered receiver",
+          "fix": "Always pair registerReceiver() in onStart() with unregisterReceiver() in onStop() to prevent memory leaks"
+        },
+        {
+          "mistake": "Using LocalBroadcastManager for in-app events",
+          "fix": "LocalBroadcastManager is deprecated — use SharedFlow, StateFlow, LiveData, or an event bus for in-app communication"
+        },
+        {
+          "mistake": "Sending sensitive data in a broadcast Intent",
+          "fix": "Any app with a matching intent-filter can receive your broadcast — never include tokens, passwords, or PII"
+        },
+        {
+          "mistake": "Not declaring android:exported on receiver in API 33+",
+          "fix": "API 33+ requires explicit exported declaration — add android:exported=\"false\" or \"true\" to avoid build errors"
+        },
+        {
+          "mistake": "Showing a Dialog or Toast from onReceive() in a static receiver",
+          "fix": "Static receivers have no UI context — use a notification instead, or send a broadcast to a running Activity"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Broadcast Receivers are Android's publish-subscribe mechanism for responding to system and app events. Use static manifest registration for critical system events like BOOT_COMPLETED that must wake the app, and dynamic runtime registration for UI-relevant events like battery level and screen state. Always keep onReceive() fast — delegate any real work to WorkManager immediately. For connectivity monitoring, replace the deprecated CONNECTIVITY_ACTION with NetworkCallback or WorkManager constraints. Secure your receivers with android:exported=\"false\" and custom permissions, never send sensitive data through broadcasts, and replace LocalBroadcastManager with SharedFlow or StateFlow for all in-app event communication."
+    }
+  ]
+}

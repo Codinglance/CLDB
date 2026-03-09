@@ -1,0 +1,218 @@
+{
+  "data": {
+    "interview_item": [
+      {
+        "category_id": "Android",
+        "title": "Android",
+        "totalQuestions": "50",
+        "icon": " "
+      },
+      {
+        "category_id": "Kotlin",
+        "title": "Kotlin",
+        "totalQuestions": "25",
+        "icon": " "
+      },
+      {
+        "category_id": "Compose",
+        "title": "Compose",
+        "totalQuestions": "20",
+        "icon": " "
+      },
+      {
+        "category_id": "Collection",
+        "title": "Collection",
+        "totalQuestions": "25",
+        "icon": " "
+      }
+    ],
+    "courses": [
+      {
+        "courseId": "Kotlin",
+        "courseTitle": "Kotlin",
+        "totalQuestions": "50",
+
+        "icon": " "
+      },
+      {
+        "courseId": "Android",
+        "courseTitle": "Android",
+        "totalQuestions": "50",
+
+        "icon": " "
+      }
+    ],
+    "dsa": [
+      {
+        "courseId": "DSA",
+        "courseTitle": "DSA",
+        "totalQuestions": "50",
+        "icon": " "
+      }
+    ],
+    "cheat_sheet": [
+      {
+        "cheatSheetId": "CheatSheet",
+        "cheatSheetTitle": "CheatSheet",
+        "cheatSheetQuestions": "50",
+        "icon": " "
+      },
+      {
+        "cheatSheetId": "CheatSheet",
+        "cheatSheetTitle": "CheatSheet",
+        "cheatSheetQuestions": "50",
+        "icon": " "
+      }
+    ],
+    "newlyAdded": [
+      {
+        "id": "dsa_1",
+        "tag": "DSA",
+        "badge": "NEW",
+        "icon": "</>",
+        "isMono": true,
+        "title": "Binary Search Tree",
+        "subtitle": "Master BST operations with interactive examples",
+        "meta": "12 Problems • 45 mins"
+      },
+      {
+        "id": "dsa_2",
+        "tag": "DSA",
+        "badge": "HOT",
+        "icon": "</>",
+        "isMono": true,
+        "title": "Dynamic Programming",
+        "subtitle": "Crack DP problems with top-down & bottom-up patterns",
+        "meta": "20 Problems • 2 hrs"
+      },
+      {
+        "id": "dsa_3",
+        "tag": "DSA",
+        "badge": "NEW",
+        "icon": "</>",
+        "isMono": true,
+        "title": "Graph Algorithms",
+        "subtitle": "BFS, DFS, Dijkstra & more — with visual walkthroughs",
+        "meta": "15 Problems • 1.5 hrs"
+      },
+      {
+        "id": "course_1",
+        "tag": "COURSE",
+        "badge": "NEW",
+        "icon": "🎓",
+        "title": "System Design Basics",
+        "subtitle": "Learn scalable architecture patterns from scratch",
+        "meta": "8 Chapters • 3 hrs"
+      },
+      {
+        "id": "course_2",
+        "tag": "COURSE",
+        "badge": "HOT",
+        "icon": "🎓",
+        "title": "Jetpack Compose Masterclass",
+        "subtitle": "Build production-ready Android UIs with Compose",
+        "meta": "12 Chapters • 5 hrs"
+      },
+      {
+        "id": "course_3",
+        "tag": "COURSE",
+        "badge": "NEW",
+        "icon": "🎓",
+        "title": "Clean Architecture in Android",
+        "subtitle": "MVVM, UseCase, Repository — done right",
+        "meta": "6 Chapters • 2.5 hrs"
+      },
+      {
+        "id": "qa_1",
+        "tag": "INTERVIEW_QA",
+        "badge": "HOT",
+        "icon": "💬",
+        "title": "Android Interview 2025",
+        "subtitle": "Top 50 questions asked at FAANG companies",
+        "meta": "50 Questions • 30 mins"
+      },
+      {
+        "id": "qa_2",
+        "tag": "INTERVIEW_QA",
+        "badge": "NEW",
+        "icon": "💬",
+        "title": "Kotlin Deep Dive Q/A",
+        "subtitle": "Coroutines, Flow, Sealed classes & more",
+        "meta": "35 Questions • 25 mins"
+      },
+      {
+        "id": "qa_3",
+        "tag": "INTERVIEW_QA",
+        "badge": "NEW",
+        "icon": "💬",
+        "title": "System Design Interview",
+        "subtitle": "Design Twitter, Uber & WhatsApp step by step",
+        "meta": "20 Questions • 40 mins"
+      },
+      {
+        "id": "sheet_1",
+        "tag": "CHEAT_SHEET",
+        "badge": "NEW",
+        "icon": "📄",
+        "title": "Kotlin Coroutines",
+        "subtitle": "Quick reference for async & concurrent programming",
+        "meta": "1 Sheet • 5 mins"
+      },
+      {
+        "id": "sheet_2",
+        "tag": "CHEAT_SHEET",
+        "badge": "NEW",
+        "icon": "📄",
+        "title": "Git Commands",
+        "subtitle": "Every Git command you'll ever need — one page",
+        "meta": "1 Sheet • 3 mins"
+      },
+      {
+        "id": "sheet_3",
+        "tag": "CHEAT_SHEET",
+        "badge": "HOT",
+        "icon": "📄",
+        "title": "Big-O Complexity",
+        "subtitle": "Time & space complexity of all major algorithms",
+        "meta": "1 Sheet • 4 mins"
+      },
+      {
+        "id": "quiz_1",
+        "tag": "QUIZ",
+        "badge": "NEW",
+        "icon": "🧠",
+        "title": "Data Structures Quiz",
+        "subtitle": "Test your knowledge with 20 timed MCQs",
+        "meta": "20 Questions • 15 mins"
+      },
+      {
+        "id": "quiz_2",
+        "tag": "QUIZ",
+        "badge": "HOT",
+        "icon": "🧠",
+        "title": "Android Fundamentals Quiz",
+        "subtitle": "Activities, Fragments, Lifecycle & more",
+        "meta": "25 Questions • 20 mins"
+      },
+      {
+        "id": "quiz_3",
+        "tag": "QUIZ",
+        "badge": "NEW",
+        "icon": "🧠",
+        "title": "OOP Concepts Quiz",
+        "subtitle": "Inheritance, Polymorphism, Abstraction — tested",
+        "meta": "15 Questions • 10 mins"
+      }
+    ],
+    "banners": [
+      {
+        "title": "Linkedin",
+        "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
+      },
+      {
+        "title": "Insta",
+        "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
+      }
+    ]
+  }
+}

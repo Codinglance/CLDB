@@ -1,0 +1,375 @@
+{
+  "title": "ConstraintLayout & LinearLayout",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are ViewGroups?",
+      "content": "A ViewGroup is a special type of View that acts as a container for other Views and ViewGroups. It is responsible for measuring, positioning, and sizing its child Views according to its own layout rules. Choosing the right ViewGroup for your UI is critical — the wrong choice leads to deeply nested hierarchies that hurt performance, while the right choice produces flat, efficient layouts. Android provides several built-in ViewGroups, the most important being ConstraintLayout and LinearLayout."
+    },
+    {
+      "type": "table",
+      "heading": "Android Layout Types Overview",
+      "rows": [
+        {
+          "layout": "ConstraintLayout",
+          "description": "Positions children using constraints between views and parent edges — flat hierarchy",
+          "best_for": "Complex, responsive screens — recommended for most layouts"
+        },
+        {
+          "layout": "LinearLayout",
+          "description": "Arranges children in a single row (horizontal) or column (vertical)",
+          "best_for": "Simple stacked or side-by-side arrangements"
+        },
+        {
+          "layout": "RelativeLayout",
+          "description": "Positions children relative to each other or the parent edges",
+          "best_for": "Legacy — replaced by ConstraintLayout in modern apps"
+        },
+        {
+          "layout": "FrameLayout",
+          "description": "Stacks children on top of each other — last child is drawn on top",
+          "best_for": "Fragment containers, overlapping Views, loading overlays"
+        },
+        {
+          "layout": "GridLayout",
+          "description": "Arranges children in a grid of rows and columns",
+          "best_for": "Simple grid arrangements without dynamic data"
+        },
+        {
+          "layout": "CoordinatorLayout",
+          "description": "Advanced FrameLayout that coordinates animations between child Views",
+          "best_for": "AppBar collapsing, Snackbar behavior, FAB interactions"
+        },
+        {
+          "layout": "MotionLayout",
+          "description": "Subclass of ConstraintLayout with built-in animation between states",
+          "best_for": "Complex UI animations and transitions"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "LinearLayout",
+      "content": "LinearLayout is the simplest and most intuitive ViewGroup. It arranges its child Views in a single direction — either vertically (one below another) or horizontally (one beside another). Its key strength is simplicity: easy to understand, easy to use, and perfect for forms, toolbars, or any stack of items. Its weakness is that nesting multiple LinearLayouts creates deep view hierarchies that slow down rendering."
+    },
+    {
+      "type": "bullet",
+      "heading": "LinearLayout Key Attributes",
+      "items": [
+        "android:orientation – Required attribute: vertical (stack top to bottom) or horizontal (side by side)",
+        "android:gravity – Aligns all children within the LinearLayout (e.g., center, end, bottom)",
+        "android:layout_gravity – Aligns an individual child within its parent LinearLayout",
+        "android:layout_weight – Distributes remaining space proportionally among children",
+        "android:weightSum – Defines the total weight sum (optional; defaults to sum of all child weights)",
+        "android:divider – Adds a drawable divider between children",
+        "android:showDividers – Controls where dividers appear: beginning, middle, end, or none",
+        "android:baselineAligned – Aligns children by their text baseline in horizontal layouts"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "LinearLayout layout_weight Examples",
+      "rows": [
+        {
+          "scenario": "Two equal-width buttons side by side",
+          "setup": "Both buttons: layout_width=0dp, layout_weight=1",
+          "result": "Each button takes exactly 50% of the available width"
+        },
+        {
+          "scenario": "One button takes twice the space",
+          "setup": "Button A: weight=2, Button B: weight=1 (layout_width=0dp)",
+          "result": "Button A gets 2/3 width, Button B gets 1/3 width"
+        },
+        {
+          "scenario": "EditText fills remaining space beside a Button",
+          "setup": "EditText: layout_width=0dp, weight=1; Button: layout_width=wrap_content",
+          "result": "Button takes its natural size, EditText fills the rest"
+        },
+        {
+          "scenario": "Three equal-height rows in vertical LinearLayout",
+          "setup": "All three Views: layout_height=0dp, layout_weight=1",
+          "result": "Each View takes exactly 1/3 of the available height"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "ConstraintLayout",
+      "content": "ConstraintLayout is the most powerful and recommended layout for Android development. It allows you to create complex, responsive UIs with a completely flat view hierarchy — no nesting required. Each child View is positioned by defining constraints that connect it to the parent edges, other Views, or guidelines. The Layout Editor in Android Studio provides a visual drag-and-drop interface for building ConstraintLayouts without writing XML manually."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why ConstraintLayout is Preferred",
+      "items": [
+        "Flat view hierarchy — all Views are direct children, no nested layouts needed",
+        "Better performance — single measurement pass instead of recursive nested passes",
+        "Responsive — Views adapt to different screen sizes using constraints and guidelines",
+        "Powerful positioning — align to parent, other views, or virtual helpers like Guidelines and Barriers",
+        "Built-in chains — distribute multiple Views evenly like a flex layout",
+        "Supports aspect ratio constraints — lock a View to a specific width:height ratio",
+        "Fully supported in the Android Studio Layout Editor with visual handles",
+        "Supports MotionLayout for advanced animations as a direct upgrade path"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ConstraintLayout Core Constraint Attributes",
+      "rows": [
+        {
+          "attribute": "app:layout_constraintTop_toTopOf",
+          "description": "Aligns the top edge of this View to the top edge of another View or parent"
+        },
+        {
+          "attribute": "app:layout_constraintBottom_toBottomOf",
+          "description": "Aligns the bottom edge of this View to the bottom edge of another View or parent"
+        },
+        {
+          "attribute": "app:layout_constraintStart_toStartOf",
+          "description": "Aligns the start (left) edge of this View to the start edge of another View or parent"
+        },
+        {
+          "attribute": "app:layout_constraintEnd_toEndOf",
+          "description": "Aligns the end (right) edge of this View to the end edge of another View or parent"
+        },
+        {
+          "attribute": "app:layout_constraintTop_toBottomOf",
+          "description": "Places the top of this View below the bottom of another View"
+        },
+        {
+          "attribute": "app:layout_constraintBottom_toTopOf",
+          "description": "Places the bottom of this View above the top of another View"
+        },
+        {
+          "attribute": "app:layout_constraintStart_toEndOf",
+          "description": "Places the start of this View to the right of another View's end"
+        },
+        {
+          "attribute": "app:layout_constraintEnd_toStartOf",
+          "description": "Places the end of this View to the left of another View's start"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "ConstraintLayout — Centering & Bias",
+      "items": [
+        "To center horizontally: constrain both Start and End to parent — View centers automatically",
+        "To center vertically: constrain both Top and Bottom to parent — View centers automatically",
+        "app:layout_constraintHorizontal_bias – Shifts position between 0.0 (start) and 1.0 (end); default 0.5 (center)",
+        "app:layout_constraintVertical_bias – Shifts position between 0.0 (top) and 1.0 (bottom); default 0.5",
+        "Bias of 0.3 means the View sits 30% from the start/top — useful for off-center layouts",
+        "Bias only works when the View has constraints on both opposite sides",
+        "To center a View exactly: set both constraints to parent and leave bias at default 0.5"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ConstraintLayout — Sizing Options for Children",
+      "rows": [
+        {
+          "value": "wrap_content",
+          "behavior": "View sizes itself to fit its content; respects constraints for positioning but not size"
+        },
+        {
+          "value": "match_parent",
+          "behavior": "Avoid in ConstraintLayout — use 0dp (match constraint) instead"
+        },
+        {
+          "value": "0dp (match_constraint)",
+          "behavior": "View expands to fill the space defined by its constraints — the ConstraintLayout equivalent of match_parent"
+        },
+        {
+          "value": "Fixed (e.g., 100dp)",
+          "behavior": "Exact fixed size regardless of constraints"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Guidelines in ConstraintLayout",
+      "content": "Guidelines are invisible helper lines you can add to a ConstraintLayout to create consistent alignment points. They can be positioned as a fixed dp offset from an edge or as a percentage of the layout's width/height. Multiple Views can be constrained to the same Guideline, making it easy to align a column of Views or create a two-column layout without nesting."
+    },
+    {
+      "type": "bullet",
+      "heading": "Guidelines, Barriers & Groups",
+      "items": [
+        "Guideline – An invisible vertical or horizontal line used as an alignment anchor for other Views",
+        "app:layout_constraintGuide_percent – Positions the Guideline at a percentage of the parent (e.g., 0.5 = center)",
+        "app:layout_constraintGuide_begin – Positions the Guideline at a fixed dp offset from the start/top",
+        "app:layout_constraintGuide_end – Positions the Guideline at a fixed dp offset from the end/bottom",
+        "Barrier – A dynamic Guideline that positions itself based on the size of multiple referenced Views",
+        "app:barrierDirection – Direction the Barrier extends: start, end, top, or bottom",
+        "app:constraint_referenced_ids – Comma-separated list of View IDs the Barrier tracks",
+        "Group – A virtual helper that controls the visibility of multiple Views at once with a single visibility change"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ConstraintLayout Chains",
+      "rows": [
+        {
+          "chain_style": "spread (default)",
+          "behavior": "Views are spread evenly across the available space including edges",
+          "use_case": "Evenly distributed Views with space between them and the edges"
+        },
+        {
+          "chain_style": "spread_inside",
+          "behavior": "Views are spread evenly but the first and last Views are attached to the chain edges",
+          "use_case": "Evenly distributed Views with no space at the edges"
+        },
+        {
+          "chain_style": "packed",
+          "behavior": "Views are packed together in the center of the chain",
+          "use_case": "Grouping Views together and centering the group"
+        },
+        {
+          "chain_style": "packed with bias",
+          "behavior": "Views are packed together and shifted by horizontal or vertical bias",
+          "use_case": "Off-center grouped Views"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Creating a Chain in ConstraintLayout",
+      "items": [
+        "A chain is created when two or more Views are connected to each other bidirectionally",
+        "View A's End is constrained to View B's Start, AND View B's Start is constrained to View A's End",
+        "The first View in the chain (chain head) controls the chain style with app:layout_constraintHorizontal_chainStyle",
+        "Set layout_width=0dp on chain members to distribute available space proportionally",
+        "Use layout_constraintHorizontal_weight on each View to control its share of the space",
+        "Chains work in both horizontal and vertical directions",
+        "In Android Studio: select multiple Views → right-click → Chains → Create Horizontal/Vertical Chain"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ConstraintLayout vs LinearLayout — When to Use Which",
+      "rows": [
+        {
+          "scenario": "Complex screen with many views at different positions",
+          "recommended": "ConstraintLayout",
+          "reason": "Flat hierarchy handles any position without nesting"
+        },
+        {
+          "scenario": "Simple vertical form with equally-spaced fields",
+          "recommended": "LinearLayout (vertical)",
+          "reason": "Simpler XML, easier to read and maintain"
+        },
+        {
+          "scenario": "Row of icons or buttons side by side",
+          "recommended": "LinearLayout (horizontal) or ConstraintLayout chain",
+          "reason": "Both work; LinearLayout is simpler for uniform rows"
+        },
+        {
+          "scenario": "Two views splitting width 50/50",
+          "recommended": "LinearLayout with weight=1 or ConstraintLayout chain",
+          "reason": "LinearLayout weight is simpler; ConstraintLayout avoids nesting"
+        },
+        {
+          "scenario": "RecyclerView item with icon, title, and subtitle",
+          "recommended": "ConstraintLayout",
+          "reason": "Efficient flat layout for repeated item rows"
+        },
+        {
+          "scenario": "Dialog with title, message, and two buttons",
+          "recommended": "LinearLayout (vertical)",
+          "reason": "Simple stacked content — LinearLayout is ideal"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "FrameLayout",
+      "content": "FrameLayout is the simplest ViewGroup — it stacks its children directly on top of each other, with the last child drawn on top. It is most commonly used as a container for Fragments, where the system swaps Fragment views in and out of the FrameLayout. It is also used for overlapping UI elements like a loading spinner over content, or a badge over an icon."
+    },
+    {
+      "type": "bullet",
+      "heading": "FrameLayout Common Uses",
+      "items": [
+        "Fragment container — the most common use: <FrameLayout android:id='@+id/fragment_container' />",
+        "Overlay a loading spinner (ProgressBar) on top of content",
+        "Display a badge or notification count overlapping an icon",
+        "Show/hide an error or empty state View on top of a list",
+        "android:layout_gravity on children controls where each child is placed within the FrameLayout",
+        "Use View.GONE and View.VISIBLE to toggle which child is shown at a time",
+        "Avoid putting multiple simultaneously visible, non-overlapping children in FrameLayout"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Margin vs Padding — Key Difference",
+      "rows": [
+        {
+          "property": "android:padding",
+          "affects": "Space inside the View between its border and its content",
+          "example": "paddingTop=16dp pushes the text 16dp away from the View's top edge"
+        },
+        {
+          "property": "android:layout_margin",
+          "affects": "Space outside the View between it and neighboring Views or parent edge",
+          "example": "marginTop=16dp pushes the View 16dp away from the View above it"
+        },
+        {
+          "property": "android:paddingStart/End",
+          "affects": "RTL-aware padding on the start or end side",
+          "example": "Use instead of paddingLeft/Right for proper RTL support"
+        },
+        {
+          "property": "android:layout_marginStart/End",
+          "affects": "RTL-aware margin on the start or end side",
+          "example": "Use instead of marginLeft/Right for proper RTL support"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Layout Performance Tips",
+      "items": [
+        "Prefer ConstraintLayout to avoid nested LinearLayouts — each nesting level adds measurement overhead",
+        "Use the Layout Inspector in Android Studio to visualize and debug your view hierarchy at runtime",
+        "Lint warnings like 'Nested weights are bad for performance' should always be resolved",
+        "Replace nested LinearLayouts with a single ConstraintLayout for better rendering performance",
+        "Use <merge> as the root of included layouts to eliminate the extra ViewGroup wrapper",
+        "Use ViewStub for UI that is only sometimes visible — it inflates lazily on demand",
+        "Avoid setting unnecessary backgrounds on intermediate ViewGroups to reduce overdraw",
+        "Enable 'Show GPU Overdraw' in Developer Options to visualize and reduce overdraw in your layouts"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "android:gravity vs android:layout_gravity",
+      "rows": [
+        {
+          "attribute": "android:gravity",
+          "scope": "Affects the content inside the View",
+          "example": "android:gravity=\"center\" centers the text inside a TextView"
+        },
+        {
+          "attribute": "android:layout_gravity",
+          "scope": "Affects the View itself within its parent",
+          "example": "android:layout_gravity=\"end\" aligns the View to the end of its LinearLayout or FrameLayout parent"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for Layouts",
+      "items": [
+        "Use ConstraintLayout as the root for any screen with more than 2-3 Views",
+        "Keep view hierarchy depth to 5 levels or fewer for optimal performance",
+        "Always use @dimen/ references for margins and padding instead of hardcoded values",
+        "Use @string/ for all text and @color/ for all colors — never hardcode in XML",
+        "Set android:contentDescription on every ImageView for accessibility compliance",
+        "Use start/end instead of left/right attributes for proper RTL language support",
+        "Preview layouts in multiple screen sizes using the Layout Editor's device selector",
+        "Extract repeated layout patterns into separate layout files and use <include>"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "ConstraintLayout and LinearLayout are the two layouts you will use in the vast majority of Android screens. ConstraintLayout excels at complex, flat, responsive layouts with its powerful constraint, chain, guideline, and barrier system. LinearLayout shines in its simplicity for straightforward stacked or side-by-side arrangements. Understanding when and how to use each — along with FrameLayout for overlays and fragment containers — gives you the tools to build any UI efficiently."
+    }
+  ]
+}

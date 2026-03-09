@@ -1,0 +1,410 @@
+{
+  "title": "XML Layouts & Views",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are XML Layouts?",
+      "content": "In Android's traditional View system, the user interface is defined using XML layout files stored in the res/layout/ directory. Each XML file describes a hierarchy of View and ViewGroup objects that make up a screen or a component. At runtime, Android inflates these XML files into actual View objects in memory, which are then drawn on the screen. XML layouts separate the UI design from the business logic in your Kotlin/Java code, making your code cleaner and easier to maintain."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Concepts of XML Layouts",
+      "items": [
+        "Every UI element in Android is a View (e.g., TextView, Button, ImageView)",
+        "Views are grouped and arranged using ViewGroups (e.g., LinearLayout, ConstraintLayout)",
+        "Layout XML files are stored in res/layout/ and inflated by setContentView() in Activity",
+        "Each View has attributes like android:id, android:layout_width, android:layout_height",
+        "Views are referenced in Kotlin code using findViewById() or View Binding",
+        "The root element of a layout file is usually a ViewGroup that contains child Views",
+        "Layouts can be nested — a ViewGroup can contain other ViewGroups as children",
+        "Android supports multiple layout files for different screen sizes using resource qualifiers"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Layout Width & Height Values",
+      "rows": [
+        {
+          "value": "match_parent",
+          "description": "Expands the View to fill the full width or height of its parent container"
+        },
+        {
+          "value": "wrap_content",
+          "description": "Shrinks the View to just fit around its content (text, image, etc.)"
+        },
+        {
+          "value": "0dp",
+          "description": "Used in ConstraintLayout to mean 'match constraint' — fills available constrained space"
+        },
+        {
+          "value": "Fixed (e.g., 100dp)",
+          "description": "Sets an exact size in density-independent pixels — avoid hardcoding where possible"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Understanding dp, sp, and px",
+      "content": "Android uses density-independent units to ensure UIs look consistent across devices with different screen densities. dp (density-independent pixels) is used for all layout dimensions — margins, padding, sizes. sp (scale-independent pixels) is used exclusively for text sizes because it also respects the user's font size preference set in system settings. Never use px (raw pixels) in layouts as it will look different on every screen."
+    },
+    {
+      "type": "table",
+      "heading": "Android Dimension Units",
+      "rows": [
+        {
+          "unit": "dp (dip)",
+          "full_name": "Density-independent Pixel",
+          "use_for": "All layout sizes, margins, padding, view dimensions",
+          "note": "1dp = 1px on 160dpi screen; scales automatically"
+        },
+        {
+          "unit": "sp",
+          "full_name": "Scale-independent Pixel",
+          "use_for": "Text sizes only (android:textSize)",
+          "note": "Like dp but also scales with user font size preference"
+        },
+        {
+          "unit": "px",
+          "full_name": "Pixel",
+          "use_for": "Avoid in layouts",
+          "note": "Does not scale — looks different on every screen density"
+        },
+        {
+          "unit": "pt",
+          "full_name": "Point",
+          "use_for": "Rarely used",
+          "note": "1/72 of an inch — not recommended for Android layouts"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Core View Attributes",
+      "items": [
+        "android:id – Unique identifier for the View; reference it in code with R.id.viewName or @+id/viewName in XML",
+        "android:layout_width – Width of the View: match_parent, wrap_content, or fixed dp value",
+        "android:layout_height – Height of the View: match_parent, wrap_content, or fixed dp value",
+        "android:padding – Inner spacing between the View's content and its border (all sides)",
+        "android:paddingTop / paddingBottom / paddingStart / paddingEnd – Individual side padding",
+        "android:layout_margin – Outer spacing between the View and its neighboring Views",
+        "android:layout_marginTop / marginBottom / marginStart / marginEnd – Individual side margins",
+        "android:visibility – Controls visibility: visible, invisible (hidden but takes space), gone (hidden, no space)",
+        "android:background – Sets background color, drawable, or shape for the View",
+        "android:elevation – Sets the Z-depth shadow for material elevation effect"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Most Used Android Views",
+      "rows": [
+        {
+          "view": "TextView",
+          "purpose": "Displays non-editable text on screen",
+          "key_attributes": "android:text, android:textSize, android:textColor, android:textStyle, android:gravity"
+        },
+        {
+          "view": "EditText",
+          "purpose": "Text input field for user to type in",
+          "key_attributes": "android:hint, android:inputType, android:maxLines, android:imeOptions"
+        },
+        {
+          "view": "Button",
+          "purpose": "Clickable button that triggers an action",
+          "key_attributes": "android:text, android:onClick (legacy), android:backgroundTint"
+        },
+        {
+          "view": "ImageView",
+          "purpose": "Displays an image, drawable, or icon",
+          "key_attributes": "android:src, android:scaleType, android:contentDescription"
+        },
+        {
+          "view": "CheckBox",
+          "purpose": "Toggle selection widget with checked/unchecked state",
+          "key_attributes": "android:checked, android:text, android:buttonTint"
+        },
+        {
+          "view": "RadioButton",
+          "purpose": "Single-selection option, used inside RadioGroup",
+          "key_attributes": "android:checked, android:text"
+        },
+        {
+          "view": "Switch / SwitchMaterial",
+          "purpose": "Toggle switch for on/off settings",
+          "key_attributes": "android:checked, android:text, android:thumb, android:track"
+        },
+        {
+          "view": "SeekBar",
+          "purpose": "Draggable slider for selecting a value in a range",
+          "key_attributes": "android:max, android:progress, android:min"
+        },
+        {
+          "view": "ProgressBar",
+          "purpose": "Shows loading or task progress (determinate or indeterminate)",
+          "key_attributes": "android:max, android:progress, style (horizontal or circular)"
+        },
+        {
+          "view": "ScrollView",
+          "purpose": "Makes content scrollable vertically when it exceeds screen height",
+          "key_attributes": "Can only have one direct child; use LinearLayout inside"
+        },
+        {
+          "view": "HorizontalScrollView",
+          "purpose": "Makes content scrollable horizontally",
+          "key_attributes": "Can only have one direct child"
+        },
+        {
+          "view": "RecyclerView",
+          "purpose": "Efficiently displays large scrollable lists or grids",
+          "key_attributes": "android:layoutManager, requires Adapter and LayoutManager in code"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "TextView — The Most Used View",
+      "content": "TextView is the most fundamental View in Android, used to display any text on screen. It supports rich text formatting, custom fonts, compound drawables (icons next to text), and spans for styled text. Many other Views like Button and EditText inherit from TextView, so understanding TextView attributes applies broadly across many components."
+    },
+    {
+      "type": "bullet",
+      "heading": "Important TextView Attributes",
+      "items": [
+        "android:text – The text to display; use @string/key to reference strings.xml for localization",
+        "android:textSize – Size of the text in sp (e.g., 16sp, 20sp)",
+        "android:textColor – Color of the text (e.g., @color/black or #FF000000)",
+        "android:textStyle – bold, italic, or bold|italic",
+        "android:fontFamily – Sets the font (e.g., sans-serif, monospace, or custom font from res/font/)",
+        "android:gravity – Aligns text within the TextView: start, center, end, top, bottom",
+        "android:maxLines – Limits how many lines of text are shown",
+        "android:ellipsize – How to truncate overflowing text: end, start, middle, marquee",
+        "android:drawableStart / drawableEnd – Places an icon to the left or right of the text",
+        "android:lineSpacingExtra – Adds extra spacing between lines of text"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "EditText inputType Values",
+      "rows": [
+        {
+          "input_type": "text",
+          "description": "Plain text keyboard — default"
+        },
+        {
+          "input_type": "textPassword",
+          "description": "Password field — characters are masked"
+        },
+        {
+          "input_type": "textEmailAddress",
+          "description": "Email keyboard — shows @ key prominently"
+        },
+        {
+          "input_type": "number",
+          "description": "Numeric keyboard — digits only"
+        },
+        {
+          "input_type": "numberDecimal",
+          "description": "Numeric keyboard with decimal point"
+        },
+        {
+          "input_type": "phone",
+          "description": "Phone number keyboard"
+        },
+        {
+          "input_type": "textMultiLine",
+          "description": "Multi-line text input — Enter key adds new lines"
+        },
+        {
+          "input_type": "textCapSentences",
+          "description": "Auto-capitalizes the first letter of each sentence"
+        },
+        {
+          "input_type": "textNoSuggestions",
+          "description": "Disables autocomplete suggestions from the keyboard"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "ImageView scaleType Values",
+      "items": [
+        "center – Centers the image in the View without scaling",
+        "centerCrop – Scales the image to fill the View, cropping excess — maintains aspect ratio",
+        "centerInside – Scales the image down to fit inside the View if it's too large",
+        "fitCenter – Scales the image to fit within the View while maintaining aspect ratio (default)",
+        "fitXY – Stretches the image to fill the entire View — may distort the image",
+        "fitStart – Scales and aligns the image to the top-left corner",
+        "fitEnd – Scales and aligns the image to the bottom-right corner",
+        "matrix – Applies a transformation matrix for custom scaling and positioning"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "View Visibility Options",
+      "rows": [
+        {
+          "visibility": "visible",
+          "xml_value": "android:visibility=\"visible\"",
+          "kotlin_value": "View.VISIBLE",
+          "behavior": "View is shown and takes up space in the layout"
+        },
+        {
+          "visibility": "invisible",
+          "xml_value": "android:visibility=\"invisible\"",
+          "kotlin_value": "View.INVISIBLE",
+          "behavior": "View is hidden but still occupies its space in the layout"
+        },
+        {
+          "visibility": "gone",
+          "xml_value": "android:visibility=\"gone\"",
+          "kotlin_value": "View.GONE",
+          "behavior": "View is hidden and does not occupy any space — layout collapses"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Accessing Views in Kotlin Code",
+      "items": [
+        "findViewById<TextView>(R.id.myTextView) – The traditional way to get a reference to a View by its ID",
+        "View Binding is the modern recommended approach — generates a binding class from your layout XML",
+        "Enable View Binding in build.gradle.kts: buildFeatures { viewBinding = true }",
+        "In Activity: val binding = ActivityMainBinding.inflate(layoutInflater); setContentView(binding.root)",
+        "Access Views through binding: binding.myTextView.text = \"Hello\"",
+        "No need for casting or null checks — View Binding is type-safe and null-safe",
+        "Data Binding is an even more powerful option that supports two-way binding with ViewModel",
+        "Avoid storing View references in variables that outlive the Fragment's view lifecycle"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "findViewById vs View Binding vs Data Binding",
+      "rows": [
+        {
+          "aspect": "Type Safety",
+          "findviewbyid": "No — requires manual casting",
+          "view_binding": "Yes — auto-generated typed references",
+          "data_binding": "Yes — typed and expression-aware"
+        },
+        {
+          "aspect": "Null Safety",
+          "findviewbyid": "No — can return null if ID is wrong",
+          "view_binding": "Yes — null-safe properties",
+          "data_binding": "Yes"
+        },
+        {
+          "aspect": "Boilerplate",
+          "findviewbyid": "High — one call per View",
+          "view_binding": "Low — one inflate call",
+          "data_binding": "Medium — requires layout tags"
+        },
+        {
+          "aspect": "Supports Layout Expressions",
+          "findviewbyid": "No",
+          "view_binding": "No",
+          "data_binding": "Yes — @{} expressions in XML"
+        },
+        {
+          "aspect": "Recommended For",
+          "findviewbyid": "Legacy code only",
+          "view_binding": "Most modern projects",
+          "data_binding": "MVVM with direct XML-ViewModel binding"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Handling Click Events",
+      "items": [
+        "setOnClickListener { } – The standard Kotlin way to handle button or view clicks",
+        "binding.myButton.setOnClickListener { /* action */ } — using View Binding",
+        "Avoid using android:onClick in XML — it's fragile and not recommended in modern Android",
+        "setOnLongClickListener { true } – Triggered on long press; return true to consume the event",
+        "setOnCheckedChangeListener – For CheckBox and RadioButton state changes",
+        "addTextChangedListener – For listening to text input changes in EditText",
+        "setOnItemSelectedListener – For Spinner (dropdown) selection changes",
+        "Use lambda expressions for concise click listener syntax in Kotlin"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Layout Files and Their Purpose",
+      "rows": [
+        {
+          "file": "activity_main.xml",
+          "purpose": "Layout for MainActivity — the main screen of the app"
+        },
+        {
+          "file": "activity_*.xml",
+          "purpose": "Layout file for each Activity in the app"
+        },
+        {
+          "file": "fragment_*.xml",
+          "purpose": "Layout file for each Fragment"
+        },
+        {
+          "file": "item_*.xml",
+          "purpose": "Layout file for a single item row in a RecyclerView list"
+        },
+        {
+          "file": "dialog_*.xml",
+          "purpose": "Layout file for a custom dialog UI"
+        },
+        {
+          "file": "layout_*.xml or view_*.xml",
+          "purpose": "Reusable custom view or partial layout included via <include> tag"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Reusing Layouts with <include> and <merge>",
+      "items": [
+        "<include layout=\"@layout/my_toolbar\" /> – Embeds another layout XML file inline to avoid duplication",
+        "Use <include> for shared UI components like toolbars, headers, or footers",
+        "<merge> replaces the root element of the included layout to eliminate redundant ViewGroups",
+        "Use <merge> as the root of a layout that is always included inside another layout",
+        "<ViewStub> is a lightweight placeholder that inflates its layout lazily only when made visible",
+        "Use ViewStub for optional UI elements (e.g., error states, empty states) to improve initial load performance",
+        "Assign IDs to <include> tags to reference the included layout's root view in code"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Best Practices for XML Layouts",
+      "rows": [
+        {
+          "practice": "Use ConstraintLayout as the root",
+          "reason": "Flat hierarchy with no nested layouts — best for performance"
+        },
+        {
+          "practice": "Use string resources (@string/)",
+          "reason": "Enables localization and avoids hardcoded text in XML"
+        },
+        {
+          "practice": "Use color resources (@color/)",
+          "reason": "Centralized color management for easy theming"
+        },
+        {
+          "practice": "Use dimen resources (@dimen/)",
+          "reason": "Consistent spacing and sizes across the app"
+        },
+        {
+          "practice": "Avoid deep view nesting",
+          "reason": "Each extra level of nesting adds measurement and layout passes, hurting performance"
+        },
+        {
+          "practice": "Always set contentDescription on ImageView",
+          "reason": "Required for accessibility — screen readers use this to describe images"
+        },
+        {
+          "practice": "Use View Binding over findViewById",
+          "reason": "Type-safe, null-safe, and less boilerplate code"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "XML layouts are the foundation of Android's traditional View-based UI system. Mastering Views, their attributes, dimension units, and how to connect them to your Kotlin code using View Binding will give you the skills to build any screen layout. Focus on using the right View for each purpose, keep your layout hierarchy flat, always use resource references instead of hardcoded values, and you'll build UIs that are maintainable, accessible, and performant."
+    }
+  ]
+}

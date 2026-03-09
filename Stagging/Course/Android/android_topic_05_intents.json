@@ -1,0 +1,393 @@
+{
+  "title": "Intents & Navigation Between Activities",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is an Intent?",
+      "content": "An Intent is a messaging object used to request an action from another component — within your own app or from another app entirely. Intents are the primary way Android components communicate with each other. You use them to start Activities, start Services, deliver Broadcasts, and pass data between screens. Think of an Intent as an envelope: it carries a message (what you want to do) and optionally a payload (data to pass along)."
+    },
+    {
+      "type": "bullet",
+      "heading": "What Intents Can Do",
+      "items": [
+        "Start a new Activity and navigate to another screen",
+        "Start a Service to perform background work",
+        "Deliver a Broadcast to multiple components listening for events",
+        "Pass data (extras) between Activities or components",
+        "Open another app's functionality (camera, browser, dialer, maps)",
+        "Return results back to the calling Activity using ActivityResultLauncher",
+        "Deep link into a specific screen of your app from a URL or notification"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Explicit Intent vs Implicit Intent",
+      "rows": [
+        {
+          "aspect": "Definition",
+          "explicit_intent": "Directly specifies the target component by class name",
+          "implicit_intent": "Declares a general action; system finds a suitable component"
+        },
+        {
+          "aspect": "Target",
+          "explicit_intent": "Known — used within your own app",
+          "implicit_intent": "Unknown — resolved by the system at runtime"
+        },
+        {
+          "aspect": "Use Case",
+          "explicit_intent": "Navigate from MainActivity to ProfileActivity",
+          "implicit_intent": "Open a URL, share text, pick an image, make a call"
+        },
+        {
+          "aspect": "Security",
+          "explicit_intent": "More secure — no ambiguity about the target",
+          "implicit_intent": "Less secure — another app could intercept it"
+        },
+        {
+          "aspect": "Example",
+          "explicit_intent": "Intent(this, DetailActivity::class.java)",
+          "implicit_intent": "Intent(Intent.ACTION_VIEW, Uri.parse(\"https://google.com\"))"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Explicit Intents — Navigating Within Your App",
+      "content": "Explicit Intents are used when you know exactly which Activity or component you want to start. You create an Intent by passing the current Context and the target Activity class. You can then attach data using putExtra() before calling startActivity(). This is the standard way to move between screens within your own app."
+    },
+    {
+      "type": "bullet",
+      "heading": "Creating & Starting an Explicit Intent",
+      "items": [
+        "val intent = Intent(this, TargetActivity::class.java) — create an explicit intent",
+        "intent.putExtra(\"key\", value) — attach primitive data (String, Int, Boolean, etc.)",
+        "intent.putExtra(\"key\", parcelableObject) — attach a Parcelable object",
+        "startActivity(intent) — starts the target Activity without expecting a result",
+        "The target Activity retrieves data using intent.getStringExtra(\"key\") in onCreate()",
+        "Use intent.extras to get the full Bundle of all passed extras",
+        "Always provide safe defaults when reading extras (e.g., getStringExtra(\"key\") ?: \"default\")"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "putExtra() Data Types Supported",
+      "rows": [
+        {
+          "type": "String",
+          "put_method": "putExtra(\"key\", \"value\")",
+          "get_method": "getStringExtra(\"key\")"
+        },
+        {
+          "type": "Int",
+          "put_method": "putExtra(\"key\", 42)",
+          "get_method": "getIntExtra(\"key\", defaultValue)"
+        },
+        {
+          "type": "Boolean",
+          "put_method": "putExtra(\"key\", true)",
+          "get_method": "getBooleanExtra(\"key\", false)"
+        },
+        {
+          "type": "Double",
+          "put_method": "putExtra(\"key\", 3.14)",
+          "get_method": "getDoubleExtra(\"key\", 0.0)"
+        },
+        {
+          "type": "Parcelable",
+          "put_method": "putExtra(\"key\", parcelableObj)",
+          "get_method": "getParcelableExtra(\"key\")"
+        },
+        {
+          "type": "Serializable",
+          "put_method": "putExtra(\"key\", serializableObj)",
+          "get_method": "getSerializableExtra(\"key\")"
+        },
+        {
+          "type": "ArrayList<String>",
+          "put_method": "putStringArrayListExtra(\"key\", list)",
+          "get_method": "getStringArrayListExtra(\"key\")"
+        },
+        {
+          "type": "Bundle",
+          "put_method": "putExtras(bundle)",
+          "get_method": "extras or getExtras()"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Implicit Intents — Opening System & Other Apps",
+      "content": "Implicit Intents do not name a specific component. Instead, you declare an action you want performed (like viewing a webpage or sharing text), and Android finds all apps that can handle it. If multiple apps can handle the intent, the user is shown a chooser dialog. If no app can handle it, your app will crash — so always check with resolveActivity() or use try-catch before firing an implicit intent."
+    },
+    {
+      "type": "table",
+      "heading": "Common Implicit Intent Actions",
+      "rows": [
+        {
+          "action": "ACTION_VIEW (URL)",
+          "code": "Intent(Intent.ACTION_VIEW, Uri.parse(\"https://example.com\"))",
+          "result": "Opens the URL in the default browser"
+        },
+        {
+          "action": "ACTION_VIEW (Map)",
+          "code": "Intent(Intent.ACTION_VIEW, Uri.parse(\"geo:37.7749,-122.4194\"))",
+          "result": "Opens location in Google Maps"
+        },
+        {
+          "action": "ACTION_DIAL",
+          "code": "Intent(Intent.ACTION_DIAL, Uri.parse(\"tel:+911234567890\"))",
+          "result": "Opens the dialer with the number pre-filled"
+        },
+        {
+          "action": "ACTION_SEND (Share)",
+          "code": "Intent(Intent.ACTION_SEND).apply { type = \"text/plain\"; putExtra(Intent.EXTRA_TEXT, \"Hello\") }",
+          "result": "Opens the share sheet to share text"
+        },
+        {
+          "action": "ACTION_SEND_MULTIPLE",
+          "code": "Intent(Intent.ACTION_SEND_MULTIPLE) with ArrayList of URIs",
+          "result": "Share multiple files or images via share sheet"
+        },
+        {
+          "action": "ACTION_EMAIL",
+          "code": "Intent(Intent.ACTION_SENDTO, Uri.parse(\"mailto:test@example.com\"))",
+          "result": "Opens email app with recipient pre-filled"
+        },
+        {
+          "action": "ACTION_IMAGE_CAPTURE",
+          "code": "Intent(MediaStore.ACTION_IMAGE_CAPTURE)",
+          "result": "Opens camera app to take a photo"
+        },
+        {
+          "action": "ACTION_PICK",
+          "code": "Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)",
+          "result": "Opens gallery for the user to pick an image"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Getting a Result Back — ActivityResultLauncher",
+      "items": [
+        "The modern way to get results from Activities is using the Activity Result API (replaces startActivityForResult)",
+        "Register a launcher using registerForActivityResult() in onCreate() or as a class property",
+        "Use ActivityResultContracts.StartActivityForResult() for generic result handling",
+        "Use built-in contracts like TakePicture, PickContact, RequestPermission for common tasks",
+        "Call launcher.launch(intent) to start the Activity",
+        "The result is delivered as an ActivityResult object containing resultCode and data Intent",
+        "Check result.resultCode == Activity.RESULT_OK before reading result data",
+        "The calling Activity uses setResult(RESULT_OK, intent) and finish() to send the result back"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Built-in ActivityResultContracts",
+      "rows": [
+        {
+          "contract": "StartActivityForResult()",
+          "input": "Intent",
+          "output": "ActivityResult (resultCode + data)",
+          "use_case": "General purpose result from any Activity"
+        },
+        {
+          "contract": "RequestPermission()",
+          "input": "Permission string",
+          "output": "Boolean (granted or denied)",
+          "use_case": "Request a single runtime permission"
+        },
+        {
+          "contract": "RequestMultiplePermissions()",
+          "input": "Array of permission strings",
+          "output": "Map<String, Boolean>",
+          "use_case": "Request multiple runtime permissions at once"
+        },
+        {
+          "contract": "TakePicture()",
+          "input": "Uri (output file location)",
+          "output": "Boolean (success)",
+          "use_case": "Capture a photo with the camera app"
+        },
+        {
+          "contract": "PickVisualMedia()",
+          "input": "PickVisualMediaRequest",
+          "output": "Uri? of selected media",
+          "use_case": "Modern photo/video picker (API 33+ Photo Picker)"
+        },
+        {
+          "contract": "GetContent()",
+          "input": "MIME type string",
+          "output": "Uri? of selected file",
+          "use_case": "Let user pick any file from storage"
+        },
+        {
+          "contract": "CreateDocument()",
+          "input": "MIME type string",
+          "output": "Uri? of created document",
+          "use_case": "Create and save a new document via SAF"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Passing Data with Parcelable",
+      "content": "When passing complex objects between Activities via Intents, the object must implement Parcelable (recommended) or Serializable. Parcelable is Android's own serialization mechanism and is significantly faster than Java's Serializable. In Kotlin, you can use the @Parcelize annotation from the kotlin-parcelize plugin to automatically generate all required Parcelable implementation code."
+    },
+    {
+      "type": "bullet",
+      "heading": "Using @Parcelize for Easy Parcelable",
+      "items": [
+        "Add plugin 'kotlin-parcelize' to your app-level build.gradle.kts plugins block",
+        "Annotate your data class with @Parcelize",
+        "Make the class implement Parcelable — the plugin generates the implementation automatically",
+        "Pass the object: intent.putExtra(\"user\", userObject)",
+        "Retrieve it: val user = intent.getParcelableExtra<User>(\"user\")",
+        "On API 33+, use intent.getParcelableExtra(\"user\", User::class.java) for type safety",
+        "Parcelable works with nested objects as long as they are also Parcelable",
+        "Avoid passing very large objects via Intent — use a shared ViewModel or database ID instead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Parcelable vs Serializable",
+      "rows": [
+        {
+          "aspect": "Performance",
+          "parcelable": "Fast — uses Android's optimized binary format",
+          "serializable": "Slow — uses Java reflection"
+        },
+        {
+          "aspect": "Implementation",
+          "parcelable": "Requires implementation (easy with @Parcelize)",
+          "serializable": "Just implement Serializable marker interface"
+        },
+        {
+          "aspect": "Android optimized",
+          "parcelable": "Yes — designed for Android IPC",
+          "serializable": "No — Java standard library"
+        },
+        {
+          "aspect": "Boilerplate",
+          "parcelable": "None with @Parcelize annotation",
+          "serializable": "None (but can be slow and error-prone)"
+        },
+        {
+          "aspect": "Recommendation",
+          "parcelable": "Always prefer for Android development",
+          "serializable": "Avoid for performance-critical paths"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Intent Flags",
+      "items": [
+        "FLAG_ACTIVITY_NEW_TASK – Starts the Activity in a new task (required when starting from non-Activity context)",
+        "FLAG_ACTIVITY_CLEAR_TOP – If Activity already exists in stack, clears all Activities above it",
+        "FLAG_ACTIVITY_SINGLE_TOP – Reuses existing instance if already at the top of the stack",
+        "FLAG_ACTIVITY_NO_HISTORY – The Activity is not added to the back stack (removed when user leaves)",
+        "FLAG_ACTIVITY_CLEAR_TASK – Clears the entire existing task before starting the Activity",
+        "FLAG_ACTIVITY_REORDER_TO_FRONT – Brings an existing instance to the front instead of creating a new one",
+        "Combine flags using bitwise OR: intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Intent Flag Use Cases",
+      "rows": [
+        {
+          "scenario": "Logout and go to Login screen (clear all back stack)",
+          "flags": "FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK"
+        },
+        {
+          "scenario": "Notification opens app to a specific screen",
+          "flags": "FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TOP or FLAG_ACTIVITY_SINGLE_TOP"
+        },
+        {
+          "scenario": "Splash screen — don't want it in back stack",
+          "flags": "FLAG_ACTIVITY_NO_HISTORY"
+        },
+        {
+          "scenario": "Deep link into an existing Activity without recreating it",
+          "flags": "FLAG_ACTIVITY_SINGLE_TOP with onNewIntent()"
+        },
+        {
+          "scenario": "Start Activity from a Service or BroadcastReceiver",
+          "flags": "FLAG_ACTIVITY_NEW_TASK (mandatory)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Handling Intents in the Target Activity",
+      "items": [
+        "Access the incoming Intent using the intent property inside onCreate()",
+        "Use intent.getStringExtra(\"key\") to read String extras",
+        "Use intent.action to check what action triggered this Activity",
+        "Use intent.data to get the URI passed with the Intent (e.g., for deep links)",
+        "Use intent.type to get the MIME type of shared content",
+        "Override onNewIntent(intent: Intent) to handle new Intents in singleTop or singleTask launch modes",
+        "Always null-check extras before using them — they may not always be present"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Explicit vs Implicit Intent Decision Guide",
+      "rows": [
+        {
+          "goal": "Go to another screen in your app",
+          "intent_type": "Explicit",
+          "example": "Intent(this, SettingsActivity::class.java)"
+        },
+        {
+          "goal": "Open a webpage",
+          "intent_type": "Implicit",
+          "example": "ACTION_VIEW with http/https URI"
+        },
+        {
+          "goal": "Share text or image",
+          "intent_type": "Implicit",
+          "example": "ACTION_SEND with text/plain or image/* type"
+        },
+        {
+          "goal": "Make a phone call",
+          "intent_type": "Implicit",
+          "example": "ACTION_DIAL with tel: URI"
+        },
+        {
+          "goal": "Take a photo",
+          "intent_type": "Implicit",
+          "example": "ACTION_IMAGE_CAPTURE via ActivityResultLauncher"
+        },
+        {
+          "goal": "Pick a file or image",
+          "intent_type": "Implicit",
+          "example": "PickVisualMedia or GetContent contract"
+        },
+        {
+          "goal": "Send email",
+          "intent_type": "Implicit",
+          "example": "ACTION_SENDTO with mailto: URI"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for Using Intents",
+      "items": [
+        "Always use explicit Intents for navigation within your own app",
+        "Check if an implicit Intent can be resolved before calling startActivity() to avoid crashes",
+        "Use the Activity Result API (registerForActivityResult) instead of the deprecated startActivityForResult()",
+        "Prefer passing primitive IDs (e.g., userId: Int) over large objects — fetch the full object in the target",
+        "Use @Parcelize for any objects that must be passed between Activities",
+        "Define Intent extra keys as constants to avoid typos (e.g., companion object { const val EXTRA_USER_ID = \"user_id\" })",
+        "Use PendingIntent when starting components from Notifications, Widgets, or AlarmManager",
+        "Never pass sensitive data (passwords, tokens) through Intent extras — use secure storage instead"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Intents are the messaging backbone of Android, enabling communication between Activities, apps, and system components. Explicit Intents handle in-app navigation, while Implicit Intents open the door to the wider Android ecosystem. Mastering data passing with extras and Parcelable, using the Activity Result API for results, and applying the right Intent flags will give you full control over how your app navigates and communicates."
+    }
+  ]
+}

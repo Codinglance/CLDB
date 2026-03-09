@@ -1,0 +1,419 @@
+{
+  "title": "WorkManager",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is WorkManager?",
+      "content": "WorkManager is the recommended Android Jetpack library for scheduling deferrable, guaranteed background work — tasks that must run to completion even if the user navigates away from the app, the app is killed, or the device is restarted. WorkManager abstracts over the underlying scheduling APIs (JobScheduler on API 23+, AlarmManager + BroadcastReceiver on older devices) and provides a unified, battery-efficient API for all Android versions. Unlike coroutines (which are tied to the app's process lifetime) or Services (which require manual lifecycle management), WorkManager guarantees execution by persisting work requests to a Room database and rescheduling them after process death or device restart."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use WorkManager",
+      "items": [
+        "Uploading logs, analytics, or user-generated content to a server when network is available",
+        "Syncing data from a remote server periodically or when connectivity is restored",
+        "Processing images or media files in the background (compression, watermarking, format conversion)",
+        "Applying database migrations or cleanup operations that must complete",
+        "Sending deferred notifications or reminders that must fire even after a reboot",
+        "Chaining multiple background tasks where step B depends on the output of step A",
+        "Any task where you need to add constraints: require charging, require Wi-Fi, require sufficient storage",
+        "Do NOT use WorkManager for tasks that need to run at a precise time — use AlarmManager; WorkManager may be delayed by the system"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "WorkManager vs Alternatives",
+      "rows": [
+        {
+          "factor": "Guaranteed execution",
+          "workmanager": "Yes — persisted to database; survives process death and reboot",
+          "coroutines": "No — cancelled when process dies",
+          "foreground_service": "Foreground only — started service can be killed",
+          "alarmmanager": "Yes — but does not survive device reboot without extra setup"
+        },
+        {
+          "factor": "Constraints support",
+          "workmanager": "Yes — network, charging, battery, storage, device idle",
+          "coroutines": "Manual — must implement yourself",
+          "foreground_service": "Manual",
+          "alarmmanager": "No constraints — fires at exact time regardless"
+        },
+        {
+          "factor": "Precise timing",
+          "workmanager": "No — system may defer for battery optimization",
+          "coroutines": "Yes — runs immediately",
+          "foreground_service": "Yes — runs immediately",
+          "alarmmanager": "Yes — fires at exact time"
+        },
+        {
+          "factor": "Chaining",
+          "workmanager": "Yes — first().then().then() API",
+          "coroutines": "Manual — sequential coroutines",
+          "foreground_service": "Manual",
+          "alarmmanager": "No"
+        },
+        {
+          "factor": "Battery efficiency",
+          "workmanager": "High — batched by OS; respects Doze mode",
+          "coroutines": "High — tied to lifecycle",
+          "foreground_service": "Low if misused",
+          "alarmmanager": "Low — wakes device regardless of state"
+        },
+        {
+          "factor": "Best use case",
+          "workmanager": "Deferrable, guaranteed tasks: sync, upload, cleanup",
+          "coroutines": "Short-lived tasks tied to app lifecycle",
+          "foreground_service": "User-visible ongoing operations",
+          "alarmmanager": "Exact-time alarms: calendar reminders"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Core WorkManager Components",
+      "content": "WorkManager is built around four core concepts: the Worker (the unit of work to execute), the WorkRequest (describes when and how to run the Worker), the WorkManager instance (enqueues and manages requests), and WorkInfo (observable status and output of a request). Workers contain the actual task logic in a doWork() function that runs on a background thread. WorkRequests come in two varieties — OneTimeWorkRequest for single executions and PeriodicWorkRequest for repeated executions on a schedule."
+    },
+    {
+      "type": "table",
+      "heading": "WorkManager Core Components",
+      "rows": [
+        {
+          "component": "Worker / CoroutineWorker",
+          "description": "Abstract class containing the background task logic in doWork(); CoroutineWorker supports suspend functions",
+          "example": "class SyncWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) { override suspend fun doWork(): Result { ... } }"
+        },
+        {
+          "component": "OneTimeWorkRequest",
+          "description": "Schedules a Worker to run once — immediately or after a delay",
+          "example": "OneTimeWorkRequest.from(SyncWorker::class.java) or OneTimeWorkRequestBuilder<SyncWorker>().build()"
+        },
+        {
+          "component": "PeriodicWorkRequest",
+          "description": "Schedules a Worker to run repeatedly on a minimum interval; minimum interval is 15 minutes",
+          "example": "PeriodicWorkRequestBuilder<SyncWorker>(1, TimeUnit.HOURS).build()"
+        },
+        {
+          "component": "WorkManager",
+          "description": "Singleton entry point — enqueue work requests and observe their status",
+          "example": "WorkManager.getInstance(context).enqueue(workRequest)"
+        },
+        {
+          "component": "WorkInfo",
+          "description": "Data class describing the current state, progress, and output of a work request",
+          "example": "workManager.getWorkInfoByIdLiveData(workRequest.id).observe(owner) { info -> info.state }"
+        },
+        {
+          "component": "Constraints",
+          "description": "Conditions that must be met before the Worker runs: network, charging, battery, storage",
+          "example": "Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()"
+        },
+        {
+          "component": "Data",
+          "description": "Key-value input/output data passed to Workers and returned from them",
+          "example": "workDataOf(\"userId\" to 42) — pass as inputData; return Result.success(outputData)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Creating a CoroutineWorker",
+      "items": [
+        "Extend CoroutineWorker instead of Worker to use suspend functions — the preferred approach for Kotlin",
+        "Override suspend fun doWork(): Result — runs on Dispatchers.Default by default",
+        "Return Result.success() — work completed successfully",
+        "Return Result.failure() — work failed and should not be retried",
+        "Return Result.retry() — work failed but should be retried according to the backoff policy",
+        "Access input data: inputData.getString(\"key\"), inputData.getInt(\"key\", defaultValue)",
+        "Return output data: Result.success(workDataOf(\"resultKey\" to value))",
+        "WorkManager automatically handles the threading — doWork() is called on a background thread",
+        "The Worker has access to applicationContext via applicationContext property — never hold Activity context",
+        "Maximum execution time is 10 minutes — for longer work, use a foreground service worker"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Worker Result Types",
+      "rows": [
+        {
+          "result": "Result.success()",
+          "description": "Work completed successfully with no output data",
+          "behavior": "WorkInfo.State transitions to SUCCEEDED; chained work continues"
+        },
+        {
+          "result": "Result.success(outputData)",
+          "description": "Work completed successfully with output Data for downstream workers or observers",
+          "behavior": "Output data is accessible via WorkInfo.outputData; chained work receives it as input"
+        },
+        {
+          "result": "Result.failure()",
+          "description": "Work failed permanently — no retry",
+          "behavior": "WorkInfo.State transitions to FAILED; chained work is cancelled"
+        },
+        {
+          "result": "Result.failure(outputData)",
+          "description": "Work failed with error data for diagnostics",
+          "behavior": "Failure data accessible via WorkInfo.outputData for error reporting"
+        },
+        {
+          "result": "Result.retry()",
+          "description": "Work failed temporarily — should be retried",
+          "behavior": "WorkManager retries after the configured backoff delay; WorkInfo.State stays ENQUEUED"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Constraints",
+      "content": "Constraints tell WorkManager the conditions that must be satisfied before a Worker is allowed to run. This is one of WorkManager's most powerful features — you can require a network connection, require the device to be charging, require sufficient storage, or require the device to be idle. WorkManager monitors these constraints automatically and runs the Worker as soon as all constraints are satisfied, even if that means waiting hours or days. Constraints help make background work battery-efficient by preventing it from running at the worst possible time."
+    },
+    {
+      "type": "bullet",
+      "heading": "Available Constraints",
+      "items": [
+        "setRequiredNetworkType(NetworkType.CONNECTED) — requires any active network connection",
+        "setRequiredNetworkType(NetworkType.UNMETERED) — requires Wi-Fi or unmetered connection; use for large uploads/downloads",
+        "setRequiredNetworkType(NetworkType.NOT_ROAMING) — requires non-roaming network",
+        "setRequiredNetworkType(NetworkType.NOT_REQUIRED) — default; runs regardless of network state",
+        "setRequiresCharging(true) — only runs when the device is plugged in and charging",
+        "setRequiresBatteryNotLow(true) — only runs when battery is not critically low",
+        "setRequiresDeviceIdle(true) — only runs when device is idle (API 23+); use for non-urgent cleanup",
+        "setRequiresStorageNotLow(true) — only runs when storage space is sufficient",
+        "Combine multiple constraints: Constraints.Builder().setRequiredNetworkType(UNMETERED).setRequiresCharging(true).build()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "OneTimeWorkRequest Configuration",
+      "rows": [
+        {
+          "option": "setInputData(data)",
+          "description": "Passes a Data object as input to the Worker",
+          "example": "OneTimeWorkRequestBuilder<SyncWorker>().setInputData(workDataOf(\"userId\" to 42)).build()"
+        },
+        {
+          "option": "setConstraints(constraints)",
+          "description": "Sets conditions that must be met before the work runs",
+          "example": ".setConstraints(Constraints.Builder().setRequiredNetworkType(CONNECTED).build())"
+        },
+        {
+          "option": "setInitialDelay(duration)",
+          "description": "Delays the start of the work by the specified duration",
+          "example": ".setInitialDelay(10, TimeUnit.MINUTES)"
+        },
+        {
+          "option": "setBackoffCriteria(policy, delay, unit)",
+          "description": "Configures retry backoff: LINEAR or EXPONENTIAL, with minimum delay",
+          "example": ".setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 10, TimeUnit.SECONDS)"
+        },
+        {
+          "option": "addTag(tag)",
+          "description": "Associates a string tag for querying or cancelling work by tag",
+          "example": ".addTag(\"sync_work\")"
+        },
+        {
+          "option": "setExpedited(policy)",
+          "description": "Marks work as expedited — runs as soon as possible with higher priority (API 31+)",
+          "example": ".setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "PeriodicWorkRequest Configuration",
+      "items": [
+        "Minimum interval is 15 minutes — WorkManager enforces this; shorter intervals are silently clamped to 15 min",
+        "PeriodicWorkRequestBuilder<MyWorker>(1, TimeUnit.HOURS).build() — runs approximately every hour",
+        "Set a flex period: PeriodicWorkRequestBuilder<MyWorker>(1, TimeUnit.HOURS, 15, TimeUnit.MINUTES) — runs in the last 15 minutes of each period",
+        "Flex period reduces battery impact by letting the system choose the optimal execution time within the window",
+        "Periodic work does not chain — use OneTimeWorkRequest chains for sequential operations",
+        "Periodic work survives device reboot — automatically rescheduled by WorkManager",
+        "enqueueUniquePeriodicWork() ensures only one instance of the periodic work runs at a time",
+        "ExistingPeriodicWorkPolicy.KEEP — keep the existing request; REPLACE — replace with the new one; UPDATE — update parameters of existing"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Enqueueing Work",
+      "rows": [
+        {
+          "method": "enqueue(workRequest)",
+          "description": "Enqueues a single OneTimeWorkRequest or list of requests",
+          "example": "WorkManager.getInstance(context).enqueue(syncRequest)"
+        },
+        {
+          "method": "enqueueUniqueWork(name, policy, request)",
+          "description": "Enqueues a uniquely named OneTimeWorkRequest — prevents duplicate instances",
+          "example": "workManager.enqueueUniqueWork(\"sync\", ExistingWorkPolicy.KEEP, syncRequest)"
+        },
+        {
+          "method": "enqueueUniquePeriodicWork(name, policy, request)",
+          "description": "Enqueues a uniquely named PeriodicWorkRequest",
+          "example": "workManager.enqueueUniquePeriodicWork(\"periodic_sync\", ExistingPeriodicWorkPolicy.KEEP, periodicRequest)"
+        },
+        {
+          "method": "ExistingWorkPolicy.KEEP",
+          "description": "If work with the same name is already enqueued or running, keep it and ignore the new request",
+          "example": "Use for: avoid duplicate sync requests"
+        },
+        {
+          "method": "ExistingWorkPolicy.REPLACE",
+          "description": "Cancel the existing work and enqueue the new request",
+          "example": "Use for: refreshing work with updated parameters"
+        },
+        {
+          "method": "ExistingWorkPolicy.APPEND",
+          "description": "Append the new work to run after the existing work completes",
+          "example": "Use for: sequential queue of tasks"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Chaining Work",
+      "content": "WorkManager supports chaining multiple work requests into a sequence or parallel graph. beginWith() starts the chain, then() appends subsequent work, and enqueue() submits the entire chain. Output data from one Worker is automatically passed as input data to the next Worker in the chain. If any Worker in a chain returns Result.failure(), subsequent Workers are cancelled unless you configure otherwise. Parallel work can be combined using WorkManager.combine() which waits for all parallel work to complete before continuing the chain."
+    },
+    {
+      "type": "bullet",
+      "heading": "Work Chaining Patterns",
+      "items": [
+        "Sequential chain: WorkManager.getInstance(ctx).beginWith(stepA).then(stepB).then(stepC).enqueue()",
+        "Parallel then sequential: WorkManager.getInstance(ctx).beginWith(listOf(parallelA, parallelB)).then(combinedStep).enqueue()",
+        "Output of stepA becomes inputData of stepB automatically via WorkManager's data merging",
+        "Use InputMerger to control how multiple parallel Workers' outputs are merged into one input for the next step",
+        "ArrayCreatingInputMerger — merges multiple values for the same key into an array",
+        "OverwritingInputMerger — default; last write wins for duplicate keys",
+        "If a parallel Worker fails, the chain fails unless you use a custom continuation policy",
+        "Tags can be added to chain steps: beginWith(stepA.addTag(\"phase1\")).then(stepB.addTag(\"phase2\"))"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Observing Work Status",
+      "rows": [
+        {
+          "method": "getWorkInfoByIdLiveData(id)",
+          "description": "Returns LiveData<WorkInfo> for a specific work request by UUID",
+          "example": "workManager.getWorkInfoByIdLiveData(request.id).observe(lifecycleOwner) { info -> renderState(info) }"
+        },
+        {
+          "method": "getWorkInfoByIdFlow(id)",
+          "description": "Returns Flow<WorkInfo> for a specific work request — Kotlin coroutines friendly",
+          "example": "workManager.getWorkInfoByIdFlow(request.id).collect { info -> renderState(info) }"
+        },
+        {
+          "method": "getWorkInfosByTagLiveData(tag)",
+          "description": "Returns LiveData<List<WorkInfo>> for all work with a specific tag",
+          "example": "workManager.getWorkInfosByTagLiveData(\"sync\").observe(owner) { list -> list.firstOrNull()?.state }"
+        },
+        {
+          "method": "getWorkInfosForUniqueWorkLiveData(name)",
+          "description": "Returns LiveData<List<WorkInfo>> for uniquely named work",
+          "example": "workManager.getWorkInfosForUniqueWorkLiveData(\"periodic_sync\").observe(owner) { }"
+        },
+        {
+          "method": "WorkInfo.State",
+          "description": "ENQUEUED — waiting to run; RUNNING — currently executing; SUCCEEDED — completed successfully; FAILED — failed permanently; CANCELLED — cancelled; BLOCKED — waiting for prerequisite work",
+          "example": "if (info.state == WorkInfo.State.SUCCEEDED) { val output = info.outputData.getString(\"key\") }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Reporting Progress from a Worker",
+      "items": [
+        "Workers can report intermediate progress using setProgress(data) inside doWork()",
+        "setProgress(workDataOf(\"progress\" to 50)) — reports 50% progress",
+        "Observe progress via WorkInfo.progress: info.progress.getInt(\"progress\", 0)",
+        "Progress is available while WorkInfo.State == RUNNING",
+        "Use for showing a ProgressBar or progress notification during long-running work",
+        "Example: image processing reporting percent completion, file upload tracking bytes uploaded",
+        "setForeground(ForegroundInfo) inside a CoroutineWorker promotes the work to a foreground service with a notification",
+        "Call setForeground() at the start of long-running work to prevent the system from killing the Worker"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Cancelling Work",
+      "rows": [
+        {
+          "method": "cancelWorkById(id)",
+          "description": "Cancels a specific work request by its UUID",
+          "example": "workManager.cancelWorkById(request.id)"
+        },
+        {
+          "method": "cancelAllWorkByTag(tag)",
+          "description": "Cancels all work requests with the specified tag",
+          "example": "workManager.cancelAllWorkByTag(\"sync_work\")"
+        },
+        {
+          "method": "cancelUniqueWork(name)",
+          "description": "Cancels the uniquely named work request",
+          "example": "workManager.cancelUniqueWork(\"periodic_sync\")"
+        },
+        {
+          "method": "cancelAllWork()",
+          "description": "Cancels ALL pending and running work — use with caution",
+          "example": "workManager.cancelAllWork() — use on logout to cancel all user-specific work"
+        },
+        {
+          "method": "Handling cancellation in Worker",
+          "description": "In CoroutineWorker, cancellation is cooperative — check isStopped or use coroutine cancellation naturally",
+          "example": "if (isStopped) return Result.failure(); or use ensureActive() from coroutines"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "WorkManager with Hilt",
+      "items": [
+        "Add dependency: implementation(\"androidx.hilt:hilt-work:1.2.x\") and ksp(\"androidx.hilt:hilt-compiler:1.2.x\")",
+        "Annotate Worker with @HiltWorker: @HiltWorker class SyncWorker @AssistedInject constructor(@Assisted ctx: Context, @Assisted params: WorkerParameters, private val repository: UserRepository) : CoroutineWorker(ctx, params)",
+        "Use @Assisted for the Context and WorkerParameters parameters — Hilt provides all other injected dependencies",
+        "Register HiltWorkerFactory in the Application class: override val workManagerConfiguration = Configuration.Builder().setWorkerFactory(workerFactory).build()",
+        "Remove the default initializer from AndroidManifest.xml: <provider android:name=\"androidx.startup.InitializationProvider\" ... tools:node=\"remove\" />",
+        "Implement Configuration.Provider in your Application class and inject HiltWorkerFactory via @Inject",
+        "All other Hilt-provided dependencies (repositories, DAOs, API services) inject naturally into the Worker",
+        "With Hilt injection, Workers can access the full dependency graph without using WorkerFactory manually"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common WorkManager Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Using WorkManager for precise timing requirements",
+          "fix": "WorkManager is not guaranteed to run at an exact time — use AlarmManager for exact-time alarms like calendar events"
+        },
+        {
+          "mistake": "Creating a new WorkManager instance with WorkManager() constructor",
+          "fix": "Always use WorkManager.getInstance(context) — WorkManager is a singleton; never instantiate directly"
+        },
+        {
+          "mistake": "Enqueueing duplicate periodic work without using enqueueUniquePeriodicWork",
+          "fix": "Use enqueueUniquePeriodicWork() with ExistingPeriodicWorkPolicy.KEEP to prevent multiple instances of the same periodic task"
+        },
+        {
+          "mistake": "Performing UI updates directly inside doWork()",
+          "fix": "doWork() runs on a background thread — observe WorkInfo from the UI layer and update there"
+        },
+        {
+          "mistake": "Returning Result.retry() unconditionally on failure",
+          "fix": "Only retry transient failures (network timeout, server 503); return Result.failure() for permanent errors (invalid data, 400)"
+        },
+        {
+          "mistake": "Running work longer than 10 minutes without setForeground()",
+          "fix": "For work exceeding 10 minutes, call setForeground(ForegroundInfo) to promote to a foreground service worker"
+        },
+        {
+          "mistake": "Storing large data objects in WorkManager Data",
+          "fix": "Data has a 10KB limit — store large data in Room or files and pass only IDs or file paths through WorkManager Data"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "WorkManager is the definitive solution for deferrable, guaranteed background work in Android. Use CoroutineWorker for suspend function support, Constraints to make work battery-efficient by waiting for the right conditions, OneTimeWorkRequest for single executions and PeriodicWorkRequest for recurring tasks, and work chaining for multi-step pipelines. Observe WorkInfo via Flow or LiveData to update your UI with progress and results. Use enqueueUniqueWork and enqueueUniquePeriodicWork to prevent duplicates, integrate with Hilt via @HiltWorker for full dependency injection, and always stay within the 10KB Data limit and 10-minute execution window."
+    }
+  ]
+}

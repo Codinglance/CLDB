@@ -1,0 +1,345 @@
+{
+  "title": "ViewModel & LiveData",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is ViewModel?",
+      "content": "ViewModel is a Jetpack architecture component designed to store and manage UI-related data in a lifecycle-conscious way. The ViewModel class is specifically engineered to survive configuration changes such as screen rotations, keyboard availability changes, and multi-window mode switches. Before ViewModel, developers had to save data in onSaveInstanceState() and restore it in onCreate(), which was limited to small, serializable data. ViewModel eliminates this complexity by keeping data in memory across configuration changes without any manual save-and-restore cycle."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why ViewModel?",
+      "items": [
+        "Survives configuration changes — data is retained across screen rotation without re-fetching from network or database",
+        "No UI references — ViewModel never holds a reference to Activity, Fragment, or View, preventing memory leaks",
+        "Lifecycle-scoped — automatically cleared when the Activity or Fragment is permanently finished (not rotated)",
+        "Clean separation — UI logic lives in the View, data management lives in the ViewModel",
+        "Shared between Fragments — a ViewModel scoped to an Activity can be shared between sibling Fragments",
+        "Works with coroutines — viewModelScope provides a coroutine scope that is automatically cancelled on ViewModel clear",
+        "Testable — ViewModel has no Android UI dependencies and can be tested with JUnit on the JVM",
+        "Integrates with SavedStateHandle for surviving process death in addition to configuration changes"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ViewModel Lifecycle",
+      "rows": [
+        {
+          "event": "Activity first created",
+          "viewmodel_state": "ViewModel is instantiated for the first time"
+        },
+        {
+          "event": "Screen rotated (configuration change)",
+          "viewmodel_state": "ViewModel survives — same instance is returned to the recreated Activity"
+        },
+        {
+          "event": "Activity recreated after rotation",
+          "viewmodel_state": "Activity gets the same ViewModel instance via by viewModels() delegate"
+        },
+        {
+          "event": "User presses Back (Activity finishes)",
+          "viewmodel_state": "ViewModel.onCleared() is called — ViewModel is destroyed and garbage collected"
+        },
+        {
+          "event": "System kills the process (low memory)",
+          "viewmodel_state": "ViewModel is destroyed — use SavedStateHandle to persist critical data"
+        },
+        {
+          "event": "Fragment added to back stack",
+          "viewmodel_state": "ViewModel survives — Fragment's View is destroyed but ViewModel remains"
+        },
+        {
+          "event": "Fragment permanently removed",
+          "viewmodel_state": "ViewModel.onCleared() is called and ViewModel is destroyed"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Creating and Using a ViewModel",
+      "content": "ViewModels should never be instantiated directly with a constructor. Instead, use the Jetpack-provided property delegates: by viewModels() in a Fragment or Activity, and by activityViewModels() to get a ViewModel scoped to the host Activity from inside a Fragment. These delegates ensure the correct ViewModel instance is always returned — the existing instance after a rotation, or a new instance on first creation."
+    },
+    {
+      "type": "bullet",
+      "heading": "ViewModel Instantiation Patterns",
+      "items": [
+        "by viewModels() — in an Activity or Fragment; ViewModel is scoped to that Activity or Fragment",
+        "by activityViewModels() — in a Fragment; ViewModel is scoped to the host Activity and shared across all Fragments",
+        "ViewModelProvider(this).get(MyViewModel::class.java) — legacy way without delegate (avoid in new code)",
+        "by viewModels { MyViewModelFactory(repository) } — with a custom factory when ViewModel needs constructor params",
+        "With Hilt: @HiltViewModel annotation + @Inject constructor — factory is generated automatically",
+        "viewModel.onCleared() is called when the ViewModel is about to be destroyed — override it to release resources",
+        "Never call ViewModel() constructor directly in production code — always use delegates or ViewModelProvider"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "by viewModels() vs by activityViewModels()",
+      "rows": [
+        {
+          "aspect": "Scope",
+          "viewmodels": "Scoped to the Fragment or Activity that creates it",
+          "activityviewmodels": "Scoped to the host Activity — shared across all Fragments in that Activity"
+        },
+        {
+          "aspect": "Lifetime",
+          "viewmodels": "Cleared when the Fragment is permanently destroyed",
+          "activityviewmodels": "Cleared when the Activity is permanently finished"
+        },
+        {
+          "aspect": "Sharing",
+          "viewmodels": "Not shared — each Fragment gets its own ViewModel instance",
+          "activityviewmodels": "Shared — all Fragments using activityViewModels() get the same instance"
+        },
+        {
+          "aspect": "Use case",
+          "viewmodels": "Fragment-specific UI state (e.g., HomeViewModel for HomeFragment)",
+          "activityviewmodels": "Shared data between sibling Fragments (e.g., a cart shared between product list and checkout)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is LiveData?",
+      "content": "LiveData is a lifecycle-aware observable data holder class from the Jetpack library. It wraps your data and allows observers (typically Activities or Fragments) to subscribe to changes. What makes LiveData special is its lifecycle awareness — it automatically manages subscription based on the observer's lifecycle state. LiveData only delivers updates to observers that are in the STARTED or RESUMED state, and it automatically removes observers when their lifecycle owner is destroyed, completely eliminating the risk of crashes from updating a destroyed UI component."
+    },
+    {
+      "type": "bullet",
+      "heading": "LiveData Key Characteristics",
+      "items": [
+        "Lifecycle-aware — only delivers data to observers in STARTED or RESUMED lifecycle state",
+        "Auto-cleanup — observers are automatically removed when the lifecycle owner (Activity/Fragment) is destroyed",
+        "No crashes — never updates a stopped or destroyed UI, eliminating common IllegalStateException crashes",
+        "Always holds the latest value — new observers immediately receive the current value upon subscription",
+        "MutableLiveData is the writable subclass used inside ViewModel; expose as LiveData (read-only) to the View",
+        "Can be transformed using map() and switchMap() to derive new LiveData from existing ones",
+        "Thread-safe — postValue() can be called from background threads; setValue() must be called from the main thread",
+        "MediatorLiveData merges multiple LiveData sources into a single observable"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "MutableLiveData vs LiveData",
+      "rows": [
+        {
+          "aspect": "Can set value",
+          "mutablelivedata": "Yes — via setValue() (main thread) or postValue() (any thread)",
+          "livedata": "No — read-only; value can only be observed"
+        },
+        {
+          "aspect": "Where to use",
+          "mutablelivedata": "Inside ViewModel as private backing property",
+          "livedata": "Exposed publicly from ViewModel to the View"
+        },
+        {
+          "aspect": "Encapsulation",
+          "mutablelivedata": "Internal — keeps write access restricted to the ViewModel",
+          "livedata": "External — View can observe but cannot modify the data"
+        },
+        {
+          "aspect": "Declaration pattern",
+          "mutablelivedata": "private val _users = MutableLiveData<List<User>>()",
+          "livedata": "val users: LiveData<List<User>> = _users"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Observing LiveData in the View",
+      "items": [
+        "Call observe(lifecycleOwner, observer) on the LiveData object from the View",
+        "In Activity: viewModel.users.observe(this) { users -> updateUI(users) }",
+        "In Fragment: viewModel.users.observe(viewLifecycleOwner) { users -> updateUI(users) }",
+        "Always use viewLifecycleOwner (not 'this') in Fragments — prevents stale observers after back stack navigation",
+        "The observer lambda is called immediately with the current value when first subscribed",
+        "The observer is called again every time the LiveData value changes",
+        "observeForever() observes without a lifecycle owner — must be removed manually with removeObserver()",
+        "Use observeForever() only in non-lifecycle-aware contexts (e.g., unit tests or Application class)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "setValue() vs postValue()",
+      "rows": [
+        {
+          "aspect": "Thread",
+          "setvalue": "Must be called on the main thread only",
+          "postvalue": "Can be called from any thread including background threads"
+        },
+        {
+          "aspect": "Delivery",
+          "setvalue": "Delivers update immediately and synchronously",
+          "postvalue": "Posts update to the main thread queue — may be slightly delayed"
+        },
+        {
+          "aspect": "Multiple rapid calls",
+          "setvalue": "Each call triggers an observer update",
+          "postvalue": "Only the last value is dispatched if called multiple times rapidly before dispatch"
+        },
+        {
+          "aspect": "Use case",
+          "setvalue": "Updating LiveData from ViewModel on main thread",
+          "postvalue": "Updating LiveData from a coroutine or background thread"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "LiveData Transformations",
+      "content": "Jetpack provides the Transformations class with two key operators — map() and switchMap() — for deriving new LiveData instances from existing ones without duplicating data. These transformations are lazy — they only compute when there is an active observer. map() transforms the value emitted by a LiveData into a new type. switchMap() is used when the transformation itself returns a LiveData, enabling dynamic LiveData sources such as database queries that depend on a search query LiveData."
+    },
+    {
+      "type": "bullet",
+      "heading": "LiveData Transformation Operators",
+      "items": [
+        "Transformations.map(source) { value -> transform(value) } — transforms emitted values from one type to another",
+        "Example: val userNames = Transformations.map(users) { userList -> userList.map { it.name } }",
+        "Transformations.switchMap(source) { value -> getLiveDataFor(value) } — switches to a new LiveData based on the source value",
+        "Example: val results = Transformations.switchMap(searchQuery) { query -> repository.search(query) }",
+        "In Kotlin, use the extension functions: liveData.map { } and liveData.switchMap { } for cleaner syntax",
+        "MediatorLiveData merges multiple LiveData sources: addSource(liveData) { value -> setValue(transform(value)) }",
+        "Transformations are computed only when there is an active observer — they are lazy and efficient",
+        "Chaining transformations is supported: liveDataA.map { }.switchMap { } chains multiple operations"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "viewModelScope and Coroutines in ViewModel",
+      "rows": [
+        {
+          "aspect": "What is viewModelScope",
+          "description": "A CoroutineScope tied to the ViewModel's lifecycle — automatically cancelled when ViewModel is cleared"
+        },
+        {
+          "aspect": "How to use",
+          "description": "viewModelScope.launch { /* coroutine work */ } — launches a coroutine inside the ViewModel"
+        },
+        {
+          "aspect": "Default dispatcher",
+          "description": "Runs on Dispatchers.Main by default — switch to Dispatchers.IO for network or database operations"
+        },
+        {
+          "aspect": "Auto-cancellation",
+          "description": "All coroutines launched in viewModelScope are cancelled automatically when onCleared() is called"
+        },
+        {
+          "aspect": "Network call pattern",
+          "description": "viewModelScope.launch { _users.value = repository.getUsers() } — fetches and updates LiveData"
+        },
+        {
+          "aspect": "IO operations",
+          "description": "viewModelScope.launch { withContext(Dispatchers.IO) { repository.insertUser(user) } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "SavedStateHandle — Surviving Process Death",
+      "items": [
+        "SavedStateHandle is a key-value map that survives both configuration changes AND process death",
+        "Inject it into the ViewModel constructor — Jetpack provides it automatically via SavedStateViewModelFactory",
+        "With Hilt, SavedStateHandle is injected automatically into @HiltViewModel ViewModels",
+        "Read values: val userId = savedStateHandle.get<Int>(\"userId\")",
+        "Write values: savedStateHandle[\"userId\"] = userId",
+        "Get as LiveData: val userIdLiveData = savedStateHandle.getLiveData<Int>(\"userId\")",
+        "Get as StateFlow: val userIdFlow = savedStateHandle.getStateFlow(\"userId\", defaultValue)",
+        "Only use SavedStateHandle for small, critical state — for large data use Room database persistence"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ViewModel vs onSaveInstanceState()",
+      "rows": [
+        {
+          "aspect": "Survives rotation",
+          "viewmodel": "Yes",
+          "onsaveinstancestate": "Yes"
+        },
+        {
+          "aspect": "Survives process death",
+          "viewmodel": "No (unless using SavedStateHandle)",
+          "onsaveinstancestate": "Yes — stored by the system"
+        },
+        {
+          "aspect": "Data size limit",
+          "viewmodel": "No practical limit — held in memory",
+          "onsaveinstancestate": "Small — Bundle size limit (~1MB)"
+        },
+        {
+          "aspect": "Data types supported",
+          "viewmodel": "Any Kotlin object, lists, complex data",
+          "onsaveinstancestate": "Primitives, Strings, Parcelables only"
+        },
+        {
+          "aspect": "Best for",
+          "viewmodel": "Large data, network results, database queries",
+          "onsaveinstancestate": "Small UI state like scroll position, selected tab, input text"
+        },
+        {
+          "aspect": "Recommended approach",
+          "viewmodel": "ViewModel + SavedStateHandle for complete coverage",
+          "onsaveinstancestate": "Use for lightweight UI state not already in ViewModel"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Sharing ViewModel Between Fragments",
+      "items": [
+        "Use by activityViewModels() in each Fragment that needs to share data",
+        "The ViewModel is scoped to the Activity — all Fragments in that Activity get the same instance",
+        "Fragment A updates the ViewModel: viewModel.selectUser(user)",
+        "Fragment B observes the same ViewModel LiveData and reacts to the selection automatically",
+        "This is the recommended pattern for master-detail UIs (list Fragment + detail Fragment)",
+        "Also use shared ViewModel for multi-step form flows where data accumulates across screens",
+        "With Jetpack Navigation Component, use by navGraphViewModels(R.id.nav_graph) to scope ViewModel to a navigation subgraph",
+        "Scoping to a nav graph destroys the ViewModel when the user exits the subgraph — cleaner than Activity scope"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complete ViewModel + LiveData Pattern Example",
+      "rows": [
+        {
+          "step": "1. Define ViewModel",
+          "code_description": "class UserViewModel(private val repo: UserRepository) : ViewModel() { private val _users = MutableLiveData<List<User>>(); val users: LiveData<List<User>> = _users }"
+        },
+        {
+          "step": "2. Load data in ViewModel",
+          "code_description": "fun loadUsers() { viewModelScope.launch { _users.postValue(repo.getUsers()) } }"
+        },
+        {
+          "step": "3. Instantiate in Fragment",
+          "code_description": "private val viewModel: UserViewModel by viewModels()"
+        },
+        {
+          "step": "4. Observe in onViewCreated()",
+          "code_description": "viewModel.users.observe(viewLifecycleOwner) { users -> adapter.submitList(users) }"
+        },
+        {
+          "step": "5. Trigger data load",
+          "code_description": "viewModel.loadUsers() called in onViewCreated() or init block of ViewModel"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common ViewModel & LiveData Mistakes",
+      "items": [
+        "Storing Activity or View reference in ViewModel — causes memory leaks; use Application context via AndroidViewModel if context is needed",
+        "Using 'this' instead of viewLifecycleOwner in Fragment observers — causes multiple observer registrations",
+        "Calling setValue() from a background thread — use postValue() for background thread updates",
+        "Exposing MutableLiveData publicly from ViewModel — always expose as LiveData to enforce encapsulation",
+        "Creating ViewModel with new keyword — always use by viewModels() or ViewModelProvider",
+        "Not cancelling background work in onCleared() — use viewModelScope which auto-cancels on ViewModel clear",
+        "Re-triggering data loads in onViewCreated() on every Fragment recreation — check if data is already loaded first",
+        "Using LiveData for one-time navigation events without SingleLiveEvent — causes re-navigation on rotation"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "ViewModel and LiveData are the twin pillars of Android's recommended architecture. ViewModel provides a lifecycle-aware container that survives configuration changes and keeps data management separate from UI concerns. LiveData provides a safe, lifecycle-aware communication channel from the ViewModel back to the View, ensuring the UI is always up to date without risking crashes from updating destroyed components. Together with viewModelScope for coroutines and SavedStateHandle for process death survival, they form a complete, robust solution for managing UI state in any Android app."
+    }
+  ]
+}

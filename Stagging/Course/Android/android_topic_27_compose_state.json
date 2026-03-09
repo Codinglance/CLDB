@@ -1,0 +1,343 @@
+{
+  "title": "Composables, State & Recomposition",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Understanding Recomposition",
+      "content": "Recomposition is the process by which Compose re-executes composable functions when their observed state changes. Unlike the View system where you manually update specific views, Compose automatically identifies which composables depend on changed state and re-runs only those functions — leaving unaffected composables untouched. This makes Compose highly efficient, but it also means composable functions can be called many times, in any order, and potentially in parallel. Understanding when and why recomposition happens is essential for building correct and performant Compose UIs."
+    },
+    {
+      "type": "bullet",
+      "heading": "How Recomposition Works",
+      "items": [
+        "When state observed by a composable changes, Compose schedules that composable for recomposition",
+        "Only the composables that read the changed state are recomposed — their siblings and parents are skipped",
+        "Recomposition is incremental — Compose compares the new composition with the previous one and applies only the differences",
+        "Composables that receive the same inputs as the previous composition may be skipped entirely (smart recomposition)",
+        "Recomposition is not guaranteed to happen immediately — Compose batches and schedules recompositions efficiently",
+        "Composables can be recomposed in any order — never depend on execution order between sibling composables",
+        "Composables can be recomposed in parallel on multiple threads — avoid writing to shared mutable state",
+        "Composables can be executed multiple times for a single frame — keep them fast and side-effect free",
+        "If a composable's inputs have not changed since the last composition, Compose may skip it — this is called skipping or memoization"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Recomposition Triggers",
+      "rows": [
+        {
+          "trigger": "mutableStateOf value change",
+          "description": "Any composable that reads a MutableState value recomposes when the value is set to a new value",
+          "example": "var count by remember { mutableStateOf(0) }; count++ triggers recomposition of composables reading count"
+        },
+        {
+          "trigger": "StateFlow / Flow emission",
+          "description": "collectAsState() or collectAsStateWithLifecycle() recomposes the composable when the Flow emits a new value",
+          "example": "val uiState by viewModel.uiState.collectAsStateWithLifecycle() recomposes when uiState changes"
+        },
+        {
+          "trigger": "Parent passes new parameter",
+          "description": "If a parent composable recomposes and passes a different value to a child, the child recomposes",
+          "example": "UserCard(user = user) recomposes UserCard when the parent recomposes with a new user object"
+        },
+        {
+          "trigger": "mutableStateListOf / mutableStateMapOf change",
+          "description": "Adding, removing, or updating items in an observable collection triggers recomposition",
+          "example": "items.add(newItem) recomposes composables observing items"
+        },
+        {
+          "trigger": "derivedStateOf recalculation",
+          "description": "derivedStateOf recomposes its readers only when the derived value actually changes, not on every upstream change",
+          "example": "val isValid by remember { derivedStateOf { email.contains(\"@\") } }"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "remember and mutableStateOf",
+      "content": "The two fundamental tools for local state in Compose are remember and mutableStateOf. remember is a composable function that executes its initialization lambda only on the first composition and returns the cached result on all subsequent recompositions. mutableStateOf creates a MutableState holder whose value changes trigger recomposition in any composable that reads it. Together, remember { mutableStateOf(initial) } creates persistent, observable state that lives as long as the composable is in the composition."
+    },
+    {
+      "type": "bullet",
+      "heading": "remember Patterns and Variants",
+      "items": [
+        "var text by remember { mutableStateOf(\"\") } — local string state, common for TextField value",
+        "var isExpanded by remember { mutableStateOf(false) } — local boolean toggle state",
+        "val listState = rememberLazyListState() — remembers scroll position of a LazyColumn across recompositions",
+        "val coroutineScope = rememberCoroutineScope() — remembers a CoroutineScope bound to the composable's lifecycle",
+        "val focusRequester = remember { FocusRequester() } — remembers a non-state object that should not be recreated",
+        "remember(key) { } — recalculates the remembered value when key changes: remember(userId) { loadUser(userId) }",
+        "remember(key1, key2) { } — recalculates when either key changes",
+        "rememberSaveable { mutableStateOf(0) } — like remember but persists across configuration changes via Bundle",
+        "rememberSaveable with custom Saver for complex types: rememberSaveable(stateSaver = CustomSaver) { }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "remember vs rememberSaveable",
+      "rows": [
+        {
+          "aspect": "Survives recomposition",
+          "remember": "Yes",
+          "rememberSaveable": "Yes"
+        },
+        {
+          "aspect": "Survives configuration change (rotation)",
+          "remember": "No — value is lost",
+          "rememberSaveable": "Yes — saved to Bundle and restored"
+        },
+        {
+          "aspect": "Survives process death",
+          "remember": "No",
+          "rememberSaveable": "Yes — if stored value is Bundle-compatible"
+        },
+        {
+          "aspect": "Supported types",
+          "remember": "Any type",
+          "rememberSaveable": "Bundle-compatible types (String, Int, Boolean, Parcelable) or types with custom Saver"
+        },
+        {
+          "aspect": "Use for",
+          "remember": "Transient UI state that can reset on rotation: dropdown expanded, animation trigger",
+          "rememberSaveable": "User input state that should persist on rotation: TextField text, scroll position, selected tab"
+        },
+        {
+          "aspect": "Example",
+          "remember": "var isDropdownExpanded by remember { mutableStateOf(false) }",
+          "rememberSaveable": "var searchQuery by rememberSaveable { mutableStateOf(\"\") }"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "State Hoisting",
+      "content": "State hoisting is the Compose pattern of moving state out of a composable and into its caller, making the composable stateless. A stateless composable receives the current state value as a parameter and emits change events via a callback lambda — it owns no state of its own. This pattern makes composables reusable across different contexts, easier to test in isolation, and easier to share state between sibling composables through a common parent. The principle is: state goes down as parameters, events go up as callbacks."
+    },
+    {
+      "type": "bullet",
+      "heading": "State Hoisting Pattern",
+      "items": [
+        "Stateful version (owns state): @Composable fun Counter() { var count by remember { mutableStateOf(0) }; CounterContent(count, onIncrement = { count++ }) }",
+        "Stateless version (hoisted): @Composable fun CounterContent(count: Int, onIncrement: () -> Unit) { Text(\"$count\"); Button(onClick = onIncrement) { Text(\"+\") } }",
+        "Hoist state when: two composables need to read the same state",
+        "Hoist state when: a parent composable needs to know about a child's state to make decisions",
+        "Hoist state when: the composable should be reusable in different contexts with different state sources",
+        "The single source of truth principle — each piece of state should have exactly one owner",
+        "State flows down (as parameters), events flow up (as lambdas) — unidirectional data flow",
+        "In MVVM: hoist state all the way up to the ViewModel; the root screen composable connects ViewModel state to stateless child composables"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Stateful vs Stateless Composables",
+      "rows": [
+        {
+          "aspect": "State ownership",
+          "stateful": "Owns and manages its own state with remember",
+          "stateless": "Receives state as parameters; owns no state"
+        },
+        {
+          "aspect": "Reusability",
+          "stateful": "Lower — state logic is coupled to the composable",
+          "stateless": "Higher — can be driven by any state source"
+        },
+        {
+          "aspect": "Testability",
+          "stateful": "Harder — must trigger state changes to test different appearances",
+          "stateless": "Easy — pass different parameter values to test all states"
+        },
+        {
+          "aspect": "Preview",
+          "stateful": "Shows only initial state",
+          "stateless": "Can preview any state by passing different parameters"
+        },
+        {
+          "aspect": "When to use",
+          "stateful": "Top-level screen composables that own state; entry points that connect to ViewModel",
+          "stateless": "Reusable UI components: buttons, cards, list items, inputs"
+        },
+        {
+          "aspect": "Example",
+          "stateful": "HomeScreen() — collects ViewModel state and passes to child composables",
+          "stateless": "UserCard(user: User, onFavorite: (User) -> Unit) — pure UI, no state"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Side Effects in Compose",
+      "content": "A side effect is any operation that affects state outside the composable's own scope — launching a coroutine, subscribing to a flow, showing a snackbar, logging analytics, or updating external state. Because composable functions can be re-executed at any time, performing side effects directly in the composable body can cause them to run multiple times unexpectedly. Compose provides a family of effect handlers — LaunchedEffect, SideEffect, DisposableEffect, produceState, and derivedStateOf — that run side effects at the correct point in the composition lifecycle."
+    },
+    {
+      "type": "table",
+      "heading": "Compose Effect Handlers",
+      "rows": [
+        {
+          "effect": "LaunchedEffect(key)",
+          "when_runs": "Runs when the composable enters composition and re-runs when key changes; cancelled when composable leaves",
+          "use_for": "Launching coroutines from a composable: showing a snackbar, navigating, loading data on first render",
+          "example": "LaunchedEffect(userId) { val user = viewModel.loadUser(userId) }"
+        },
+        {
+          "effect": "SideEffect",
+          "when_runs": "Runs after every successful recomposition",
+          "use_for": "Pushing Compose state into non-Compose code that doesn't support State: analytics, logging, updating external objects",
+          "example": "SideEffect { analytics.logScreen(screenName) }"
+        },
+        {
+          "effect": "DisposableEffect(key)",
+          "when_runs": "Runs when composable enters composition; onDispose block runs when composable leaves or key changes",
+          "use_for": "Registering and unregistering listeners, callbacks, or resources that need explicit cleanup",
+          "example": "DisposableEffect(lifecycle) { lifecycle.addObserver(observer); onDispose { lifecycle.removeObserver(observer) } }"
+        },
+        {
+          "effect": "rememberCoroutineScope()",
+          "when_runs": "Returns a CoroutineScope tied to the composable's lifetime — call from event handlers",
+          "use_for": "Launching coroutines in response to user events (button clicks) where LaunchedEffect is not appropriate",
+          "example": "val scope = rememberCoroutineScope(); Button(onClick = { scope.launch { scrollState.animateScrollTo(0) } })"
+        },
+        {
+          "effect": "produceState(initial)",
+          "when_runs": "Runs a coroutine in composition; produces State<T> values from async sources",
+          "use_for": "Converting non-Compose async sources (callbacks, Flows) into Compose State",
+          "example": "val image by produceState<Bitmap?>(null) { value = loadImage(url) }"
+        },
+        {
+          "effect": "derivedStateOf { }",
+          "when_runs": "Recalculates only when the state values it reads change — not on every recomposition",
+          "use_for": "Expensive calculations derived from state that should not recompute on every recomposition",
+          "example": "val showButton by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "LaunchedEffect — Key Patterns",
+      "items": [
+        "LaunchedEffect(Unit) — runs once when the composable enters composition; Unit never changes so it never re-runs",
+        "LaunchedEffect(userId) — re-runs whenever userId changes; previous coroutine is cancelled first",
+        "LaunchedEffect(true) — equivalent to LaunchedEffect(Unit) — runs once",
+        "LaunchedEffect(viewModel) — re-runs if the ViewModel instance changes (rarely needed)",
+        "Collect a one-time event channel: LaunchedEffect(Unit) { viewModel.events.collect { event -> handleEvent(event) } }",
+        "Show a snackbar: LaunchedEffect(snackbarMessage) { if (snackbarMessage != null) snackbarHostState.showSnackbar(snackbarMessage) }",
+        "Load data on entry: LaunchedEffect(Unit) { viewModel.loadData() }",
+        "LaunchedEffect is cancelled and restarted when its key changes — use this for dependent data loading"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "derivedStateOf vs remember(key)",
+      "rows": [
+        {
+          "aspect": "Purpose",
+          "derived_state_of": "Computes a value derived from other state; only recomposes readers when derived value changes",
+          "remember_key": "Recomputes the remembered value when the key itself changes"
+        },
+        {
+          "aspect": "Recomputation trigger",
+          "derived_state_of": "When any state it reads changes — but only notifies readers if the result is different",
+          "remember_key": "When the key parameter changes value"
+        },
+        {
+          "aspect": "Use for",
+          "derived_state_of": "Reducing recompositions from frequently changing state: scroll position, filter results",
+          "remember_key": "Recalculating an object when an ID or input changes: remember(userId) { UserPresenter(userId) }"
+        },
+        {
+          "aspect": "Example",
+          "derived_state_of": "val showFab by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }",
+          "remember_key": "val formattedDate = remember(timestamp) { formatDate(timestamp) }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Connecting ViewModel State to Compose",
+      "items": [
+        "Expose state from ViewModel as StateFlow<UiState>: val uiState: StateFlow<UiState> = ... .stateIn(viewModelScope, WhileSubscribed(5000), UiState.Loading)",
+        "Collect in composable: val uiState by viewModel.uiState.collectAsStateWithLifecycle()",
+        "collectAsStateWithLifecycle() is preferred over collectAsState() — it stops collecting when the composable is not active (lifecycle-aware)",
+        "Add dependency: implementation(\"androidx.lifecycle:lifecycle-runtime-compose:2.x.x\")",
+        "For one-time events (navigation, snackbar): use a Channel<Event> in ViewModel and collect with LaunchedEffect",
+        "Pass the ViewModel to the top-level screen composable only; pass individual state and callbacks to child composables",
+        "Never pass the ViewModel itself deep into the composable tree — hoist state and pass lambdas instead",
+        "Use hiltViewModel() to obtain a Hilt-injected ViewModel inside a composable: val viewModel: MyViewModel = hiltViewModel()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "UiState Sealed Class Pattern",
+      "rows": [
+        {
+          "component": "Sealed class definition",
+          "description": "sealed class UiState { object Loading : UiState(); data class Success(val data: List<User>) : UiState(); data class Error(val message: String) : UiState() }"
+        },
+        {
+          "component": "ViewModel StateFlow",
+          "description": "val uiState: StateFlow<UiState> = repo.getUsers().map { UiState.Success(it) }.catch { emit(UiState.Error(it.message ?: \"\")) }.stateIn(viewModelScope, WhileSubscribed(5000), UiState.Loading)"
+        },
+        {
+          "component": "Composable collection",
+          "description": "val uiState by viewModel.uiState.collectAsStateWithLifecycle()"
+        },
+        {
+          "component": "Rendering with when",
+          "description": "when (uiState) { is UiState.Loading -> CircularProgressIndicator(); is UiState.Success -> UserList(uiState.data); is UiState.Error -> ErrorMessage(uiState.message) }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Performance — Avoiding Unnecessary Recompositions",
+      "items": [
+        "Move state reads as low as possible in the composable tree — only the composables that actually use the state will recompose",
+        "Use derivedStateOf for values derived from high-frequency state like scroll position",
+        "Avoid creating new lambda instances in the composable body — use remember { } or define them outside",
+        "Use stable data classes as composable parameters — Compose can skip recomposition if all parameters are equal",
+        "Annotate data classes with @Stable or @Immutable to help Compose's compiler skip recomposition",
+        "Avoid passing unstable types (List, Map) directly as parameters — wrap in a @Stable class or use ImmutableList",
+        "Use the Compose compiler metrics to identify composables that are not skippable",
+        "key() composable — provides a unique key for items in a list to help Compose correctly track additions, removals, and moves"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common State and Recomposition Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Reading state outside a composable (in a non-composable function)",
+          "fix": "State can only be read inside a composable function — pass state values as parameters to non-composable functions"
+        },
+        {
+          "mistake": "Writing to state directly in the composable body during composition",
+          "fix": "Never write to state during composition — update state only in response to events or in LaunchedEffect"
+        },
+        {
+          "mistake": "Using remember without mutableStateOf for values that should trigger recomposition",
+          "fix": "remember alone does not trigger recomposition — use remember { mutableStateOf(value) } for reactive state"
+        },
+        {
+          "mistake": "Using mutableStateOf without remember — state resets on every recomposition",
+          "fix": "Always pair mutableStateOf with remember: var x by remember { mutableStateOf(0) }"
+        },
+        {
+          "mistake": "Passing a List directly as a composable parameter",
+          "fix": "List is unstable — Compose always recomposes; use ImmutableList from kotlinx.collections.immutable or wrap in @Stable class"
+        },
+        {
+          "mistake": "Collecting StateFlow with collectAsState() instead of collectAsStateWithLifecycle()",
+          "fix": "collectAsStateWithLifecycle() is lifecycle-aware and stops collection when the app is backgrounded — saves battery and resources"
+        },
+        {
+          "mistake": "Launching coroutines directly in the composable body",
+          "fix": "Use LaunchedEffect for coroutines that run on composition; use rememberCoroutineScope().launch for event-triggered coroutines"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "State and recomposition are the beating heart of Jetpack Compose. Recomposition automatically updates the UI whenever observed state changes, executing only the affected composables for efficiency. Use remember { mutableStateOf() } for local transient state, rememberSaveable for state that should survive rotation, and state hoisting to make composables reusable and testable. Side effects must be managed through the appropriate effect handler — LaunchedEffect for coroutines, DisposableEffect for resource cleanup, and derivedStateOf for reducing unnecessary recompositions. Connect ViewModel state with collectAsStateWithLifecycle() and pass individual state values and event callbacks down the composable tree rather than the ViewModel itself."
+    }
+  ]
+}

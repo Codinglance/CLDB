@@ -1,0 +1,435 @@
+{
+  "title": "File Storage & Media",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "File Storage in Android",
+      "content": "Android provides multiple mechanisms for storing files depending on their size, sensitivity, and whether they should be shared with other apps. Unlike SharedPreferences or Room (which handle structured data), file storage handles raw binary or text data — images, audio, video, PDFs, logs, downloaded content, and user-created documents. Android organizes storage into two primary areas: internal storage (private to your app, always available) and external storage (potentially shared, may require permissions). Since Android 10 (API 29), Google introduced Scoped Storage, fundamentally changing how apps access files on external storage."
+    },
+    {
+      "type": "bullet",
+      "heading": "Storage Options Overview",
+      "items": [
+        "App-specific internal storage — private directory on internal memory; no permissions needed; deleted when app is uninstalled",
+        "App-specific external storage — private directory on external storage (SD card or emulated); no permissions needed on API 29+",
+        "Shared storage (MediaStore) — photos, videos, audio, and downloads shared across apps; requires permissions on older APIs",
+        "Documents and files (SAF) — Storage Access Framework lets users pick files from any provider using a system file picker",
+        "Assets (read-only) — files bundled in the app's assets/ folder; read-only at runtime",
+        "Raw resources — files in res/raw/ accessed via R.raw.filename; read-only at runtime",
+        "Cache directories — temporary files that the system can delete when storage is low",
+        "DataStore and Room — for structured data and preferences, not raw file storage"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Storage Location Comparison",
+      "rows": [
+        {
+          "location": "Internal Storage (filesDir)",
+          "permissions": "None required",
+          "accessible_by_others": "No — completely private",
+          "persists_after_uninstall": "No",
+          "best_for": "Sensitive app data, config files, private user data"
+        },
+        {
+          "location": "Internal Cache (cacheDir)",
+          "permissions": "None required",
+          "accessible_by_others": "No",
+          "persists_after_uninstall": "No",
+          "best_for": "Temporary files, downloaded thumbnails, decompressed assets"
+        },
+        {
+          "location": "External App-Specific (getExternalFilesDir)",
+          "permissions": "None on API 29+; READ_EXTERNAL_STORAGE on older",
+          "accessible_by_others": "No (scoped) on API 29+",
+          "persists_after_uninstall": "No",
+          "best_for": "Large files the user may need after uninstall (backup photos, exports)"
+        },
+        {
+          "location": "External Cache (externalCacheDir)",
+          "permissions": "None on API 29+",
+          "accessible_by_others": "No",
+          "persists_after_uninstall": "No",
+          "best_for": "Large temporary files like downloaded media for offline playback"
+        },
+        {
+          "location": "Shared Storage (MediaStore)",
+          "permissions": "READ_MEDIA_IMAGES / READ_MEDIA_VIDEO on API 33+; READ_EXTERNAL_STORAGE on older",
+          "accessible_by_others": "Yes — visible to all apps and gallery",
+          "persists_after_uninstall": "Yes",
+          "best_for": "Photos and videos the user creates and wants to keep in the gallery"
+        },
+        {
+          "location": "Storage Access Framework (SAF)",
+          "permissions": "None — user grants access via picker",
+          "accessible_by_others": "Yes — user explicitly selects the file",
+          "persists_after_uninstall": "Yes (file is not owned by your app)",
+          "best_for": "Opening, editing, or saving documents picked by the user"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Internal Storage",
+      "content": "Internal storage is the safest and simplest place to store files that are private to your app. Every app has its own internal storage directory that no other app can access (unless the device is rooted). The primary directories are context.filesDir for persistent files and context.cacheDir for temporary files. Files in filesDir persist until the user uninstalls the app or clears app data. Files in cacheDir may be deleted by the system when storage is critically low. No permissions are needed to read or write to either directory."
+    },
+    {
+      "type": "bullet",
+      "heading": "Reading and Writing Internal Files",
+      "items": [
+        "Get the files directory: val file = File(context.filesDir, \"my_file.txt\")",
+        "Write text to a file: file.writeText(\"Hello World\") — creates or overwrites the file",
+        "Append text: file.appendText(\"More content\")",
+        "Write bytes: file.writeBytes(byteArray)",
+        "Read text: val content = file.readText()",
+        "Read lines: val lines = file.readLines()",
+        "Read bytes: val bytes = file.readBytes()",
+        "Check if file exists: if (file.exists()) { ... }",
+        "Delete a file: file.delete()",
+        "Create subdirectory: File(context.filesDir, \"subfolder\").mkdirs()",
+        "Use openFileOutput() for stream-based writing: context.openFileOutput(\"file.txt\", Context.MODE_PRIVATE).use { it.write(data) }",
+        "Use openFileInput() for stream-based reading: context.openFileInput(\"file.txt\").use { it.readBytes() }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "File Write Modes for openFileOutput()",
+      "rows": [
+        {
+          "mode": "MODE_PRIVATE",
+          "value": "0",
+          "behavior": "Creates or overwrites the file — default and recommended mode"
+        },
+        {
+          "mode": "MODE_APPEND",
+          "value": "32768",
+          "behavior": "Opens the file and appends new content to the end without truncating"
+        },
+        {
+          "mode": "MODE_WORLD_READABLE",
+          "value": "Deprecated",
+          "behavior": "Made file readable by other apps — deprecated in API 17; use FileProvider instead"
+        },
+        {
+          "mode": "MODE_WORLD_WRITEABLE",
+          "value": "Deprecated",
+          "behavior": "Made file writable by other apps — deprecated in API 17; use FileProvider instead"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "External App-Specific Storage",
+      "content": "External app-specific storage gives your app a private directory on external storage (which may be an SD card or emulated external storage on internal memory). Since Android 10 (API 29), this directory is scoped and does not require any storage permissions to access. The path is returned by context.getExternalFilesDir(type) where type is an Environment constant like Environment.DIRECTORY_PICTURES, DIRECTORY_DOCUMENTS, or null for the root. Files here survive app clear data but are deleted on uninstall."
+    },
+    {
+      "type": "bullet",
+      "heading": "External App-Specific Storage Usage",
+      "items": [
+        "Get pictures directory: val dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)",
+        "Get documents directory: context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)",
+        "Get music directory: context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)",
+        "Get root external directory: context.getExternalFilesDir(null)",
+        "Always null-check — external storage may not be available: if (dir != null) { ... }",
+        "Check availability: Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED",
+        "No permissions needed on API 29 and above for app-specific external directories",
+        "Files are accessible via a file manager app on the device but not shared with the media store",
+        "Use this for large files (exported CSVs, recorded audio) the user may want to access outside the app"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Environment Directory Constants",
+      "rows": [
+        {
+          "constant": "Environment.DIRECTORY_PICTURES",
+          "path": "Pictures/",
+          "use_for": "Image files captured or saved by the app"
+        },
+        {
+          "constant": "Environment.DIRECTORY_DOCUMENTS",
+          "path": "Documents/",
+          "use_for": "PDFs, text files, exports, and user documents"
+        },
+        {
+          "constant": "Environment.DIRECTORY_DOWNLOADS",
+          "path": "Downloads/",
+          "use_for": "Downloaded files the user may want to access later"
+        },
+        {
+          "constant": "Environment.DIRECTORY_MUSIC",
+          "path": "Music/",
+          "use_for": "Audio files generated or cached by the app"
+        },
+        {
+          "constant": "Environment.DIRECTORY_MOVIES",
+          "path": "Movies/",
+          "use_for": "Video files recorded or downloaded by the app"
+        },
+        {
+          "constant": "Environment.DIRECTORY_DCIM",
+          "path": "DCIM/",
+          "use_for": "Camera-captured photos and videos (standard camera directory)"
+        },
+        {
+          "constant": "null",
+          "path": "Root of app-specific external directory",
+          "use_for": "Custom subdirectories not covered by standard constants"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Scoped Storage & MediaStore",
+      "content": "Since Android 10 (API 29), Scoped Storage restricts apps from freely accessing the entire external storage file system. Apps can only access their own app-specific directories without permissions. To save or read media files (photos, videos, audio) that should appear in the device gallery or be shared with other apps, you must use the MediaStore API. MediaStore is a system content provider that manages shared media collections and provides structured access through URIs."
+    },
+    {
+      "type": "bullet",
+      "heading": "Saving an Image to MediaStore (Gallery)",
+      "items": [
+        "Create ContentValues describing the file: contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, \"photo.jpg\")",
+        "Set MIME type: contentValues.put(MediaStore.Images.Media.MIME_TYPE, \"image/jpeg\")",
+        "Set relative path (API 29+): contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, \"Pictures/MyApp\")",
+        "Insert into MediaStore: val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)",
+        "Write file content via the URI: contentResolver.openOutputStream(uri!!)?.use { outputStream -> bitmap.compress(Bitmap.CompressFormat.JPEG, 95, outputStream) }",
+        "The image now appears in the device gallery — visible to all apps and the user",
+        "On API 29+: set IS_PENDING = 1 before writing and IS_PENDING = 0 after to prevent partial files from appearing in gallery",
+        "Read permissions required for reading other apps' media: READ_MEDIA_IMAGES (API 33+) or READ_EXTERNAL_STORAGE (pre-API 33)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "MediaStore Collections",
+      "rows": [
+        {
+          "collection": "MediaStore.Images.Media.EXTERNAL_CONTENT_URI",
+          "media_type": "Images (JPEG, PNG, WebP, GIF)",
+          "permission_to_read": "READ_MEDIA_IMAGES (API 33+) or READ_EXTERNAL_STORAGE"
+        },
+        {
+          "collection": "MediaStore.Video.Media.EXTERNAL_CONTENT_URI",
+          "media_type": "Video files (MP4, MKV, AVI)",
+          "permission_to_read": "READ_MEDIA_VIDEO (API 33+) or READ_EXTERNAL_STORAGE"
+        },
+        {
+          "collection": "MediaStore.Audio.Media.EXTERNAL_CONTENT_URI",
+          "media_type": "Audio files (MP3, AAC, FLAC)",
+          "permission_to_read": "READ_MEDIA_AUDIO (API 33+) or READ_EXTERNAL_STORAGE"
+        },
+        {
+          "collection": "MediaStore.Downloads.EXTERNAL_CONTENT_URI",
+          "media_type": "Downloaded files (any type)",
+          "permission_to_read": "No special permission needed for own downloads"
+        },
+        {
+          "collection": "MediaStore.Files.getContentUri(\"external\")",
+          "media_type": "All file types including documents",
+          "permission_to_read": "MANAGE_EXTERNAL_STORAGE (special permission)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Storage Access Framework (SAF)",
+      "content": "The Storage Access Framework (SAF) allows users to grant your app access to specific files or directories through a system-provided file picker — without requiring broad storage permissions. The user selects a file or folder from any installed document provider (Google Drive, Dropbox, local storage), and the system returns a URI your app can read from or write to. SAF is the recommended approach for apps that need to open, edit, or save user-chosen documents."
+    },
+    {
+      "type": "bullet",
+      "heading": "SAF — Opening and Creating Files",
+      "items": [
+        "Open a file for reading: use GetContent() contract — launcher.launch(\"*/*\") to let user pick any file",
+        "Open an image specifically: launcher.launch(\"image/*\") restricts the picker to image files",
+        "Create a new file: use CreateDocument() contract — launcher.launch(\"text/plain\") opens save dialog",
+        "Open a directory tree: use OpenDocumentTree() contract — user grants persistent access to a folder",
+        "Read the picked file: contentResolver.openInputStream(uri)?.use { stream -> stream.readBytes() }",
+        "Write to the picked file: contentResolver.openOutputStream(uri)?.use { stream -> stream.write(data) }",
+        "Take persistent URI permission: contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)",
+        "Store the URI string and reuse it across app sessions — persistent permissions survive app restarts"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ActivityResultContracts for File Operations",
+      "rows": [
+        {
+          "contract": "GetContent()",
+          "input": "MIME type string (e.g., \"image/*\", \"*/*\")",
+          "output": "URI? of selected file",
+          "use_case": "Let user pick an existing file from any source"
+        },
+        {
+          "contract": "OpenDocument()",
+          "input": "Array of MIME types",
+          "output": "URI? of selected file with persistent permission",
+          "use_case": "Open a specific document for editing with persistent access"
+        },
+        {
+          "contract": "OpenMultipleDocuments()",
+          "input": "Array of MIME types",
+          "output": "List<URI> of selected files",
+          "use_case": "Let user pick multiple files at once"
+        },
+        {
+          "contract": "CreateDocument(mimeType)",
+          "input": "Suggested file name",
+          "output": "URI? of created file",
+          "use_case": "Create and save a new file in a location the user chooses"
+        },
+        {
+          "contract": "OpenDocumentTree()",
+          "input": "Initial URI hint (optional)",
+          "output": "URI? of selected directory tree",
+          "use_case": "Grant persistent read/write access to an entire folder"
+        },
+        {
+          "contract": "PickVisualMedia()",
+          "input": "PickVisualMediaRequest with media type",
+          "output": "URI? of selected photo or video",
+          "use_case": "Modern photo/video picker using the Android Photo Picker (API 33+)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "FileProvider — Sharing Files Between Apps",
+      "items": [
+        "FileProvider is a ContentProvider subclass that exposes private internal files to other apps via a content:// URI",
+        "Required for sharing files (e.g., sharing an image to WhatsApp) without granting world-readable permissions",
+        "Declare in AndroidManifest.xml inside <application>: <provider android:name=\"androidx.core.content.FileProvider\" android:authorities=\"${applicationId}.provider\" android:exported=\"false\" android:grantUriPermissions=\"true\" />",
+        "Create res/xml/file_paths.xml to define which directories the FileProvider can expose",
+        "Get a shareable URI: val uri = FileProvider.getUriForFile(context, \"${packageName}.provider\", file)",
+        "Grant the receiving app permission: intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)",
+        "Share via Intent: intent.setDataAndType(uri, \"image/jpeg\"); startActivity(Intent.createChooser(intent, \"Share\"))",
+        "Never share file:// URIs directly on API 24+ — it throws FileUriExposedException"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "file_paths.xml Path Types for FileProvider",
+      "rows": [
+        {
+          "tag": "<files-path>",
+          "maps_to": "context.filesDir",
+          "example": "<files-path name=\"my_files\" path=\".\" />"
+        },
+        {
+          "tag": "<cache-path>",
+          "maps_to": "context.cacheDir",
+          "example": "<cache-path name=\"my_cache\" path=\".\" />"
+        },
+        {
+          "tag": "<external-path>",
+          "maps_to": "Environment.getExternalStorageDirectory()",
+          "example": "<external-path name=\"external\" path=\".\" />"
+        },
+        {
+          "tag": "<external-files-path>",
+          "maps_to": "context.getExternalFilesDir(null)",
+          "example": "<external-files-path name=\"ext_files\" path=\".\" />"
+        },
+        {
+          "tag": "<external-cache-path>",
+          "maps_to": "context.externalCacheDir",
+          "example": "<external-cache-path name=\"ext_cache\" path=\".\" />"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Capturing Photos with the Camera",
+      "items": [
+        "Use TakePicture() ActivityResultContract for capturing a photo with the system camera app",
+        "Create a temporary file in cacheDir or external files dir to store the captured image",
+        "Get a FileProvider URI for the file: val photoUri = FileProvider.getUriForFile(context, authority, photoFile)",
+        "Launch the camera: takePictureLauncher.launch(photoUri)",
+        "The result callback receives a Boolean — true means the photo was saved successfully to the URI",
+        "Load the captured image: binding.imageView.setImageURI(photoUri) or decode with BitmapFactory",
+        "For video capture, use TakeVideo() contract which returns a Bitmap thumbnail; for full video, use CameraX",
+        "REQUEST_IMAGE_CAPTURE via Intent is the legacy approach — prefer ActivityResultContracts for modern code"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Storage Permissions by API Level",
+      "rows": [
+        {
+          "api_level": "API 28 and below",
+          "reading_external": "READ_EXTERNAL_STORAGE required",
+          "writing_external": "WRITE_EXTERNAL_STORAGE required",
+          "notes": "Broad file system access; permissions declared in manifest and requested at runtime"
+        },
+        {
+          "api_level": "API 29 (Android 10)",
+          "reading_external": "READ_EXTERNAL_STORAGE for other apps' files",
+          "writing_external": "No permission needed for own MediaStore contributions",
+          "notes": "Scoped Storage introduced; app-specific dirs need no permissions"
+        },
+        {
+          "api_level": "API 30 (Android 11)",
+          "reading_external": "READ_EXTERNAL_STORAGE or MANAGE_EXTERNAL_STORAGE (special)",
+          "writing_external": "MANAGE_EXTERNAL_STORAGE for broad access (requires Play Store approval)",
+          "notes": "Scoped Storage fully enforced; MANAGE_EXTERNAL_STORAGE for file manager apps only"
+        },
+        {
+          "api_level": "API 33 (Android 13)+",
+          "reading_external": "READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO (granular)",
+          "writing_external": "No permission for app's own MediaStore contributions",
+          "notes": "READ_EXTERNAL_STORAGE replaced by granular media permissions; Photo Picker available"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for File Storage",
+      "items": [
+        "Always perform file I/O on a background thread — use coroutines with Dispatchers.IO to avoid blocking the main thread",
+        "Use context.cacheDir for temporary files — the system cleans these up when storage is low",
+        "Delete temporary files explicitly after use — do not rely solely on the system cache cleanup",
+        "Use FileProvider instead of file:// URIs when sharing files with other apps",
+        "Prefer the Photo Picker (PickVisualMedia) over requesting READ_EXTERNAL_STORAGE for selecting media",
+        "Use the Storage Access Framework for opening user documents — avoids broad storage permissions",
+        "Always close streams in a finally block or use Kotlin's use { } extension to prevent resource leaks",
+        "Compress images before saving — use Bitmap.compress() with an appropriate quality setting to reduce file size"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common File Storage Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Performing file I/O on the main thread",
+          "fix": "Use withContext(Dispatchers.IO) { } in a coroutine for all file read and write operations"
+        },
+        {
+          "mistake": "Sharing files with file:// URI on API 24+",
+          "fix": "Use FileProvider.getUriForFile() to create a content:// URI and grant read permission via FLAG_GRANT_READ_URI_PERMISSION"
+        },
+        {
+          "mistake": "Requesting WRITE_EXTERNAL_STORAGE on API 29+",
+          "fix": "No write permission needed for app-specific external directories or MediaStore contributions on API 29+"
+        },
+        {
+          "mistake": "Not closing streams after use",
+          "fix": "Use Kotlin's use { } extension on InputStream and OutputStream — it closes the stream automatically"
+        },
+        {
+          "mistake": "Storing sensitive data in external storage",
+          "fix": "Keep sensitive files in internal storage (filesDir) — external storage is accessible to other apps on older APIs"
+        },
+        {
+          "mistake": "Hardcoding absolute file paths",
+          "fix": "Always build paths using context.filesDir, context.cacheDir, or Environment constants — never hardcode /sdcard/"
+        },
+        {
+          "mistake": "Loading large images directly into memory",
+          "fix": "Decode with BitmapFactory.Options inSampleSize to downsample large images; use Glide or Coil for image loading"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Android's file storage system is layered and permission-aware. Use internal storage (filesDir, cacheDir) for private app data with no permissions needed. Use external app-specific directories for larger files the user might access outside the app. Use MediaStore for media files that should appear in the gallery and be shared with other apps. Use the Storage Access Framework for user-driven document access without broad permissions. Always perform I/O on background threads with coroutines, use FileProvider for sharing, and prefer the modern Photo Picker and SAF APIs to avoid requesting broad storage permissions that increasingly restrictive Android versions no longer allow."
+    }
+  ]
+}

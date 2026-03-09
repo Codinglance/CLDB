@@ -1,0 +1,416 @@
+{
+  "title": "Testing Compose UI",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Compose UI Testing?",
+      "content": "Compose UI testing is the framework provided by Jetpack Compose for writing instrumented UI tests that interact with and assert on Compose-based interfaces. Unlike Espresso which operates on the View system, Compose testing uses a semantics tree — a parallel representation of the UI that exposes meaningful information about each composable for accessibility services and tests alike. Compose tests use ComposeTestRule to host composables in a test environment, find nodes using semantic matchers, perform actions, and assert state. Compose testing integrates seamlessly with JUnit 4, supports both full Activity-based testing and isolated composable testing, and provides built-in synchronization with Compose recomposition — no manual waits or IdlingResources needed for standard Compose state changes."
+    },
+    {
+      "type": "table",
+      "heading": "Compose Testing vs Espresso",
+      "rows": [
+        {
+          "aspect": "UI Framework",
+          "compose_testing": "Jetpack Compose — operates on the semantics tree",
+          "espresso": "View system — operates on the View hierarchy"
+        },
+        {
+          "aspect": "Node finding",
+          "compose_testing": "Semantic matchers — onNodeWithText(), onNodeWithContentDescription(), onNodeWithTag()",
+          "espresso": "ViewMatchers — withId(), withText(), withContentDescription()"
+        },
+        {
+          "aspect": "Synchronization",
+          "compose_testing": "Automatic — waits for recomposition and animations to complete",
+          "espresso": "Automatic for View system — needs IdlingResources for custom async"
+        },
+        {
+          "aspect": "Isolated component testing",
+          "compose_testing": "Yes — setContent { MyComposable() } to test any composable in isolation",
+          "espresso": "Partial — FragmentScenario for Fragments; full Activity needed for Views"
+        },
+        {
+          "aspect": "Test rule",
+          "compose_testing": "createComposeRule() or createAndroidComposeRule<Activity>()",
+          "espresso": "ActivityScenarioRule<Activity>"
+        },
+        {
+          "aspect": "Finding by ID",
+          "compose_testing": "No resource IDs in Compose — use testTag, text, or content description",
+          "espresso": "withId(R.id.viewId) — resource IDs available on all Views"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setting Up Compose Testing Dependencies",
+      "items": [
+        "Compose UI Test JUnit4: androidTestImplementation(\"androidx.compose.ui:ui-test-junit4:$composeVersion\")",
+        "Compose UI Test Manifest: debugImplementation(\"androidx.compose.ui:ui-test-manifest:$composeVersion\") — required for createComposeRule()",
+        "AndroidX Test JUnit extension: androidTestImplementation(\"androidx.test.ext:junit:1.x.x\")",
+        "AndroidX Test Runner: androidTestImplementation(\"androidx.test:runner:1.x.x\")",
+        "For Activity-hosted tests: androidTestImplementation(\"androidx.compose.ui:ui-test-junit4\") is sufficient",
+        "Hilt testing (if using Hilt): androidTestImplementation(\"com.google.dagger:hilt-android-testing:$hiltVersion\"); kaptAndroidTest(\"com.google.dagger:hilt-android-compiler:$hiltVersion\")",
+        "Configure test runner in build.gradle.kts: testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"",
+        "No need to add espresso-core for Compose-only tests — Compose testing is independent of Espresso"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "ComposeTestRule — The Test Host",
+      "content": "ComposeTestRule is the central JUnit rule for Compose tests. It provides a Compose environment to host your composables, the entry point for finding and interacting with nodes, and control over the clock for animation testing. There are two variants: createComposeRule() for testing composables in isolation without a real Activity (requires ui-test-manifest), and createAndroidComposeRule<MyActivity>() for testing composables within a specific Activity — useful when the composable depends on Activity-level state, themes, or navigation. Both variants automatically synchronize with Compose's recomposition and animation system."
+    },
+    {
+      "type": "bullet",
+      "heading": "createComposeRule vs createAndroidComposeRule",
+      "items": [
+        "createComposeRule() — hosts composables without a specific Activity; uses a blank ComponentActivity; best for isolated component testing",
+        "val composeTestRule = createComposeRule() — declare as a @get:Rule in the test class",
+        "Set content: composeTestRule.setContent { MyComposable(param = \"value\") }",
+        "createAndroidComposeRule<MainActivity>() — hosts composables inside a real MainActivity; access the Activity via composeTestRule.activity",
+        "Use createAndroidComposeRule when your composable requires: a specific theme applied in the Activity, navigation host, or Activity-scoped ViewModel",
+        "Access the activity: composeTestRule.activity.someMethod() — runs on the test thread",
+        "Run on main thread: composeTestRule.runOnUiThread { /* interact with activity */ }",
+        "Run on main thread with idle wait: composeTestRule.runOnIdle { /* assert state after idle */ }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Semantics Tree — How Compose Testing Works",
+      "rows": [
+        {
+          "concept": "Semantics Tree",
+          "description": "A parallel representation of the Compose UI that exposes meaningful properties — text, content description, role, state — used by both accessibility services and tests",
+          "example": "Every composable with a Modifier.semantics { } or built-in semantic properties contributes to the tree"
+        },
+        {
+          "concept": "Semantic Properties",
+          "description": "Properties attached to nodes in the semantics tree — text, contentDescription, role, isEnabled, isChecked, isFocused, testTag",
+          "example": "Text() composable automatically contributes its text; Button contributes role = Role.Button"
+        },
+        {
+          "concept": "testTag",
+          "description": "A custom string identifier attached to a composable via Modifier.testTag() — the Compose equivalent of a View resource ID for testing",
+          "example": "Modifier.testTag(\"submitButton\") — find with onNodeWithTag(\"submitButton\")"
+        },
+        {
+          "concept": "Merged vs Unmerged Tree",
+          "description": "The merged tree combines child semantics into parent nodes (as TalkBack sees it); the unmerged tree shows all nodes individually — tests use the merged tree by default",
+          "example": "A Button with a Text child merges the text into the button node — onNodeWithText() finds the button, not just the text"
+        },
+        {
+          "concept": "useUnmergedTree",
+          "description": "Pass useUnmergedTree = true to node finders to inspect the raw unmerged semantics tree — useful for testing individual children inside merged components",
+          "example": "onNodeWithText(\"Submit\", useUnmergedTree = true)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Finding Nodes — Semantic Matchers",
+      "items": [
+        "onNodeWithText(\"Submit\") — finds a node whose text exactly matches; use substring = true for partial match: onNodeWithText(\"Sub\", substring = true)",
+        "onNodeWithTag(\"submitButton\") — finds a node by its testTag — most reliable for nodes without visible text",
+        "onNodeWithContentDescription(\"Close dialog\") — finds a node by its content description — ideal for icon buttons",
+        "onNodeWithTag(\"list\").onChildren() — finds all children of a node",
+        "onNodeWithTag(\"list\").onChildAt(0) — finds the child at a specific index",
+        "onAllNodesWithText(\"Item\") — returns a list of all matching nodes — use for asserting count",
+        "onAllNodesWithTag(\"listItem\") — returns all nodes with the given testTag",
+        "onNode(hasText(\"Submit\") and hasClickAction()) — combine matchers with and / or / not operators",
+        "onRoot() — finds the root node of the semantics tree — useful for printing the tree for debugging",
+        "onNodeWithText(\"Submit\").assertExists() — asserts the node exists without checking other properties"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Semantic Matchers Reference",
+      "rows": [
+        {
+          "matcher": "hasText(text)",
+          "description": "Matches nodes whose text equals the given string",
+          "example": "onNode(hasText(\"Submit\"))"
+        },
+        {
+          "matcher": "hasTestTag(tag)",
+          "description": "Matches nodes with the specified testTag",
+          "example": "onNode(hasTestTag(\"loginButton\"))"
+        },
+        {
+          "matcher": "hasContentDescription(desc)",
+          "description": "Matches nodes with the specified content description",
+          "example": "onNode(hasContentDescription(\"Back\"))"
+        },
+        {
+          "matcher": "hasClickAction()",
+          "description": "Matches nodes that have a click action — buttons, clickable rows",
+          "example": "onNode(hasText(\"Item\") and hasClickAction())"
+        },
+        {
+          "matcher": "isDisplayed()",
+          "description": "Matches nodes that are currently visible on screen",
+          "example": "onNode(hasTestTag(\"dialog\")).assert(isDisplayed())"
+        },
+        {
+          "matcher": "isEnabled()",
+          "description": "Matches nodes that are currently enabled and interactive",
+          "example": "onNodeWithTag(\"submitButton\").assert(isEnabled())"
+        },
+        {
+          "matcher": "isNotEnabled()",
+          "description": "Matches nodes that are currently disabled",
+          "example": "onNodeWithTag(\"submitButton\").assert(isNotEnabled())"
+        },
+        {
+          "matcher": "isChecked()",
+          "description": "Matches nodes in a checked state — Checkbox, Switch, RadioButton",
+          "example": "onNodeWithTag(\"rememberMe\").assert(isChecked())"
+        },
+        {
+          "matcher": "isFocused()",
+          "description": "Matches the node that currently has input focus",
+          "example": "onNodeWithTag(\"emailField\").assert(isFocused())"
+        },
+        {
+          "matcher": "hasAnyChild(matcher)",
+          "description": "Matches nodes that have at least one child matching the given matcher",
+          "example": "onNode(hasAnyChild(hasText(\"Alice\")))"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Performing Actions",
+      "items": [
+        "performClick() — simulates a click on the node: onNodeWithTag(\"submitButton\").performClick()",
+        "performTextInput(text) — types text into a focused text field: onNodeWithTag(\"emailField\").performTextInput(\"user@example.com\")",
+        "performTextClearance() — clears all text from a text field: onNodeWithTag(\"searchField\").performTextClearance()",
+        "performTextReplacement(text) — clears and replaces text in a text field: onNodeWithTag(\"nameField\").performTextReplacement(\"Alice\")",
+        "performScrollTo() — scrolls the node into view inside a scrollable parent",
+        "performTouchInput { swipeLeft() } — performs raw touch gestures: swipeLeft(), swipeRight(), swipeUp(), swipeDown()",
+        "performTouchInput { click(position) } — clicks at a specific offset within the node",
+        "performSemanticsAction(SemanticsActions.Collapse) — triggers a semantic action like expand/collapse on a node",
+        "onNodeWithTag(\"lazyList\").performScrollToIndex(15) — scrolls a LazyColumn or LazyRow to a specific index",
+        "onNodeWithTag(\"lazyList\").performScrollToNode(hasText(\"Item 20\")) — scrolls until a matching node is visible"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Assertions Reference",
+      "rows": [
+        {
+          "assertion": "assertIsDisplayed()",
+          "description": "Asserts the node is currently visible on screen",
+          "example": "onNodeWithTag(\"dialog\").assertIsDisplayed()"
+        },
+        {
+          "assertion": "assertIsNotDisplayed()",
+          "description": "Asserts the node exists in the tree but is not visible",
+          "example": "onNodeWithTag(\"loadingSpinner\").assertIsNotDisplayed()"
+        },
+        {
+          "assertion": "assertExists()",
+          "description": "Asserts the node exists in the semantics tree — even if not visible",
+          "example": "onNodeWithTag(\"errorMessage\").assertExists()"
+        },
+        {
+          "assertion": "assertDoesNotExist()",
+          "description": "Asserts the node does not exist in the semantics tree at all",
+          "example": "onNodeWithTag(\"loadingSpinner\").assertDoesNotExist()"
+        },
+        {
+          "assertion": "assertTextEquals(text)",
+          "description": "Asserts the node's text exactly equals the given string",
+          "example": "onNodeWithTag(\"greetingText\").assertTextEquals(\"Hello, Alice!\")"
+        },
+        {
+          "assertion": "assertTextContains(text)",
+          "description": "Asserts the node's text contains the given substring",
+          "example": "onNodeWithTag(\"statusText\").assertTextContains(\"success\")"
+        },
+        {
+          "assertion": "assertIsEnabled()",
+          "description": "Asserts the node is currently enabled",
+          "example": "onNodeWithTag(\"submitButton\").assertIsEnabled()"
+        },
+        {
+          "assertion": "assertIsNotEnabled()",
+          "description": "Asserts the node is currently disabled",
+          "example": "onNodeWithTag(\"submitButton\").assertIsNotEnabled()"
+        },
+        {
+          "assertion": "assertIsOn() / assertIsOff()",
+          "description": "Asserts a toggleable node (Switch, Checkbox) is on or off",
+          "example": "onNodeWithTag(\"darkModeSwitch\").assertIsOn()"
+        },
+        {
+          "assertion": "assertCountEquals(count)",
+          "description": "Asserts the number of nodes matching the finder equals the given count",
+          "example": "onAllNodesWithTag(\"listItem\").assertCountEquals(5)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Adding testTags to Composables",
+      "items": [
+        "Apply testTag modifier: Modifier.testTag(\"submitButton\") on any composable",
+        "Define tag constants to avoid magic strings: object TestTags { const val SUBMIT_BUTTON = \"submitButton\"; const val EMAIL_FIELD = \"emailField\" }",
+        "Share TestTags object between main and test source sets by placing it in the main source set",
+        "Apply to LazyColumn items: LazyColumn { items(list) { item -> ItemRow(item, modifier = Modifier.testTag(\"item_${item.id}\")) } }",
+        "Enable semantics on non-interactive composables: Modifier.semantics { testTag = \"myTag\" }",
+        "Use meaningful tag names that describe the composable's role: \"loginButton\" not \"button1\"",
+        "Strip testTags from release builds if desired using a custom Modifier that applies testTag only in debug: if (BuildConfig.DEBUG) Modifier.testTag(tag) else Modifier",
+        "Combine testTag with other semantics: Modifier.testTag(\"emailField\").semantics { contentDescription = \"Email input field\" }"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Testing State Changes and Recomposition",
+      "content": "Compose tests automatically wait for the UI to be idle after each action before proceeding — this includes waiting for recompositions triggered by state changes. For state that changes over time (loading, success, error), you can assert intermediate states by calling actions and immediately asserting, since Compose test rule flushes the composition synchronously. For animations, Compose testing provides clock control via composeTestRule.mainClock to advance time manually. When testing composables that receive state via parameters, you can use mutableStateOf() in the test to drive state changes and assert the UI updates correctly."
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing State-Driven Composables",
+      "items": [
+        "Drive state changes from the test using mutableStateOf: var isLoading by mutableStateOf(true); composeTestRule.setContent { if (isLoading) LoadingSpinner() else ContentScreen() }",
+        "Change state and assert: isLoading = false; onNodeWithTag(\"contentScreen\").assertIsDisplayed()",
+        "Compose test rule automatically waits for recomposition after state change before the next assertion",
+        "Test loading state: onNodeWithTag(\"loadingSpinner\").assertIsDisplayed(); onNodeWithTag(\"content\").assertDoesNotExist()",
+        "Test success state after action: onNodeWithTag(\"submitButton\").performClick(); onNodeWithTag(\"successMessage\").assertIsDisplayed()",
+        "Test error state: onNodeWithTag(\"submitButton\").performClick(); onNodeWithTag(\"errorText\").assertTextContains(\"Invalid email\")",
+        "Use composeTestRule.waitUntil(timeoutMillis = 5000) { onNodeWithTag(\"content\").fetchSemanticsNode().config.contains(SemanticsProperties.Text) } for async state that arrives after a delay",
+        "Avoid Thread.sleep() — use waitUntil() or ensure synchronization through ViewModel test dispatchers instead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Testing with ViewModel Integration",
+      "rows": [
+        {
+          "aspect": "Providing a real ViewModel",
+          "description": "Use createAndroidComposeRule<MainActivity>() so the Activity provides the ViewModel through the normal Compose lifecycle",
+          "implementation": "val composeTestRule = createAndroidComposeRule<MainActivity>() — ViewModel is created by the Activity"
+        },
+        {
+          "aspect": "Providing a fake ViewModel",
+          "description": "Pass a fake or mock ViewModel state directly to the composable under test — preferred for isolated composable testing",
+          "implementation": "composeTestRule.setContent { HomeScreen(uiState = HomeUiState.Success(fakeData), onAction = { }) }"
+        },
+        {
+          "aspect": "Hilt ViewModel injection in tests",
+          "description": "Use HiltAndroidRule and @HiltAndroidTest to inject Hilt-provided ViewModels with test module overrides",
+          "implementation": "@HiltAndroidTest class HomeScreenTest { @get:Rule val hiltRule = HiltAndroidRule(this) }"
+        },
+        {
+          "aspect": "Replacing Hilt dependencies",
+          "description": "Use @UninstallModules and @BindValue or a test module to replace real repositories with fakes",
+          "implementation": "@UninstallModules(RepositoryModule::class) — then provide FakeRepository via @BindValue"
+        },
+        {
+          "aspect": "Testing navigation",
+          "description": "Use createAndroidComposeRule and verify destination by asserting composables that exist only on the target screen",
+          "implementation": "After click: onNodeWithTag(\"detailScreen\").assertIsDisplayed() to confirm navigation occurred"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing Navigation in Compose",
+      "items": [
+        "For simple navigation tests, assert the destination composable is displayed after triggering navigation action",
+        "Set up a full NavHost in setContent for end-to-end navigation tests: composeTestRule.setContent { AppNavHost(navController = rememberNavController()) }",
+        "Trigger navigation: onNodeWithTag(\"loginButton\").performClick() — then assert destination screen content is shown",
+        "Test back navigation: composeTestRule.activity.onBackPressedDispatcher.onBackPressed() — then assert previous screen content",
+        "For isolated navigation unit testing, pass a captured navController and verify navigate() was called using a fake NavController",
+        "Use TestNavHostController for more control: val navController = TestNavHostController(LocalContext.current); navController.navigatorProvider.addNavigator(ComposeNavigator())",
+        "Assert current route: assertThat(navController.currentBackStackEntry?.destination?.route).isEqualTo(\"home\")",
+        "Test deep link navigation: navController.handleDeepLink(Intent(Intent.ACTION_VIEW, Uri.parse(\"https://example.com/product/123\")))"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Animation Testing with Clock Control",
+      "rows": [
+        {
+          "concept": "Auto-advance clock",
+          "description": "By default Compose test rule auto-advances the clock so animations complete immediately — assertions see the final animated state",
+          "usage": "Default behavior — no configuration needed for most tests"
+        },
+        {
+          "concept": "mainClock.autoAdvance = false",
+          "description": "Disables automatic clock advancement — animations pause at their start state; you advance time manually",
+          "usage": "composeTestRule.mainClock.autoAdvance = false — use to assert intermediate animation states"
+        },
+        {
+          "concept": "mainClock.advanceTimeBy(ms)",
+          "description": "Advances the Compose clock by the specified number of milliseconds — triggers recomposition for the elapsed time",
+          "usage": "composeTestRule.mainClock.advanceTimeBy(300L) — advances 300ms into an animation"
+        },
+        {
+          "concept": "mainClock.advanceTimeUntilIdle()",
+          "description": "Advances the clock until there are no more pending recompositions or animations",
+          "usage": "composeTestRule.mainClock.advanceTimeUntilIdle() — completes all pending animations"
+        },
+        {
+          "concept": "waitForIdle()",
+          "description": "Waits for all recompositions and animations to complete — equivalent to advanceTimeUntilIdle with real-time waiting",
+          "usage": "composeTestRule.waitForIdle() — use after triggering state changes that cause animations"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Debugging Failing Compose Tests",
+      "items": [
+        "Print the semantics tree to Logcat: onRoot().printToLog(\"TAG\") — shows the full merged semantics tree for the current composition",
+        "Print unmerged tree: onRoot(useUnmergedTree = true).printToLog(\"TAG\") — shows all individual nodes before merging",
+        "Use assertExists() before performing actions to confirm the node is found before failing on the action",
+        "Check testTag spelling — testTag values are case-sensitive strings; a typo means the node is never found",
+        "If a node is not found, check if it is inside a scrollable container — use performScrollTo() or performScrollToNode() first",
+        "Use composeTestRule.waitUntil() for nodes that appear asynchronously after data loading",
+        "Check merged vs unmerged tree — if a node is not found in the merged tree, it may be accessible via useUnmergedTree = true",
+        "Use Layout Inspector in Android Studio to inspect the live semantics tree of a running Compose test"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Compose Testing Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Forgetting ui-test-manifest debugImplementation dependency",
+          "fix": "Add debugImplementation(\"androidx.compose.ui:ui-test-manifest\") — without it createComposeRule() crashes with 'No compose hierarchies found'"
+        },
+        {
+          "mistake": "Using magic strings for testTags",
+          "fix": "Define testTag values as constants in a shared TestTags object — prevents typos and makes refactoring easier"
+        },
+        {
+          "mistake": "Asserting on nodes inside a LazyColumn that are off screen",
+          "fix": "Call performScrollToIndex() or performScrollToNode() before asserting on items that may not be visible"
+        },
+        {
+          "mistake": "Not accounting for merged semantics",
+          "fix": "Nodes inside a Button or clickable Row are merged — if onNodeWithText() fails try the parent composable or use useUnmergedTree = true to inspect"
+        },
+        {
+          "mistake": "Using Thread.sleep() for async state",
+          "fix": "Use composeTestRule.waitUntil { condition } for async state; use MainDispatcherRule and fake repositories to make async operations synchronous in tests"
+        },
+        {
+          "mistake": "Testing composables without providing required dependencies",
+          "fix": "Wrap the composable in its required providers in setContent: CompositionLocalProvider, theme wrapper, or fake ViewModel state"
+        },
+        {
+          "mistake": "Not resetting state between tests",
+          "fix": "Each test gets a fresh composition via setContent — but shared ViewModel or repository state must be reset in @Before if using createAndroidComposeRule"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Compose UI testing uses the semantics tree to find, interact with, and assert on composables through a clean API of node finders, actions, and assertions. Use createComposeRule() for isolated composable testing and createAndroidComposeRule<Activity>() when the full Activity context is needed. Find nodes reliably using Modifier.testTag() with shared constants, combine semantic matchers with and/or/not for precise targeting, and use onAllNodesWithTag() for list item assertions. Perform actions with performClick(), performTextInput(), and performScrollToIndex(), then assert state with assertIsDisplayed(), assertTextEquals(), and assertDoesNotExist(). Control animation timing via mainClock for intermediate state testing, use waitUntil() for async state changes, and debug failures by printing the semantics tree with onRoot().printToLog(). Compose testing's built-in synchronization with recomposition eliminates the need for manual waits in the vast majority of test scenarios."
+    }
+  ]
+}

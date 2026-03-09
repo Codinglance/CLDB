@@ -1,0 +1,418 @@
+{
+  "title": "Fragments & Fragment Lifecycle",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is a Fragment?",
+      "content": "A Fragment is a reusable, self-contained portion of a UI that lives inside an Activity. Think of a Fragment as a modular sub-screen — it has its own layout, its own lifecycle, and its own logic, but it always requires a host Activity to exist. Fragments were introduced to allow Android apps to build flexible, multi-pane UIs that adapt to different screen sizes — for example, showing a list and detail panel side by side on a tablet, but as separate screens on a phone."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Fragments?",
+      "items": [
+        "Modularity — break complex screens into smaller, focused, reusable UI components",
+        "Adaptability — show multiple Fragments side by side on tablets, stacked on phones",
+        "Navigation — Jetpack Navigation Component uses Fragments as navigation destinations",
+        "Back stack management — FragmentManager maintains its own back stack for Fragment transactions",
+        "Shared ViewModel — Fragments within the same Activity can share a ViewModel for communication",
+        "Lifecycle awareness — Fragments have their own lifecycle separate from but tied to their host Activity",
+        "Dialog Fragments — show dialogs as Fragments for proper lifecycle and state management",
+        "Bottom navigation — each tab in a bottom navigation bar is typically backed by a Fragment"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Activity vs Fragment",
+      "rows": [
+        {
+          "aspect": "Definition",
+          "activity": "A full standalone screen managed by the Android OS",
+          "fragment": "A modular UI component hosted inside an Activity"
+        },
+        {
+          "aspect": "Lifecycle",
+          "activity": "Managed directly by the Android system",
+          "fragment": "Tied to the host Activity lifecycle with additional Fragment-specific callbacks"
+        },
+        {
+          "aspect": "Back stack",
+          "activity": "System-managed Activity task back stack",
+          "fragment": "FragmentManager-managed Fragment back stack"
+        },
+        {
+          "aspect": "XML declaration",
+          "activity": "Must be declared in AndroidManifest.xml",
+          "fragment": "No manifest declaration needed"
+        },
+        {
+          "aspect": "Multiple per screen",
+          "activity": "One Activity per screen (typically)",
+          "fragment": "Multiple Fragments can coexist on one screen"
+        },
+        {
+          "aspect": "Communication",
+          "activity": "Via Intents and extras",
+          "fragment": "Via shared ViewModel, Fragment Result API, or callbacks"
+        },
+        {
+          "aspect": "Modern recommendation",
+          "activity": "Use one Activity as host (Single Activity Architecture)",
+          "fragment": "Use Fragments for all screens with Navigation Component"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Fragment Lifecycle",
+      "content": "The Fragment lifecycle is more complex than the Activity lifecycle because a Fragment has two distinct lifecycles: the Fragment lifecycle itself and the separate View lifecycle. The Fragment object can exist without its View — for example, when placed on the back stack, the Fragment's View is destroyed but the Fragment instance remains alive. This distinction is critical for correct resource management, especially when observing LiveData or collecting Flows."
+    },
+    {
+      "type": "table",
+      "heading": "Fragment Lifecycle Callbacks",
+      "rows": [
+        {
+          "method": "onAttach(context)",
+          "called_when": "Fragment is attached to its host Activity",
+          "typical_use": "Get reference to host Activity or context; verify host implements required interface"
+        },
+        {
+          "method": "onCreate(savedInstanceState)",
+          "called_when": "Fragment is being created (View not yet created)",
+          "typical_use": "Initialize non-UI components: ViewModel, arguments, retained data"
+        },
+        {
+          "method": "onCreateView(inflater, container, savedInstanceState)",
+          "called_when": "Fragment creates its UI View hierarchy",
+          "typical_use": "Inflate and return the Fragment's layout using the inflater"
+        },
+        {
+          "method": "onViewCreated(view, savedInstanceState)",
+          "called_when": "View is fully created and ready",
+          "typical_use": "Set up UI: click listeners, RecyclerView, observe LiveData, collect Flow"
+        },
+        {
+          "method": "onViewStateRestored(savedInstanceState)",
+          "called_when": "Saved state has been restored into the View hierarchy",
+          "typical_use": "Restore any custom View state not handled automatically"
+        },
+        {
+          "method": "onStart()",
+          "called_when": "Fragment becomes visible to the user",
+          "typical_use": "Same as Activity onStart — register visible-state listeners"
+        },
+        {
+          "method": "onResume()",
+          "called_when": "Fragment is interactive and in the foreground",
+          "typical_use": "Resume camera, sensors, or media playback"
+        },
+        {
+          "method": "onPause()",
+          "called_when": "Fragment is losing focus but may still be visible",
+          "typical_use": "Pause playback, sensors, or ongoing animations"
+        },
+        {
+          "method": "onStop()",
+          "called_when": "Fragment is no longer visible",
+          "typical_use": "Stop background work tied to visibility"
+        },
+        {
+          "method": "onSaveInstanceState(outState)",
+          "called_when": "System saves Fragment state before destruction",
+          "typical_use": "Save lightweight UI state to the Bundle for restoration"
+        },
+        {
+          "method": "onDestroyView()",
+          "called_when": "Fragment's View is being destroyed (Fragment may still exist)",
+          "typical_use": "Clear View Binding reference to prevent memory leaks; stop View-related work"
+        },
+        {
+          "method": "onDestroy()",
+          "called_when": "Fragment itself is being destroyed",
+          "typical_use": "Release all remaining resources not tied to the View"
+        },
+        {
+          "method": "onDetach()",
+          "called_when": "Fragment is detached from its host Activity",
+          "typical_use": "Final cleanup; null out any Activity references"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Fragment Lifecycle vs View Lifecycle",
+      "items": [
+        "The Fragment object lifecycle: onAttach → onCreate → onCreateView → onViewCreated → ... → onDestroyView → onDestroy → onDetach",
+        "The Fragment's View lifecycle is shorter: created in onCreateView, destroyed in onDestroyView",
+        "viewLifecycleOwner is tied to the View lifecycle — use it (not 'this') for observing LiveData in Fragments",
+        "Using 'this' (Fragment) as LifecycleOwner for LiveData can cause multiple observer registrations after back stack pop",
+        "View Binding references must be nulled out in onDestroyView() to avoid memory leaks",
+        "The Fragment instance survives back stack — its View does not; onCreateView is called again on return",
+        "ViewModel survives both View and Fragment destruction — it lives as long as the host Activity"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Fragment Lifecycle vs Activity Lifecycle Comparison",
+      "rows": [
+        {
+          "stage": "Initialization",
+          "activity": "onCreate()",
+          "fragment": "onAttach() → onCreate() → onCreateView() → onViewCreated()"
+        },
+        {
+          "stage": "Visible",
+          "activity": "onStart()",
+          "fragment": "onStart()"
+        },
+        {
+          "stage": "Interactive",
+          "activity": "onResume()",
+          "fragment": "onResume()"
+        },
+        {
+          "stage": "Losing focus",
+          "activity": "onPause()",
+          "fragment": "onPause()"
+        },
+        {
+          "stage": "Hidden",
+          "activity": "onStop()",
+          "fragment": "onStop()"
+        },
+        {
+          "stage": "View cleanup",
+          "activity": "N/A (Activity has no separate view lifecycle)",
+          "fragment": "onDestroyView() — unique to Fragment"
+        },
+        {
+          "stage": "Destruction",
+          "activity": "onDestroy()",
+          "fragment": "onDestroy() → onDetach()"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Adding Fragments to an Activity",
+      "content": "There are two ways to add a Fragment to an Activity: statically in XML using the <fragment> tag (or <androidx.fragment.app.FragmentContainerView>), or dynamically at runtime using a FragmentTransaction. The static approach is simpler but inflexible. The dynamic approach using FragmentManager and FragmentTransaction is the standard modern pattern — it lets you add, replace, remove, and animate Fragments at runtime."
+    },
+    {
+      "type": "bullet",
+      "heading": "Dynamic Fragment Transactions",
+      "items": [
+        "Get the FragmentManager: supportFragmentManager (in Activity) or parentFragmentManager / childFragmentManager (in Fragment)",
+        "Begin a transaction: supportFragmentManager.beginTransaction()",
+        "add(containerId, fragment) — adds a Fragment to the container; existing Fragment stays in memory",
+        "replace(containerId, fragment) — replaces the current Fragment in the container with a new one",
+        "remove(fragment) — removes the Fragment from the container",
+        "hide(fragment) / show(fragment) — hides or shows a Fragment without destroying it",
+        "addToBackStack(name) — adds this transaction to the back stack so the user can press Back to reverse it",
+        "commit() — schedules the transaction asynchronously; use commitNow() for immediate synchronous execution",
+        "setCustomAnimations(enter, exit, popEnter, popExit) — adds enter/exit animations to the transition"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "add() vs replace() in Fragment Transactions",
+      "rows": [
+        {
+          "aspect": "Behavior",
+          "add": "Adds the new Fragment on top of any existing Fragment in the container",
+          "replace": "Removes the current Fragment and adds the new one in its place"
+        },
+        {
+          "aspect": "Existing Fragment",
+          "add": "Stays alive and visible beneath (if not covered)",
+          "replace": "Destroyed (onDestroyView called) unless added to back stack"
+        },
+        {
+          "aspect": "Back stack behavior",
+          "add": "Popping reverses the add — the new Fragment is removed",
+          "replace": "Popping re-creates the previous Fragment's View"
+        },
+        {
+          "aspect": "Memory",
+          "add": "Both Fragments stay in memory simultaneously",
+          "replace": "Previous Fragment's View is destroyed — more memory efficient"
+        },
+        {
+          "aspect": "Use case",
+          "add": "Overlaying Fragments (dialog-like), tab switching with hide/show",
+          "replace": "Standard screen navigation — the most common pattern"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Passing Data to Fragments — Arguments Bundle",
+      "items": [
+        "Never pass data to a Fragment via constructor parameters — the system recreates Fragments using a no-arg constructor",
+        "Use a Bundle arguments: val fragment = MyFragment().apply { arguments = bundleOf(\"userId\" to 42) }",
+        "bundleOf() is a Kotlin extension from androidx.core.os that creates a Bundle concisely",
+        "Read arguments inside the Fragment: val userId = arguments?.getInt(\"userId\") ?: 0",
+        "Define argument keys as constants in a companion object to avoid typos",
+        "Use a static factory method (newInstance) pattern to encapsulate argument creation",
+        "For type-safe argument passing, use the Jetpack Navigation Component's Safe Args plugin",
+        "Arguments survive configuration changes and process death — they are part of the Fragment's saved state"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Fragment Communication Approaches",
+      "rows": [
+        {
+          "approach": "Shared ViewModel",
+          "description": "Both Fragments get the same ViewModel scoped to the host Activity using activityViewModels()",
+          "best_for": "Sibling Fragments that need to share or react to the same data"
+        },
+        {
+          "approach": "Fragment Result API",
+          "description": "One Fragment sets a result with setFragmentResult(); another listens with setFragmentResultListener()",
+          "best_for": "One-time results from a child Fragment back to its parent (e.g., dialog selection)"
+        },
+        {
+          "approach": "Interface callback",
+          "description": "Fragment defines an interface; host Activity implements it; Fragment calls it via onAttach()",
+          "best_for": "Legacy pattern — replaced by ViewModel and Result API in modern code"
+        },
+        {
+          "approach": "Navigation Safe Args",
+          "description": "Pass typed arguments between Fragment destinations via the Navigation Component",
+          "best_for": "Passing data during screen navigation with type safety"
+        },
+        {
+          "approach": "Direct reference (avoid)",
+          "description": "Fragment holds a direct reference to another Fragment or Activity",
+          "best_for": "Never — causes tight coupling and potential memory leaks"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Fragment Result API",
+      "items": [
+        "The Fragment Result API is the modern, lifecycle-safe way to send results between Fragments",
+        "The sender calls: setFragmentResult(\"requestKey\", bundleOf(\"result\" to value))",
+        "The receiver registers a listener in onViewCreated(): setFragmentResultListener(\"requestKey\") { key, bundle -> }",
+        "The listener is automatically removed when the Fragment's View is destroyed — no manual cleanup needed",
+        "Results are delivered only when the recipient Fragment is at least in the STARTED state",
+        "If a result is set before the listener is registered, it is held and delivered once the listener is ready",
+        "Use it for dialog results, bottom sheet confirmations, or any child-to-parent Fragment communication"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "DialogFragment vs AlertDialog",
+      "rows": [
+        {
+          "aspect": "Lifecycle",
+          "dialog_fragment": "Fully lifecycle-aware — survives rotation without crashing",
+          "alert_dialog": "Not lifecycle-aware — dismissed on rotation, can cause window leaks"
+        },
+        {
+          "aspect": "State saving",
+          "dialog_fragment": "Automatically saves and restores dialog state",
+          "alert_dialog": "Must be recreated manually after configuration change"
+        },
+        {
+          "aspect": "Result passing",
+          "dialog_fragment": "Use Fragment Result API for clean decoupled results",
+          "alert_dialog": "Requires direct callback reference — can cause memory leaks"
+        },
+        {
+          "aspect": "Back stack",
+          "dialog_fragment": "Can be added to Fragment back stack",
+          "alert_dialog": "Not manageable via back stack"
+        },
+        {
+          "aspect": "Recommendation",
+          "dialog_fragment": "Always preferred for dialogs in modern Android",
+          "alert_dialog": "Only for very simple, transient dialogs with no state concerns"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "ViewBinding in Fragments — Avoiding Memory Leaks",
+      "items": [
+        "In Fragments, View Binding requires special handling because the View lifecycle is shorter than the Fragment lifecycle",
+        "Declare binding as nullable: private var _binding: FragmentHomeBinding? = null",
+        "Create a non-null accessor: private val binding get() = _binding!!",
+        "Inflate in onCreateView(): _binding = FragmentHomeBinding.inflate(inflater, container, false); return binding.root",
+        "Always null out the binding in onDestroyView(): _binding = null",
+        "Failing to null the binding in onDestroyView() causes a memory leak — the binding holds View references that should be released",
+        "Never access binding after onDestroyView() — the Views no longer exist and the reference is null"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "childFragmentManager vs parentFragmentManager vs supportFragmentManager",
+      "rows": [
+        {
+          "property": "supportFragmentManager",
+          "available_in": "Activity",
+          "manages": "Fragments directly hosted in the Activity's layout"
+        },
+        {
+          "property": "parentFragmentManager",
+          "available_in": "Fragment",
+          "manages": "The FragmentManager of the Fragment's direct parent (Activity or parent Fragment)"
+        },
+        {
+          "property": "childFragmentManager",
+          "available_in": "Fragment",
+          "manages": "Fragments nested inside this Fragment's own layout"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices for Fragments",
+      "items": [
+        "Adopt Single Activity Architecture — one host Activity with all screens as Fragments managed by Navigation Component",
+        "Always use viewLifecycleOwner when observing LiveData or collecting Flow inside a Fragment",
+        "Null out View Binding in onDestroyView() every time — this is a mandatory memory leak prevention step",
+        "Use the Fragment Result API instead of interface callbacks for Fragment-to-Fragment communication",
+        "Pass data via arguments Bundle or Safe Args — never via constructor parameters",
+        "Scope ViewModels to the Activity (activityViewModels()) when data must be shared between sibling Fragments",
+        "Prefer replace() over add() for navigation-style Fragment transactions to avoid stacking invisible Fragments",
+        "Use FragmentContainerView instead of FrameLayout as the Fragment host container in your Activity layout"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Fragment Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Passing data via Fragment constructor",
+          "fix": "Use arguments Bundle or Safe Args — system recreates Fragments with a no-arg constructor"
+        },
+        {
+          "mistake": "Using 'this' as LifecycleOwner for LiveData observation",
+          "fix": "Use viewLifecycleOwner — prevents stale observers accumulating after back stack returns"
+        },
+        {
+          "mistake": "Not nulling binding in onDestroyView()",
+          "fix": "Always set _binding = null in onDestroyView() to prevent View memory leaks"
+        },
+        {
+          "mistake": "Doing UI work in onCreate() instead of onViewCreated()",
+          "fix": "Access Views only in onViewCreated() or later — Views don't exist in onCreate()"
+        },
+        {
+          "mistake": "Using getActivity() without null check",
+          "fix": "Use requireActivity() if you're sure Fragment is attached, or check isAdded() first"
+        },
+        {
+          "mistake": "Calling commit() inside onSaveInstanceState()",
+          "fix": "Use commitAllowingStateLoss() if the transaction can safely be lost after state save"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Fragments are the modular building blocks of modern Android UI. Their dual lifecycle — Fragment lifecycle and View lifecycle — requires careful handling, especially around View Binding, LiveData observation, and data passing. Adopt the Single Activity Architecture with Jetpack Navigation Component, always use viewLifecycleOwner for UI observations, communicate via shared ViewModels and the Fragment Result API, and you will build Fragment-based apps that are robust, memory-efficient, and easy to maintain."
+    }
+  ]
+}

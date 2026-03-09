@@ -1,0 +1,349 @@
+{
+  "title": "Push Notifications with FCM",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Firebase Cloud Messaging?",
+      "content": "Firebase Cloud Messaging (FCM) is Google's cross-platform messaging solution for sending push notifications and data messages to Android, iOS, and web apps. FCM allows your server to send messages to individual devices, groups of devices, or topic subscribers — without maintaining persistent connections. Each Android device running your app receives a unique FCM registration token that your server uses to address messages. FCM messages come in two flavors: notification messages (handled automatically by the system when the app is in the background) and data messages (always delivered to your app's FirebaseMessagingService for custom handling). FCM is free, highly reliable, and deeply integrated with the Android platform."
+    },
+    {
+      "type": "table",
+      "heading": "FCM Message Types",
+      "rows": [
+        {
+          "type": "Notification Message",
+          "also_known_as": "Display message",
+          "foreground_handling": "Delivered to FirebaseMessagingService.onMessageReceived() — app handles display",
+          "background_handling": "System automatically displays the notification using the title and body from the payload",
+          "payload_key": "\"notification\": { \"title\": \"...\", \"body\": \"...\" }",
+          "use_case": "Simple alerts where default system display is acceptable"
+        },
+        {
+          "type": "Data Message",
+          "also_known_as": "Silent message",
+          "foreground_handling": "Delivered to FirebaseMessagingService.onMessageReceived() — app handles everything",
+          "background_handling": "Delivered to FirebaseMessagingService.onMessageReceived() — app handles everything",
+          "payload_key": "\"data\": { \"key\": \"value\", \"key2\": \"value2\" }",
+          "use_case": "Custom handling, silent sync triggers, full control over notification appearance"
+        },
+        {
+          "type": "Combined Message",
+          "also_known_as": "Notification + data",
+          "foreground_handling": "Delivered to onMessageReceived() — app handles both notification and data",
+          "background_handling": "System displays notification automatically; data extras delivered in the launch Intent",
+          "payload_key": "Both \"notification\" and \"data\" keys present",
+          "use_case": "Background auto-display with additional data payload for deep linking"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "FCM Setup Steps",
+      "items": [
+        "Step 1: Create a Firebase project at console.firebase.google.com and add your Android app",
+        "Step 2: Download google-services.json and place it in the app/ directory",
+        "Step 3: Add Google Services plugin to root build.gradle.kts: id(\"com.google.gms.google-services\") version \"4.4.x\" apply false",
+        "Step 4: Apply plugin in app build.gradle.kts: id(\"com.google.gms.google-services\")",
+        "Step 5: Add Firebase BOM and FCM dependency: implementation(platform(\"com.google.firebase:firebase-bom:33.x.x\")); implementation(\"com.google.firebase:firebase-messaging-ktx\")",
+        "Step 6: Create a class extending FirebaseMessagingService and override onMessageReceived() and onNewToken()",
+        "Step 7: Declare the service in AndroidManifest.xml with the MESSAGING_EVENT intent filter",
+        "Step 8: Request POST_NOTIFICATIONS permission on Android 13+ (API 33+) before showing notifications",
+        "Step 9: Create a NotificationChannel on API 26+ before displaying any notification",
+        "Step 10: Send the FCM registration token to your backend server from onNewToken()"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "FirebaseMessagingService",
+      "content": "FirebaseMessagingService is the central class for receiving FCM messages in your app. It extends Service and is declared in the manifest so the Firebase SDK can start it to deliver messages even when the app is not running. It has two key callbacks: onMessageReceived() which is called for all messages when the app is in the foreground, and for data-only messages in the background; and onNewToken() which is called whenever the device's FCM registration token is created or refreshed. The registration token is the unique identifier your backend uses to target push notifications to a specific device."
+    },
+    {
+      "type": "bullet",
+      "heading": "Implementing FirebaseMessagingService",
+      "items": [
+        "Extend FirebaseMessagingService: class MyFirebaseMessagingService : FirebaseMessagingService()",
+        "Override onMessageReceived(message: RemoteMessage): called when a message is received",
+        "Check for notification payload: message.notification?.title, message.notification?.body",
+        "Check for data payload: message.data[\"key\"]",
+        "Build and show a NotificationCompat notification manually from the data payload",
+        "Override onNewToken(token: String): called when the FCM token is created or refreshed",
+        "In onNewToken(), send the token to your backend: repository.updateFcmToken(token)",
+        "Also fetch the token proactively: FirebaseMessaging.getInstance().token.addOnSuccessListener { token -> sendToServer(token) }",
+        "Declare in manifest: <service android:name=\".MyFirebaseMessagingService\" android:exported=\"false\"><intent-filter><action android:name=\"com.google.firebase.MESSAGING_EVENT\" /></intent-filter></service>"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "RemoteMessage Properties",
+      "rows": [
+        {
+          "property": "message.messageId",
+          "type": "String?",
+          "description": "Unique ID for this message — use for deduplication"
+        },
+        {
+          "property": "message.from",
+          "type": "String?",
+          "description": "Sender ID or topic the message was sent to"
+        },
+        {
+          "property": "message.data",
+          "type": "Map<String, String>",
+          "description": "Key-value data payload — always available; all values are strings"
+        },
+        {
+          "property": "message.notification",
+          "type": "RemoteMessage.Notification?",
+          "description": "Notification payload — present only if the server included a notification object"
+        },
+        {
+          "property": "message.notification?.title",
+          "type": "String?",
+          "description": "Notification title from the server payload"
+        },
+        {
+          "property": "message.notification?.body",
+          "type": "String?",
+          "description": "Notification body text from the server payload"
+        },
+        {
+          "property": "message.notification?.imageUrl",
+          "type": "Uri?",
+          "description": "URL of an image to display in the notification — BigPictureStyle"
+        },
+        {
+          "property": "message.notification?.channelId",
+          "type": "String?",
+          "description": "Notification channel ID specified by the server — overrides default channel"
+        },
+        {
+          "property": "message.sentTime",
+          "type": "Long",
+          "description": "Unix timestamp (ms) when the message was sent from the server"
+        },
+        {
+          "property": "message.priority",
+          "type": "Int",
+          "description": "Message priority: PRIORITY_NORMAL or PRIORITY_HIGH — high priority wakes the device"
+        },
+        {
+          "property": "message.ttl",
+          "type": "Int",
+          "description": "Time-to-live in seconds — how long FCM stores the message if the device is offline"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Displaying Notifications",
+      "content": "When your app receives a data message or a foreground notification message, you must build and display the notification yourself using NotificationCompat.Builder. This gives you full control over the notification's appearance, behavior, and the action performed when the user taps it. For the notification to appear on Android 8.0+ (API 26+), it must be assigned to a NotificationChannel that was created before the notification is shown. On Android 13+ (API 33+), you must also request the POST_NOTIFICATIONS runtime permission before showing any notification."
+    },
+    {
+      "type": "bullet",
+      "heading": "Building and Showing a Notification",
+      "items": [
+        "Create NotificationChannel once (in Application.onCreate() or before showing first notification): val channel = NotificationChannel(CHANNEL_ID, \"Push Notifications\", NotificationManager.IMPORTANCE_HIGH)",
+        "Register channel: (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)",
+        "Create a PendingIntent for the tap action: val intent = Intent(this, MainActivity::class.java).apply { putExtra(\"deepLink\", data[\"link\"]) }; val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)",
+        "Build notification: val notification = NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification).setContentTitle(title).setContentText(body).setContentIntent(pendingIntent).setAutoCancel(true).build()",
+        "Show notification: NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)",
+        "Use unique notification IDs for different notification types; use the same ID to update an existing notification",
+        "setAutoCancel(true) — dismisses the notification when the user taps it",
+        "setPriority(NotificationCompat.PRIORITY_HIGH) — shows as a heads-up notification (floating banner)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "NotificationCompat.Builder Key Methods",
+      "rows": [
+        {
+          "method": "setSmallIcon(resId)",
+          "description": "Required — the icon shown in the status bar; must be a vector or monochrome drawable",
+          "example": ".setSmallIcon(R.drawable.ic_notification)"
+        },
+        {
+          "method": "setContentTitle(text)",
+          "description": "The bold title line of the notification",
+          "example": ".setContentTitle(\"New message\")"
+        },
+        {
+          "method": "setContentText(text)",
+          "description": "The body text line of the notification",
+          "example": ".setContentText(\"Alice sent you a message\")"
+        },
+        {
+          "method": "setLargeIcon(bitmap)",
+          "description": "Large image shown on the right side of the notification",
+          "example": ".setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.avatar))"
+        },
+        {
+          "method": "setStyle(style)",
+          "description": "Expands the notification: BigTextStyle for long text, BigPictureStyle for images, InboxStyle for multiple lines",
+          "example": ".setStyle(NotificationCompat.BigTextStyle().bigText(longMessage))"
+        },
+        {
+          "method": "setContentIntent(pendingIntent)",
+          "description": "Action triggered when the user taps the notification body",
+          "example": ".setContentIntent(openAppPendingIntent)"
+        },
+        {
+          "method": "addAction(icon, title, pendingIntent)",
+          "description": "Adds an action button below the notification content",
+          "example": ".addAction(R.drawable.ic_reply, \"Reply\", replyPendingIntent)"
+        },
+        {
+          "method": "setAutoCancel(true)",
+          "description": "Automatically dismisses the notification when tapped",
+          "example": ".setAutoCancel(true)"
+        },
+        {
+          "method": "setPriority(priority)",
+          "description": "PRIORITY_HIGH shows as heads-up; PRIORITY_DEFAULT is standard; PRIORITY_LOW has no sound",
+          "example": ".setPriority(NotificationCompat.PRIORITY_HIGH)"
+        },
+        {
+          "method": "setGroup(groupKey)",
+          "description": "Groups multiple notifications together under a single summary notification",
+          "example": ".setGroup(\"messages_group\")"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Notification Channels",
+      "items": [
+        "Required for all notifications on API 26+ — notifications without a channel are silently dropped",
+        "Create channels once — recreating an existing channel has no effect on its settings",
+        "Create in Application.onCreate() to ensure channels exist before any notification is shown",
+        "Importance levels: IMPORTANCE_HIGH (heads-up, sound), IMPORTANCE_DEFAULT (sound, no heads-up), IMPORTANCE_LOW (no sound), IMPORTANCE_MIN (no sound, collapsed)",
+        "Users can customize each channel's importance, sound, vibration, and lock screen visibility in device settings",
+        "Create multiple channels for different notification types: Messages, Promotions, Reminders, System alerts",
+        "val channel = NotificationChannel(CHANNEL_ID, \"Messages\", NotificationManager.IMPORTANCE_HIGH).apply { description = \"Direct messages from other users\" }",
+        "Delete obsolete channels: notificationManager.deleteNotificationChannel(oldChannelId)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "POST_NOTIFICATIONS Permission (Android 13+)",
+      "rows": [
+        {
+          "aspect": "Requirement",
+          "description": "Android 13 (API 33+) requires runtime permission android.permission.POST_NOTIFICATIONS before showing any notification"
+        },
+        {
+          "aspect": "Manifest declaration",
+          "description": "<uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\" /> — add to AndroidManifest.xml"
+        },
+        {
+          "aspect": "Runtime request",
+          "description": "Use ActivityResultContracts.RequestPermission() to request the permission at an appropriate moment in the user flow"
+        },
+        {
+          "aspect": "When to request",
+          "description": "Request when the user performs an action that implies they want notifications — after enabling a notification setting, not at app launch"
+        },
+        {
+          "aspect": "Denied handling",
+          "description": "If denied, notifications are silently blocked — show a rationale explaining the value of notifications before requesting"
+        },
+        {
+          "aspect": "Existing installs",
+          "description": "Apps already installed before the user upgraded to API 33 are granted the permission automatically during upgrade"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "FCM Topics and Device Groups",
+      "items": [
+        "Topics — subscribe a device to named topics; send one message to reach all subscribers: FirebaseMessaging.getInstance().subscribeToTopic(\"news\")",
+        "Unsubscribe: FirebaseMessaging.getInstance().unsubscribeFromTopic(\"news\")",
+        "Topics are useful for broadcast messages: breaking news, sports scores, app-wide announcements",
+        "Topic messages are sent server-side to: /topics/news as the FCM target",
+        "Device groups — group multiple FCM tokens (multiple devices owned by one user) to send to all their devices at once",
+        "Group messages are managed server-side by creating and managing group keys",
+        "Condition targeting — send to devices subscribed to a combination of topics: \"'sports' in topics && 'football' in topics\"",
+        "Topic delivery is best-effort — messages may be delayed or dropped if the device is offline for an extended period"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Handling Notification Tap — Deep Linking",
+      "rows": [
+        {
+          "scenario": "App in foreground",
+          "handling": "onMessageReceived() is called — build and show notification or handle silently; tap action determined by your PendingIntent"
+        },
+        {
+          "scenario": "App in background (notification message)",
+          "handling": "System shows notification automatically; user tap opens the app's launcher Activity; data extras from the combined payload are in the Intent"
+        },
+        {
+          "scenario": "App in background (data message)",
+          "handling": "onMessageReceived() is called on your service — build and show notification manually with your custom PendingIntent"
+        },
+        {
+          "scenario": "App killed (notification message)",
+          "handling": "System shows notification; user tap launches app; retrieve data from getIntent().extras in onCreate()"
+        },
+        {
+          "scenario": "Deep link from notification",
+          "handling": "In PendingIntent, pass the deep link URI: intent.putExtra(\"link\", message.data[\"link\"]); in MainActivity handle with NavController.handleDeepLink(intent)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "FCM Token Management",
+      "items": [
+        "Each app instance on a device gets a unique FCM registration token",
+        "Token can change when: app is uninstalled and reinstalled, user clears app data, app is restored on a new device",
+        "Always send the latest token to your backend — stale tokens cause delivery failures",
+        "Fetch current token: FirebaseMessaging.getInstance().token.addOnCompleteListener { task -> if (task.isSuccessful) sendToken(task.result) }",
+        "Refresh token: onNewToken(token) is called automatically when the token changes",
+        "Store the token server-side associated with the user's account for targeted messaging",
+        "On logout: delete the token server-side and optionally call FirebaseMessaging.getInstance().deleteToken() to get a new one on next login",
+        "Token deletion prevents notifications from being sent to a logged-out user's session"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common FCM Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Not creating a NotificationChannel before showing notifications on API 26+",
+          "fix": "Create all NotificationChannels in Application.onCreate() — notifications without a valid channel are silently dropped"
+        },
+        {
+          "mistake": "Not requesting POST_NOTIFICATIONS permission on Android 13+",
+          "fix": "Declare the permission in the manifest and request it at runtime — without it notifications are blocked on API 33+"
+        },
+        {
+          "mistake": "Relying on notification messages for critical data delivery in background",
+          "fix": "Use data messages for critical payloads — notification messages delivered to background apps bypass onMessageReceived()"
+        },
+        {
+          "mistake": "Not sending the FCM token to the backend on onNewToken()",
+          "fix": "Always update the backend with the latest token in onNewToken() — stale tokens cause silent delivery failures"
+        },
+        {
+          "mistake": "Performing long work in onMessageReceived()",
+          "fix": "onMessageReceived() runs on the main thread — immediately show the notification and enqueue WorkManager for any heavy processing"
+        },
+        {
+          "mistake": "Using the same notification ID for all notifications",
+          "fix": "Different notification types should have different IDs; using the same ID replaces the previous notification silently"
+        },
+        {
+          "mistake": "Not handling the notification tap intent in MainActivity",
+          "fix": "Check getIntent().extras or handleDeepLink() in onCreate() and onNewIntent() to handle notification taps when app is killed or backgrounded"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Firebase Cloud Messaging is the standard solution for delivering push notifications to Android devices. Set up the FirebaseMessagingService to handle incoming messages and token refreshes, create NotificationChannels for all notification categories, request the POST_NOTIFICATIONS permission on Android 13+, and build notifications manually with NotificationCompat.Builder for full control over appearance and tap behavior. Use data messages for critical payloads that must always reach onMessageReceived(), manage FCM tokens carefully by always syncing the latest token to your backend, and use topics for broadcast scenarios. Keep onMessageReceived() fast — show the notification immediately and delegate any heavy processing to WorkManager."
+    }
+  ]
+}

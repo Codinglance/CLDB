@@ -1,0 +1,389 @@
+{
+  "title": "Dependency Injection with Hilt",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Dependency Injection?",
+      "content": "Dependency Injection (DI) is a design pattern where an object receives its dependencies from an external source rather than creating them itself. Instead of writing val repository = UserRepository(UserDao(), ApiService()) inside a ViewModel, the ViewModel simply declares what it needs and a DI framework provides it automatically. This makes code more modular, testable, and maintainable — you can swap real implementations for fakes in tests without changing the classes being tested."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Dependency Injection?",
+      "items": [
+        "Testability — inject mock or fake dependencies in unit tests without changing production code",
+        "Loose coupling — classes declare what they need, not how to create it, reducing tight interdependencies",
+        "Single responsibility — classes focus on their own logic, not on constructing their dependencies",
+        "Reusability — the same dependency can be injected into multiple classes without duplication",
+        "Lifecycle management — DI frameworks manage object creation, scoping, and destruction automatically",
+        "Scalability — as the app grows, managing manual dependency graphs becomes unmanageable; DI scales cleanly",
+        "Centralized configuration — all dependency wiring is in one place (Hilt modules), making changes easy",
+        "Google recommendation — Hilt is the officially recommended DI solution for Android apps"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Manual DI vs Hilt DI",
+      "rows": [
+        {
+          "aspect": "Object creation",
+          "manual_di": "You manually construct and pass dependencies through constructors",
+          "hilt": "Hilt automatically constructs and injects dependencies at the right time"
+        },
+        {
+          "aspect": "Boilerplate",
+          "manual_di": "High — every class needs a factory or manual wiring",
+          "hilt": "Low — annotations handle wiring; Hilt generates the boilerplate"
+        },
+        {
+          "aspect": "Scoping",
+          "manual_di": "Manual — you manage object lifetime yourself",
+          "hilt": "Automatic — scopes like Singleton, ActivityScoped, ViewModelScoped handled by Hilt"
+        },
+        {
+          "aspect": "Testability",
+          "manual_di": "Possible but requires extra effort to swap dependencies",
+          "hilt": "First-class — use @TestInstallIn or hiltRule to replace modules in tests"
+        },
+        {
+          "aspect": "ViewModel injection",
+          "manual_di": "Requires a custom ViewModelFactory for every ViewModel",
+          "hilt": "Automatic — @HiltViewModel + @Inject constructor; no factory needed"
+        },
+        {
+          "aspect": "Scalability",
+          "manual_di": "Becomes unmanageable as the app grows",
+          "hilt": "Scales well — Hilt manages the entire dependency graph"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is Hilt?",
+      "content": "Hilt is Google's officially recommended dependency injection library for Android, built on top of Dagger 2. It reduces the boilerplate of Dagger by providing standard components and scopes that are pre-built for Android's component hierarchy — Application, Activity, Fragment, View, Service, and BroadcastReceiver. Hilt uses annotation processing to generate all the dependency wiring code at compile time, so there is no reflection overhead at runtime. The result is a DI setup that is type-safe, performant, and deeply integrated with Jetpack components like ViewModel and Navigation."
+    },
+    {
+      "type": "bullet",
+      "heading": "Setting Up Hilt",
+      "items": [
+        "Step 1: Add the Hilt Gradle plugin to the project-level build.gradle.kts plugins block: id(\"com.google.dagger.hilt.android\") version \"2.x\" apply false",
+        "Step 2: Apply the plugin in the app-level build.gradle.kts: id(\"com.google.dagger.hilt.android\")",
+        "Step 3: Enable kapt or KSP in the app-level build.gradle.kts: id(\"org.jetbrains.kotlin.kapt\") or id(\"com.google.devtools.ksp\")",
+        "Step 4: Add Hilt dependencies: implementation(\"com.google.dagger:hilt-android:2.x\") and kapt(\"com.google.dagger:hilt-android-compiler:2.x\")",
+        "Step 5: Annotate your Application class with @HiltAndroidApp",
+        "Step 6: Annotate Android classes that need injection with @AndroidEntryPoint (Activities, Fragments, Services)",
+        "Step 7: Annotate ViewModels with @HiltViewModel and use @Inject constructor",
+        "Step 8: Create @Module classes with @InstallIn to provide dependencies Hilt cannot construct automatically"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Hilt Annotations",
+      "rows": [
+        {
+          "annotation": "@HiltAndroidApp",
+          "target": "Application class",
+          "purpose": "Triggers Hilt code generation and sets up the application-level dependency container"
+        },
+        {
+          "annotation": "@AndroidEntryPoint",
+          "target": "Activity, Fragment, View, Service, BroadcastReceiver",
+          "purpose": "Enables field injection into the annotated Android class"
+        },
+        {
+          "annotation": "@HiltViewModel",
+          "target": "ViewModel class",
+          "purpose": "Marks the ViewModel for Hilt injection — no custom factory needed"
+        },
+        {
+          "annotation": "@Inject",
+          "target": "Constructor, field, or method",
+          "purpose": "Tells Hilt how to provide or inject a dependency"
+        },
+        {
+          "annotation": "@Module",
+          "target": "Object or class",
+          "purpose": "Contains provider methods (@Provides or @Binds) for dependencies Hilt cannot auto-create"
+        },
+        {
+          "annotation": "@InstallIn",
+          "target": "Module class",
+          "purpose": "Specifies which Hilt component this module's dependencies are available in"
+        },
+        {
+          "annotation": "@Provides",
+          "target": "Function inside a @Module",
+          "purpose": "Tells Hilt how to create an instance of a type it cannot construct (e.g., Retrofit, Room)"
+        },
+        {
+          "annotation": "@Binds",
+          "target": "Abstract function inside an abstract @Module",
+          "purpose": "Tells Hilt which implementation to use when an interface is injected"
+        },
+        {
+          "annotation": "@Singleton",
+          "target": "Class or @Provides function",
+          "purpose": "Scopes the dependency to the application lifetime — only one instance is ever created"
+        },
+        {
+          "annotation": "@ActivityScoped",
+          "target": "Class or @Provides function",
+          "purpose": "Scopes the dependency to the Activity lifetime — new instance per Activity"
+        },
+        {
+          "annotation": "@ViewModelScoped",
+          "target": "Class or @Provides function",
+          "purpose": "Scopes the dependency to the ViewModel lifetime — tied to the ViewModel's lifecycle"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "@Inject Constructor — The Simplest Way to Inject",
+      "content": "The simplest way to make a class injectable with Hilt is to annotate its constructor with @Inject. This tells Hilt that it knows how to create this class and can inject it wherever it is requested. Hilt will automatically provide all the parameters of the annotated constructor, as long as it also knows how to provide those parameter types. This works for plain Kotlin classes like Repositories and UseCases that have no special construction requirements."
+    },
+    {
+      "type": "bullet",
+      "heading": "@Inject Constructor — How It Works",
+      "items": [
+        "Annotate the primary constructor: class UserRepository @Inject constructor(private val dao: UserDao, private val api: UserApiService)",
+        "Hilt sees @Inject and knows it can create UserRepository by providing its constructor parameters",
+        "Hilt must also know how to provide UserDao and UserApiService — either via @Inject or @Provides in a module",
+        "No factory class is needed — Hilt generates all the wiring code at compile time",
+        "The class can then be injected into a ViewModel: class UserViewModel @Inject constructor(private val repo: UserRepository) : ViewModel()",
+        "Combined with @HiltViewModel: Hilt automatically wires the ViewModel factory — no ViewModelFactory needed",
+        "Only one @Inject constructor is allowed per class — multiple constructors are not supported",
+        "Fields and methods can also be annotated with @Inject for field injection in Android classes (Activities, Fragments)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Hilt Modules — @Provides vs @Binds",
+      "rows": [
+        {
+          "aspect": "Purpose",
+          "provides": "Manually provides an instance by writing the construction logic in the function body",
+          "binds": "Tells Hilt which concrete implementation to use for an interface — no function body"
+        },
+        {
+          "aspect": "When to use",
+          "provides": "For third-party classes (Retrofit, OkHttp, Room) that you cannot annotate with @Inject",
+          "binds": "When you have an interface and want to bind it to a concrete implementation"
+        },
+        {
+          "aspect": "Module type",
+          "provides": "Can be in a regular object or class annotated with @Module",
+          "binds": "Must be in an abstract class annotated with @Module"
+        },
+        {
+          "aspect": "Function body",
+          "provides": "Has a body that returns the constructed instance",
+          "binds": "Is abstract — no body; Hilt handles the binding"
+        },
+        {
+          "aspect": "Performance",
+          "provides": "Slightly more overhead — executes construction code",
+          "binds": "More efficient — Hilt resolves at compile time with no runtime cost"
+        },
+        {
+          "aspect": "Example",
+          "provides": "@Provides fun provideRetrofit(): Retrofit = Retrofit.Builder().baseUrl(BASE_URL).build()",
+          "binds": "@Binds abstract fun bindUserRepo(impl: UserRepositoryImpl): UserRepository"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Hilt Components and @InstallIn",
+      "items": [
+        "Every Hilt module must declare which component it is installed in using @InstallIn",
+        "SingletonComponent — dependencies live as long as the Application; use for app-wide singletons like Retrofit and Room",
+        "ActivityComponent — dependencies live as long as the Activity; new instance per Activity",
+        "FragmentComponent — dependencies live as long as the Fragment",
+        "ViewModelComponent — dependencies live as long as the ViewModel; use @ViewModelScoped here",
+        "ServiceComponent — dependencies scoped to a Service lifetime",
+        "ActivityRetainedComponent — survives configuration changes like a ViewModel; use for Activity-scoped singletons",
+        "ViewComponent — scoped to a single View; rarely used"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Hilt Component Hierarchy & Scopes",
+      "rows": [
+        {
+          "component": "SingletonComponent",
+          "scope_annotation": "@Singleton",
+          "lifetime": "Application lifetime",
+          "use_for": "Retrofit, OkHttpClient, Room Database, app-wide Repositories"
+        },
+        {
+          "component": "ActivityRetainedComponent",
+          "scope_annotation": "@ActivityRetainedScoped",
+          "lifetime": "Survives configuration changes",
+          "use_for": "Dependencies shared between Activity and ViewModel"
+        },
+        {
+          "component": "ViewModelComponent",
+          "scope_annotation": "@ViewModelScoped",
+          "lifetime": "ViewModel lifetime",
+          "use_for": "Dependencies used only within a specific ViewModel"
+        },
+        {
+          "component": "ActivityComponent",
+          "scope_annotation": "@ActivityScoped",
+          "lifetime": "Activity lifetime",
+          "use_for": "Dependencies tied to one Activity instance"
+        },
+        {
+          "component": "FragmentComponent",
+          "scope_annotation": "@FragmentScoped",
+          "lifetime": "Fragment lifetime",
+          "use_for": "Dependencies tied to one Fragment instance"
+        },
+        {
+          "component": "ServiceComponent",
+          "scope_annotation": "@ServiceScoped",
+          "lifetime": "Service lifetime",
+          "use_for": "Dependencies used only within a Service"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Providing Third-Party Dependencies with @Provides",
+      "content": "Many dependencies in an Android app come from third-party libraries like Retrofit, OkHttp, Gson, or Room. You cannot add @Inject to these classes because you don't own their source code. Instead, you write a Hilt Module — a class annotated with @Module and @InstallIn — that contains @Provides functions. Each @Provides function tells Hilt how to construct one dependency by writing the construction code explicitly. Hilt calls these functions when a dependency is needed and caches the result based on the declared scope."
+    },
+    {
+      "type": "bullet",
+      "heading": "Typical Hilt Module Structure",
+      "items": [
+        "@Module marks the class as a Hilt module containing dependency providers",
+        "@InstallIn(SingletonComponent::class) means all providers in this module live at the Application scope",
+        "@Provides @Singleton fun provideDatabase(@ApplicationContext context: Context): AppDatabase — provides Room database singleton",
+        "@Provides fun provideUserDao(db: AppDatabase): UserDao = db.userDao() — extracts DAO from the database",
+        "@Provides @Singleton fun provideRetrofit(): Retrofit — creates and configures the Retrofit instance",
+        "@Provides @Singleton fun provideApiService(retrofit: Retrofit): UserApiService = retrofit.create(UserApiService::class.java)",
+        "Hilt automatically resolves the parameter chain — provideApiService receives the Retrofit from provideRetrofit",
+        "Use @ApplicationContext to inject the application Context: fun provide(..., @ApplicationContext context: Context)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Hilt Qualifiers — @Named and Custom",
+      "rows": [
+        {
+          "qualifier": "@Named(\"qualifier\")",
+          "purpose": "Distinguishes between two providers that return the same type",
+          "example": "@Provides @Named(\"baseUrl\") fun provideBaseUrl(): String = \"https://api.example.com\""
+        },
+        {
+          "qualifier": "Custom @Qualifier",
+          "purpose": "Type-safe alternative to @Named — define a custom annotation instead of using a string",
+          "example": "@Qualifier @Retention(AnnotationRetention.BINARY) annotation class BaseUrl"
+        },
+        {
+          "qualifier": "@ApplicationContext",
+          "purpose": "Injects the application-level Context — available in SingletonComponent",
+          "example": "fun provideRepo(@ApplicationContext context: Context): UserRepository"
+        },
+        {
+          "qualifier": "@ActivityContext",
+          "purpose": "Injects the Activity-level Context — available in ActivityComponent and below",
+          "example": "fun provideAnalytics(@ActivityContext context: Context): AnalyticsHelper"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Field Injection in Android Classes",
+      "items": [
+        "Activities and Fragments annotated with @AndroidEntryPoint support field injection",
+        "Declare the field with @Inject: @Inject lateinit var analyticsHelper: AnalyticsHelper",
+        "Hilt injects the field before onCreate() in Activities and before onAttach() in Fragments",
+        "Field-injected properties must be var and lateinit — they cannot be val or have private visibility",
+        "Avoid field injection in plain Kotlin classes — use constructor injection instead for better testability",
+        "Field injection is necessary for Android framework classes (Activity, Fragment, BroadcastReceiver) where you don't control the constructor",
+        "Never inject into a non-@AndroidEntryPoint class using field injection — it will silently not work",
+        "ViewModel classes use constructor injection (@HiltViewModel + @Inject constructor) — not field injection"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Hilt with ViewModel — Complete Pattern",
+      "rows": [
+        {
+          "step": "1. Annotate ViewModel",
+          "description": "@HiltViewModel class UserViewModel @Inject constructor(private val repo: UserRepository) : ViewModel()"
+        },
+        {
+          "step": "2. Annotate Fragment",
+          "description": "@AndroidEntryPoint class UserFragment : Fragment()"
+        },
+        {
+          "step": "3. Use delegate in Fragment",
+          "description": "private val viewModel: UserViewModel by viewModels() — Hilt provides the factory automatically"
+        },
+        {
+          "step": "4. Make Repository injectable",
+          "description": "class UserRepository @Inject constructor(private val dao: UserDao, private val api: UserApiService)"
+        },
+        {
+          "step": "5. Provide DAO and ApiService",
+          "description": "@Module @InstallIn(SingletonComponent::class) object AppModule with @Provides functions for Room and Retrofit"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Hilt for Testing",
+      "items": [
+        "Use @HiltAndroidTest on test classes to enable Hilt injection in Android instrumented tests",
+        "Add HiltAndroidRule as a JUnit test rule to manage the Hilt component lifecycle in tests",
+        "Replace production modules with test modules using @TestInstallIn(components, replaces)",
+        "@TestInstallIn replaces the real module entirely — every test in the module gets the fake dependency",
+        "Use @UninstallModules on individual test classes to replace only specific tests' modules",
+        "For unit tests, use constructor injection — pass fake implementations directly in the constructor",
+        "FakeUserRepository implementing UserRepository interface can be injected in place of the real one",
+        "Hilt's testing support eliminates the need for manual dependency graphs in instrumented tests"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Hilt Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Forgetting @HiltAndroidApp on the Application class",
+          "fix": "Every Hilt app must have exactly one @HiltAndroidApp Application class — without it, Hilt won't work at all"
+        },
+        {
+          "mistake": "Forgetting @AndroidEntryPoint on Activity or Fragment",
+          "fix": "Without @AndroidEntryPoint, Hilt cannot inject into the class — @Inject fields will remain null"
+        },
+        {
+          "mistake": "Using @Inject on a field with private visibility",
+          "fix": "Field-injected properties must be at least package-private — use lateinit var without private"
+        },
+        {
+          "mistake": "Providing the same type twice without qualifiers",
+          "fix": "Use @Named or a custom @Qualifier annotation to distinguish between two providers of the same type"
+        },
+        {
+          "mistake": "Injecting Activity Context in a Singleton-scoped provider",
+          "fix": "Use @ApplicationContext for singleton-scoped providers — Activity context would leak the Activity"
+        },
+        {
+          "mistake": "Not scoping expensive objects like Retrofit or Room Database",
+          "fix": "Always annotate app-wide singletons with @Singleton — without it, a new instance is created on every injection"
+        },
+        {
+          "mistake": "Using @InstallIn(ActivityComponent) for a Repository used by a ViewModel",
+          "fix": "Repositories should be in SingletonComponent — ViewModels outlive Activities in configuration changes"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Hilt transforms Android dependency injection from a complex, boilerplate-heavy Dagger setup into a streamlined, annotation-driven system that integrates naturally with Android's component hierarchy. By annotating Application with @HiltAndroidApp, Android classes with @AndroidEntryPoint, and ViewModels with @HiltViewModel, and by providing third-party dependencies through @Module classes, Hilt automatically wires your entire dependency graph at compile time. The result is cleaner, more testable, and more maintainable code where every class receives exactly what it needs without knowing how it was created."
+    }
+  ]
+}

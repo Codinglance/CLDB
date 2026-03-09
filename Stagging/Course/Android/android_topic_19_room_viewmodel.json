@@ -1,0 +1,345 @@
+{
+  "title": "Room with ViewModel & Flow",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Combine Room, ViewModel, and Flow?",
+      "content": "Room, ViewModel, and Flow are the three pillars of a reactive, offline-capable Android data layer. Room stores data persistently on the device and emits changes as a Flow. The ViewModel holds and manages that Flow, transforming it into UI state that survives configuration changes. Flow carries data reactively from the database all the way up to the UI — a single database write anywhere in the app automatically propagates to every screen observing that data. Together, these three components implement the unidirectional data flow principle that makes Android apps predictable, testable, and maintainable."
+    },
+    {
+      "type": "bullet",
+      "heading": "The Full Reactive Data Pipeline",
+      "items": [
+        "Room DAO exposes Flow<List<Entity>> — emits a new list every time the underlying table changes",
+        "Repository collects the DAO's Flow, maps entities to domain models, and re-exposes as Flow<List<DomainModel>>",
+        "ViewModel collects the Repository Flow inside viewModelScope and converts to StateFlow for the UI",
+        "Fragment or Activity collects the ViewModel's StateFlow using repeatOnLifecycle for lifecycle safety",
+        "UI renders the latest state — new data in Room propagates automatically without manual refresh calls",
+        "User action in UI → ViewModel function call → Repository suspend function → Room DAO insert/update/delete → Room emits new Flow value → UI updates automatically",
+        "No manual notifyDataSetChanged() or LiveData.postValue() needed — the reactive chain handles everything",
+        "This pipeline works identically whether data comes from a local insert or a network sync that writes to Room"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Data Flow Through Each Layer",
+      "rows": [
+        {
+          "layer": "Room DAO",
+          "data_type": "Flow<List<UserEntity>>",
+          "operation": "Emits new list whenever the users table is modified",
+          "example": "@Query(\"SELECT * FROM users\") fun getAllUsers(): Flow<List<UserEntity>>"
+        },
+        {
+          "layer": "Repository",
+          "data_type": "Flow<List<User>>",
+          "operation": "Maps Room entities to domain models and re-exposes as Flow",
+          "example": "fun getUsers(): Flow<List<User>> = dao.getAllUsers().map { it.map(UserEntity::toDomain) }"
+        },
+        {
+          "layer": "ViewModel",
+          "data_type": "StateFlow<UiState>",
+          "operation": "Converts Repository Flow to StateFlow with loading/success/error state",
+          "example": "val uiState = repo.getUsers().map { UiState.Success(it) }.stateIn(viewModelScope, WhileSubscribed(5000), UiState.Loading)"
+        },
+        {
+          "layer": "Fragment / Activity",
+          "data_type": "UiState (collected from StateFlow)",
+          "operation": "Collects StateFlow safely with repeatOnLifecycle and renders UI",
+          "example": "repeatOnLifecycle(STARTED) { viewModel.uiState.collect { render(it) } }"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Room DAO with Flow",
+      "content": "When a Room DAO function returns Flow instead of a plain value or suspend function, Room automatically tracks the underlying database table and emits a new value through the Flow every time that table changes. This means you write to the database once — through an insert, update, or delete — and every active Flow collector receives the updated data automatically. Flow-returning DAO functions are not suspend functions — they return immediately with a cold Flow that begins emitting when collected."
+    },
+    {
+      "type": "bullet",
+      "heading": "Room DAO Flow Patterns",
+      "items": [
+        "Observe all rows: @Query(\"SELECT * FROM users ORDER BY name ASC\") fun getAllUsers(): Flow<List<UserEntity>>",
+        "Observe a single row: @Query(\"SELECT * FROM users WHERE id = :id\") fun getUserById(id: Int): Flow<UserEntity?>",
+        "Observe filtered results: @Query(\"SELECT * FROM users WHERE isActive = 1\") fun getActiveUsers(): Flow<List<UserEntity>>",
+        "Observe count: @Query(\"SELECT COUNT(*) FROM users\") fun getUserCount(): Flow<Int>",
+        "Flow-returning functions are NOT suspend — they return immediately with a cold Flow",
+        "The Flow emits on Room's query executor thread — collect it safely on any thread",
+        "Each subscriber to the same Flow gets independent emissions — Room tracks all active subscriptions",
+        "When the observed table has no rows, Flow emits an empty list — it does not complete or error"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "suspend fun vs Flow in Room DAO",
+      "rows": [
+        {
+          "aspect": "Operation type",
+          "suspend_fun": "One-shot — executes once and returns a result",
+          "flow": "Continuous — emits results whenever the data changes"
+        },
+        {
+          "aspect": "Use for",
+          "suspend_fun": "Insert, Update, Delete, one-time reads",
+          "flow": "Observing data that changes over time — SELECT queries"
+        },
+        {
+          "aspect": "Called from",
+          "suspend_fun": "viewModelScope.launch { } or another coroutine",
+          "flow": "Collected in viewModelScope or converted to StateFlow"
+        },
+        {
+          "aspect": "Auto-updates",
+          "suspend_fun": "No — must be called again to get updated data",
+          "flow": "Yes — automatically emits when table changes"
+        },
+        {
+          "aspect": "Example",
+          "suspend_fun": "suspend fun insertUser(user: UserEntity)",
+          "flow": "fun getAllUsers(): Flow<List<UserEntity>>"
+        },
+        {
+          "aspect": "Return value",
+          "suspend_fun": "Long, Int, Unit, or nullable entity",
+          "flow": "Flow<List<T>>, Flow<T?>, Flow<Int>"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Repository Layer — Mapping and Exposing Flow",
+      "content": "The Repository sits between the Room DAO and the ViewModel. It receives raw Room entities from the DAO's Flow and maps them to clean domain model objects before exposing them upward. The Repository also handles one-shot write operations as suspend functions — insert, update, and delete — which the ViewModel calls from viewModelScope. This ensures the ViewModel never directly interacts with Room, making it easier to test and swap implementations."
+    },
+    {
+      "type": "bullet",
+      "heading": "Repository Implementation Pattern",
+      "items": [
+        "Inject DAO via constructor: class UserRepository @Inject constructor(private val dao: UserDao)",
+        "Expose read Flow with mapping: fun getUsers(): Flow<List<User>> = dao.getAllUsers().map { list -> list.map { it.toDomain() } }",
+        "Expose suspend write functions: suspend fun insertUser(user: User) { dao.insert(user.toEntity()) }",
+        "suspend fun updateUser(user: User) { dao.update(user.toEntity()) }",
+        "suspend fun deleteUser(user: User) { dao.delete(user.toEntity()) }",
+        "Wrap network sync in the Repository: suspend fun syncFromNetwork() { val remote = api.getUsers(); dao.insertAll(remote.map { it.toEntity() }) }",
+        "Handle errors with try-catch or Result wrapper — expose clean error state to the ViewModel",
+        "Define mapping extension functions in a separate mapper file: fun UserEntity.toDomain(): User = User(id, name, email)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ViewModel — Converting Flow to StateFlow",
+      "rows": [
+        {
+          "pattern": "stateIn() — basic conversion",
+          "code_description": "val users = repo.getUsers().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())",
+          "notes": "Converts cold Flow to hot StateFlow; WhileSubscribed(5000) keeps upstream active 5s after last collector"
+        },
+        {
+          "pattern": "map to UiState before stateIn()",
+          "code_description": "val uiState = repo.getUsers().map<List<User>, UiState> { UiState.Success(it) }.stateIn(viewModelScope, WhileSubscribed(5000), UiState.Loading)",
+          "notes": "Wraps data in a sealed UiState class to handle loading, success, and error in the UI"
+        },
+        {
+          "pattern": "combine multiple Flows",
+          "code_description": "val uiState = combine(repo.getUsers(), repo.getCategories()) { users, cats -> UiState.Success(users, cats) }.stateIn(...)",
+          "notes": "Merges two Flows — emits a new combined value whenever either source emits"
+        },
+        {
+          "pattern": "flatMapLatest for dependent queries",
+          "code_description": "val filteredUsers = searchQuery.flatMapLatest { query -> repo.searchUsers(query) }.stateIn(...)",
+          "notes": "Cancels previous collection and switches to new Flow when searchQuery changes"
+        },
+        {
+          "pattern": "catch errors before stateIn()",
+          "code_description": "val uiState = repo.getUsers().map { UiState.Success(it) }.catch { emit(UiState.Error(it.message)) }.stateIn(...)",
+          "notes": "Catches exceptions in the Flow pipeline and converts to error UI state"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "SharingStarted Strategies for stateIn()",
+      "items": [
+        "SharingStarted.WhileSubscribed(5000) — starts upstream when first collector appears; stops 5 seconds after last collector disappears",
+        "The 5000ms timeout prevents restarting the upstream Flow for quick configuration changes like screen rotation",
+        "SharingStarted.Eagerly — starts upstream immediately when StateFlow is created; never stops",
+        "SharingStarted.Lazily — starts upstream when first collector appears; never stops after that",
+        "WhileSubscribed() is the recommended strategy for ViewModels — it balances resource efficiency with responsiveness",
+        "Without the timeout: WhileSubscribed() would restart the database query on every screen rotation",
+        "The initial value in stateIn() is what the UI sees before the first emission — use Loading state or empty list",
+        "Always provide a meaningful initial value — null initial values require null checks throughout the UI"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Write Operations — ViewModel to Room",
+      "rows": [
+        {
+          "operation": "Insert",
+          "viewmodel_code": "fun addUser(user: User) { viewModelScope.launch { repository.insertUser(user) } }",
+          "notes": "After insert, the Flow from getAllUsers() automatically emits the updated list"
+        },
+        {
+          "operation": "Update",
+          "viewmodel_code": "fun updateUser(user: User) { viewModelScope.launch { repository.updateUser(user) } }",
+          "notes": "Room detects the table change and re-emits the updated list through active Flows"
+        },
+        {
+          "operation": "Delete",
+          "viewmodel_code": "fun deleteUser(user: User) { viewModelScope.launch { repository.deleteUser(user) } }",
+          "notes": "The deleted item disappears from the Flow emission automatically"
+        },
+        {
+          "operation": "Delete by ID",
+          "viewmodel_code": "fun deleteUserById(id: Int) { viewModelScope.launch { repository.deleteById(id) } }",
+          "notes": "Use @Query(\"DELETE FROM users WHERE id = :id\") suspend fun deleteById(id: Int) in DAO"
+        },
+        {
+          "operation": "Insert or Replace (upsert)",
+          "viewmodel_code": "fun saveUser(user: User) { viewModelScope.launch { repository.upsertUser(user) } }",
+          "notes": "Use @Insert(onConflict = OnConflictStrategy.REPLACE) for upsert behavior"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Collecting StateFlow Safely in the Fragment",
+      "items": [
+        "Use repeatOnLifecycle(Lifecycle.State.STARTED) to collect StateFlow only when the Fragment is visible",
+        "Never collect in onCreate() — use onViewCreated() where the View is ready to render",
+        "Pattern: viewLifecycleOwner.lifecycleScope.launch { repeatOnLifecycle(STARTED) { viewModel.uiState.collect { render(it) } } }",
+        "repeatOnLifecycle automatically cancels collection when the lifecycle drops below STARTED and restarts when it rises again",
+        "Avoid collectAsState() — that is for Jetpack Compose; use repeatOnLifecycle in traditional View-based Fragments",
+        "Handle each UiState subtype in a when block: when(state) { is UiState.Loading -> ...; is UiState.Success -> ...; is UiState.Error -> ... }",
+        "Use multiple collect calls inside the same repeatOnLifecycle block for multiple StateFlows",
+        "Never use lifecycleScope.launch { flow.collect { } } without repeatOnLifecycle — it keeps collecting even when the Fragment is in the background"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complete Room + ViewModel + Flow Example — Step by Step",
+      "rows": [
+        {
+          "step": "1. Room Entity",
+          "description": "@Entity(tableName = \"users\") data class UserEntity(@PrimaryKey(autoGenerate = true) val id: Int = 0, val name: String, val email: String)"
+        },
+        {
+          "step": "2. Room DAO",
+          "description": "@Dao interface UserDao { @Query(\"SELECT * FROM users\") fun getAllUsers(): Flow<List<UserEntity>>; @Insert suspend fun insert(user: UserEntity) }"
+        },
+        {
+          "step": "3. Domain Model",
+          "description": "data class User(val id: Int, val name: String, val email: String)"
+        },
+        {
+          "step": "4. Mapper",
+          "description": "fun UserEntity.toDomain() = User(id, name, email); fun User.toEntity() = UserEntity(id, name, email)"
+        },
+        {
+          "step": "5. Repository",
+          "description": "class UserRepository @Inject constructor(private val dao: UserDao) { fun getUsers() = dao.getAllUsers().map { it.map(UserEntity::toDomain) }; suspend fun addUser(user: User) = dao.insert(user.toEntity()) }"
+        },
+        {
+          "step": "6. ViewModel",
+          "description": "@HiltViewModel class UserViewModel @Inject constructor(private val repo: UserRepository) : ViewModel() { val uiState = repo.getUsers().map { UiState.Success(it) }.catch { emit(UiState.Error(it.message ?: \"\")) }.stateIn(viewModelScope, WhileSubscribed(5000), UiState.Loading); fun addUser(user: User) { viewModelScope.launch { repo.addUser(user) } } }"
+        },
+        {
+          "step": "7. Fragment",
+          "description": "viewLifecycleOwner.lifecycleScope.launch { repeatOnLifecycle(STARTED) { viewModel.uiState.collect { state -> when(state) { is UiState.Loading -> showLoading(); is UiState.Success -> adapter.submitList(state.users); is UiState.Error -> showError(state.message) } } } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Advanced Flow Operators in ViewModel",
+      "items": [
+        "map { } — transforms each emission: repo.getUsers().map { list -> list.filter { it.isActive } }",
+        "combine(flowA, flowB) { a, b -> } — merges two Flows into one — emits when either source emits",
+        "flatMapLatest { } — switches to a new Flow based on the latest emission — ideal for search queries",
+        "debounce(300) — waits 300ms after the last emission before passing it downstream — prevents rapid re-queries on every keystroke",
+        "distinctUntilChanged() — only emits when the value actually changes — prevents redundant UI updates",
+        "filter { } — only passes emissions that satisfy a predicate",
+        "onEach { } — performs a side effect on each emission without transforming the value — useful for logging",
+        "catch { } — intercepts exceptions in the Flow pipeline and handles or transforms them"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Search with Room and Flow — Reactive Query Pattern",
+      "rows": [
+        {
+          "step": "1. DAO search query",
+          "description": "@Query(\"SELECT * FROM users WHERE name LIKE '%' || :query || '%'\") fun searchUsers(query: String): Flow<List<UserEntity>>"
+        },
+        {
+          "step": "2. Repository method",
+          "description": "fun searchUsers(query: String): Flow<List<User>> = dao.searchUsers(query).map { it.map(UserEntity::toDomain) }"
+        },
+        {
+          "step": "3. ViewModel search state",
+          "description": "private val _searchQuery = MutableStateFlow(\"\"); val searchResults = _searchQuery.debounce(300).flatMapLatest { repo.searchUsers(it) }.stateIn(viewModelScope, WhileSubscribed(5000), emptyList())"
+        },
+        {
+          "step": "4. ViewModel update function",
+          "description": "fun onSearchQueryChanged(query: String) { _searchQuery.value = query }"
+        },
+        {
+          "step": "5. Fragment wiring",
+          "description": "searchEditText.doAfterTextChanged { viewModel.onSearchQueryChanged(it.toString()) }; collect searchResults StateFlow and submit to adapter"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing Room with ViewModel and Flow",
+      "items": [
+        "Use an in-memory Room database for tests: Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()",
+        "In-memory databases are fast — no disk I/O — and are automatically destroyed when the test process ends",
+        "Use runTest { } from kotlinx-coroutines-test for testing suspend functions and Flow collection",
+        "Collect Flow values in tests: val results = dao.getAllUsers().first() — first() returns the first emission and cancels",
+        "Insert test data before asserting: dao.insert(UserEntity(name = \"Alice\", email = \"alice@test.com\"))",
+        "Use Turbine library for advanced Flow testing: flow.test { assertEquals(expected, awaitItem()) }",
+        "For ViewModel tests, use FakeUserRepository that returns predefined test data",
+        "Use TestCoroutineDispatcher or StandardTestDispatcher to control coroutine timing in tests"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Room + Flow + ViewModel Mistakes",
+      "rows": [
+        {
+          "mistake": "Collecting Flow in lifecycleScope without repeatOnLifecycle",
+          "fix": "Always wrap collection in repeatOnLifecycle(STARTED) — prevents collecting while Fragment is in background"
+        },
+        {
+          "mistake": "Using Eagerly or Lazily for stateIn() in ViewModel",
+          "fix": "Use WhileSubscribed(5000) — Eagerly wastes resources; Lazily never stops the upstream"
+        },
+        {
+          "mistake": "Calling suspend DAO functions from the main thread directly",
+          "fix": "Always call suspend functions from viewModelScope.launch or another coroutine scope"
+        },
+        {
+          "mistake": "Not mapping Room entities to domain models in Repository",
+          "fix": "Map entities before exposing from Repository — never leak @Entity classes to ViewModel or UI"
+        },
+        {
+          "mistake": "Re-triggering data load in onViewCreated() every time",
+          "fix": "StateFlow from stateIn() already holds the latest value — no need to re-trigger; ViewModel survives rotation"
+        },
+        {
+          "mistake": "Using Flow instead of suspend for write operations",
+          "fix": "Insert, update, and delete are one-shot — use suspend functions; only use Flow for SELECT queries"
+        },
+        {
+          "mistake": "Not providing an initial value to stateIn()",
+          "fix": "Always provide UiState.Loading or emptyList() — the UI needs something to render before first emission"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Combining Room, ViewModel, and Flow creates a fully reactive, lifecycle-aware data pipeline that is the cornerstone of modern Android architecture. Room emits database changes as Flow, the Repository maps and exposes them cleanly, the ViewModel converts them to StateFlow with WhileSubscribed for efficient lifecycle management, and the Fragment collects them safely with repeatOnLifecycle. Write operations flow the other direction — UI events trigger ViewModel functions that launch coroutines calling Repository suspend functions that write to Room, automatically triggering Flow emissions that update the UI. This clean, unidirectional pipeline requires no manual refresh logic and is testable at every layer."
+    }
+  ]
+}

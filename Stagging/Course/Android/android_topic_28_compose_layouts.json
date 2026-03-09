@@ -1,0 +1,480 @@
+{
+  "title": "Compose Layouts & Modifiers",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "How Compose Layouts Work",
+      "content": "Compose measures and places UI elements through a single-pass layout system that is fundamentally different from the View system's multi-pass measurement. Every composable is given a set of constraints by its parent — minimum and maximum width and height — and must measure itself and its children within those constraints, then report its own size back to the parent. Because each node is measured only once, Compose's layout system is inherently efficient and avoids the exponential slowdown that deeply nested Views could cause in the old system. Understanding constraints, alignment, and arrangement is the key to building precise, responsive layouts in Compose."
+    },
+    {
+      "type": "bullet",
+      "heading": "Layout System Fundamentals",
+      "items": [
+        "Constraints — every composable receives min/max width and height from its parent; it must fit within these bounds",
+        "Measure — a composable measures all its children first, then determines its own size",
+        "Place — after measuring, the parent places each child at a specific offset within its bounds",
+        "Single-pass — each child is measured exactly once — no double measurement like the old View system",
+        "Intrinsic measurements — use IntrinsicSize.Min and IntrinsicSize.Max when you need to size based on children's natural sizes before placing",
+        "Tight constraints — parent forces an exact size on the child (min == max); child cannot choose its own size",
+        "Loose constraints — parent gives a range; child can choose any size within that range",
+        "Unbounded constraints — parent imposes no maximum (e.g., inside a ScrollColumn); child can be as large as it wants"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Layout Composables",
+      "rows": [
+        {
+          "composable": "Column",
+          "description": "Arranges children vertically one after another",
+          "key_params": "verticalArrangement, horizontalAlignment, modifier"
+        },
+        {
+          "composable": "Row",
+          "description": "Arranges children horizontally one after another",
+          "key_params": "horizontalArrangement, verticalAlignment, modifier"
+        },
+        {
+          "composable": "Box",
+          "description": "Stacks children on top of each other; last child is on top",
+          "key_params": "contentAlignment, modifier"
+        },
+        {
+          "composable": "LazyColumn",
+          "description": "Vertically scrollable list that only composes visible items — equivalent to RecyclerView",
+          "key_params": "state, contentPadding, verticalArrangement, modifier"
+        },
+        {
+          "composable": "LazyRow",
+          "description": "Horizontally scrollable list that only composes visible items",
+          "key_params": "state, contentPadding, horizontalArrangement, modifier"
+        },
+        {
+          "composable": "LazyVerticalGrid",
+          "description": "Vertically scrollable grid of items — fixed column count or adaptive sizing",
+          "key_params": "columns = GridCells.Fixed(2) or GridCells.Adaptive(minSize)"
+        },
+        {
+          "composable": "LazyVerticalStaggeredGrid",
+          "description": "Pinterest-style staggered grid with items of varying heights",
+          "key_params": "columns = StaggeredGridCells.Fixed(2)"
+        },
+        {
+          "composable": "FlowRow",
+          "description": "Wraps children to the next line when they overflow — like CSS flexbox wrap",
+          "key_params": "horizontalArrangement, verticalArrangement, maxItemsInEachRow"
+        },
+        {
+          "composable": "FlowColumn",
+          "description": "Wraps children to the next column when they overflow vertically",
+          "key_params": "verticalArrangement, horizontalArrangement, maxItemsInEachColumn"
+        },
+        {
+          "composable": "ConstraintLayout",
+          "description": "Positions children relative to each other using constraints — available via separate dependency",
+          "key_params": "constraintSet or inline createRefs() and constrainAs()"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Column and Row — Arrangement and Alignment",
+      "content": "Column and Row are the workhorses of Compose layouts. Column arranges children vertically and Row arranges them horizontally. Both accept an arrangement parameter that controls how children are distributed along the main axis (vertical for Column, horizontal for Row) and an alignment parameter that controls how children are positioned along the cross axis. Getting these two parameters right is the key to achieving most common layout patterns without needing a more complex layout composable."
+    },
+    {
+      "type": "table",
+      "heading": "Arrangement Options",
+      "rows": [
+        {
+          "arrangement": "Arrangement.Top / Start",
+          "axis": "Column (vertical) / Row (horizontal)",
+          "description": "Places children at the top or start with no extra space — default for Column and Row",
+          "example": "Column(verticalArrangement = Arrangement.Top)"
+        },
+        {
+          "arrangement": "Arrangement.Bottom / End",
+          "axis": "Column / Row",
+          "description": "Places children at the bottom or end of the container",
+          "example": "Column(verticalArrangement = Arrangement.Bottom)"
+        },
+        {
+          "arrangement": "Arrangement.Center",
+          "axis": "Both",
+          "description": "Centers all children in the middle of the main axis",
+          "example": "Row(horizontalArrangement = Arrangement.Center)"
+        },
+        {
+          "arrangement": "Arrangement.SpaceBetween",
+          "axis": "Both",
+          "description": "Equal space between children; no space at the edges",
+          "example": "Row(horizontalArrangement = Arrangement.SpaceBetween)"
+        },
+        {
+          "arrangement": "Arrangement.SpaceAround",
+          "axis": "Both",
+          "description": "Equal space around each child — half space at edges, full space between",
+          "example": "Column(verticalArrangement = Arrangement.SpaceAround)"
+        },
+        {
+          "arrangement": "Arrangement.SpaceEvenly",
+          "axis": "Both",
+          "description": "Equal space between and around all children — equal at edges and between",
+          "example": "Row(horizontalArrangement = Arrangement.SpaceEvenly)"
+        },
+        {
+          "arrangement": "Arrangement.spacedBy(dp)",
+          "axis": "Both",
+          "description": "Fixed gap of specified dp between each child — most commonly used arrangement",
+          "example": "Column(verticalArrangement = Arrangement.spacedBy(8.dp))"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Alignment Options",
+      "rows": [
+        {
+          "alignment": "Alignment.CenterHorizontally",
+          "used_in": "Column (horizontalAlignment)",
+          "description": "Centers each child horizontally within the Column",
+          "example": "Column(horizontalAlignment = Alignment.CenterHorizontally)"
+        },
+        {
+          "alignment": "Alignment.Start",
+          "used_in": "Column (horizontalAlignment)",
+          "description": "Aligns each child to the start edge of the Column",
+          "example": "Column(horizontalAlignment = Alignment.Start)"
+        },
+        {
+          "alignment": "Alignment.End",
+          "used_in": "Column (horizontalAlignment)",
+          "description": "Aligns each child to the end edge of the Column",
+          "example": "Column(horizontalAlignment = Alignment.End)"
+        },
+        {
+          "alignment": "Alignment.CenterVertically",
+          "used_in": "Row (verticalAlignment)",
+          "description": "Centers each child vertically within the Row — most commonly needed Row alignment",
+          "example": "Row(verticalAlignment = Alignment.CenterVertically)"
+        },
+        {
+          "alignment": "Alignment.Top",
+          "used_in": "Row (verticalAlignment)",
+          "description": "Aligns each child to the top of the Row",
+          "example": "Row(verticalAlignment = Alignment.Top)"
+        },
+        {
+          "alignment": "Alignment.Bottom",
+          "used_in": "Row (verticalAlignment)",
+          "description": "Aligns each child to the bottom of the Row",
+          "example": "Row(verticalAlignment = Alignment.Bottom)"
+        },
+        {
+          "alignment": "Alignment.Center",
+          "used_in": "Box (contentAlignment)",
+          "description": "Centers the Box's content both horizontally and vertically",
+          "example": "Box(contentAlignment = Alignment.Center)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Modifier System — Deep Dive",
+      "content": "Modifiers are the primary mechanism for controlling a composable's size, appearance, behavior, and interaction. They form an ordered chain of transformations — each modifier wraps around the composable and the modifiers that come after it. This means modifier order is critical: Modifier.padding(16.dp).clickable { } is different from Modifier.clickable { }.padding(16.dp) because padding and click target area are determined by position in the chain. Every composable should accept a Modifier parameter with a default of Modifier to allow callers to customize it."
+    },
+    {
+      "type": "bullet",
+      "heading": "Size Modifiers",
+      "items": [
+        "Modifier.fillMaxSize() — expands to fill all available space (both width and height)",
+        "Modifier.fillMaxWidth() — expands to fill the full available width",
+        "Modifier.fillMaxHeight() — expands to fill the full available height",
+        "Modifier.fillMaxWidth(0.5f) — fills 50% of the available width — fraction parameter (0.0 to 1.0)",
+        "Modifier.size(dp) — sets exact square size",
+        "Modifier.size(width = dp, height = dp) — sets exact width and height independently",
+        "Modifier.width(dp) — sets exact width; height determined by content",
+        "Modifier.height(dp) — sets exact height; width determined by content",
+        "Modifier.widthIn(min = dp, max = dp) — constrains width to a range",
+        "Modifier.heightIn(min = dp, max = dp) — constrains height to a range",
+        "Modifier.wrapContentSize() — sizes the composable to exactly fit its content",
+        "Modifier.defaultMinSize(minWidth, minHeight) — sets minimum size without overriding larger constraints"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Padding and Spacing Modifiers",
+      "rows": [
+        {
+          "modifier": "Modifier.padding(all)",
+          "description": "Adds equal padding on all four sides",
+          "example": "Modifier.padding(16.dp)"
+        },
+        {
+          "modifier": "Modifier.padding(horizontal, vertical)",
+          "description": "Sets horizontal (start+end) and vertical (top+bottom) padding separately",
+          "example": "Modifier.padding(horizontal = 16.dp, vertical = 8.dp)"
+        },
+        {
+          "modifier": "Modifier.padding(start, top, end, bottom)",
+          "description": "Sets each side independently using named parameters",
+          "example": "Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 0.dp)"
+        },
+        {
+          "modifier": "Modifier.padding(PaddingValues)",
+          "description": "Applies padding from a PaddingValues object — used with Scaffold's content padding",
+          "example": "Modifier.padding(paddingValues)"
+        },
+        {
+          "modifier": "Spacer(Modifier.height(dp))",
+          "description": "Inserts vertical empty space between composables in a Column",
+          "example": "Spacer(modifier = Modifier.height(16.dp))"
+        },
+        {
+          "modifier": "Spacer(Modifier.width(dp))",
+          "description": "Inserts horizontal empty space between composables in a Row",
+          "example": "Spacer(modifier = Modifier.width(8.dp))"
+        },
+        {
+          "modifier": "Spacer(Modifier.weight(1f))",
+          "description": "Flexible spacer that pushes adjacent items to opposite ends of a Row or Column",
+          "example": "Row { Text(\"Left\"); Spacer(Modifier.weight(1f)); Text(\"Right\") }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Visual and Background Modifiers",
+      "items": [
+        "Modifier.background(color) — fills composable area with a solid color",
+        "Modifier.background(color, shape = RoundedCornerShape(8.dp)) — solid color with rounded corners",
+        "Modifier.background(brush) — fills with a gradient: Brush.horizontalGradient(listOf(Color.Red, Color.Blue))",
+        "Modifier.clip(shape) — clips the composable's content to the given shape",
+        "Modifier.clip(CircleShape) — circular clip — use for profile photos",
+        "Modifier.clip(RoundedCornerShape(8.dp)) — rounded corners clip",
+        "Modifier.border(width, color, shape) — draws a border; shape must match clip shape for correct appearance",
+        "Modifier.shadow(elevation, shape) — draws a Material elevation shadow",
+        "Modifier.alpha(fraction) — sets opacity from 0.0 (invisible) to 1.0 (fully visible)",
+        "Modifier.graphicsLayer { rotationZ = 45f } — applies 2D/3D graphics transformations (rotation, scale, translation)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Interaction and Behavior Modifiers",
+      "rows": [
+        {
+          "modifier": "Modifier.clickable { }",
+          "description": "Makes the composable respond to click events; shows ripple effect by default",
+          "example": "Modifier.clickable { viewModel.onItemClick(item) }"
+        },
+        {
+          "modifier": "Modifier.clickable(enabled, onClick)",
+          "description": "Clickable with enabled/disabled state control",
+          "example": "Modifier.clickable(enabled = isEnabled) { handleClick() }"
+        },
+        {
+          "modifier": "Modifier.combinedClickable",
+          "description": "Supports single click, long click, and double click",
+          "example": "Modifier.combinedClickable(onClick = { }, onLongClick = { })"
+        },
+        {
+          "modifier": "Modifier.selectable",
+          "description": "For mutually exclusive selection — radio button behavior",
+          "example": "Modifier.selectable(selected = isSelected, onClick = { onSelect() })"
+        },
+        {
+          "modifier": "Modifier.toggleable",
+          "description": "For toggle on/off behavior — checkbox-like",
+          "example": "Modifier.toggleable(value = isChecked, onValueChange = { isChecked = it })"
+        },
+        {
+          "modifier": "Modifier.scrollable",
+          "description": "Low-level scroll behavior — prefer verticalScroll() or horizontalScroll()",
+          "example": "Modifier.scrollable(state, Orientation.Vertical)"
+        },
+        {
+          "modifier": "Modifier.verticalScroll(state)",
+          "description": "Makes a Column scrollable vertically — use rememberScrollState()",
+          "example": "Column(modifier = Modifier.verticalScroll(rememberScrollState()))"
+        },
+        {
+          "modifier": "Modifier.horizontalScroll(state)",
+          "description": "Makes a Row scrollable horizontally",
+          "example": "Row(modifier = Modifier.horizontalScroll(rememberScrollState()))"
+        },
+        {
+          "modifier": "Modifier.focusable()",
+          "description": "Makes the composable focusable for keyboard and accessibility navigation",
+          "example": "Modifier.focusable()"
+        },
+        {
+          "modifier": "Modifier.semantics { }",
+          "description": "Adds accessibility semantics — role, content description, state descriptions",
+          "example": "Modifier.semantics { role = Role.Button; contentDescription = \"Submit form\" }"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Weight Modifier in Row and Column",
+      "content": "The weight modifier is a scope-specific modifier available only inside Row and Column. It distributes remaining space proportionally among weighted children after unweighted children have been measured and placed. A child with weight(2f) receives twice the remaining space as a child with weight(1f). This is the Compose equivalent of layout_weight in LinearLayout and is essential for building flexible, proportional layouts."
+    },
+    {
+      "type": "bullet",
+      "heading": "weight Modifier Patterns",
+      "items": [
+        "Row { Text(\"Label\", Modifier.weight(1f)); TextField(Modifier.weight(2f)) } — label takes 1/3, field takes 2/3",
+        "Column { Header(); Content(Modifier.weight(1f)); Footer() } — header and footer are fixed; content fills remaining space",
+        "Equal distribution: Row { items.forEach { Text(it, Modifier.weight(1f)) } } — all items equal width",
+        "weight(fill = false) — the composable is weighted but not forced to fill its allotted space",
+        "weight only works directly inside RowScope and ColumnScope — not in Box or nested layouts",
+        "Weighted children are measured after all non-weighted children — non-weighted items get their natural size first",
+        "Combining weight with fillMaxWidth causes an exception — weight already controls the size; do not combine",
+        "Use Spacer(Modifier.weight(1f)) to push remaining items to one end of a Row or Column"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "LazyColumn and LazyRow — List DSL",
+      "rows": [
+        {
+          "api": "items(list)",
+          "description": "Renders each item in a list",
+          "example": "items(userList) { user -> UserCard(user) }"
+        },
+        {
+          "api": "items(list, key = { it.id })",
+          "description": "Renders list with stable keys — enables smooth add/remove animations and correct scroll preservation",
+          "example": "items(userList, key = { it.id }) { user -> UserCard(user) }"
+        },
+        {
+          "api": "itemsIndexed(list)",
+          "description": "Renders each item with its index",
+          "example": "itemsIndexed(list) { index, item -> Text(\"$index: ${item.name}\") }"
+        },
+        {
+          "api": "item { }",
+          "description": "Renders a single item — for headers, footers, or separators",
+          "example": "item { SectionHeader(\"Top Users\") }"
+        },
+        {
+          "api": "stickyHeader { }",
+          "description": "Renders a header that sticks to the top as the user scrolls past its section",
+          "example": "stickyHeader { AlphabetHeader(letter) }"
+        },
+        {
+          "api": "contentPadding",
+          "description": "Adds padding inside the scroll container without clipping scroll content at the edges",
+          "example": "LazyColumn(contentPadding = PaddingValues(16.dp))"
+        },
+        {
+          "api": "verticalArrangement = Arrangement.spacedBy(dp)",
+          "description": "Adds equal spacing between each list item",
+          "example": "LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp))"
+        },
+        {
+          "api": "state = rememberLazyListState()",
+          "description": "Remembers scroll position; use to programmatically scroll or read scroll offset",
+          "example": "val listState = rememberLazyListState(); LazyColumn(state = listState)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Box — Overlapping and Z-Ordering",
+      "items": [
+        "Box stacks children on top of each other — last child in the lambda renders on top",
+        "contentAlignment = Alignment.Center — centers all children by default",
+        "Alignment.TopStart, TopCenter, TopEnd, CenterStart, Center, CenterEnd, BottomStart, BottomCenter, BottomEnd — all nine positions available",
+        "Modifier.align(Alignment.X) inside Box — overrides contentAlignment for a specific child",
+        "Use Box for overlay patterns: loading spinner over content, badge over icon, floating button over list",
+        "Example: Box { AsyncImage(...); if (isLoading) CircularProgressIndicator(Modifier.align(Center)) }",
+        "Box is not scrollable — wrap it in ScrollState if content may exceed bounds",
+        "For stacking with explicit Z ordering: use Modifier.zIndex(float) to control draw order"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Scaffold Layout Structure",
+      "rows": [
+        {
+          "slot": "topBar",
+          "description": "Top app bar — typically TopAppBar or CenterAlignedTopAppBar",
+          "example": "topBar = { TopAppBar(title = { Text(\"Screen\") }, navigationIcon = { BackButton() }) }"
+        },
+        {
+          "slot": "bottomBar",
+          "description": "Bottom navigation or action bar",
+          "example": "bottomBar = { NavigationBar { NavigationBarItem(...) } }"
+        },
+        {
+          "slot": "floatingActionButton",
+          "description": "FAB positioned at the bottom-end corner by default",
+          "example": "floatingActionButton = { FloatingActionButton(onClick = { }) { Icon(Icons.Default.Add, null) } }"
+        },
+        {
+          "slot": "snackbarHost",
+          "description": "Host for displaying Snackbars — use SnackbarHostState for programmatic control",
+          "example": "snackbarHost = { SnackbarHost(snackbarHostState) }"
+        },
+        {
+          "slot": "content",
+          "description": "Main content lambda receives PaddingValues — MUST apply to content modifier",
+          "example": "content = { padding -> LazyColumn(Modifier.padding(padding)) { ... } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Custom Layout with Layout Composable",
+      "items": [
+        "Use the Layout composable for custom measurement and placement that Column, Row, and Box cannot achieve",
+        "Layout(content = { children composables }) { measurables, constraints -> measurePolicy }",
+        "Measure each child: val placeables = measurables.map { it.measure(constraints) }",
+        "Calculate your own size from the children's measured sizes",
+        "layout(width, height) { placeables.forEach { it.placeRelative(x, y) } } — place each child at its position",
+        "placeRelative() respects RTL layout direction; place() uses absolute coordinates",
+        "Use SubcomposeLayout for cases where the measurement of one child depends on the measured size of another",
+        "Custom layouts are rare — most UI can be built with Column, Row, Box, and the weight modifier"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Layout Mistakes to Avoid",
+      "rows": [
+        {
+          "mistake": "Nesting multiple scrollable containers (Column inside LazyColumn)",
+          "fix": "Never put a verticalScroll Column inside a LazyColumn — they conflict; use LazyColumn items() for all content"
+        },
+        {
+          "mistake": "Using fillMaxSize() on an item inside LazyColumn",
+          "fix": "LazyColumn has infinite height — use fillMaxWidth() on items; fillMaxSize() causes a crash"
+        },
+        {
+          "mistake": "Not applying Scaffold's padding to the content",
+          "fix": "Always apply PaddingValues from Scaffold's content lambda: Modifier.padding(paddingValues) or content is hidden behind bars"
+        },
+        {
+          "mistake": "Using hardcoded pixel values instead of dp",
+          "fix": "Always use dp for layout dimensions — pixel values are density-dependent and break on different screen densities"
+        },
+        {
+          "mistake": "Not passing Modifier as a parameter in custom composables",
+          "fix": "Always accept a modifier: Modifier = Modifier parameter in custom composables to allow callers to customize layout"
+        },
+        {
+          "mistake": "Using weight modifier outside Row or Column",
+          "fix": "weight is a scope-specific modifier — it only works as a direct child of Row or Column"
+        },
+        {
+          "mistake": "Forgetting key parameter in LazyColumn items",
+          "fix": "Always provide key = { item.id } for list items — enables correct animations and preserves scroll state on list updates"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Compose's layout system is built on a powerful but simple constraint-based model where each composable is measured once and placed by its parent. Column, Row, and Box cover the vast majority of layout needs — with Arrangement and Alignment parameters handling distribution and positioning, the weight modifier for proportional sizing, and Modifier chains for all visual styling, size, padding, and interaction behavior. LazyColumn and LazyRow efficiently handle large lists with their DSL-based item APIs. Scaffold provides the standard Material screen structure. For the rare cases where these primitives are insufficient, the Layout composable offers full control over measurement and placement."
+    }
+  ]
+}

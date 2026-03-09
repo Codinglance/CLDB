@@ -1,0 +1,433 @@
+{
+  "title": "Publishing to Google Play Store",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Overview of the Publishing Process",
+      "content": "Publishing an Android app to Google Play Store is a multi-step process that involves creating a developer account, preparing your app for release, building and signing a release artifact, creating a store listing, and rolling out to users through a structured release track system. Google Play uses Android App Bundles (AAB) as the required upload format for new apps — Google's servers then generate optimized APKs tailored to each device's screen density, CPU architecture, and language. The Play Console is Google's web-based dashboard for managing every aspect of your app's presence on Google Play — from release management and store listings to crash reports, ratings, revenue, and policy compliance. A well-prepared release takes time but ensures a smooth review process and a positive first impression for users."
+    },
+    {
+      "type": "table",
+      "heading": "Publishing Process Overview",
+      "rows": [
+        {
+          "step": "1",
+          "phase": "Account Setup",
+          "tasks": "Create Google Play Developer account; pay one-time $25 registration fee; complete identity verification; accept Developer Distribution Agreement",
+          "where": "play.google.com/console"
+        },
+        {
+          "step": "2",
+          "phase": "App Creation",
+          "tasks": "Create new app in Play Console; set app name, default language, app or game type, free or paid status",
+          "where": "Play Console > All apps > Create app"
+        },
+        {
+          "step": "3",
+          "phase": "Store Listing",
+          "tasks": "Write title, short description, full description; upload screenshots, feature graphic, app icon; add categorization and contact details",
+          "where": "Play Console > Store presence > Main store listing"
+        },
+        {
+          "step": "4",
+          "phase": "App Content",
+          "tasks": "Complete content rating questionnaire; set privacy policy URL; declare app content, target audience, data safety",
+          "where": "Play Console > Policy > App content"
+        },
+        {
+          "step": "5",
+          "phase": "Build & Sign",
+          "tasks": "Build release AAB with ./gradlew bundleRelease; sign with upload key; enable Google Play App Signing",
+          "where": "Android Studio / Terminal"
+        },
+        {
+          "step": "6",
+          "phase": "Release",
+          "tasks": "Upload AAB to Internal Testing track; promote through Closed Testing > Open Testing > Production; set rollout percentage",
+          "where": "Play Console > Release > Testing / Production"
+        },
+        {
+          "step": "7",
+          "phase": "Review & Launch",
+          "tasks": "Submit for review; wait for Google review (hours to days); address policy violations if any; app goes live",
+          "where": "Play Console > Release overview"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setting Up a Google Play Developer Account",
+      "items": [
+        "Go to play.google.com/console and sign in with a Google account dedicated to your developer or company identity",
+        "Pay the one-time $25 USD registration fee — this is a lifetime fee, not annual",
+        "Complete identity verification — Google requires phone verification and may request additional identity documents for new accounts",
+        "For organizations, use a Google account associated with your business rather than a personal account",
+        "Accept the Google Play Developer Distribution Agreement before you can publish any apps",
+        "Set up your developer profile: public developer name (shown on Play Store), email address, website, and phone number",
+        "Enable two-factor authentication on your Google account — your Play Console account controls app publishing and payments",
+        "Add team members with specific permissions: Play Console > Users and permissions — assign roles like Release Manager, Financial Reports, Developer"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Store Listing Requirements",
+      "rows": [
+        {
+          "asset": "App Title",
+          "requirement": "Up to 30 characters — shown as the app name on the Play Store listing page",
+          "tips": "Include your brand name; keep it clear and recognizable; avoid keyword stuffing"
+        },
+        {
+          "asset": "Short Description",
+          "requirement": "Up to 80 characters — shown in search results and app listing preview",
+          "tips": "Summarize the core value proposition in one sentence; most important real estate after the title"
+        },
+        {
+          "asset": "Full Description",
+          "requirement": "Up to 4000 characters — shown on the full app listing page below the screenshots",
+          "tips": "First 167 characters are shown without expanding; put the most important information first; use formatting with line breaks"
+        },
+        {
+          "asset": "App Icon",
+          "requirement": "512x512 PNG with no alpha transparency — shown on the Play Store listing",
+          "tips": "Must match the launcher icon in the APK; use a clean design that looks good at small sizes"
+        },
+        {
+          "asset": "Feature Graphic",
+          "requirement": "1024x500 PNG or JPEG — shown at the top of the listing when the app is featured",
+          "tips": "Required for featuring opportunities; use simple, bold visuals without small text"
+        },
+        {
+          "asset": "Screenshots",
+          "requirement": "Minimum 2, maximum 8 per device type — phone, 7-inch tablet, 10-inch tablet, Chromebook, TV, Wear OS",
+          "tips": "Show core features; use device frames or lifestyle images; phone screenshots are required; others are optional but recommended"
+        },
+        {
+          "asset": "Promo Video",
+          "requirement": "Optional — YouTube video URL; shown at the top of the listing alongside the feature graphic",
+          "tips": "30-120 seconds recommended; show the app in action; must be publicly available on YouTube"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Preparing the Release Build",
+      "items": [
+        "Ensure versionCode is incremented from the previous release — Play Store rejects uploads with duplicate or lower versionCode",
+        "Update versionName to a human-readable string for the new release: versionName = \"2.1.0\"",
+        "Enable R8 minification and resource shrinking in the release build type: isMinifyEnabled = true; isShrinkResources = true",
+        "Configure signing with your release keystore or upload key for Google Play App Signing",
+        "Build the release AAB: ./gradlew bundleRelease — output at build/outputs/bundle/release/app-release.aab",
+        "Test the release AAB locally before uploading: use bundletool to extract APKs and install on a device",
+        "Install bundletool: download from github.com/google/bundletool/releases",
+        "Build APK set from AAB: java -jar bundletool.jar build-apks --bundle=app-release.aab --output=app.apks --connected-device",
+        "Install on connected device: java -jar bundletool.jar install-apks --apks=app.apks",
+        "Verify the release build works end-to-end: test all critical user flows in the release build before uploading"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Release Tracks",
+      "rows": [
+        {
+          "track": "Internal Testing",
+          "audience": "Up to 100 testers added by email — must be Google accounts",
+          "review": "No Google review — available to testers within minutes of upload",
+          "use_case": "Quick smoke testing by your development team immediately after upload",
+          "promotion": "Can be promoted to Closed Testing, Open Testing, or Production"
+        },
+        {
+          "track": "Closed Testing (Alpha)",
+          "audience": "Specific testers via Google Groups or Google Play Groups — unlimited testers",
+          "review": "Brief Google review required before testers can access",
+          "use_case": "Controlled beta testing with a specific group of external testers",
+          "promotion": "Can be promoted to Open Testing or Production"
+        },
+        {
+          "track": "Open Testing (Beta)",
+          "audience": "Any Google Play user who joins the beta program — publicly visible opt-in",
+          "review": "Google review required",
+          "use_case": "Public beta testing — users self-select to test pre-release builds; reviews appear separately from production",
+          "promotion": "Can be promoted to Production"
+        },
+        {
+          "track": "Production",
+          "audience": "All Google Play users in the selected countries",
+          "review": "Full Google review required — typically hours to a few days for new apps",
+          "use_case": "Live release to all users — supports percentage-based staged rollouts",
+          "promotion": "Final destination — halt or rollback available if issues are found"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Staged Rollouts",
+      "items": [
+        "Staged rollout releases the new version to a percentage of production users — the rest continue receiving the previous version",
+        "Start with a small percentage: 1% or 5% — monitor crash rates and ANR rates in Android Vitals before expanding",
+        "Expand the rollout gradually: 5% > 20% > 50% > 100% — wait at least 24-48 hours between expansions to observe metrics",
+        "Halt a rollout: if crash rates spike, halt the rollout immediately — users on the new version are unaffected but no more users receive it",
+        "Resume a halted rollout: fix the issue, upload a new AAB with an incremented versionCode, then resume or restart the rollout",
+        "Full rollout: set percentage to 100% when you are confident in the release quality",
+        "Users not yet on the new version will be updated when they open the Play Store or when the device checks for updates",
+        "Staged rollouts are not available for apps with fewer than a minimum number of active users — Play Console will indicate if staged rollout is available"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "App Content Declarations",
+      "rows": [
+        {
+          "declaration": "Content Rating",
+          "description": "Complete the IARC questionnaire to receive age ratings for all countries — required before publishing",
+          "location": "Play Console > Policy > App content > Content rating"
+        },
+        {
+          "declaration": "Privacy Policy",
+          "description": "URL to your app's privacy policy — required for all apps; mandatory if your app collects any user data",
+          "location": "Play Console > Policy > App content > Privacy policy"
+        },
+        {
+          "declaration": "Data Safety",
+          "description": "Declare what data your app collects, why it is collected, and whether it is shared with third parties — shown to users on the store listing",
+          "location": "Play Console > Policy > App content > Data safety"
+        },
+        {
+          "declaration": "Target Audience",
+          "description": "Specify the age group your app targets — apps targeting children under 13 must comply with Families Policy and additional restrictions",
+          "location": "Play Console > Policy > App content > Target audience and content"
+        },
+        {
+          "declaration": "Ads",
+          "description": "Declare whether your app contains ads — must match the actual app content; misleading declarations violate Play policy",
+          "location": "Play Console > Policy > App content > Ads"
+        },
+        {
+          "declaration": "App Access",
+          "description": "Provide test credentials or instructions if your app requires login — helps Google reviewers access all app content",
+          "location": "Play Console > Policy > App content > App access"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Data Safety Section",
+      "items": [
+        "The Data Safety section is shown prominently on your app's Play Store listing — users see it before downloading",
+        "Declare all data types your app collects: location, personal info, financial info, health data, messages, files, contacts, app activity, device identifiers",
+        "For each data type declare: whether it is collected, whether it is shared with third parties, whether collection is required or optional, and the purpose",
+        "Third-party SDKs collect data too — audit all SDKs in your app (Firebase, Analytics, Ads) and include their data collection in your declaration",
+        "Data safety must be accurate — inaccurate declarations violate Google Play policy and can result in app removal",
+        "Google provides a Data Safety Help Center with guidance on how to categorize each type of data",
+        "Update the Data Safety section whenever you add new SDKs or change what data your app collects",
+        "Inconsistency between your privacy policy and Data Safety section is a common policy violation — keep them in sync"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "App Signing on Google Play",
+      "rows": [
+        {
+          "topic": "Google Play App Signing enrollment",
+          "description": "Google securely stores the app signing key and re-signs your AAB after upload — you sign with the upload key only",
+          "action": "Enroll during first AAB upload — mandatory for new apps; Play Console guides you through the process"
+        },
+        {
+          "topic": "Upload key vs App signing key",
+          "description": "Upload key: you hold this; used to sign AABs before upload. App signing key: Google holds this; used to sign APKs delivered to users",
+          "action": "Sign your release AAB with your upload keystore before uploading to Play Console"
+        },
+        {
+          "topic": "SHA fingerprints",
+          "description": "Google provides SHA-1 and SHA-256 fingerprints of the app signing key — needed for Firebase, Google Maps API, and App Links",
+          "action": "Play Console > Setup > App integrity > App signing tab — copy the fingerprints for use in Firebase and API configurations"
+        },
+        {
+          "topic": "Upload key reset",
+          "description": "If your upload key is lost or compromised, contact Google Play support to reset it — the app signing key is unaffected",
+          "action": "Generate a new upload key and submit a key reset request through Play Console with identity verification"
+        },
+        {
+          "topic": "SHA-256 for App Links",
+          "description": "The app signing key SHA-256 fingerprint must be in your assetlinks.json file for verified App Links to work in production",
+          "action": "After enrolling in Play App Signing, update assetlinks.json with the SHA-256 from the App signing tab — not from your local keystore"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Versioning Strategy",
+      "items": [
+        "versionCode — integer used by the Play Store to identify build order; must be incremented with every upload; users never see this value",
+        "versionName — human-readable string shown to users: '2.1.0', '2.1.0-beta1'; can be any string",
+        "Use semantic versioning for versionName: MAJOR.MINOR.PATCH — e.g. 2.1.0 where major = breaking changes, minor = new features, patch = bug fixes",
+        "Automate versionCode to avoid forgetting to increment: set it from the CI build number or use a Gradle task to read it from a file",
+        "versionCode automation example: versionCode = System.getenv(\"BUILD_NUMBER\")?.toInt() ?: 1",
+        "For multi-flavor apps, each flavor can have its own versionCode: productFlavors { free { versionCode = 1000 + rootVersionCode }; paid { versionCode = 2000 + rootVersionCode } }",
+        "Play Store allows up to 2,100,000,000 for versionCode — start at 1 and increment by 1 for each release",
+        "Never reuse or lower a versionCode — Play Store will reject the upload with 'Version code already used'"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Play Console Key Sections",
+      "rows": [
+        {
+          "section": "Android Vitals",
+          "purpose": "Monitors app stability — crash rate, ANR rate, excessive wakeups, stuck partial wake locks",
+          "why_important": "Poor vitals can result in Play Store warnings, reduced visibility, and a 'contains bugs' badge on your listing"
+        },
+        {
+          "section": "Release Overview",
+          "purpose": "Dashboard showing the current state of all release tracks and any pending reviews",
+          "why_important": "Central view for tracking what version is live on each track and the status of pending releases"
+        },
+        {
+          "section": "Statistics",
+          "purpose": "App metrics — installs, uninstalls, ratings, crashes, active devices, retention over time",
+          "why_important": "Understanding growth trends, uninstall causes, and which devices your app performs worst on"
+        },
+        {
+          "section": "Ratings and Reviews",
+          "purpose": "User ratings and reviews — reply to reviews directly from Play Console",
+          "why_important": "Responding to reviews improves user trust and can prevent negative word-of-mouth; monitor for usability issues"
+        },
+        {
+          "section": "App Bundle Explorer",
+          "purpose": "Inspect generated APK splits from an uploaded AAB — see exactly what APK each device configuration receives",
+          "why_important": "Verify APK size for specific device configurations; download mapping.txt and native debug symbols"
+        },
+        {
+          "section": "Policy Status",
+          "purpose": "Shows any policy violations or warnings on your app — enforcement actions and required fixes",
+          "why_important": "Policy violations can suspend the app or your entire developer account — resolve immediately"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Pre-Launch Report",
+      "items": [
+        "Google automatically runs your app on real devices in a Firebase Test Lab environment after each AAB upload to any track",
+        "The pre-launch report checks for: crashes, ANRs, broken permissions, display issues across screen sizes, and accessibility problems",
+        "Access the report: Play Console > Android Vitals > Pre-launch report — available within a few hours of upload",
+        "The report includes screenshots of your app running on multiple device configurations — useful for catching layout issues",
+        "Crashes found in the pre-launch report are shown with stack traces — fix them before promoting to wider tracks",
+        "Accessibility checks identify missing content descriptions, small touch targets, and low contrast — address these to improve your app's accessibility score",
+        "Security checks flag common vulnerabilities — plain HTTP usage, exported components without permissions",
+        "The pre-launch report does not block publishing — it is informational; you can promote to Production even with warnings"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Rejection Reasons and Fixes",
+      "rows": [
+        {
+          "reason": "Misleading store listing",
+          "description": "App title, description, screenshots, or icon do not accurately represent the app's functionality",
+          "fix": "Ensure all store listing assets accurately represent what the app does — no false claims or misleading imagery"
+        },
+        {
+          "reason": "Missing privacy policy",
+          "description": "App requests sensitive permissions or collects user data but has no privacy policy URL declared",
+          "fix": "Add a privacy policy URL in Play Console under App content > Privacy policy — the policy must be accessible and cover the app's data practices"
+        },
+        {
+          "reason": "Inaccurate Data Safety section",
+          "description": "The Data Safety declaration does not match the app's actual data collection and sharing practices",
+          "fix": "Audit all SDKs and APIs; update the Data Safety section to accurately reflect all data collected and shared"
+        },
+        {
+          "reason": "Dangerous permissions without justification",
+          "description": "App requests permissions (CAMERA, RECORD_AUDIO, READ_CONTACTS) that are not necessary for its core functionality",
+          "fix": "Remove unused permissions; if permissions are needed, ensure the app's purpose clearly justifies them in the listing"
+        },
+        {
+          "reason": "Crashes during Google review",
+          "description": "The app crashes during Google's review process — reviewers cannot complete the review flow",
+          "fix": "Test the release build thoroughly; check the pre-launch report; fix all crashes before resubmitting"
+        },
+        {
+          "reason": "Intellectual property violation",
+          "description": "App uses trademarks, copyrighted assets, or impersonates another app or brand",
+          "fix": "Use only original or licensed assets; do not use another app's name, icon, or branding"
+        },
+        {
+          "reason": "Policy violation in content",
+          "description": "App content violates Google Play policies — hate speech, adult content in a non-adult app, gambling without authorization",
+          "fix": "Review the Google Play Developer Policy Center; remove or restrict violating content; use content ratings appropriately"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Localized Store Listings",
+      "items": [
+        "Provide translated store listings for each language your app supports — increases discoverability in non-English markets",
+        "Play Console > Store presence > Store listing > Manage translations — add translations for title, short description, and full description",
+        "Use Google's managed translations service in Play Console for professional translations — paid service integrated directly",
+        "Or manage translations manually: export strings, send to translators, import translated files",
+        "Provide localized screenshots for major markets — screenshots in the local language perform significantly better",
+        "The default language listing is shown to users whose language has no specific translation — make the default listing high quality",
+        "Custom store listings allow different listings for different countries — useful for region-specific branding or features",
+        "Play Console > Store presence > Custom store listings — override the default listing for specific countries"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Post-Launch Monitoring",
+      "rows": [
+        {
+          "metric": "Crash Rate",
+          "where": "Android Vitals > Crashes and ANRs",
+          "target": "Below 1% crash-free sessions — Play Store may add a warning badge above this threshold",
+          "action": "Set up Crashlytics for detailed crash reports with stack traces; fix high-impact crashes in a hotfix release"
+        },
+        {
+          "metric": "ANR Rate",
+          "where": "Android Vitals > Crashes and ANRs",
+          "target": "Below 0.47% ANR rate — Play Store threshold for poor behavior warning",
+          "action": "Profile main thread work with CPU Profiler; move blocking operations off the main thread"
+        },
+        {
+          "metric": "Rating",
+          "where": "Ratings and Reviews",
+          "target": "4.0+ average rating — below 3.0 significantly reduces install conversion",
+          "action": "Respond to negative reviews; use in-app review API to prompt satisfied users to rate"
+        },
+        {
+          "metric": "Install Conversion Rate",
+          "where": "Statistics > Store performance",
+          "target": "Varies by category — benchmark against similar apps in your category",
+          "action": "A/B test store listing assets using Play Console's Store listing experiments feature"
+        },
+        {
+          "metric": "Uninstall Rate",
+          "where": "Statistics > Installs",
+          "target": "Low and stable — spikes after an update indicate a regression",
+          "action": "Correlate uninstall spikes with specific releases; investigate crash reports and reviews from that period"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "In-App Review API",
+      "items": [
+        "The In-App Review API lets you prompt users to rate and review your app without leaving it — shown as a system overlay",
+        "Add dependency: implementation(\"com.google.android.play:review:2.x.x\"); implementation(\"com.google.android.play:review-ktx:2.x.x\")",
+        "Create a ReviewManager: val reviewManager = ReviewManagerFactory.create(context)",
+        "Request review info: val request = reviewManager.requestReviewFlow(); request.addOnCompleteListener { task -> if (task.isSuccessful) launchReviewFlow(task.result) }",
+        "Launch the review flow: reviewManager.launchReviewFlow(activity, reviewInfo)",
+        "The system decides whether to show the dialog — it may not always be shown; Google rate-limits the prompt per user",
+        "Request the review at a meaningful moment: after the user completes a key task, not at app launch or during a critical flow",
+        "Never gate the prompt on a predicted positive rating — this violates Play policy; show the prompt to all users equally",
+        "Test using the FakeReviewManager in debug builds: val reviewManager = FakeReviewManager(context) — always shows the dialog"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Publishing to Google Play requires careful preparation across multiple dimensions: a complete and accurate store listing with high-quality screenshots and a compelling description, a correctly configured release build signed with your upload key, complete app content declarations including the Data Safety section and content rating, and a structured rollout strategy using release tracks. Start every release on the Internal Testing track, test thoroughly with bundletool, then promote through Closed and Open Testing before a staged Production rollout. Monitor Android Vitals for crash and ANR rates after each release, respond to user reviews promptly, and use the In-App Review API to collect ratings organically. Keep your Data Safety section, privacy policy, and store listing accurate and up to date — policy compliance is an ongoing responsibility, not a one-time checkbox."
+    }
+  ]
+}

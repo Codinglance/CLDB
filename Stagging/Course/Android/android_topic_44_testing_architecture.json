@@ -1,0 +1,372 @@
+{
+  "title": "Testing ViewModel & Repository",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Test ViewModel and Repository?",
+      "content": "ViewModel and Repository are the two most critical layers in Android's MVVM architecture — they contain the majority of your app's business logic, data transformation, and state management. Testing them thoroughly in isolation gives you fast, reliable feedback that your core logic works correctly without needing a device, emulator, or real network connection. ViewModel tests verify that UI state is produced correctly in response to user actions and data changes, that navigation events are emitted at the right time, and that errors are handled gracefully. Repository tests verify that the correct data source is called under each condition, that caching logic works correctly, that network errors are propagated or recovered from, and that local and remote data are combined correctly. Together, ViewModel and Repository tests form the backbone of a healthy Android test suite."
+    },
+    {
+      "type": "table",
+      "heading": "Architecture Layer Testing Strategy",
+      "rows": [
+        {
+          "layer": "ViewModel",
+          "test_type": "Unit Test",
+          "location": "src/test/",
+          "dependencies_to_mock": "Repository, UseCases, SavedStateHandle",
+          "key_tools": "JUnit 4, Mockito, Turbine, kotlinx-coroutines-test, MainDispatcherRule",
+          "what_to_test": "UI state transitions, one-shot events, error handling, argument parsing from SavedStateHandle"
+        },
+        {
+          "layer": "Repository",
+          "test_type": "Unit Test",
+          "location": "src/test/",
+          "dependencies_to_mock": "RemoteDataSource, LocalDataSource (Room DAO), NetworkApi",
+          "key_tools": "JUnit 4, Mockito, kotlinx-coroutines-test, Turbine",
+          "what_to_test": "Caching strategy, data source selection, error propagation, data mapping"
+        },
+        {
+          "layer": "Room DAO",
+          "test_type": "Instrumented Integration Test",
+          "location": "src/androidTest/",
+          "dependencies_to_mock": "None — use real in-memory Room database",
+          "key_tools": "JUnit 4, Room in-memory database, kotlinx-coroutines-test",
+          "what_to_test": "Query correctness, insert/update/delete behavior, Flow emissions from queries"
+        },
+        {
+          "layer": "UseCase",
+          "test_type": "Unit Test",
+          "location": "src/test/",
+          "dependencies_to_mock": "Repository",
+          "key_tools": "JUnit 4, Mockito, kotlinx-coroutines-test",
+          "what_to_test": "Business rule application, input validation, data transformation, error mapping"
+        },
+        {
+          "layer": "Mapper / Transformer",
+          "test_type": "Unit Test",
+          "location": "src/test/",
+          "dependencies_to_mock": "None — pure functions",
+          "key_tools": "JUnit 4, Truth",
+          "what_to_test": "Correct field mapping, null handling, default values, format conversions"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Required Dependencies for Architecture Testing",
+      "items": [
+        "JUnit 4: testImplementation(\"junit:junit:4.13.2\")",
+        "Mockito Kotlin: testImplementation(\"org.mockito.kotlin:mockito-kotlin:5.x.x\")",
+        "Coroutines Test: testImplementation(\"org.jetbrains.kotlinx:kotlinx-coroutines-test:1.x.x\")",
+        "Turbine (Flow testing): testImplementation(\"app.cash.turbine:turbine:1.x.x\")",
+        "Google Truth: testImplementation(\"com.google.truth:truth:1.x.x\")",
+        "Arch Core Testing (LiveData): testImplementation(\"androidx.arch.core:core-testing:2.x.x\")",
+        "Room testing (DAO tests): androidTestImplementation(\"androidx.room:room-testing:$roomVersion\")",
+        "Hilt testing: testImplementation(\"com.google.dagger:hilt-android-testing:$hiltVersion\") for unit tests with Hilt"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "MainDispatcherRule — Essential for ViewModel Tests",
+      "content": "ViewModels launch coroutines on viewModelScope which uses Dispatchers.Main internally. In unit tests running on the JVM, Dispatchers.Main is not available by default — attempting to use it causes an IllegalStateException with 'Module with Main dispatcher had failed to initialize'. The solution is MainDispatcherRule — a JUnit TestWatcher that replaces Dispatchers.Main with a TestDispatcher before each test and resets it after. This is the single most important setup step for ViewModel unit testing. The rule must be applied to every ViewModel test class using @get:Rule."
+    },
+    {
+      "type": "bullet",
+      "heading": "Implementing MainDispatcherRule",
+      "items": [
+        "Define the rule once and share it across all test classes: class MainDispatcherRule(val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()) : TestWatcher() { override fun starting(description: Description) { Dispatchers.setMain(testDispatcher) }; override fun finished(description: Description) { Dispatchers.resetMain() } }",
+        "Apply in every ViewModel test class: @get:Rule val mainDispatcherRule = MainDispatcherRule()",
+        "UnconfinedTestDispatcher — executes coroutines eagerly and immediately without suspending; best for most ViewModel tests where you want state to update synchronously",
+        "StandardTestDispatcher — coroutines are queued and only run when explicitly advanced; use with runTest { advanceUntilIdle() } for precise control over execution order",
+        "Access the dispatcher in tests: mainDispatcherRule.testDispatcher — pass to coroutine builders that need an explicit dispatcher",
+        "Place the rule file in a shared test utility package: com.example.app.test.util.MainDispatcherRule",
+        "For tests that need both MainDispatcherRule and InstantTaskExecutorRule, declare both as @get:Rule — order matters if they interact",
+        "runTest { } from coroutines-test automatically uses the test dispatcher — combine with MainDispatcherRule for full coverage"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Testing ViewModel UI State",
+      "rows": [
+        {
+          "scenario": "Initial state",
+          "approach": "Assert the StateFlow's initial value immediately after ViewModel creation — before any action is triggered",
+          "example": "assertThat(viewModel.uiState.value).isEqualTo(HomeUiState.Loading)"
+        },
+        {
+          "scenario": "State after successful data load",
+          "approach": "Stub repository to return success, trigger load action, advance coroutines, assert success state",
+          "example": "whenever(repo.getUsers()).thenReturn(flowOf(fakeUsers)); viewModel.loadUsers(); advanceUntilIdle(); assertThat(viewModel.uiState.value).isEqualTo(HomeUiState.Success(fakeUsers))"
+        },
+        {
+          "scenario": "State after error",
+          "approach": "Stub repository to throw or return error, trigger load action, advance coroutines, assert error state",
+          "example": "whenever(repo.getUsers()).thenThrow(IOException()); viewModel.loadUsers(); advanceUntilIdle(); assertThat(viewModel.uiState.value).isInstanceOf(HomeUiState.Error::class.java)"
+        },
+        {
+          "scenario": "State sequence (Loading then Success)",
+          "approach": "Use Turbine to collect all emissions in order and assert each state in sequence",
+          "example": "viewModel.uiState.test { assertThat(awaitItem()).isEqualTo(Loading); assertThat(awaitItem()).isEqualTo(Success(data)); cancelAndIgnoreRemainingEvents() }"
+        },
+        {
+          "scenario": "State after user action",
+          "approach": "Trigger the user action method on the ViewModel, advance coroutines, assert updated state",
+          "example": "viewModel.onSearchQueryChanged(\"Alice\"); advanceUntilIdle(); assertThat(viewModel.uiState.value).isEqualTo(HomeUiState.Success(filteredUsers))"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing StateFlow with Turbine",
+      "items": [
+        "Collect StateFlow emissions in a test block: viewModel.uiState.test { /* assertions */ }",
+        "awaitItem() — suspends until the next emission and returns it: val state = awaitItem()",
+        "Assert each emission in sequence: assertThat(awaitItem()).isEqualTo(HomeUiState.Loading); assertThat(awaitItem()).isEqualTo(HomeUiState.Success(data))",
+        "cancelAndIgnoreRemainingEvents() — cancels collection and ignores any remaining emissions — use at the end of most StateFlow tests",
+        "awaitComplete() — asserts the Flow completed normally — use for finite flows",
+        "awaitError() — asserts the Flow terminated with an exception: val error = awaitError(); assertThat(error).isInstanceOf(IOException::class.java)",
+        "expectNoEvents() — asserts no new emissions have occurred — useful for verifying state did NOT change",
+        "ensureAllEventsConsumed() — strict mode — fails if there are unconsumed events; use when you want to assert exact emission count",
+        "Test SharedFlow events (navigation, snackbar): viewModel.events.test { onNodeWithTag(\"button\").performClick(); assertThat(awaitItem()).isInstanceOf(NavigateToDetail::class.java) }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Testing One-Shot Events from ViewModel",
+      "rows": [
+        {
+          "pattern": "SharedFlow events",
+          "implementation": "val _events = MutableSharedFlow<UiEvent>(); val events = _events.asSharedFlow()",
+          "test_approach": "Use Turbine: viewModel.events.test { viewModel.onLoginClicked(); assertThat(awaitItem()).isEqualTo(UiEvent.NavigateToHome) }",
+          "use_case": "Navigation commands, show snackbar, show dialog — one-shot actions that should not be replayed"
+        },
+        {
+          "pattern": "Channel events",
+          "implementation": "val _events = Channel<UiEvent>(); val events = _events.receiveAsFlow()",
+          "test_approach": "Use Turbine on the receiveAsFlow(): viewModel.events.test { viewModel.onLoginClicked(); assertThat(awaitItem()).isEqualTo(UiEvent.NavigateToHome) }",
+          "use_case": "Same as SharedFlow events — Channel guarantees exactly-once delivery even with multiple collectors"
+        },
+        {
+          "pattern": "LiveData events (SingleLiveEvent)",
+          "implementation": "val event = MutableLiveData<Event<UiEvent>>()",
+          "test_approach": "Use InstantTaskExecutorRule; observe with observeForever; trigger action; assert LiveData value",
+          "use_case": "Legacy codebases using LiveData for one-shot events"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing SavedStateHandle in ViewModel",
+      "items": [
+        "SavedStateHandle can be constructed directly in unit tests with initial values: val savedStateHandle = SavedStateHandle(mapOf(\"userId\" to 42))",
+        "Pass it to the ViewModel constructor: val viewModel = DetailViewModel(savedStateHandle, mockRepository)",
+        "Test that the ViewModel reads arguments correctly: assertThat(viewModel.userId).isEqualTo(42)",
+        "Test that the ViewModel loads data for the correct ID: verify(mockRepository).getUser(42)",
+        "Test SavedStateHandle state saving: savedStateHandle[\"key\"] = \"value\"; assertThat(viewModel.someState.value).isEqualTo(expectedState)",
+        "Navigation Component passes route arguments via SavedStateHandle — test with the exact key used in the nav graph argument declaration",
+        "For nullable arguments: SavedStateHandle(mapOf(\"userId\" to null)) — test null handling in the ViewModel",
+        "Test that ViewModel survives process death by verifying state is restored from SavedStateHandle values"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Testing the Repository Layer",
+      "content": "Repository tests verify the coordination logic between data sources — when to fetch from the network, when to serve from cache, how to handle errors, and how to map data between layers. The repository's dependencies (typically a remote API interface and a local DAO) should be mocked so the repository can be tested in complete isolation. For repositories that return Flow, use Turbine to assert emissions. For repositories that implement an offline-first caching strategy, test each scenario separately: cache hit, cache miss with successful network fetch, cache miss with network error, and stale cache refresh."
+    },
+    {
+      "type": "bullet",
+      "heading": "Repository Test Scenarios",
+      "items": [
+        "Cache hit — local data exists and is fresh: stub DAO to return data; assert repository returns local data without calling the API",
+        "Cache miss — local data absent: stub DAO to return empty; stub API to return data; assert API is called and result is saved to DAO and returned",
+        "Network error with no cache: stub DAO to return empty; stub API to throw IOException; assert repository emits error state or throws",
+        "Network error with stale cache: stub DAO to return stale data; stub API to throw IOException; assert repository returns cached data with error indication",
+        "Successful refresh: stub API to return new data; assert new data is saved to DAO via insert/update; assert repository emits updated data",
+        "Data mapping: stub API to return a NetworkModel; assert repository correctly maps it to a DomainModel before returning",
+        "Concurrent requests: verify the repository does not make duplicate API calls when data is already being fetched",
+        "Verify DAO interactions: verify(mockDao).insertAll(expectedEntities) — confirm repository persists data correctly after fetching"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Repository Test — Code Patterns",
+      "rows": [
+        {
+          "pattern": "Stub Flow from DAO",
+          "code": "whenever(mockDao.getUsers()).thenReturn(flowOf(fakeEntities))",
+          "description": "Returns a finite Flow with the given entities — simulates a DAO query result"
+        },
+        {
+          "pattern": "Stub suspend API call",
+          "code": "whenever(mockApi.fetchUsers()).thenReturn(fakeNetworkResponse)",
+          "description": "Stubs a suspend function to return a value — use in runTest block"
+        },
+        {
+          "pattern": "Stub API to throw",
+          "code": "whenever(mockApi.fetchUsers()).thenThrow(IOException(\"No network\"))",
+          "description": "Simulates a network failure — test that the repository handles it correctly"
+        },
+        {
+          "pattern": "Assert Flow emission",
+          "code": "repository.getUsers().test { assertThat(awaitItem()).isEqualTo(expectedDomainModels); cancelAndIgnoreRemainingEvents() }",
+          "description": "Collect repository Flow and assert the emitted domain models"
+        },
+        {
+          "pattern": "Verify DAO write",
+          "code": "verify(mockDao).insertAll(expectedEntities)",
+          "description": "Confirm the repository persisted the API response to the local database"
+        },
+        {
+          "pattern": "Verify API not called",
+          "code": "verify(mockApi, never()).fetchUsers()",
+          "description": "Confirm the repository served from cache without hitting the network"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing Room DAO — In-Memory Database",
+      "items": [
+        "DAO tests require an instrumented test in src/androidTest/ — Room needs the Android framework to compile queries",
+        "Use an in-memory Room database: Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).allowMainThreadQueries().build()",
+        "In-memory database is destroyed when the process ends — each test gets a clean state if you create it in @Before",
+        "Close the database in @After: database.close() — prevents resource leaks between tests",
+        "Test insert and query: dao.insert(fakeUser); val result = dao.getUserById(1); assertThat(result).isEqualTo(fakeUser)",
+        "Test Flow queries with Turbine: dao.getAllUsers().test { assertThat(awaitItem()).isEmpty(); dao.insert(fakeUser); assertThat(awaitItem()).containsExactly(fakeUser) }",
+        "Test update: dao.insert(fakeUser); dao.update(updatedUser); assertThat(dao.getUserById(1).name).isEqualTo(\"Updated Name\")",
+        "Test delete: dao.insert(fakeUser); dao.delete(fakeUser); assertThat(dao.getUserById(1)).isNull()",
+        "allowMainThreadQueries() — only for tests — removes the main thread restriction so test assertions can read synchronously"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Fake Repository Pattern",
+      "rows": [
+        {
+          "aspect": "What is a Fake Repository?",
+          "description": "A hand-written in-memory implementation of the Repository interface used in tests — simulates real behavior without real data sources",
+          "example": "class FakeUserRepository : UserRepository { private val users = mutableListOf<User>() }"
+        },
+        {
+          "aspect": "When to use Fakes over Mocks",
+          "description": "Use fakes when the repository has many methods, complex stateful behavior, or when multiple tests share the same fake — fakes are more maintainable than per-test stubbing",
+          "example": "Fakes for repositories used across ViewModel tests, UseCase tests, and integration tests"
+        },
+        {
+          "aspect": "Controlling fake behavior",
+          "description": "Add control properties to the fake to simulate different scenarios: var shouldThrowError = false; var delay = 0L",
+          "example": "if (shouldThrowError) throw IOException(); delay(delay); return users.toList()"
+        },
+        {
+          "aspect": "Simulating emissions",
+          "description": "Use MutableStateFlow or MutableSharedFlow inside the fake to emit updates that the ViewModel observes",
+          "example": "private val _users = MutableStateFlow<List<User>>(emptyList()); override fun getUsers() = _users.asStateFlow()"
+        },
+        {
+          "aspect": "Sharing fakes across test classes",
+          "description": "Place fake implementations in a dedicated test utility package accessible from both unit and instrumented tests",
+          "example": "src/test/java/com/example/app/test/fake/FakeUserRepository.kt"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing UseCase Layer",
+      "items": [
+        "UseCases are typically thin classes with a single invoke() operator — they are the simplest layer to test",
+        "Mock the repository dependency and test that the UseCase applies the correct business rules",
+        "Test happy path: stub repository to return data; invoke useCase(); assert result is correctly transformed or filtered",
+        "Test validation: invoke useCase with invalid input; assert it throws IllegalArgumentException or returns an error Result",
+        "Test delegation: verify(mockRepository).getUsers() — confirm the UseCase calls the correct repository method",
+        "Test data transformation: stub repository to return raw data; assert UseCase maps it to the correct domain model",
+        "UseCases that combine multiple repositories: mock all repositories; assert the correct combination logic",
+        "Operator function testing: val result = useCase(GetUserUseCase.Params(userId = 1)); assertThat(result).isEqualTo(expectedUser)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Testing Error Handling",
+      "rows": [
+        {
+          "scenario": "Repository throws exception",
+          "viewmodel_test": "Stub repo to throw; trigger load; advanceUntilIdle(); assert uiState.value is Error state with correct message",
+          "repository_test": "Stub API to throw; call repo method in runTest; assert it either rethrows, wraps in Result.failure, or emits error state"
+        },
+        {
+          "scenario": "Network timeout",
+          "viewmodel_test": "Stub repo to throw SocketTimeoutException; assert ViewModel emits a timeout-specific error message to UI",
+          "repository_test": "Stub API to throw SocketTimeoutException; assert repository maps it to a NetworkException or propagates it"
+        },
+        {
+          "scenario": "Empty response",
+          "viewmodel_test": "Stub repo to return empty list; assert ViewModel emits HomeUiState.Empty or equivalent empty state",
+          "repository_test": "Stub API to return empty body; assert repository returns empty list or emits empty flow — not an error state"
+        },
+        {
+          "scenario": "Result<T> wrapper",
+          "viewmodel_test": "Stub repo to return Result.failure(exception); assert ViewModel maps failure to correct error UI state",
+          "repository_test": "Stub API to throw; assert repository catches and wraps in Result.failure with the correct exception type"
+        },
+        {
+          "scenario": "Retry logic",
+          "viewmodel_test": "Stub repo to throw then succeed on second call; trigger retry action; assert ViewModel transitions from error to success state",
+          "repository_test": "Verify API is called the expected number of times; assert repository returns success after retry"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Test Data Builders",
+      "items": [
+        "Define default test data builders to avoid repetitive object creation in every test",
+        "Use default parameter functions: fun fakeUser(id: Int = 1, name: String = \"Alice\", email: String = \"alice@example.com\") = User(id, name, email)",
+        "Override only the fields relevant to the current test: val user = fakeUser(name = \"Bob\") — keeps tests focused",
+        "Define fake builders for all domain models: fakeUser(), fakeProduct(), fakeOrder() — place in a shared test utilities file",
+        "Use builders for network models too: fakeUserDto(), fakeProductResponse() — to test mapping logic",
+        "For complex objects use the Builder pattern: UserBuilder().withId(1).withName(\"Alice\").build()",
+        "Place all test data builders in src/test/java/com/example/app/test/data/TestDataBuilders.kt",
+        "Consistent test data makes test failures easier to diagnose — a fakeUser() always has known, predictable values"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Architecture Testing Mistakes",
+      "rows": [
+        {
+          "mistake": "Not applying MainDispatcherRule in ViewModel tests",
+          "fix": "Add @get:Rule val mainDispatcherRule = MainDispatcherRule() to every ViewModel test class — without it coroutines launched in viewModelScope fail with dispatcher initialization error"
+        },
+        {
+          "mistake": "Testing ViewModels without mocking repositories",
+          "fix": "Always mock or fake all repository dependencies — never use real repositories with real databases or network in ViewModel unit tests"
+        },
+        {
+          "mistake": "Not advancing coroutines before asserting state",
+          "fix": "Call advanceUntilIdle() inside runTest { } after triggering async actions — StateFlow does not update until the coroutine completes"
+        },
+        {
+          "mistake": "Using real Room database in repository unit tests",
+          "fix": "Mock the DAO in repository unit tests — use real in-memory Room only in DAO integration tests in src/androidTest/"
+        },
+        {
+          "mistake": "Asserting only the happy path",
+          "fix": "Write explicit tests for error states, empty states, loading states, and edge cases — these are where real bugs hide"
+        },
+        {
+          "mistake": "Creating ViewModel without SavedStateHandle when it is required",
+          "fix": "Pass SavedStateHandle(mapOf(\"key\" to value)) in the ViewModel constructor call in tests — missing arguments cause NullPointerExceptions in the ViewModel"
+        },
+        {
+          "mistake": "Not cancelling Turbine collection at the end of tests",
+          "fix": "Always call cancelAndIgnoreRemainingEvents() or ensureAllEventsConsumed() at the end of Turbine test blocks to avoid test hanging"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Testing ViewModel and Repository layers thoroughly is the highest-value investment in your Android test suite. Always apply MainDispatcherRule to every ViewModel test class to replace Dispatchers.Main with a test dispatcher. Use Turbine to assert StateFlow and SharedFlow emissions in sequence — covering loading, success, error, and empty states. Mock all dependencies with Mockito or replace them with hand-written fakes for complex stateful repositories. For the Repository layer, test each caching scenario explicitly — cache hit, cache miss, network error, and stale data. Test Room DAOs using an in-memory database in instrumented tests, verifying query correctness and Flow emissions. Use SavedStateHandle directly in tests to verify argument reading and state restoration. Build shared test data builders for domain models to keep individual tests concise and focused on the specific behavior being verified."
+    }
+  ]
+}

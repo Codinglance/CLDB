@@ -1,0 +1,370 @@
+{
+  "title": "App Signing & Build Variants",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Build Variants?",
+      "content": "Build variants are the result of combining a build type with a product flavor in Android's Gradle build system. They allow you to produce multiple versions of your app from a single codebase — for example, a free version and a paid version, or a debug build and a release build, each with different features, endpoints, package names, or signing configurations. Build types control how the app is built and packaged (debug vs release, minification, debugging enabled), while product flavors control what is built (free vs paid, staging vs production, different branding). Every Android project has at least two build types by default — debug and release — and combining them with flavors produces the full matrix of build variants."
+    },
+    {
+      "type": "table",
+      "heading": "Build Types vs Product Flavors",
+      "rows": [
+        {
+          "concept": "Build Type",
+          "purpose": "Controls how the app is compiled and packaged",
+          "examples": "debug, release, staging",
+          "configured_in": "buildTypes { } block in build.gradle.kts",
+          "typical_settings": "isMinifyEnabled, isDebuggable, signingConfig, proguardFiles, applicationIdSuffix"
+        },
+        {
+          "concept": "Product Flavor",
+          "purpose": "Controls what variant of the app is built — feature set, branding, or environment",
+          "examples": "free/paid, dev/staging/prod, brandA/brandB",
+          "configured_in": "productFlavors { } block in build.gradle.kts",
+          "typical_settings": "applicationId, versionCode, versionName, buildConfigField, resValue, dimension"
+        },
+        {
+          "concept": "Build Variant",
+          "purpose": "The final output — a combination of one build type and one product flavor",
+          "examples": "freeDebug, freRelease, paidDebug, paidRelease",
+          "configured_in": "Selected in Android Studio Build Variants panel",
+          "typical_settings": "Inherits all settings from its build type and product flavor"
+        },
+        {
+          "concept": "Flavor Dimension",
+          "purpose": "Groups product flavors into axes — each dimension contributes one flavor to the final variant",
+          "examples": "dimension 'tier' (free/paid) + dimension 'environment' (dev/prod) = 4 variants",
+          "configured_in": "flavorDimensions += listOf(\"tier\", \"environment\") in build.gradle.kts",
+          "typical_settings": "Each flavor must declare which dimension it belongs to"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Configuring Build Types",
+      "items": [
+        "Define build types in the android { buildTypes { } } block in app/build.gradle.kts",
+        "debug build type is created automatically — you can customize it: buildTypes { debug { isDebuggable = true; applicationIdSuffix = \".debug\"; versionNameSuffix = \"-debug\" } }",
+        "release build type: buildTypes { release { isMinifyEnabled = true; isShrinkResources = true; proguardFiles(getDefaultProguardFile(\"proguard-android-optimize.txt\"), \"proguard-rules.pro\"); signingConfig = signingConfigs.getByName(\"release\") } }",
+        "Create custom build types: buildTypes { create(\"staging\") { initWith(getByName(\"debug\")); applicationIdSuffix = \".staging\"; versionNameSuffix = \"-staging\"; isMinifyEnabled = true } }",
+        "initWith(other) — copies all settings from another build type and then applies overrides",
+        "isDebuggable = true — allows attaching the debugger; always false in release",
+        "applicationIdSuffix — appends a suffix to the application ID: com.example.app.debug — allows debug and release installed side by side",
+        "versionNameSuffix — appends a suffix to the version name: '1.0.0-debug' — visible in About screen"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Key Build Type Properties",
+      "rows": [
+        {
+          "property": "isDebuggable",
+          "description": "Enables debugging — allows attaching Android Studio debugger to the app process",
+          "debug_default": "true",
+          "release_default": "false"
+        },
+        {
+          "property": "isMinifyEnabled",
+          "description": "Enables R8 code shrinking and obfuscation — reduces APK size and protects code",
+          "debug_default": "false",
+          "release_default": "true (recommended)"
+        },
+        {
+          "property": "isShrinkResources",
+          "description": "Removes unused resources from the APK — requires isMinifyEnabled = true",
+          "debug_default": "false",
+          "release_default": "true (recommended)"
+        },
+        {
+          "property": "applicationIdSuffix",
+          "description": "Appends a string to the application ID — allows multiple build types installed simultaneously",
+          "debug_default": "\".debug\" (common convention)",
+          "release_default": "none"
+        },
+        {
+          "property": "versionNameSuffix",
+          "description": "Appends a string to the versionName — useful for identifying build type from About screen",
+          "debug_default": "\"-debug\" (common convention)",
+          "release_default": "none"
+        },
+        {
+          "property": "signingConfig",
+          "description": "Specifies which signing configuration to use for this build type",
+          "debug_default": "signingConfigs.debug (auto-generated debug keystore)",
+          "release_default": "Must be explicitly configured — not set by default"
+        },
+        {
+          "property": "proguardFiles",
+          "description": "Specifies ProGuard/R8 rules files to apply when minification is enabled",
+          "debug_default": "Not needed when isMinifyEnabled = false",
+          "release_default": "proguardFiles(getDefaultProguardFile(\"proguard-android-optimize.txt\"), \"proguard-rules.pro\")"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Configuring Product Flavors",
+      "items": [
+        "Declare flavor dimensions first: flavorDimensions += \"tier\" — required when using product flavors",
+        "Define flavors in the productFlavors { } block: productFlavors { create(\"free\") { dimension = \"tier\"; applicationIdSuffix = \".free\"; versionNameSuffix = \"-free\" }; create(\"paid\") { dimension = \"tier\"; applicationIdSuffix = \".paid\" } }",
+        "Each flavor must specify its dimension: dimension = \"tier\"",
+        "Override applicationId per flavor to produce completely different package names: applicationId = \"com.example.paidapp\"",
+        "Add BuildConfig fields per flavor: buildConfigField(\"String\", \"API_BASE_URL\", \"\\\"https://api.example.com\\\"\")",
+        "Add string resources per flavor: resValue(\"string\", \"app_name\", \"My App Pro\")",
+        "Multiple dimensions: flavorDimensions += listOf(\"tier\", \"environment\") — produces tier x environment combinations",
+        "Flavor-specific source sets: src/paid/java/, src/paid/res/ — files here are included only in paid flavor builds"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Source Set Priority Order",
+      "rows": [
+        {
+          "priority": "1 (Highest)",
+          "source_set": "Build Variant source set",
+          "location": "src/paidRelease/",
+          "description": "Specific to the exact combination of flavor and build type — highest priority, overrides everything"
+        },
+        {
+          "priority": "2",
+          "source_set": "Build Type source set",
+          "location": "src/release/",
+          "description": "Specific to the build type — applies to all flavors of this build type"
+        },
+        {
+          "priority": "3",
+          "source_set": "Product Flavor source set",
+          "location": "src/paid/",
+          "description": "Specific to the product flavor — applies to all build types of this flavor"
+        },
+        {
+          "priority": "4",
+          "source_set": "Flavor Dimension source set",
+          "location": "src/tier/ (dimension name)",
+          "description": "Applies to all flavors within this dimension"
+        },
+        {
+          "priority": "5 (Lowest)",
+          "source_set": "Main source set",
+          "location": "src/main/",
+          "description": "Default source set — included in all build variants; lowest priority"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "BuildConfig Fields",
+      "items": [
+        "BuildConfig is a generated class with build-time constants — access in code as BuildConfig.FIELD_NAME",
+        "Default BuildConfig fields: BuildConfig.DEBUG (Boolean), BuildConfig.APPLICATION_ID, BuildConfig.VERSION_CODE, BuildConfig.VERSION_NAME, BuildConfig.BUILD_TYPE, BuildConfig.FLAVOR",
+        "Add custom fields in build types: buildConfigField(\"String\", \"API_URL\", \"\\\"https://dev.api.example.com\\\"\")",
+        "Add custom fields in product flavors: buildConfigField(\"Boolean\", \"PREMIUM_ENABLED\", \"true\")",
+        "Access in Kotlin: val url = BuildConfig.API_URL; val isPremium = BuildConfig.PREMIUM_ENABLED",
+        "Enable BuildConfig generation (required in AGP 8+): android { buildFeatures { buildConfig = true } }",
+        "Use BuildConfig for environment-specific values: API URLs, feature flags, analytics keys",
+        "Never put secrets in BuildConfig — they are visible in the APK via decompilation; use server-side secrets or Android Keystore instead",
+        "Use resValue for string resources that vary by flavor: resValue(\"string\", \"app_name\", \"MyApp Free\") — accessible as R.string.app_name"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "App Signing",
+      "content": "Every Android APK or AAB must be digitally signed before it can be installed on a device or published to Google Play. Signing proves that the app came from you and hasn't been tampered with. The signing process uses a private key stored in a keystore file — a binary file containing one or more private keys and their corresponding certificates. Android uses two signing schemes: the legacy JAR signing (v1), the APK Signature Scheme v2 (v2), v3, and v4. Google Play requires apps to be signed with a key whose certificate you control. Since August 2021, new apps published to Google Play must use the AAB format and Google Play App Signing, where Google re-signs your app with an optimized key after you upload it signed with your upload key."
+    },
+    {
+      "type": "bullet",
+      "heading": "Generating a Release Keystore",
+      "items": [
+        "Generate a keystore using keytool (included with the JDK): keytool -genkeypair -v -keystore release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias mykey",
+        "You will be prompted for: keystore password, key alias password, and distinguished name fields (name, org, city, country)",
+        "Store the keystore file securely — losing it means you can never update your app on Google Play",
+        "Never commit the keystore file or its passwords to version control — add *.jks to .gitignore",
+        "Back up the keystore in multiple secure locations — cloud storage, password manager, encrypted drive",
+        "Keystore validity of 10000 days (~27 years) is recommended — Google Play requires the key to be valid past October 22, 2033",
+        "Use a strong, unique password for both the keystore and the key alias",
+        "In Android Studio: Build > Generate Signed Bundle/APK > Create new keystore — GUI alternative to keytool"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Configuring Signing in build.gradle.kts",
+      "rows": [
+        {
+          "step": "Define signingConfigs block",
+          "code": "android { signingConfigs { create(\"release\") { storeFile = file(\"release.jks\"); storePassword = \"...\"; keyAlias = \"mykey\"; keyPassword = \"...\" } } }",
+          "description": "Declares a named signing configuration with keystore file and credentials"
+        },
+        {
+          "step": "Apply to build type",
+          "code": "buildTypes { release { signingConfig = signingConfigs.getByName(\"release\") } }",
+          "description": "Assigns the signing configuration to the release build type"
+        },
+        {
+          "step": "Read from local.properties (secure)",
+          "code": "val props = Properties().apply { load(rootProject.file(\"local.properties\").inputStream()) }; storePassword = props[\"storePassword\"] as String",
+          "description": "Reads credentials from local.properties — never committed to version control"
+        },
+        {
+          "step": "Read from environment variables (CI/CD)",
+          "code": "storePassword = System.getenv(\"STORE_PASSWORD\") ?: \"\"; keyPassword = System.getenv(\"KEY_PASSWORD\") ?: \"\"",
+          "description": "Reads credentials from environment variables — secure approach for CI/CD pipelines"
+        },
+        {
+          "step": "Verify signing",
+          "code": "apksigner verify --verbose app-release.apk",
+          "description": "Verifies the APK is correctly signed using the apksigner tool from the Android SDK build tools"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Securing Signing Credentials",
+      "items": [
+        "Never hardcode keystore passwords in build.gradle.kts — they would be committed to version control",
+        "Use local.properties for local development: storePassword=mypassword — add local.properties to .gitignore",
+        "Use environment variables for CI/CD: System.getenv(\"STORE_PASSWORD\") — set secrets in your CI platform (GitHub Actions, Bitrise, CircleCI)",
+        "Use GitHub Actions secrets: secrets.STORE_PASSWORD — never visible in logs",
+        "Store the base64-encoded keystore as a CI secret: base64 release.jks | pbcopy — decode in CI before signing",
+        "Decode keystore in GitHub Actions: echo '${{ secrets.KEYSTORE_BASE64 }}' | base64 --decode > release.jks",
+        "Separate the upload key from the app signing key when using Google Play App Signing — the upload key can be reset if compromised",
+        "Rotate your upload key if it is compromised — contact Google Play support to reset the upload key association"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Google Play App Signing",
+      "rows": [
+        {
+          "concept": "App Signing Key",
+          "description": "The key Google uses to sign APKs delivered to users — stored securely by Google; you never have direct access",
+          "your_responsibility": "Opt in during first upload — Google generates or you provide the initial app signing key"
+        },
+        {
+          "concept": "Upload Key",
+          "description": "The key you use to sign your AAB before uploading to Google Play — Google verifies this, then re-signs with the app signing key",
+          "your_responsibility": "Generate and store securely; used in your local build and CI pipeline"
+        },
+        {
+          "concept": "AAB requirement",
+          "description": "New apps on Google Play must be published as Android App Bundles (AAB) — Google generates optimized APKs for each device configuration",
+          "your_responsibility": "Build with: ./gradlew bundleRelease — produces .aab file in build/outputs/bundle/release/"
+        },
+        {
+          "concept": "Upload key reset",
+          "description": "If your upload key is lost or compromised, Google can reset the upload key association — the app signing key is never affected",
+          "your_responsibility": "Contact Google Play support with identity verification to reset the upload key"
+        },
+        {
+          "concept": "SHA-1 and SHA-256 fingerprints",
+          "description": "Google Play provides the SHA-1 and SHA-256 fingerprints of the app signing key — needed for Firebase, Maps API, and App Links configuration",
+          "your_responsibility": "Retrieve from Play Console > Setup > App Integrity > App signing tab"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Building Release Artifacts",
+      "items": [
+        "Build a release APK: ./gradlew assembleRelease — outputs to build/outputs/apk/release/app-release.apk",
+        "Build a release AAB: ./gradlew bundleRelease — outputs to build/outputs/bundle/release/app-release.aab",
+        "Build a specific flavor release: ./gradlew assemblePaidRelease or ./gradlew bundlePaidRelease",
+        "Build all variants: ./gradlew assemble — builds all build type and flavor combinations",
+        "Build debug APK: ./gradlew assembleDebug — signed with the debug keystore automatically",
+        "Install debug APK on connected device: ./gradlew installDebug",
+        "Clean build: ./gradlew clean assembleRelease — ensures no stale artifacts from previous builds",
+        "Verify the release APK is signed: apksigner verify --verbose --print-certs build/outputs/apk/release/app-release.apk",
+        "Check APK size and contents: Android Studio > Build > Analyze APK — inspect DEX files, resources, and manifest"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Build Variant Use Cases",
+      "rows": [
+        {
+          "use_case": "Free and Paid versions",
+          "flavor_dimension": "tier",
+          "flavors": "free, paid",
+          "differentiation": "Different features enabled via BuildConfig.PREMIUM_ENABLED; different applicationId for separate Play Store listings"
+        },
+        {
+          "use_case": "Environment targeting",
+          "flavor_dimension": "environment",
+          "flavors": "dev, staging, prod",
+          "differentiation": "Different API base URLs via buildConfigField; different Firebase projects via google-services.json per flavor source set"
+        },
+        {
+          "use_case": "White-label / Multi-brand",
+          "flavor_dimension": "brand",
+          "flavors": "brandA, brandB, brandC",
+          "differentiation": "Different app names, colors, logos, and package names; each flavor has its own res/ folder with brand assets"
+        },
+        {
+          "use_case": "Region-specific builds",
+          "flavor_dimension": "region",
+          "flavors": "global, china",
+          "differentiation": "China flavor uses different SDKs (no Google Play Services); different analytics and push notification providers"
+        },
+        {
+          "use_case": "Debug vs Release",
+          "flavor_dimension": "N/A — build types",
+          "flavors": "debug, release",
+          "differentiation": "Debug: debuggable, no minification, debug suffix; Release: minified, obfuscated, release signing, no debug tools"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Managing google-services.json Per Flavor",
+      "items": [
+        "Firebase requires a google-services.json file — different environments (dev/prod) need different Firebase projects",
+        "Place flavor-specific google-services.json in the flavor source set: src/dev/google-services.json and src/prod/google-services.json",
+        "The Google Services plugin picks the correct file based on the active build variant automatically",
+        "For build type-specific files: src/debug/google-services.json and src/release/google-services.json",
+        "Verify the correct file is used by checking the package_name in google-services.json matches the variant's applicationId",
+        "Add all google-services.json files to .gitignore if they contain sensitive project IDs — use CI secrets to inject them",
+        "Each Firebase project should have separate Android app registrations for debug and release applicationIds",
+        "FCM sender IDs, analytics IDs, and Crashlytics keys all differ between Firebase projects — use flavor-specific files"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Build Configuration Mistakes",
+      "rows": [
+        {
+          "mistake": "Hardcoding signing credentials in build.gradle.kts",
+          "fix": "Read passwords from local.properties for local builds and environment variables for CI — never commit credentials to version control"
+        },
+        {
+          "mistake": "Not enabling buildConfig = true in AGP 8+",
+          "fix": "Add buildFeatures { buildConfig = true } in the android block — BuildConfig generation is opt-in from AGP 8.0 onwards"
+        },
+        {
+          "mistake": "Losing the release keystore",
+          "fix": "Back up the keystore in multiple secure locations immediately after generation — losing it permanently prevents updating the app on Google Play"
+        },
+        {
+          "mistake": "Using the same applicationId for debug and release",
+          "fix": "Add applicationIdSuffix = \".debug\" to the debug build type — allows both builds installed simultaneously for testing"
+        },
+        {
+          "mistake": "Not defining flavorDimensions when using productFlavors",
+          "fix": "Every productFlavors block requires at least one dimension declared — missing dimension causes a Gradle sync error"
+        },
+        {
+          "mistake": "Putting secrets in BuildConfig fields",
+          "fix": "BuildConfig values are visible in the APK via decompilation — use server-side secrets, Android Keystore, or encrypted storage instead"
+        },
+        {
+          "mistake": "Uploading an APK instead of AAB to Google Play",
+          "fix": "New apps must use AAB format — build with ./gradlew bundleRelease; APKs are still acceptable for internal testing tracks"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Build variants allow you to produce multiple versions of your app from a single codebase by combining build types (debug, release) with product flavors (free, paid, dev, prod). Configure build types for compilation settings like minification, debugging, and signing. Use product flavors with dimensions for feature, environment, or branding differentiation — leveraging flavor-specific source sets, BuildConfig fields, and resValue for per-variant customization. For signing, generate a secure keystore and never commit it or its passwords to version control — use local.properties for local builds and environment variables for CI/CD. Publish to Google Play as an AAB signed with your upload key, and use Google Play App Signing so Google securely manages the app signing key. Always back up your keystore in multiple locations — losing it means you can never update your app."
+    }
+  ]
+}

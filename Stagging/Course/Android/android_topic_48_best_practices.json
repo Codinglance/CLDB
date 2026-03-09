@@ -1,0 +1,411 @@
+{
+  "title": "Android Best Practices & Code Quality",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Code Quality and Best Practices Matter",
+      "content": "Code quality is not just about writing code that works — it is about writing code that is maintainable, testable, readable, and resilient over time. Android apps are long-lived products that grow in complexity, change hands between developers, and must adapt to new Android versions, new devices, and evolving user expectations. Poor code quality leads to bugs that are hard to reproduce, features that are expensive to add, regressions that slip into production, and developer burnout from working in a codebase that fights you at every turn. Adopting consistent best practices — clean architecture, meaningful naming, small focused classes, comprehensive testing, and rigorous code review — compounds over time into a codebase that remains productive and enjoyable to work in years after its creation. Best practices are not rules for their own sake; they are accumulated wisdom from countless teams who learned what works and what causes pain at scale."
+    },
+    {
+      "type": "table",
+      "heading": "Android Architecture Best Practices",
+      "rows": [
+        {
+          "practice": "Separate concerns with MVVM",
+          "description": "Keep UI logic in ViewModels, business logic in UseCases, and data access in Repositories — each layer has a single responsibility",
+          "anti_pattern": "Putting network calls, database queries, or business logic directly in Activities or Fragments"
+        },
+        {
+          "practice": "Unidirectional Data Flow (UDF)",
+          "description": "UI observes state from ViewModel; user actions flow up to ViewModel; ViewModel updates state; state flows down to UI — never the reverse",
+          "anti_pattern": "UI directly modifying shared state or calling repository methods; ViewModel holding references to the UI"
+        },
+        {
+          "practice": "Single source of truth",
+          "description": "Each piece of data has exactly one authoritative source — the Repository is the single source of truth for all data in the app",
+          "anti_pattern": "Maintaining the same data in multiple places (ViewModel and Fragment both holding separate copies of the user list)"
+        },
+        {
+          "practice": "Dependency injection",
+          "description": "Inject dependencies through constructors rather than creating them inside classes — makes code testable and modular",
+          "anti_pattern": "Instantiating Retrofit, Room, or Repository objects with 'new' inside Activity or ViewModel"
+        },
+        {
+          "practice": "Program to interfaces",
+          "description": "Define Repository and DataSource as interfaces; inject concrete implementations — allows fake implementations in tests",
+          "anti_pattern": "Depending directly on concrete classes (UserRepositoryImpl) instead of their interface (UserRepository)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Kotlin Code Quality",
+      "items": [
+        "Prefer val over var — immutability prevents accidental state mutation and makes code easier to reason about",
+        "Use data classes for models — automatic equals(), hashCode(), copy(), and toString() with no boilerplate",
+        "Use sealed classes for exhaustive state representation: sealed class UiState { object Loading; data class Success(val data: List<Item>); data class Error(val message: String) }",
+        "Prefer extension functions over utility classes — keeps logic close to the type it operates on and reads naturally",
+        "Use scope functions appropriately: let for null-safe operations, apply for object configuration, run for object transformation, also for side effects, with for grouping calls",
+        "Avoid !! (non-null assertion operator) — it is a deferred NullPointerException; use safe calls (?.), Elvis operator (?:), or require()/checkNotNull() with a meaningful message",
+        "Use named arguments for functions with multiple parameters of the same type: sendMessage(to = recipient, from = sender) — eliminates parameter order bugs",
+        "Prefer when expressions over if-else chains for multiple conditions — more readable and exhaustive for sealed classes and enums"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Naming Conventions",
+      "rows": [
+        {
+          "element": "Classes and Interfaces",
+          "convention": "PascalCase",
+          "examples": "UserRepository, HomeViewModel, NetworkModule, OnItemClickListener"
+        },
+        {
+          "element": "Functions and Variables",
+          "convention": "camelCase",
+          "examples": "getUserById(), isLoading, fetchRemoteData(), userList"
+        },
+        {
+          "element": "Constants",
+          "convention": "SCREAMING_SNAKE_CASE in companion object",
+          "examples": "companion object { const val MAX_RETRY_COUNT = 3; const val BASE_URL = \"https://api.example.com\" }"
+        },
+        {
+          "element": "Backing properties",
+          "convention": "Underscore prefix for private mutable; public val without underscore",
+          "examples": "private val _uiState = MutableStateFlow(...); val uiState = _uiState.asStateFlow()"
+        },
+        {
+          "element": "Layout files",
+          "convention": "component_type_description.xml — snake_case with component type prefix",
+          "examples": "activity_main.xml, fragment_home.xml, item_user.xml, view_loading.xml, dialog_confirm.xml"
+        },
+        {
+          "element": "Resource IDs",
+          "convention": "componentType_description — camelCase in code; snake_case in XML",
+          "examples": "btnSubmit / btn_submit, tvUserName / tv_user_name, rvProductList / rv_product_list"
+        },
+        {
+          "element": "String resources",
+          "convention": "screen_element_description — snake_case",
+          "examples": "home_title, login_error_invalid_email, profile_button_save, common_ok, common_cancel"
+        },
+        {
+          "element": "Test methods",
+          "convention": "Backtick descriptive names: given_when_then or method_scenario_expectedResult",
+          "examples": "`given valid input, when submit clicked, then navigates to home`"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "ViewModel Best Practices",
+      "items": [
+        "Expose immutable state to the UI: use StateFlow<UiState> via asStateFlow() — never expose MutableStateFlow directly",
+        "Use a single UiState sealed class per screen — reduces the complexity of managing multiple LiveData/Flow properties",
+        "Handle one-shot events (navigation, toasts, dialogs) via SharedFlow or Channel — never via StateFlow which replays the last value",
+        "Never hold a reference to Context, View, Activity, or Fragment in a ViewModel — it causes memory leaks and couples ViewModel to the UI lifecycle",
+        "Use viewModelScope for all coroutines — it is automatically cancelled when the ViewModel is cleared",
+        "Catch exceptions at the ViewModel layer and map them to user-friendly error states — never let raw exceptions propagate to the UI",
+        "Keep ViewModels focused on a single screen — if a ViewModel is used by multiple screens it is probably doing too much",
+        "Use SavedStateHandle for arguments passed via navigation — it survives process death and is testable without navigation infrastructure"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Coroutine Best Practices",
+      "rows": [
+        {
+          "practice": "Use structured concurrency",
+          "description": "Always launch coroutines within a scope that has a defined lifecycle — viewModelScope, lifecycleScope, or a custom scope",
+          "anti_pattern": "Using GlobalScope — it has no lifecycle and coroutines leak until the process dies"
+        },
+        {
+          "practice": "Use the correct Dispatcher",
+          "description": "Dispatchers.Main for UI, Dispatchers.IO for disk and network, Dispatchers.Default for CPU-intensive work",
+          "anti_pattern": "Running network or database operations on Dispatchers.Main — causes ANR and NetworkOnMainThreadException"
+        },
+        {
+          "practice": "Use withContext for switching",
+          "description": "Switch dispatcher for a block of work with withContext(Dispatchers.IO) { } rather than launching a new coroutine",
+          "anti_pattern": "launch(Dispatchers.IO) { } inside a suspend function — creates an unstructured child coroutine"
+        },
+        {
+          "practice": "Prefer suspend functions over callbacks",
+          "description": "Wrap callback-based APIs with suspendCancellableCoroutine { } — integrates cleanly with coroutine cancellation",
+          "anti_pattern": "Mixing callbacks and coroutines — creates unpredictable execution order and difficult error handling"
+        },
+        {
+          "practice": "Handle cancellation correctly",
+          "description": "Check isActive in long loops; use ensureActive(); propagate CancellationException — never catch and swallow it",
+          "anti_pattern": "catch (e: Exception) { } that also catches CancellationException — prevents coroutine cancellation from propagating"
+        },
+        {
+          "practice": "Use Flow for streams, suspend for single values",
+          "description": "Return Flow<T> for data that changes over time; return T or Result<T> from suspend functions for one-shot operations",
+          "anti_pattern": "Returning LiveData from Repository — LiveData is a UI concern; Repository should return Flow"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "UI and Compose Best Practices",
+      "items": [
+        "Keep composables stateless where possible — lift state up to the ViewModel or a stateful parent composable",
+        "Use state hoisting: pass state down as parameters and events up as lambda callbacks — makes composables reusable and testable",
+        "Avoid reading from ViewModel or doing business logic inside composables — pass pre-computed state via UiState and event callbacks",
+        "Use remember { } for expensive calculations that should survive recomposition but not configuration changes",
+        "Use rememberSaveable { } for state that should survive both recomposition and configuration changes",
+        "Mark lambdas as stable with remember { } to prevent unnecessary recompositions when parent recomposes",
+        "Use LazyColumn/LazyRow for lists — never Column with forEach for dynamic lists of arbitrary size",
+        "Apply Modifier parameters as the first parameter after content for composable functions: fun MyComposable(modifier: Modifier = Modifier, content: @Composable () -> Unit) — allows callers to customize layout"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Error Handling Best Practices",
+      "rows": [
+        {
+          "practice": "Use Result<T> or sealed classes",
+          "description": "Wrap repository return values in Result<T> or a custom sealed class — makes error handling explicit and type-safe at every call site",
+          "example": "sealed class DataResult<T> { data class Success<T>(val data: T); data class Error<T>(val exception: Exception) }"
+        },
+        {
+          "practice": "Never swallow exceptions silently",
+          "description": "Always handle or rethrow exceptions — catch blocks that log and return null hide bugs and make debugging nearly impossible",
+          "example": "catch (e: IOException) { _uiState.value = UiState.Error(e.message ?: \"Unknown error\") } — map to UI state"
+        },
+        {
+          "practice": "Map exceptions to domain errors",
+          "description": "Convert low-level exceptions (IOException, HttpException) to meaningful domain error types in the Repository — ViewModel should not know about HTTP status codes",
+          "example": "catch (e: HttpException) { if (e.code() == 401) throw UnauthorizedException() else throw NetworkException() }"
+        },
+        {
+          "practice": "Use CoroutineExceptionHandler for global errors",
+          "description": "Attach a CoroutineExceptionHandler to catch unhandled exceptions from launch { } blocks as a last resort safety net",
+          "example": "val handler = CoroutineExceptionHandler { _, e -> _uiState.value = UiState.Error(e.message) }; viewModelScope.launch(handler) { }"
+        },
+        {
+          "practice": "Retry with exponential backoff",
+          "description": "Implement retry logic with increasing delays for transient network failures — do not hammer a failing server",
+          "example": "repeat(MAX_RETRIES) { attempt -> try { return api.fetch() } catch (e: IOException) { delay(2.0.pow(attempt).toLong() * 1000) } }"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Dependency Management Best Practices",
+      "items": [
+        "Use Gradle version catalogs (libs.versions.toml) to centralize all dependency versions — eliminates version conflicts and scattered version declarations",
+        "Define versions in [versions], libraries in [libraries], and plugins in [plugins] sections of libs.versions.toml",
+        "Reference in build.gradle.kts: implementation(libs.retrofit) — type-safe, IDE-auto-completed dependency declarations",
+        "Use BOM (Bill of Materials) for library families: implementation(platform(libs.firebase.bom)) — ensures all Firebase libraries use compatible versions",
+        "Regularly update dependencies — outdated libraries accumulate security vulnerabilities and compatibility issues",
+        "Use Renovate or Dependabot to automate dependency update PRs — reduces manual tracking overhead",
+        "Audit transitive dependencies with: ./gradlew app:dependencies — understand what your libraries bring in",
+        "Prefer official Jetpack libraries over third-party alternatives when equivalent functionality exists — better lifecycle integration and long-term support"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Code Review Best Practices",
+      "rows": [
+        {
+          "practice": "Keep PRs small and focused",
+          "description": "Each pull request should implement one feature or fix one bug — large PRs are hard to review thoroughly and hide bugs",
+          "guideline": "Aim for under 400 lines changed per PR; split larger features into sequential smaller PRs"
+        },
+        {
+          "practice": "Write meaningful PR descriptions",
+          "description": "Explain what changed, why it changed, how to test it, and any risks — reviewers should understand context without reading every line",
+          "guideline": "Include: summary of changes, screenshots for UI changes, test instructions, and link to the issue or ticket"
+        },
+        {
+          "practice": "Review for correctness, not style",
+          "description": "Automated tools (ktlint, detekt) handle style — reviewers should focus on logic, architecture, edge cases, and security",
+          "guideline": "Configure ktlint and detekt in CI to block PRs with style violations automatically"
+        },
+        {
+          "practice": "Be constructive and specific",
+          "description": "Comment on the code, not the author; explain why a change is needed, not just that it is wrong; suggest alternatives",
+          "guideline": "Use conventional comments: 'nit:' for minor style, 'question:' for clarification, 'blocker:' for must-fix issues"
+        },
+        {
+          "practice": "Require tests for new logic",
+          "description": "Every new ViewModel method, Repository function, or UseCase should have corresponding unit tests before merging",
+          "guideline": "Make test coverage a PR requirement — configure minimum coverage thresholds in CI"
+        },
+        {
+          "practice": "Use feature flags for unfinished work",
+          "description": "Merge incomplete features behind a feature flag rather than using long-lived feature branches — keeps the main branch releasable at all times",
+          "guideline": "Use BuildConfig.FEATURE_ENABLED or remote feature flags (Firebase Remote Config) to control feature visibility"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Static Analysis Tools",
+      "items": [
+        "ktlint — enforces Kotlin coding style and formatting; run locally: ./gradlew ktlintCheck; fix automatically: ./gradlew ktlintFormat",
+        "Add ktlint to build.gradle.kts: plugins { id(\"org.jlleitschuh.gradle.ktlint\") version \"12.x.x\" }",
+        "detekt — static analysis for Kotlin code quality: complexity, style, potential bugs, performance issues",
+        "Add detekt: plugins { id(\"io.gitlab.arturbosch.detekt\") version \"1.x.x\" }; run: ./gradlew detekt",
+        "Configure detekt rules in detekt.yml — customize thresholds for complexity metrics like cyclomatic complexity and method length",
+        "Android Lint — built-in Android Studio tool detecting: missing translations, accessibility issues, deprecated API usage, performance problems",
+        "Run Lint: ./gradlew lint — generates an HTML report at build/reports/lint-results-debug.html",
+        "Configure Lint in build.gradle.kts: android { lint { abortOnError = true; warningsAsErrors = true; htmlReport = true } }",
+        "Add all static analysis checks to CI — PRs that fail ktlint, detekt, or Lint checks should not be merged"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Git and CI/CD Best Practices",
+      "rows": [
+        {
+          "practice": "Use a branching strategy",
+          "description": "Adopt GitFlow or trunk-based development — main/master is always releasable; feature branches are short-lived",
+          "implementation": "main (production), develop (integration), feature/xxx (short-lived), hotfix/xxx (emergency fixes)"
+        },
+        {
+          "practice": "Write meaningful commit messages",
+          "description": "Follow Conventional Commits: type(scope): description — enables automated changelog generation",
+          "implementation": "feat(login): add biometric authentication; fix(cart): correct total calculation for discounted items; chore(deps): update Retrofit to 2.11.0"
+        },
+        {
+          "practice": "Automate CI on every PR",
+          "description": "Run build, unit tests, static analysis, and lint on every pull request — prevent broken code from reaching main",
+          "implementation": "GitHub Actions, Bitrise, or CircleCI workflow: build > test > lint > detekt > ktlint"
+        },
+        {
+          "practice": "Automate release builds on CI",
+          "description": "Build, sign, and upload release AABs on CI using secure environment variables for signing credentials — no manual release builds",
+          "implementation": "Trigger on merge to main or version tags; use fastlane supply or Gradle Play Publisher to upload to Play Console"
+        },
+        {
+          "practice": "Use .gitignore correctly",
+          "description": "Never commit: local.properties, *.jks keystore files, google-services.json, .idea/, build/ directories, API keys",
+          "implementation": "Use the standard Android .gitignore template from gitignore.io or GitHub's Android template"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Memory and Resource Management",
+      "items": [
+        "Always clear View references in Fragment.onDestroyView(): private var _binding: FragmentHomeBinding? = null — prevents the most common Fragment memory leak",
+        "Use lifecycleScope and viewModelScope instead of GlobalScope — automatically cancelled when the lifecycle ends",
+        "Unregister listeners, observers, and BroadcastReceivers in the corresponding lifecycle cleanup method — onStop(), onDestroyView(), or onDestroy()",
+        "Use LeakCanary in debug builds to detect memory leaks automatically: debugImplementation(\"com.squareup.leakcanary:leakcanary-android:2.x\")",
+        "Avoid static references to Context, Activity, View, or any object that holds them — use applicationContext for singletons",
+        "Use Glide or Coil for image loading — they handle caching, memory management, and lifecycle awareness automatically",
+        "Cancel image loading requests when a View is recycled or a Fragment is destroyed — Coil and Glide handle this automatically when used with the correct lifecycle owner",
+        "Close resources explicitly: database connections, streams, and Cursor objects must always be closed in finally blocks or use use { }"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Testing Best Practices Summary",
+      "rows": [
+        {
+          "practice": "Follow the testing pyramid",
+          "description": "70% unit tests, 20% integration tests, 10% UI tests — fast, reliable unit tests are the foundation",
+          "tool": "JUnit + Mockito + Turbine for unit; Room in-memory + Hilt for integration; Espresso + Compose Testing for UI"
+        },
+        {
+          "practice": "Test behavior, not implementation",
+          "description": "Assert what the code does from the outside — avoid testing private methods or verifying every internal call",
+          "tool": "Write tests from the perspective of the caller; refactor freely without breaking tests"
+        },
+        {
+          "practice": "Make tests deterministic",
+          "description": "Tests must produce the same result every time — eliminate randomness, time dependencies, and shared mutable state",
+          "tool": "Use fake clocks, fixed test data, and isolated in-memory databases"
+        },
+        {
+          "practice": "Test all states",
+          "description": "Test loading, success, error, empty, and edge case states — not just the happy path",
+          "tool": "Turbine for asserting state sequences; fake repositories with controllable error injection"
+        },
+        {
+          "practice": "Run tests in CI",
+          "description": "Unit tests run on every PR; instrumented tests run nightly or on release branches",
+          "tool": "GitHub Actions for unit tests; Firebase Test Lab or Gradle Managed Devices for instrumented tests"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Documentation and Code Readability",
+      "items": [
+        "Write self-documenting code — choose names that make the intent obvious; prefer readable code over comments that explain unclear code",
+        "Add KDoc comments to all public APIs: /** * Returns the user with the given ID, or null if not found. * @param userId The unique identifier of the user. */",
+        "Document the 'why', not the 'what' — comments should explain non-obvious decisions, constraints, or workarounds, not restate what the code does",
+        "Keep functions short and focused — if a function does not fit on one screen it is doing too much; extract helper functions",
+        "Avoid magic numbers and magic strings — extract them as named constants: const val MAX_RETRY_COUNT = 3 instead of repeat(3) { }",
+        "Use TODO() with context: TODO(\"Replace with real API call after backend is ready — tracked in JIRA-123\") — actionable and traceable",
+        "Delete dead code immediately — commented-out code adds noise and creates confusion about whether it should exist; version control preserves history",
+        "Keep files focused — if a file exceeds ~300 lines it likely needs to be split into smaller, more focused classes"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Anti-Patterns to Avoid",
+      "rows": [
+        {
+          "anti_pattern": "God Activity / God Fragment",
+          "description": "A single Activity or Fragment that handles network calls, business logic, database access, and UI — hundreds or thousands of lines long",
+          "fix": "Extract ViewModels for state management, Repositories for data, and UseCases for business logic — Activity and Fragment should only handle UI"
+        },
+        {
+          "anti_pattern": "Context leaks",
+          "description": "Passing Activity context to singletons, static fields, or long-lived objects — the Activity cannot be garbage collected",
+          "fix": "Use applicationContext for singletons; never store Activity reference in anything that outlives it"
+        },
+        {
+          "anti_pattern": "Callback hell",
+          "description": "Deeply nested callbacks for async operations — hard to read, error-prone, and difficult to cancel or handle errors in",
+          "fix": "Replace callbacks with coroutines and suspend functions — flat, linear code with structured error handling"
+        },
+        {
+          "anti_pattern": "Premature optimization",
+          "description": "Optimizing code before measuring — wasting time on micro-optimizations that have no meaningful impact on user experience",
+          "fix": "Profile first with Android Studio Profiler; optimize only bottlenecks that are measured to impact performance"
+        },
+        {
+          "anti_pattern": "Not handling configuration changes",
+          "description": "Storing UI state in Activity fields that are lost on rotation — app resets state and restarts network requests on every configuration change",
+          "fix": "Store all UI state in ViewModel which survives configuration changes; use SavedStateHandle for process death"
+        },
+        {
+          "anti_pattern": "Hardcoded strings in layouts",
+          "description": "Using android:text=\"Submit\" directly in XML — untranslatable, inconsistent, and violates the single source of truth principle",
+          "fix": "Always use string resources: android:text=\"@string/common_submit\" — enables localization and consistency"
+        },
+        {
+          "anti_pattern": "Ignoring ProGuard warnings",
+          "description": "Suppressing all R8 warnings with -dontwarn ** — hides real issues that cause runtime crashes in release builds",
+          "fix": "Resolve each warning individually; add specific -dontwarn rules only for intentionally absent optional dependencies"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Staying Current with Android Development",
+      "items": [
+        "Follow the official Android Developers blog: android-developers.googleblog.com — announcements, best practice guides, and deep dives from the Android team",
+        "Watch Android at Google I/O sessions annually — major platform updates, new Jetpack APIs, and Compose advancements are announced here",
+        "Read the official Android Architecture Guides: developer.android.com/topic/architecture — the canonical guidance from Google on MVVM, UDF, and Jetpack usage",
+        "Follow Now in Android — Google's official weekly digest of Android developer news, blog posts, and videos",
+        "Use the Android Studio preview channel to stay ahead of IDE improvements and new inspections: Help > Check for Updates > switch to Canary channel",
+        "Keep dependencies updated — Jetpack libraries receive regular improvements; outdated versions miss bug fixes and Compose optimizations",
+        "Contribute to or read open source Android projects — AOSP, Now in Android sample app, and other Google sample apps demonstrate current best practices",
+        "Join the Kotlin and Android developer communities: KotlinLang Slack, Android Dev subreddit, Droidcon conference talks — real-world experience shared by practitioners"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Android best practices and code quality are the cumulative result of consistent discipline applied across architecture, Kotlin usage, testing, tooling, and team processes. Build on a solid MVVM foundation with unidirectional data flow, single sources of truth, and dependency injection. Write idiomatic Kotlin — prefer val, use sealed classes for exhaustive state, avoid !!, and leverage scope functions appropriately. Keep ViewModels free of Android framework references, expose immutable state via StateFlow, and handle all errors explicitly with meaningful UI state. Test thoroughly at all three levels of the pyramid, with the majority of coverage in fast unit tests using JUnit, Mockito, and Turbine. Enforce code quality automatically with ktlint, detekt, and Android Lint integrated into CI so that style and quality gates are consistent and unambiguous. Manage dependencies centrally with version catalogs, write meaningful commit messages and PR descriptions, and keep the main branch always releasable. The best Android codebases are not built in a single sprint — they are the result of small, consistent, disciplined decisions made every day."
+    }
+  ]
+}
