@@ -3,338 +3,54 @@
   "sections": [
     {
       "type": "text",
-      "heading": "Why Localization and Accessibility Matter",
-      "content": "Localization (l10n) is the process of adapting your app for different languages, regions, and cultures — allowing you to reach a global audience. Accessibility (a11y) ensures your app is usable by people with disabilities including visual, motor, auditory, and cognitive impairments. Both are first-class concerns on Android: the platform provides built-in APIs and tools for string translation, RTL layout support, plurals, date and number formatting, TalkBack screen reader support, and more. Localizing your app increases your potential user base dramatically — over 70% of Google Play downloads come from outside the United States. Accessibility compliance is not only ethically important but increasingly a legal requirement in many markets, and Google Play highlights accessible apps in search rankings."
+      "heading": "Overview",
+      "content": "Localization (l10n) adapts your app for different languages and regions; accessibility (a11y) ensures usability for users with disabilities. Android supports string translation, RTL layouts, plurals, date/number formatting, and TalkBack. Localizing expands reach globally; accessibility is ethically and legally important, improving Google Play discoverability."
     },
     {
       "type": "table",
-      "heading": "Localization vs Internationalization",
+      "heading": "Key Concepts",
       "rows": [
-        {
-          "concept": "Internationalization (i18n)",
-          "definition": "Designing and building your app so it can be adapted to different locales without engineering changes",
-          "examples": "Externalizing all strings, using locale-aware date/number formatters, supporting RTL layouts, avoiding hardcoded text in layouts"
-        },
-        {
-          "concept": "Localization (l10n)",
-          "definition": "The actual process of adapting the app for a specific locale — translating strings, providing locale-specific resources",
-          "examples": "Providing res/values-fr/ for French, res/values-ar/ for Arabic, locale-specific images or icons"
-        },
-        {
-          "concept": "Locale",
-          "definition": "A combination of language and region that determines formatting and translation — e.g. en-US, fr-FR, ar-SA",
-          "examples": "en-US (English, United States), zh-CN (Chinese Simplified, China), pt-BR (Portuguese, Brazil)"
-        },
-        {
-          "concept": "RTL (Right-to-Left)",
-          "definition": "Text direction used by Arabic, Hebrew, Farsi, and Urdu — layouts must mirror horizontally for RTL locales",
-          "examples": "Navigation drawer on the right, back arrow pointing right, text aligned to the right"
-        }
+        {"concept": "Internationalization (i18n)", "definition": "Design app to support multiple locales without code changes"},
+        {"concept": "Localization (l10n)", "definition": "Translate strings and provide locale-specific resources"},
+        {"concept": "RTL", "definition": "Right-to-left text direction for Arabic, Hebrew, etc.; layouts mirror automatically"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Externalizing Strings",
+      "heading": "Best Practices",
       "items": [
-        "All user-visible text must be defined in res/values/strings.xml — never hardcode strings in layouts or Kotlin/Java code",
-        "Reference in XML layouts: android:text=\"@string/welcome_message\"",
-        "Reference in Kotlin: getString(R.string.welcome_message) or context.getString(R.string.welcome_message)",
-        "String with argument placeholders: <string name=\"greeting\">Hello, %1$s!</string> — use getString(R.string.greeting, userName)",
-        "Use %1$s for string, %1$d for integer, %1$f for float — numbered arguments allow translators to reorder them",
-        "Avoid string concatenation: never do getString(R.string.hello) + name — use placeholders instead so translators can reorder",
-        "Mark strings that should NOT be translated: tools:ignore=\"TypographyDashes\" or translatable=\"false\": <string name=\"app_id\" translatable=\"false\">com.example.app</string>",
-        "Use the Translations Editor in Android Studio (open strings.xml > Open editor) to manage all locales in one view"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Resource Directory Qualifiers",
-      "rows": [
-        {
-          "qualifier": "res/values/",
-          "description": "Default strings — used as fallback when no locale-specific resource matches",
-          "example": "res/values/strings.xml"
-        },
-        {
-          "qualifier": "res/values-fr/",
-          "description": "French language strings",
-          "example": "res/values-fr/strings.xml"
-        },
-        {
-          "qualifier": "res/values-fr-rCA/",
-          "description": "French language, Canada region — more specific than values-fr/",
-          "example": "res/values-fr-rCA/strings.xml"
-        },
-        {
-          "qualifier": "res/values-ar/",
-          "description": "Arabic language strings — also triggers RTL layout by default",
-          "example": "res/values-ar/strings.xml"
-        },
-        {
-          "qualifier": "res/values-night/",
-          "description": "Dark mode resource overrides — combined with locale: values-fr-night/",
-          "example": "res/values-night/colors.xml"
-        },
-        {
-          "qualifier": "res/drawable-fr/",
-          "description": "Locale-specific drawables — e.g. images with embedded text that need translation",
-          "example": "res/drawable-fr/banner.png"
-        },
-        {
-          "qualifier": "res/layout-ldrtl/",
-          "description": "RTL-specific layouts — only needed for complex RTL overrides; prefer start/end attributes instead",
-          "example": "res/layout-ldrtl/activity_main.xml"
-        }
+        "Externalize all strings in res/values/strings.xml; use placeholders and <plurals>",
+        "Use start/end attributes and android:supportsRtl=\"true\" for RTL",
+        "Format dates, numbers, and currency with locale-aware APIs",
+        "Provide meaningful contentDescription for all non-text elements",
+        "Ensure touch targets ≥48x48dp and sufficient color contrast (WCAG AA)",
+        "Test with TalkBack, Accessibility Scanner, Layout Inspector, and Espresso Accessibility Checks"
       ]
     },
     {
       "type": "bullet",
-      "heading": "Plural Strings",
+      "heading": "Per-App Language (API 33+)",
       "items": [
-        "Use <plurals> in strings.xml for quantities that have different forms in different languages",
-        "English has two forms (one, other) but other languages may have up to six (zero, one, two, few, many, other)",
-        "Declare: <plurals name=\"message_count\"><item quantity=\"one\">%1$d message</item><item quantity=\"other\">%1$d messages</item></plurals>",
-        "Use in Kotlin: resources.getQuantityString(R.plurals.message_count, count, count) — first count selects the plural form, second is the format argument",
-        "Never hardcode plural logic in code with if (count == 1) — always use <plurals> so translators can define correct forms",
-        "Arabic has six plural forms — always provide all relevant quantity items for languages you support",
-        "Russian, Polish, and Czech have complex plural rules — trust the plural system rather than coding rules manually",
-        "Test plurals with different values: 0, 1, 2, 5, 11, 21 to ensure correct forms are selected"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "RTL Layout Support",
-      "rows": [
-        {
-          "topic": "Enable RTL support",
-          "description": "Add android:supportsRtl=\"true\" to <application> in AndroidManifest.xml — required for RTL mirroring",
-          "example": "<application android:supportsRtl=\"true\">"
-        },
-        {
-          "topic": "Use start/end instead of left/right",
-          "description": "Replace layout_marginLeft with layout_marginStart, layout_marginRight with layout_marginEnd — automatically mirrors in RTL",
-          "example": "android:layout_marginStart=\"16dp\" android:paddingEnd=\"8dp\""
-        },
-        {
-          "topic": "Gravity",
-          "description": "Use gravity=\"start\" instead of gravity=\"left\" — resolves to left in LTR and right in RTL",
-          "example": "android:gravity=\"start\""
-        },
-        {
-          "topic": "ConstraintLayout RTL",
-          "description": "Use app:layout_constraintStart_toStartOf and End constraints — avoid Left/Right constraint attributes",
-          "example": "app:layout_constraintStart_toStartOf=\"parent\""
-        },
-        {
-          "topic": "Auto-mirrored drawables",
-          "description": "Mark drawables that should flip horizontally in RTL with android:autoMirrored=\"true\" in the vector drawable",
-          "example": "<vector android:autoMirrored=\"true\"> — for back arrows, forward chevrons, directional icons"
-        },
-        {
-          "topic": "Force RTL for testing",
-          "description": "Test RTL layout without changing device language via Developer Options or adb",
-          "example": "adb shell settings put global debug.force_rtl 1 — forces RTL layout for all apps"
-        }
+        "Declare supported locales in res/xml/locales_config.xml",
+        "Set language programmatically via LocaleManager or AppCompatDelegate",
+        "System recreates app automatically on language change"
       ]
     },
     {
       "type": "bullet",
-      "heading": "Locale-Aware Formatting",
+      "heading": "Compose Accessibility",
       "items": [
-        "Never hardcode date, time, number, or currency formats — they vary significantly across locales",
-        "Format dates with DateFormat.getDateInstance(DateFormat.MEDIUM, locale) or DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)",
-        "Format numbers with NumberFormat.getInstance(locale) — handles decimal separators (1,234.56 vs 1.234,56)",
-        "Format currency with NumberFormat.getCurrencyInstance(locale) — handles symbol, position, and decimal format",
-        "Use android.text.format.DateUtils for relative time strings ('5 minutes ago') — automatically localized",
-        "Avoid String.format() for numbers — use NumberFormat instead to respect locale decimal and grouping separators",
-        "Use Locale.getDefault() to get the current device locale — pass it explicitly to formatters rather than relying on system default",
-        "For Compose: use LocalContext.current and stringResource() / pluralStringResource() for locale-aware string access"
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "App-Level Language Selection (API 33+)",
-      "content": "Since Android 13 (API 33), users can set a per-app language preference directly in system Settings > Apps > Language, independent of the system language. This is handled by the Android platform through the LocaleManager API. Jetpack's AppCompatDelegate provides a backward-compatible API for supporting per-app language selection down to API 14. When the user selects a language for your app, the system recreates the app with the new locale configuration automatically. You should declare your supported locales in res/xml/locales_config.xml so the system knows which languages your app supports and can display them in the language picker."
-    },
-    {
-      "type": "bullet",
-      "heading": "Per-App Language Configuration",
-      "items": [
-        "Declare supported locales in res/xml/locales_config.xml: <locale-config xmlns:android=\"...\"><locale android:name=\"en\"/><locale android:name=\"fr\"/><locale android:name=\"ar\"/></locale-config>",
-        "Reference in manifest: <application android:localeConfig=\"@xml/locales_config\">",
-        "Set app language programmatically (API 33+): getSystemService(LocaleManager::class.java).applicationLocales = LocaleList.forLanguageTags(\"fr\")",
-        "Jetpack backward-compatible API (API 14+): AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(\"fr\"))",
-        "Get current app locale: AppCompatDelegate.getApplicationLocales() — returns LocaleListCompat",
-        "Reset to system language: AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())",
-        "Add Appcompat dependency for backward compat: implementation(\"androidx.appcompat:appcompat:1.6.x\")",
-        "The system automatically shows your app in the system language picker if locales_config.xml is declared"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Accessibility — Core Concepts",
-      "rows": [
-        {
-          "concept": "TalkBack",
-          "description": "Android's built-in screen reader — reads UI elements aloud for users with visual impairments; navigates via swipe gestures",
-          "developer_action": "Ensure all interactive and informative views have meaningful content descriptions"
-        },
-        {
-          "concept": "Content Description",
-          "description": "Text description of a view read aloud by TalkBack — required for ImageViews, ImageButtons, and icon-only views",
-          "developer_action": "Set android:contentDescription=\"@string/profile_photo_desc\" on all non-text visual elements"
-        },
-        {
-          "concept": "Touch Target Size",
-          "description": "Interactive elements must be at least 48x48dp — smaller targets are hard to tap for motor-impaired users",
-          "developer_action": "Use minWidth/minHeight of 48dp or wrap in a container with sufficient padding"
-        },
-        {
-          "concept": "Color Contrast",
-          "description": "Text must have sufficient contrast against its background — WCAG AA requires 4.5:1 for normal text, 3:1 for large text",
-          "developer_action": "Use Accessibility Scanner or Android Studio lint to check contrast ratios"
-        },
-        {
-          "concept": "Focus Order",
-          "description": "The order in which TalkBack moves focus between elements — should be logical and follow reading order",
-          "developer_action": "Use android:accessibilityTraversalAfter/Before or nextFocusDown/Up/Left/Right to define focus order"
-        },
-        {
-          "concept": "Switch Access",
-          "description": "Navigation using external switches instead of touch — for users with motor impairments",
-          "developer_action": "Ensure all interactive elements are focusable and reachable via keyboard/switch navigation"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Content Descriptions",
-      "items": [
-        "Set content descriptions on ImageViews: android:contentDescription=\"@string/send_button_description\"",
-        "Set in Kotlin: imageView.contentDescription = getString(R.string.send_button_description)",
-        "For decorative images that convey no information, mark as not important for accessibility: android:importantForAccessibility=\"no\"",
-        "In Compose: use semantics { contentDescription = \"...\" } modifier or Modifier.semantics { }",
-        "For ImageButtons and FABs, the content description IS the accessible label — make it action-oriented: 'Send message' not 'envelope icon'",
-        "Don't describe the type of control in the content description — TalkBack already announces 'button', 'image' etc.",
-        "Group related views with android:screenReaderFocusable=\"true\" on the container so TalkBack reads them together",
-        "Dynamic content descriptions should update when the view state changes — e.g. 'Play' vs 'Pause' for a media button"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Accessibility Attributes Reference",
-      "rows": [
-        {
-          "attribute": "android:contentDescription",
-          "purpose": "Text read by TalkBack for non-text views",
-          "example": "android:contentDescription=\"@string/profile_image_desc\""
-        },
-        {
-          "attribute": "android:importantForAccessibility",
-          "purpose": "Control whether a view is exposed to accessibility services",
-          "example": "android:importantForAccessibility=\"no\" for decorative views"
-        },
-        {
-          "attribute": "android:labelFor",
-          "purpose": "Associates a TextView label with an EditText — TalkBack reads the label when the EditText is focused",
-          "example": "android:labelFor=\"@id/emailEditText\" on the label TextView"
-        },
-        {
-          "attribute": "android:hint",
-          "purpose": "Placeholder text in EditText — read by TalkBack when the field is empty",
-          "example": "android:hint=\"@string/email_hint\""
-        },
-        {
-          "attribute": "android:accessibilityLiveRegion",
-          "purpose": "Announces dynamic content changes automatically without user focus",
-          "example": "android:accessibilityLiveRegion=\"polite\" for non-urgent updates, \"assertive\" for urgent"
-        },
-        {
-          "attribute": "android:screenReaderFocusable",
-          "purpose": "Makes a container focusable as a single unit by screen readers",
-          "example": "android:screenReaderFocusable=\"true\" on a card view grouping related content"
-        },
-        {
-          "attribute": "android:focusable",
-          "purpose": "Makes a non-interactive view focusable for keyboard and switch access navigation",
-          "example": "android:focusable=\"true\" on a custom view that handles click events"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Accessibility in Jetpack Compose",
-      "items": [
-        "Compose uses semantics properties to expose information to accessibility services",
-        "Add content description: Modifier.semantics { contentDescription = getString(R.string.send_desc) }",
-        "Merge semantics for grouped elements: Modifier.semantics(mergeDescendants = true) { } — reads all child text as one unit",
-        "Mark decorative elements: Modifier.semantics { invisibleToUser() }",
-        "Custom role: Modifier.semantics { role = Role.Button } — announces the correct control type to TalkBack",
-        "State description for toggle elements: Modifier.semantics { stateDescription = if (checked) \"On\" else \"Off\" }",
-        "Live region equivalent: Modifier.semantics { liveRegion = LiveRegionMode.Polite }",
-        "Test accessibility in Compose: use composeTestRule.onNodeWithContentDescription() in UI tests to verify semantic labels",
-        "Use AccessibilityChecks from Espresso Accessibility Checks library to automatically detect accessibility issues in tests"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Accessibility Testing Tools",
-      "rows": [
-        {
-          "tool": "TalkBack",
-          "type": "On-device screen reader",
-          "how_to_use": "Enable in Settings > Accessibility > TalkBack — navigate your app using swipe gestures; verify all elements are announced correctly"
-        },
-        {
-          "tool": "Accessibility Scanner",
-          "type": "Google app — on-device scanning",
-          "how_to_use": "Install from Play Store; tap the scan button to get suggestions for contrast, touch targets, and missing labels on the current screen"
-        },
-        {
-          "tool": "Layout Inspector",
-          "type": "Android Studio tool",
-          "how_to_use": "Tools > Layout Inspector — inspect semantic properties and content descriptions on live running apps"
-        },
-        {
-          "tool": "Lint Accessibility Checks",
-          "type": "Static analysis — build time",
-          "how_to_use": "Android Studio lint warns about missing contentDescription, low contrast, and other accessibility issues at build time"
-        },
-        {
-          "tool": "Espresso Accessibility Checks",
-          "type": "Automated test integration",
-          "how_to_use": "AccessibilityChecks.enable() in your Espresso test setup — automatically runs accessibility checks on every Espresso interaction"
-        },
-        {
-          "tool": "Switch Access",
-          "type": "On-device motor accessibility simulation",
-          "how_to_use": "Enable in Settings > Accessibility > Switch Access — verify all interactive elements are reachable and operable via switch navigation"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Localization & Accessibility Checklist",
-      "items": [
-        "All user-visible strings externalized to strings.xml — no hardcoded text in layouts or code",
-        "Plural strings use <plurals> — no hardcoded singular/plural logic in code",
-        "All layouts use start/end instead of left/right attributes",
-        "android:supportsRtl=\"true\" declared in the manifest",
-        "RTL layout tested using Developer Options force RTL setting",
-        "Dates, numbers, and currencies formatted using locale-aware APIs",
-        "All ImageViews and icon-only buttons have meaningful content descriptions",
-        "Decorative images marked with importantForAccessibility=\"no\"",
-        "All touch targets are at least 48x48dp",
-        "Text contrast ratio meets WCAG AA standards (4.5:1 for normal text)",
-        "App tested with TalkBack enabled — all screens navigable and understandable",
-        "Supported locales declared in res/xml/locales_config.xml (API 33+)",
-        "Translations reviewed by native speakers — not just machine translated"
+        "Use Modifier.semantics { contentDescription = ... }",
+        "MergeDescendants for grouped elements",
+        "Mark decorative elements invisible with invisibleToUser()",
+        "Set role and stateDescription for controls",
+        "Use liveRegion for dynamic content announcements"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Localization and accessibility are essential for building an inclusive, globally competitive Android app. For localization, externalize all strings to strings.xml using placeholders and <plurals> for quantities, use locale-aware APIs for formatting dates, numbers, and currencies, and support RTL layouts by replacing left/right attributes with start/end throughout your layouts. Declare supported locales in locales_config.xml to enable per-app language selection on Android 13+. For accessibility, add meaningful content descriptions to all non-text visual elements, ensure touch targets are at least 48x48dp, maintain sufficient color contrast, and use semantics in Compose for full screen reader support. Test with TalkBack, Accessibility Scanner, and Espresso Accessibility Checks to catch issues before they reach users. Both localization and accessibility are investments that expand your audience and improve the experience for all users."
+      "content": "Localization and accessibility ensure inclusive apps. Externalize strings, handle plurals, support RTL, format locale-aware content, provide content descriptions, test touch targets and contrast, and leverage Compose semantics. These practices expand your audience and improve user experience globally."
     }
   ]
 }

@@ -3,358 +3,48 @@
   "sections": [
     {
       "type": "text",
-      "heading": "What are ProGuard and R8?",
-      "content": "ProGuard and R8 are code shrinking, obfuscation, and optimization tools for Android apps. ProGuard was the original tool used by Android for many years, but since Android Gradle Plugin 3.4, R8 has replaced ProGuard as the default compiler and shrinker. R8 performs all of ProGuard's tasks — shrinking, obfuscation, and optimization — in a single compilation step integrated directly into the D8 dexer, making it faster and more efficient than the separate ProGuard pass it replaced. R8 is fully compatible with ProGuard rules files, so existing ProGuard configurations continue to work without modification. Enabling R8 in your release build reduces APK size, improves runtime performance, and makes reverse engineering significantly harder by renaming classes, methods, and fields to meaningless short names."
+      "heading": "Overview",
+      "content": "R8 is Android's default code shrinker, obfuscator, and optimizer, replacing ProGuard. It reduces APK size, improves performance, and makes reverse engineering harder. R8 is fully compatible with existing ProGuard rules."
     },
     {
       "type": "table",
-      "heading": "R8 Processing Stages",
+      "heading": "R8 Stages",
       "rows": [
-        {
-          "stage": "Shrinking (Tree Shaking)",
-          "what_it_does": "Removes unused classes, methods, fields, and attributes from the compiled code and resources",
-          "benefit": "Reduces APK/AAB size significantly — especially effective when using large libraries where only a fraction of the API is used",
-          "enabled_by": "isMinifyEnabled = true"
-        },
-        {
-          "stage": "Obfuscation",
-          "what_it_does": "Renames classes, methods, and fields to short meaningless names (a, b, c) — makes decompiled code hard to understand",
-          "benefit": "Protects intellectual property and business logic from reverse engineering",
-          "enabled_by": "isMinifyEnabled = true (obfuscation is part of the same pass)"
-        },
-        {
-          "stage": "Optimization",
-          "what_it_does": "Inlines methods, removes dead code branches, simplifies control flow, and performs other bytecode-level optimizations",
-          "benefit": "Improves runtime performance and further reduces code size",
-          "enabled_by": "isMinifyEnabled = true with proguard-android-optimize.txt rules file"
-        },
-        {
-          "stage": "Resource Shrinking",
-          "what_it_does": "Removes unused resources (layouts, drawables, strings, etc.) from the APK after code shrinking",
-          "benefit": "Further reduces APK size — particularly impactful for apps using large libraries with bundled resources",
-          "enabled_by": "isShrinkResources = true — requires isMinifyEnabled = true"
-        }
+        {"stage": "Shrinking", "description": "Removes unused code and resources (isMinifyEnabled=true)"},
+        {"stage": "Obfuscation", "description": "Renames classes, methods, and fields to short names to protect IP"},
+        {"stage": "Optimization", "description": "Inlines methods, removes dead code, improves runtime performance"},
+        {"stage": "Resource Shrinking", "description": "Removes unused layouts, drawables, strings (isShrinkResources=true)"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Enabling R8 in build.gradle.kts",
+      "heading": "Keep Rules",
       "items": [
-        "Enable minification for release build: buildTypes { release { isMinifyEnabled = true; isShrinkResources = true; proguardFiles(getDefaultProguardFile(\"proguard-android-optimize.txt\"), \"proguard-rules.pro\") } }",
-        "getDefaultProguardFile(\"proguard-android-optimize.txt\") — Android's built-in rules with optimizations enabled; prefer over proguard-android.txt",
-        "getDefaultProguardFile(\"proguard-android.txt\") — built-in rules without optimizations — use only if optimize causes issues",
-        "\"proguard-rules.pro\" — your app-specific custom rules file located in the app/ directory",
-        "isShrinkResources = true — enables resource shrinking; always pair with isMinifyEnabled = true",
-        "Enable for debug builds to catch keep rule issues early: debug { isMinifyEnabled = true; proguardFiles(...) } — use sparingly as it slows debug builds",
-        "Add library-specific rules files: proguardFiles(getDefaultProguardFile(\"proguard-android-optimize.txt\"), \"proguard-rules.pro\", \"proguard-retrofit.pro\")",
-        "Check if R8 is active: build output will show 'R8' tasks instead of 'ProGuard' tasks in the Gradle build log"
+        "-keep: preserves classes and members",
+        "-keepnames: preserves names, allows shrinking",
+        "-keepclassmembers: preserves specified members",
+        "-dontwarn: suppress warnings",
+        "-dontobfuscate/-dontoptimize/-dontshrink: disable respective R8 passes"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Libraries",
+      "rows": [
+        {"library": "Retrofit", "rules": "Keep interface types and signatures"},
+        {"library": "Gson", "rules": "Keep model classes for JSON parsing"},
+        {"library": "Room", "rules": "Keep @Entity, @Dao, RoomDatabase subclasses"}
       ]
     },
     {
       "type": "text",
-      "heading": "Understanding Keep Rules",
-      "content": "Keep rules tell R8 which classes, methods, and fields must not be removed or renamed during shrinking and obfuscation. R8 starts by analyzing all entry points — Activities, Services, BroadcastReceivers, ContentProviders declared in the manifest, and any classes referenced from the manifest or from keep rules — then traces all code reachable from those entry points and removes everything else. Without keep rules, R8 will remove or rename code that is accessed only via reflection, serialization, or by name from external systems — causing runtime crashes that do not appear during compilation. Writing correct keep rules is the most important skill for working with R8 effectively."
-    },
-    {
-      "type": "table",
-      "heading": "Keep Rule Types",
-      "rows": [
-        {
-          "rule": "-keep",
-          "effect": "Preserves the class and its specified members from both shrinking and obfuscation — entry points are never removed or renamed",
-          "example": "-keep class com.example.app.model.User { *; }"
-        },
-        {
-          "rule": "-keepnames",
-          "effect": "Preserves names (no obfuscation) but still allows shrinking — members not used can still be removed",
-          "example": "-keepnames class com.example.app.model.** { *; }"
-        },
-        {
-          "rule": "-keepclassmembers",
-          "effect": "Preserves specified members of a class if the class itself is kept — does not prevent the class from being removed",
-          "example": "-keepclassmembers class com.example.app.model.User { public String name; public int id; }"
-        },
-        {
-          "rule": "-keepclasseswithmembers",
-          "effect": "Keeps the class AND its specified members if all specified members are present — useful for keeping classes that have specific method signatures",
-          "example": "-keepclasseswithmembers class * { public static void main(java.lang.String[]); }"
-        },
-        {
-          "rule": "-dontwarn",
-          "effect": "Suppresses warnings about missing classes — use when a library references classes not present in your build",
-          "example": "-dontwarn okio.**"
-        },
-        {
-          "rule": "-dontobfuscate",
-          "effect": "Disables obfuscation entirely — shrinking still occurs; useful for debugging crash reports without a mapping file",
-          "example": "-dontobfuscate"
-        },
-        {
-          "rule": "-dontoptimize",
-          "effect": "Disables optimization — use if optimizations cause runtime issues on specific devices",
-          "example": "-dontoptimize"
-        },
-        {
-          "rule": "-dontshrink",
-          "effect": "Disables shrinking — only obfuscation and optimization run; rarely used",
-          "example": "-dontshrink"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Keep Rule Syntax",
-      "items": [
-        "Keep a specific class: -keep class com.example.app.model.User { *; }",
-        "Keep all classes in a package: -keep class com.example.app.model.** { *; } — ** matches any class in the package and subpackages",
-        "Keep a single wildcard level: -keep class com.example.app.model.* { *; } — * matches classes in this package only, not subpackages",
-        "Keep specific fields: -keepclassmembers class com.example.app.model.User { public String name; public int id; }",
-        "Keep all public methods: -keepclassmembers class com.example.app.** { public *; }",
-        "Keep classes with annotation: -keep @com.example.app.annotation.KeepClass class * { *; }",
-        "Keep Serializable classes: -keepclassmembers class * implements java.io.Serializable { static final long serialVersionUID; private static final java.io.ObjectStreamField[] serialPersistentFields; private void writeObject(java.io.ObjectOutputStream); private void readObject(java.io.ObjectInputStream); java.lang.Object readResolve(); java.lang.Object writeReplace(); }",
-        "Keep enum members: -keepclassmembers enum * { public static **[] values(); public static ** valueOf(java.lang.String); }"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Library Keep Rules",
-      "rows": [
-        {
-          "library": "Retrofit",
-          "keep_rules": "-keepattributes Signature; -keepattributes Exceptions; -keep,allowobfuscation,allowshrinking interface retrofit2.Call; -keep,allowobfuscation,allowshrinking class retrofit2.Response",
-          "reason": "Retrofit uses reflection and generics to parse API interface return types — type signatures must be preserved"
-        },
-        {
-          "library": "Gson",
-          "keep_rules": "-keepattributes Signature; -keepattributes *Annotation*; -keep class com.example.app.model.** { *; }; -keep class * implements com.google.gson.TypeAdapterFactory; -keep class * implements com.google.gson.JsonSerializer; -keep class * implements com.google.gson.JsonDeserializer",
-          "reason": "Gson uses reflection to read field names for JSON serialization — data class field names must not be obfuscated"
-        },
-        {
-          "library": "Room",
-          "keep_rules": "-keep class * extends androidx.room.RoomDatabase; -keep @androidx.room.Entity class *; -keep @androidx.room.Dao class *",
-          "reason": "Room generates code at compile time but uses reflection for some operations — entity and DAO class names must be preserved"
-        },
-        {
-          "library": "Kotlin Serialization",
-          "keep_rules": "-keepattributes *Annotation*, InnerClasses; -dontnote kotlinx.serialization.AnnotationsKt; -keep,includedescriptorclasses class com.example.app.**$$serializer { *; }; -keepclassmembers class com.example.app.** { *** Companion; }",
-          "reason": "Kotlin Serialization generates serializer companion objects that must be preserved for serialization to work at runtime"
-        },
-        {
-          "library": "OkHttp",
-          "keep_rules": "-dontwarn okhttp3.**; -dontwarn okio.**; -dontwarn javax.annotation.**",
-          "reason": "OkHttp references optional classes not present in Android — dontwarn suppresses false-positive missing class warnings"
-        },
-        {
-          "library": "Parcelable",
-          "keep_rules": "-keepclassmembers class * implements android.os.Parcelable { public static final android.os.Parcelable$Creator CREATOR; }",
-          "reason": "Parcelable CREATOR field is accessed by name via reflection — must not be renamed or removed"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "The Mapping File",
-      "items": [
-        "R8 generates a mapping.txt file during each release build — maps obfuscated names back to original names",
-        "Location: build/outputs/mapping/release/mapping.txt",
-        "The mapping file is essential for reading obfuscated stack traces from crash reports — without it crashes are unreadable",
-        "Upload mapping file to Google Play Console: App Bundle Explorer > select release > Downloads > Mapping file — Play Console will automatically deobfuscate Android Vitals crash reports",
-        "Upload to Firebase Crashlytics: Crashlytics Gradle plugin uploads mapping file automatically after a release build",
-        "Deobfuscate a stack trace manually: retrace build/outputs/mapping/release/mapping.txt obfuscated-stacktrace.txt",
-        "Store the mapping file for every release build — you may need to deobfuscate crashes months later",
-        "Never discard mapping files — archive them alongside the release APK/AAB in secure storage",
-        "Each build produces a different mapping file — always use the mapping file from the exact build that produced the crash"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "R8 Output Files",
-      "rows": [
-        {
-          "file": "mapping.txt",
-          "location": "build/outputs/mapping/release/",
-          "purpose": "Maps obfuscated class/method/field names back to original names — required for crash deobfuscation",
-          "action": "Upload to Google Play Console and Crashlytics; archive for every release"
-        },
-        {
-          "file": "seeds.txt",
-          "location": "build/outputs/mapping/release/",
-          "purpose": "Lists all classes and members that were kept (not removed) by keep rules",
-          "action": "Review to verify keep rules are working correctly — check expected classes appear here"
-        },
-        {
-          "file": "usage.txt",
-          "location": "build/outputs/mapping/release/",
-          "purpose": "Lists all classes and members that were removed by shrinking",
-          "action": "Review if a class is unexpectedly missing at runtime — confirm it appears in usage.txt (was removed)"
-        },
-        {
-          "file": "configuration.txt",
-          "location": "build/outputs/mapping/release/",
-          "purpose": "The complete merged ProGuard/R8 configuration used for the build — combines all rules files",
-          "action": "Review when debugging keep rule issues — shows the full effective configuration"
-        },
-        {
-          "file": "resources.txt",
-          "location": "build/outputs/mapping/release/",
-          "purpose": "Lists which resources were kept and which were removed by resource shrinking",
-          "action": "Review if a resource is missing at runtime — confirm whether it was removed and why"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Debugging R8 Issues",
-      "items": [
-        "ClassNotFoundException or NoSuchMethodException at runtime — the class or method was removed or renamed; add a -keep rule for it",
-        "Check usage.txt to confirm the class was removed: grep 'com.example.MyClass' build/outputs/mapping/release/usage.txt",
-        "Check seeds.txt to confirm a class was kept: grep 'com.example.MyClass' build/outputs/mapping/release/seeds.txt",
-        "Enable full R8 diagnostics: add -printconfiguration full-config.txt to proguard-rules.pro to dump the merged config",
-        "Test with minification enabled in debug: buildTypes { debug { isMinifyEnabled = true } } — catch issues before release",
-        "Use -dontobfuscate temporarily to confirm the issue is obfuscation (renamed) vs shrinking (removed)",
-        "Add @Keep annotation from AndroidX as an alternative to keep rules: @androidx.annotation.Keep class MyClass { } — keeps the annotated class and its members",
-        "Use missing_rules.txt: R8 generates this file in the output directory with suggested keep rules for detected missing classes — add these to proguard-rules.pro",
-        "Run ./gradlew assembleRelease and inspect the build output for R8 warnings — each warning may indicate a missing keep rule"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Resource Shrinking",
-      "rows": [
-        {
-          "topic": "Enabling resource shrinking",
-          "description": "Set isShrinkResources = true in the release build type — requires isMinifyEnabled = true to be set first",
-          "example": "buildTypes { release { isMinifyEnabled = true; isShrinkResources = true } }"
-        },
-        {
-          "topic": "How it works",
-          "description": "After code shrinking, R8 identifies resources referenced by surviving code and removes all others from the APK",
-          "example": "A library with 500 images — if your code only references 20, the other 480 are removed"
-        },
-        {
-          "topic": "Keeping specific resources",
-          "description": "Create res/raw/keep.xml to mark resources that should never be removed even if not directly referenced",
-          "example": "<resources xmlns:tools=\"http://schemas.android.com/tools\" tools:keep=\"@layout/activity_main,@drawable/logo\" />"
-        },
-        {
-          "topic": "Discarding specific resources",
-          "description": "Use tools:discard in keep.xml to force removal of resources that are referenced but unused (false positives)",
-          "example": "<resources xmlns:tools=\"http://schemas.android.com/tools\" tools:discard=\"@drawable/unused_icon\" />"
-        },
-        {
-          "topic": "Dynamic resource references",
-          "description": "Resources referenced via dynamic names (Resources.getIdentifier(\"icon_\" + name)) may be incorrectly removed — mark them with tools:keep",
-          "example": "tools:keep=\"@drawable/icon_*\" — keeps all drawables matching the pattern"
-        },
-        {
-          "topic": "Strict mode",
-          "description": "Enable strict resource shrinking to remove resources that are kept only as a precaution — more aggressive removal",
-          "example": "<resources xmlns:tools=\"http://schemas.android.com/tools\" tools:shrinkMode=\"strict\" />"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Kotlin-Specific Considerations",
-      "items": [
-        "Kotlin data classes used for JSON parsing must be kept — their field names are accessed by name via Gson or Moshi reflection",
-        "Keep data classes: -keep class com.example.app.model.** { *; } — preserves all fields and constructors",
-        "Kotlin companion objects may be obfuscated — if accessed by name (e.g. from Java or reflection) add keep rules",
-        "Kotlin coroutines internals: -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory — required to prevent dispatcher initialization failures",
-        "Kotlin serialization requires keeping generated serializer classes: add the official Kotlin serialization keep rules from the library documentation",
-        "Sealed classes: all subclasses must be reachable from the sealed class — R8 handles this automatically for direct subclasses in the same module",
-        "Kotlin lambdas and anonymous classes may be obfuscated to synthetic names — this is safe unless accessed by reflection",
-        "Use -keepattributes SourceFile,LineNumberTable to preserve line numbers in stack traces for better crash debugging"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "keepattributes — Preserving Metadata",
-      "rows": [
-        {
-          "attribute": "Signature",
-          "purpose": "Preserves generic type signatures — required for Retrofit, Gson, and any library using generics via reflection",
-          "rule": "-keepattributes Signature"
-        },
-        {
-          "attribute": "*Annotation*",
-          "purpose": "Preserves all annotations — required for Retrofit API annotations, Room annotations, and custom annotation processing",
-          "rule": "-keepattributes *Annotation*"
-        },
-        {
-          "attribute": "SourceFile,LineNumberTable",
-          "purpose": "Preserves source file names and line numbers in stack traces — essential for readable crash reports",
-          "rule": "-keepattributes SourceFile,LineNumberTable"
-        },
-        {
-          "attribute": "Exceptions",
-          "purpose": "Preserves the checked exceptions declared by methods — required for Retrofit and some reflection use cases",
-          "rule": "-keepattributes Exceptions"
-        },
-        {
-          "attribute": "InnerClasses",
-          "purpose": "Preserves inner class relationships — required for correct behavior of anonymous classes and lambdas",
-          "rule": "-keepattributes InnerClasses"
-        },
-        {
-          "attribute": "EnclosingMethod",
-          "purpose": "Preserves the enclosing method attribute for anonymous and local classes — pair with InnerClasses",
-          "rule": "-keepattributes EnclosingMethod"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Consumer ProGuard Rules for Libraries",
-      "items": [
-        "If you are building an Android library (AAR), provide consumer ProGuard rules so app developers don't need to add rules manually",
-        "Declare consumer rules in build.gradle.kts: android { defaultConfig { consumerProguardFiles(\"consumer-rules.pro\") } }",
-        "Consumer rules are automatically applied to the consuming app's R8 configuration when the library is used",
-        "Include rules that keep all public APIs of the library that may be accessed reflectively",
-        "Most popular libraries (Retrofit, OkHttp, Gson, Room) already include consumer rules — you don't need to add them manually",
-        "Verify a library's consumer rules: unzip the .aar file and inspect the proguard.txt file inside",
-        "Do not include -dontobfuscate or -dontshrink in consumer rules — these would disable optimization for the entire consuming app",
-        "Keep consumer rules minimal — only include rules that are strictly necessary for the library to function correctly"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common R8 Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Not keeping data classes used for JSON parsing",
-          "fix": "Add -keep class com.example.app.model.** { *; } — Gson and Moshi use reflection to read field names; obfuscation renames them causing JSON parsing failures"
-        },
-        {
-          "mistake": "Not keeping Parcelable CREATOR fields",
-          "fix": "Add -keepclassmembers class * implements android.os.Parcelable { public static final android.os.Parcelable$Creator CREATOR; } — CREATOR is accessed by name via reflection"
-        },
-        {
-          "mistake": "Not preserving line numbers in stack traces",
-          "fix": "Add -keepattributes SourceFile,LineNumberTable — without this, crash stack traces show obfuscated file names and incorrect line numbers"
-        },
-        {
-          "mistake": "Discarding the mapping.txt file after release",
-          "fix": "Archive mapping.txt for every release build — you cannot deobfuscate crash reports without the mapping file from the exact build that produced the crash"
-        },
-        {
-          "mistake": "Not testing with minification enabled before release",
-          "fix": "Create a minified debug build type or run a release build locally before publishing — R8 issues only appear in minified builds"
-        },
-        {
-          "mistake": "Using -keep class com.example.** { *; } too broadly",
-          "fix": "Overly broad keep rules defeat the purpose of shrinking — keep only what is actually needed; be specific about which classes and members to preserve"
-        },
-        {
-          "mistake": "Ignoring R8 warnings during the build",
-          "fix": "Every R8 warning about missing classes is a potential runtime crash — resolve all warnings by adding -dontwarn for intentionally absent optional classes or fixing the dependency"
-        }
-      ]
+      "heading": "Mapping File",
+      "content": "R8 generates mapping.txt for deobfuscating stack traces. Always archive and upload to Play Console & Crashlytics after each release."
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "R8 is the default code shrinker, obfuscator, and optimizer for Android release builds — enabled by setting isMinifyEnabled = true and isShrinkResources = true in your release build type. It operates in three stages: shrinking removes unused code and resources, obfuscation renames classes and members to meaningless names, and optimization improves runtime performance. Write precise -keep rules to preserve classes accessed via reflection, serialization, JSON parsing, and external frameworks — be specific to avoid defeating the purpose of shrinking. Always add -keepattributes SourceFile,LineNumberTable to preserve readable stack traces, and upload the generated mapping.txt to Google Play Console and Crashlytics after every release build so crash reports can be automatically deobfuscated. Test with minification enabled before releasing, review the usage.txt and seeds.txt output files to verify your rules are working correctly, and archive mapping files permanently alongside each release artifact."
+      "content": "Enable isMinifyEnabled and isShrinkResources for release builds. Write precise keep rules to preserve reflection-accessed code. Verify with seeds.txt/usage.txt, test minified builds, and maintain mapping files for crash debugging."
     }
   ]
 }

@@ -4,323 +4,70 @@
     {
       "type": "text",
       "heading": "What is a Service?",
-      "content": "A Service is an Android application component that runs in the background to perform long-running operations without a user interface. Unlike Activities, Services do not have a visual presence — they run silently behind the scenes handling tasks like playing music, downloading files, syncing data, processing uploads, or maintaining a persistent network connection. Services run on the main thread by default and must manually dispatch work to background threads. Android defines three types of services: started services (run until explicitly stopped), bound services (run while clients are bound to them), and foreground services (started services with a persistent notification that cannot be killed by the system under memory pressure)."
+      "content": "A Service runs background tasks without a UI. Types: started (runs until stopped), bound (runs while clients are connected), foreground (persistent notification, higher priority). Services run on the main thread by default — offload work to background threads."
     },
     {
       "type": "table",
       "heading": "Service Types",
       "rows": [
-        {
-          "type": "Started Service",
-          "started_by": "startService() or startForegroundService()",
-          "lifecycle": "Runs until stopSelf() is called or the system kills it under memory pressure",
-          "use_case": "Fire-and-forget background tasks: uploading a file, processing data"
-        },
-        {
-          "type": "Bound Service",
-          "started_by": "bindService()",
-          "lifecycle": "Runs while at least one client is bound; destroyed when all clients unbind",
-          "use_case": "IPC between components: Activity communicating with a background music player"
-        },
-        {
-          "type": "Foreground Service",
-          "started_by": "startForegroundService() then startForeground()",
-          "lifecycle": "Runs until explicitly stopped; system cannot kill it; requires a persistent notification",
-          "use_case": "User-visible ongoing operations: navigation, music playback, location tracking, file download"
-        },
-        {
-          "type": "IntentService (deprecated)",
-          "started_by": "startService()",
-          "lifecycle": "Processes intents sequentially on a background thread; stops itself when done",
-          "use_case": "Legacy — replaced by WorkManager or coroutines in a regular Service"
-        }
+        {"type": "Started Service", "started_by": "startService()", "lifecycle": "Runs until stopped", "use_case": "One-off tasks"},
+        {"type": "Bound Service", "started_by": "bindService()", "lifecycle": "Runs while bound", "use_case": "IPC between components"},
+        {"type": "Foreground Service", "started_by": "startForegroundService()", "lifecycle": "Runs until stopped; persistent notification", "use_case": "User-visible tasks"},
+        {"type": "IntentService (deprecated)", "started_by": "startService()", "lifecycle": "Stops automatically", "use_case": "Legacy sequential tasks"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "When to Use a Service vs Alternatives",
+      "heading": "When to Use",
       "items": [
-        "Use a Foreground Service for operations the user is actively aware of: music playback, navigation, ongoing download",
-        "Use WorkManager for deferrable background work that must complete even if the app is killed: sync, cleanup, uploads",
-        "Use coroutines in ViewModel/Repository for short-lived background work tied to the app's lifecycle",
-        "Use JobScheduler (via WorkManager) for scheduled or constrained background work",
-        "Do NOT use a plain started Service for network calls or database operations — it runs on the main thread",
-        "Do NOT use a Service when a ViewModel + coroutine will suffice — Services are heavier components",
-        "A foreground service is required for any task that must continue when the user navigates away from the app",
-        "Android 14+ restricts foreground service types — you must declare the type in the manifest and have a legitimate use case"
+        "Foreground service: user-aware tasks (music, navigation)",
+        "WorkManager: deferrable tasks (sync, uploads)",
+        "Coroutines in ViewModel: short-lived background work",
+        "Avoid plain started Service for network/db tasks",
+        "Android 14+: declare foreground type in manifest"
       ]
     },
     {
       "type": "text",
       "heading": "Service Lifecycle",
-      "content": "The Service lifecycle differs depending on how it is started. A started service follows the path: onCreate() → onStartCommand() → (running) → onDestroy(). A bound service follows: onCreate() → onBind() → (bound) → onUnbind() → onDestroy(). A service can be both started and bound simultaneously. onCreate() is called once when the service is first created. onStartCommand() is called every time startService() is called and is where started services receive their Intent and begin work. onDestroy() is the last callback — use it to clean up threads, listeners, and resources."
-    },
-    {
-      "type": "table",
-      "heading": "Service Lifecycle Callbacks",
-      "rows": [
-        {
-          "callback": "onCreate()",
-          "when_called": "Called once when the service is first created — before onStartCommand() or onBind()",
-          "use_for": "One-time initialization: creating threads, initializers, registering receivers"
-        },
-        {
-          "callback": "onStartCommand(intent, flags, startId)",
-          "when_called": "Called every time a client calls startService() or startForegroundService()",
-          "use_for": "Receive the Intent and begin background work; return a START_* constant"
-        },
-        {
-          "callback": "onBind(intent)",
-          "when_called": "Called when a client binds with bindService()",
-          "use_for": "Return an IBinder to the client for communication; return null for started services"
-        },
-        {
-          "callback": "onUnbind(intent)",
-          "when_called": "Called when all clients have unbound",
-          "use_for": "Clean up bound resources; return true to allow rebinding via onRebind()"
-        },
-        {
-          "callback": "onRebind(intent)",
-          "when_called": "Called when a new client binds after onUnbind() returned true",
-          "use_for": "Re-initialize resources needed for binding"
-        },
-        {
-          "callback": "onDestroy()",
-          "when_called": "Called when the service is about to be destroyed — final cleanup opportunity",
-          "use_for": "Cancel coroutines, unregister receivers, release resources, call stopForeground()"
-        }
-      ]
+      "content": "onCreate() → onStartCommand()/onBind() → work → onDestroy(). Clean up threads, receivers, and resources in onDestroy()."
     },
     {
       "type": "bullet",
-      "heading": "onStartCommand Return Values",
+      "heading": "Foreground Service Steps",
       "items": [
-        "START_STICKY — service is restarted after being killed; onStartCommand() is called with a null intent; use for services that should always be running (music player)",
-        "START_NOT_STICKY — service is NOT restarted after being killed; use for services doing work that can be safely abandoned (upload that can be retried later)",
-        "START_REDELIVER_INTENT — service is restarted and the original intent is re-delivered; use for services where completing the specific task is critical (file download)",
-        "START_STICKY_COMPATIBILITY — compatibility version of START_STICKY for older API levels",
-        "Most foreground services use START_STICKY or START_REDELIVER_INTENT",
-        "The startId parameter identifies the specific start request — use stopSelf(startId) to stop after processing that specific request",
-        "stopSelf() stops the service immediately regardless of how many times it was started",
-        "stopSelf(startId) only stops the service if no newer start requests are pending — safer for sequential processing"
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Foreground Services",
-      "content": "A foreground service is a started service that is visible to the user through a persistent, non-dismissable notification in the status bar. Because the user is aware of its operation, Android treats foreground services with higher priority and will not kill them under normal memory pressure conditions. Foreground services are required for any background operation the user is actively engaged with — music playback, navigation, file download progress, fitness tracking, or VoIP calls. Starting with Android 9 (API 28), apps must call startForeground() within 5 seconds of calling startForegroundService() or the system throws an ANR."
-    },
-    {
-      "type": "bullet",
-      "heading": "Foreground Service Setup Steps",
-      "items": [
-        "Step 1: Declare in AndroidManifest.xml: <service android:name=\".MyForegroundService\" android:foregroundServiceType=\"dataSync\" />",
-        "Step 2: Add permission: <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />",
-        "Step 3: For Android 14+, add type-specific permission: <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE_DATA_SYNC\" />",
-        "Step 4: Create a notification channel (required for API 26+) in Application or before showing the notification",
-        "Step 5: Build a Notification with NotificationCompat.Builder",
-        "Step 6: In onStartCommand(), call startForeground(NOTIFICATION_ID, notification) immediately",
-        "Step 7: When work is done, call stopForeground(STOP_FOREGROUND_REMOVE) then stopSelf()",
-        "Step 8: Start from app: startForegroundService(Intent(this, MyForegroundService::class.java))"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Foreground Service Types (Android 10+ / 14+)",
-      "rows": [
-        {
-          "type": "dataSync",
-          "description": "Syncing data to or from the network or another device",
-          "permission": "FOREGROUND_SERVICE_DATA_SYNC (API 34+)",
-          "example": "Uploading files, syncing contacts, backup operations"
-        },
-        {
-          "type": "mediaPlayback",
-          "description": "Playing audio or video content",
-          "permission": "FOREGROUND_SERVICE_MEDIA_PLAYBACK (API 34+)",
-          "example": "Music player, podcast app, video streaming"
-        },
-        {
-          "type": "location",
-          "description": "Accessing device location in the background",
-          "permission": "FOREGROUND_SERVICE_LOCATION (API 34+) + ACCESS_FINE_LOCATION or ACCESS_COARSE_LOCATION",
-          "example": "Navigation, fitness tracking, delivery driver app"
-        },
-        {
-          "type": "camera",
-          "description": "Accessing the device camera in the background",
-          "permission": "FOREGROUND_SERVICE_CAMERA (API 34+) + CAMERA",
-          "example": "Video call app, continuous scanning app"
-        },
-        {
-          "type": "microphone",
-          "description": "Accessing the device microphone in the background",
-          "permission": "FOREGROUND_SERVICE_MICROPHONE (API 34+) + RECORD_AUDIO",
-          "example": "VoIP call, voice recording, transcription"
-        },
-        {
-          "type": "mediaProjection",
-          "description": "Capturing the screen content",
-          "permission": "FOREGROUND_SERVICE_MEDIA_PROJECTION (API 34+)",
-          "example": "Screen recording, screen sharing"
-        },
-        {
-          "type": "health",
-          "description": "Accessing health, fitness, or medical sensor data",
-          "permission": "FOREGROUND_SERVICE_HEALTH (API 34+)",
-          "example": "Heart rate monitor, fitness tracking"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Creating the Foreground Notification",
-      "items": [
-        "Create a NotificationChannel in Application.onCreate() or before the service starts — required for API 26+",
-        "val channel = NotificationChannel(CHANNEL_ID, \"Service\", NotificationManager.IMPORTANCE_LOW) — use LOW importance to avoid sound on every update",
-        "Register channel: (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)",
-        "Build notification: NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle(\"Syncing\").setContentText(\"In progress\").setSmallIcon(R.drawable.ic_sync).build()",
-        "Add a PendingIntent to open the app when the notification is tapped: .setContentIntent(pendingIntent)",
-        "For ongoing progress: .setProgress(max, current, false) — update the notification via NotificationManagerCompat.notify()",
-        "Use IMPORTANCE_LOW or IMPORTANCE_MIN for the channel to avoid sound and minimize disruption",
-        "The notification is automatically removed when stopForeground(STOP_FOREGROUND_REMOVE) is called"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Bound Services — IBinder Communication",
-      "rows": [
-        {
-          "approach": "Local Binder (same process)",
-          "description": "Return a Binder subclass that provides a reference to the Service itself — only works within the same app process",
-          "example": "inner class LocalBinder : Binder() { fun getService() = this@MyService }; override fun onBind(intent: Intent) = binder"
-        },
-        {
-          "approach": "Messenger (cross-process, simple)",
-          "description": "Use Messenger and Handler to pass Message objects across processes — simpler than AIDL for basic IPC",
-          "example": "val messenger = Messenger(IncomingHandler()); override fun onBind(intent: Intent) = messenger.binder"
-        },
-        {
-          "approach": "AIDL (cross-process, complex)",
-          "description": "Android Interface Definition Language — define a typed interface for complex cross-process communication",
-          "example": "Define .aidl file; implement generated interface; return IBinder in onBind()"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Binding to a Service from an Activity",
-      "items": [
-        "Implement ServiceConnection: val connection = object : ServiceConnection { override fun onServiceConnected(name, binder) { myService = (binder as MyService.LocalBinder).getService() }; override fun onServiceDisconnected(name) { myService = null } }",
-        "Bind in onStart(): bindService(Intent(this, MyService::class.java), connection, Context.BIND_AUTO_CREATE)",
-        "Unbind in onStop(): unbindService(connection) — always unbind to prevent leaks",
-        "BIND_AUTO_CREATE — creates the service if it is not already running when binding",
-        "The service's onCreate() is called when the first client binds; onDestroy() when the last client unbinds",
-        "A service can be simultaneously started and bound — it only destroys when stopped AND all clients unbind",
-        "Check the bound state with isBound flag before calling service methods to prevent NullPointerException",
-        "For Compose: use DisposableEffect to bind in composition and unbind on dispose"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Coroutines Inside a Service",
-      "rows": [
-        {
-          "approach": "CoroutineScope in Service",
-          "description": "Create a CoroutineScope in the service; cancel it in onDestroy()",
-          "example": "private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO); override fun onDestroy() { serviceScope.cancel() }"
-        },
-        {
-          "approach": "Launch in onStartCommand",
-          "description": "Launch background work as a coroutine from onStartCommand()",
-          "example": "override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int { serviceScope.launch { doWork(); stopSelf(startId) }; return START_REDELIVER_INTENT }"
-        },
-        {
-          "approach": "SupervisorJob",
-          "description": "Use SupervisorJob so a failed child coroutine does not cancel all sibling coroutines",
-          "example": "CoroutineScope(SupervisorJob() + Dispatchers.Main)"
-        },
-        {
-          "approach": "Stop after completion",
-          "description": "Call stopSelf(startId) after the coroutine completes to stop the service cleanly",
-          "example": "serviceScope.launch { performWork(); stopSelf(startId) }"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Declaring a Service in AndroidManifest.xml",
-      "items": [
-        "All services must be declared inside <application> in AndroidManifest.xml",
-        "Basic declaration: <service android:name=\".MyService\" />",
-        "Foreground service: <service android:name=\".MyForegroundService\" android:foregroundServiceType=\"dataSync|location\" />",
-        "Multiple foreground types can be combined with pipe: android:foregroundServiceType=\"mediaPlayback|location\"",
-        "Private service (cannot be started by other apps): android:exported=\"false\" — this is the default and recommended",
-        "Public service for IPC: android:exported=\"true\" with android:permission to restrict access",
-        "Add intent filter if starting by implicit intent: <intent-filter><action android:name=\"com.example.MY_SERVICE_ACTION\" /></intent-filter>",
-        "Prefer explicit intents when starting services — implicit intents are blocked for services on API 21+"
+        "Declare in manifest with android:foregroundServiceType",
+        "Create NotificationChannel (API 26+)",
+        "Call startForeground() immediately in onStartCommand()",
+        "Stop with stopForeground() + stopSelf()",
+        "Use WorkManager or coroutines if user visibility not required"
       ]
     },
     {
       "type": "table",
       "heading": "Service vs WorkManager vs Coroutine",
       "rows": [
-        {
-          "factor": "Survives app process death",
-          "service": "Foreground: Yes. Started: Maybe (START_STICKY). Bound: No",
-          "workmanager": "Yes — system guarantees execution",
-          "coroutine": "No — cancelled when process dies"
-        },
-        {
-          "factor": "User visibility",
-          "service": "Foreground: required notification. Started: none",
-          "workmanager": "None — fully background",
-          "coroutine": "None"
-        },
-        {
-          "factor": "Timing control",
-          "service": "Immediate or whenever started",
-          "workmanager": "Immediate, scheduled, or periodic",
-          "coroutine": "Immediate"
-        },
-        {
-          "factor": "Constraints (network, charging)",
-          "service": "Must implement manually",
-          "workmanager": "Built-in constraint system",
-          "coroutine": "Must implement manually"
-        },
-        {
-          "factor": "Battery impact",
-          "service": "High if misused — always running",
-          "workmanager": "Optimized — batched by system",
-          "coroutine": "Minimal — tied to app lifecycle"
-        },
-        {
-          "factor": "Best for",
-          "service": "Ongoing user-visible tasks: music, navigation, VoIP",
-          "workmanager": "Deferrable guaranteed tasks: sync, backup, processing",
-          "coroutine": "Short-lived tasks tied to app UI: fetch data, submit form"
-        }
+        {"factor": "Survives process death", "service": "Foreground: yes", "workmanager": "Yes", "coroutine": "No"},
+        {"factor": "User visibility", "service": "Foreground requires notification", "workmanager": "None", "coroutine": "None"},
+        {"factor": "Best for", "service": "Ongoing tasks", "workmanager": "Deferrable guaranteed tasks", "coroutine": "Short-lived UI tasks"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Common Service Mistakes to Avoid",
+      "heading": "Common Mistakes",
       "items": [
-        "Performing blocking work on the main thread in onStartCommand() — always launch a coroutine or thread",
-        "Forgetting to call startForeground() within 5 seconds of startForegroundService() — causes ANR on API 26+",
-        "Not calling stopSelf() when work is complete — service runs forever wasting battery",
-        "Not unbinding from a bound service in onStop() — causes a ServiceConnection leak",
-        "Starting an unneeded foreground service when WorkManager would suffice — misuse draws Play Store scrutiny",
-        "Not creating a NotificationChannel before calling startForeground() on API 26+ — notification is silently ignored",
-        "Using an implicit Intent to start a service on API 21+ — throws IllegalArgumentException",
-        "Forgetting to cancel the serviceScope CoroutineScope in onDestroy() — coroutines leak beyond service lifetime"
+        "Blocking main thread in onStartCommand()",
+        "Missing startForeground() → ANR",
+        "Forgetting stopSelf() → battery drain",
+        "Not unbinding → leaks",
+        "Implicit intents blocked API 21+",
+        "Not cancelling coroutines in onDestroy()"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Services are Android's mechanism for running background operations detached from the UI lifecycle. Foreground services are the most commonly needed type — they run persistent, user-visible operations like media playback, navigation, and file transfers with a required notification. Always call startForeground() immediately in onStartCommand(), declare the correct foreground service type in the manifest, run actual work on background threads via a CoroutineScope, and call stopSelf() when the work completes. For work that does not need to be immediately visible to the user, prefer WorkManager. For short-lived work tied to the app lifecycle, prefer coroutines in the ViewModel or Repository without a Service at all."
+      "content": "Use foreground services for persistent, user-visible tasks. Always startForeground(), declare types in manifest, run work on background threads via coroutines, and stopSelf() when done. Prefer WorkManager for deferrable tasks, and coroutines in ViewModel for short-lived background work without a Service."
     }
   ]
 }

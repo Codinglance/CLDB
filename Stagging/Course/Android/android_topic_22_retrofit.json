@@ -4,427 +4,98 @@
     {
       "type": "text",
       "heading": "What is Retrofit?",
-      "content": "Retrofit is a type-safe HTTP client for Android developed by Square. It turns your REST API into a Kotlin interface — you define your API endpoints as annotated functions, and Retrofit generates all the networking code automatically. Instead of manually building HTTP requests, parsing responses, and managing threads, you simply call a function and Retrofit handles everything: the HTTP request construction, the network call via OkHttp, the JSON parsing via a converter (Gson, Moshi, or kotlinx.serialization), and the response delivery. Retrofit is the industry standard for Android networking and is used in virtually every production Android app."
+      "content": "Retrofit is a type-safe HTTP client for Android developed by Square. It allows developers to convert REST API endpoints into Kotlin interface functions using annotations. Instead of manually building HTTP requests and parsing responses, you simply define an API interface and Retrofit handles the network request, JSON parsing, and threading automatically. Retrofit works together with OkHttp for network communication and uses converters such as Gson or Moshi to transform JSON responses into Kotlin data classes."
     },
     {
       "type": "bullet",
-      "heading": "Why Retrofit?",
+      "heading": "Why Use Retrofit?",
       "items": [
-        "Type-safe — API endpoints are Kotlin functions with typed parameters and return types; wrong types cause compile errors",
-        "Coroutine support — suspend functions make async network calls look like synchronous code",
-        "Automatic JSON parsing — pluggable converters (Gson, Moshi) parse response JSON into Kotlin data classes",
-        "OkHttp integration — built on top of OkHttp for connection pooling, caching, interceptors, and timeouts",
-        "Annotation-driven — HTTP method, URL, headers, query params, and body are all declared as annotations",
-        "Error handling — non-2xx responses throw HttpException; network failures throw IOException",
-        "Flexible — supports multipart uploads, streaming, custom converters, and dynamic URLs",
-        "Widely adopted — extensive community support, documentation, and library ecosystem"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Retrofit vs Manual HttpURLConnection vs Volley",
-      "rows": [
-        {
-          "aspect": "API definition",
-          "retrofit": "Annotated Kotlin interface — clean and declarative",
-          "httpurlconnection": "Manual — open connection, set method, write body, read stream",
-          "volley": "Request objects — more abstraction than HttpURLConnection but less than Retrofit"
-        },
-        {
-          "aspect": "JSON parsing",
-          "retrofit": "Automatic via converter (Gson, Moshi)",
-          "httpurlconnection": "Manual — parse InputStream yourself",
-          "volley": "Built-in basic JSON support; limited type safety"
-        },
-        {
-          "aspect": "Coroutine support",
-          "retrofit": "First-class — suspend functions",
-          "httpurlconnection": "None — manual thread management",
-          "volley": "None — callback-based"
-        },
-        {
-          "aspect": "Interceptors",
-          "retrofit": "Full OkHttp interceptor chain — headers, logging, auth, caching",
-          "httpurlconnection": "Manual — set headers on each connection",
-          "volley": "Limited"
-        },
-        {
-          "aspect": "Boilerplate",
-          "retrofit": "Minimal — define interface, Retrofit does the rest",
-          "httpurlconnection": "Very high — dozens of lines per request",
-          "volley": "Medium"
-        },
-        {
-          "aspect": "Recommendation",
-          "retrofit": "Industry standard — use for all Android networking",
-          "httpurlconnection": "Avoid — too much boilerplate",
-          "volley": "Legacy — prefer Retrofit for new projects"
-        }
+        "Type-safe API calls using Kotlin interfaces",
+        "Simple annotation-based endpoint definition",
+        "Automatic JSON parsing using converters like Gson or Moshi",
+        "Built-in coroutine support using suspend functions",
+        "Uses OkHttp internally for efficient networking",
+        "Reduces networking boilerplate code significantly"
       ]
     },
     {
       "type": "text",
-      "heading": "Setting Up Retrofit",
-      "content": "To use Retrofit, add the Retrofit dependency along with the OkHttp dependency and a JSON converter to your app-level build.gradle.kts. The most common converter is Gson for its simplicity, though Moshi and kotlinx.serialization are excellent alternatives with better Kotlin support. You also optionally add the OkHttp logging interceptor for debugging network requests during development."
+      "heading": "Basic Retrofit Setup",
+      "content": "To start using Retrofit, you must add the Retrofit dependency and a JSON converter to your project. Retrofit requires a base URL and an API interface that defines the endpoints. Each endpoint is represented by a function annotated with HTTP methods such as GET or POST."
     },
     {
       "type": "bullet",
-      "heading": "Retrofit Setup Steps",
+      "heading": "Basic Setup Steps",
       "items": [
-        "Step 1: Add Retrofit dependency: implementation(\"com.squareup.retrofit2:retrofit:2.11.x\")",
-        "Step 2: Add Gson converter: implementation(\"com.squareup.retrofit2:converter-gson:2.11.x\")",
-        "Step 3: Add OkHttp logging interceptor for debug: implementation(\"com.squareup.okhttp3:logging-interceptor:4.12.x\")",
-        "Step 4: Add INTERNET permission to AndroidManifest.xml: <uses-permission android:name=\"android.permission.INTERNET\" />",
-        "Step 5: Create your API service interface with annotated suspend functions",
-        "Step 6: Create Kotlin data classes matching your API's JSON response structure",
-        "Step 7: Build a Retrofit instance using Retrofit.Builder() with base URL and converter",
-        "Step 8: Create the API service implementation: retrofit.create(UserApiService::class.java)",
-        "Step 9: Provide Retrofit and the API service as singletons via Hilt for dependency injection"
+        "Add Retrofit dependency to your project",
+        "Add a JSON converter such as Gson",
+        "Add INTERNET permission in AndroidManifest",
+        "Create Kotlin data classes matching the API response",
+        "Define an API interface with Retrofit annotations",
+        "Create a Retrofit instance using Retrofit.Builder()"
       ]
     },
     {
       "type": "table",
-      "heading": "Retrofit HTTP Annotations",
+      "heading": "Common Retrofit Annotations",
       "rows": [
         {
-          "annotation": "@GET(\"users\")",
-          "description": "Defines a GET request to the specified endpoint path",
+          "annotation": "@GET",
+          "description": "Retrieves data from the server",
           "example": "@GET(\"users\") suspend fun getUsers(): List<User>"
         },
         {
-          "annotation": "@POST(\"users\")",
-          "description": "Defines a POST request — typically used to create a new resource",
-          "example": "@POST(\"users\") suspend fun createUser(@Body user: CreateUserRequest): User"
+          "annotation": "@POST",
+          "description": "Creates a new resource on the server",
+          "example": "@POST(\"users\") suspend fun createUser(@Body user: User): User"
         },
         {
-          "annotation": "@PUT(\"users/{id}\")",
-          "description": "Defines a PUT request — replaces an entire resource",
-          "example": "@PUT(\"users/{id}\") suspend fun updateUser(@Path(\"id\") id: Int, @Body user: User): User"
+          "annotation": "@PUT",
+          "description": "Replaces an existing resource",
+          "example": "@PUT(\"users/{id}\") suspend fun updateUser(@Path(\"id\") id: Int, @Body user: User)"
         },
         {
-          "annotation": "@PATCH(\"users/{id}\")",
-          "description": "Defines a PATCH request — partially updates a resource",
-          "example": "@PATCH(\"users/{id}\") suspend fun patchUser(@Path(\"id\") id: Int, @Body updates: Map<String, Any>): User"
-        },
-        {
-          "annotation": "@DELETE(\"users/{id}\")",
-          "description": "Defines a DELETE request — removes a resource",
-          "example": "@DELETE(\"users/{id}\") suspend fun deleteUser(@Path(\"id\") id: Int): Response<Unit>"
-        },
-        {
-          "annotation": "@HEAD(\"users/{id}\")",
-          "description": "Defines a HEAD request — retrieves headers only, no body",
-          "example": "@HEAD(\"users/{id}\") suspend fun checkUser(@Path(\"id\") id: Int): Response<Void>"
-        },
-        {
-          "annotation": "@HTTP(method, path, hasBody)",
-          "description": "Custom HTTP method for non-standard verbs",
-          "example": "@HTTP(method = \"PURGE\", path = \"cache\", hasBody = false) suspend fun clearCache()"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Retrofit Parameter Annotations",
-      "items": [
-        "@Path(\"id\") — replaces a path variable in the URL: @GET(\"users/{id}\") with @Path(\"id\") id: Int → /users/42",
-        "@Query(\"page\") — appends a query parameter: @GET(\"users\") with @Query(\"page\") page: Int → /users?page=2",
-        "@QueryMap — appends a Map<String, String> as multiple query parameters: @QueryMap options: Map<String, String>",
-        "@Body — sends a Kotlin object as the JSON request body (serialized by the converter): @Body user: CreateUserRequest",
-        "@Field and @FormUrlEncoded — sends form-encoded data instead of JSON body",
-        "@Part and @Multipart — sends multipart data for file uploads",
-        "@Header(\"Authorization\") — adds a single dynamic header: @Header(\"Authorization\") token: String",
-        "@Headers — adds static headers declared as strings: @Headers(\"Content-Type: application/json\")",
-        "@Url — replaces the entire URL dynamically: suspend fun getFromUrl(@Url url: String): ResponseBody"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Retrofit Return Types",
-      "rows": [
-        {
-          "return_type": "suspend fun getUser(): User",
-          "description": "Returns the parsed data class directly — throws HttpException on non-2xx; simplest pattern",
-          "use_case": "When you only need the body and want automatic exception on error"
-        },
-        {
-          "return_type": "suspend fun getUser(): Response<User>",
-          "description": "Returns a Retrofit Response wrapper with status code, headers, and body",
-          "use_case": "When you need to inspect the status code or headers alongside the body"
-        },
-        {
-          "return_type": "suspend fun getUser(): ResponseBody",
-          "description": "Returns the raw OkHttp ResponseBody — parse manually",
-          "use_case": "When working with non-JSON responses like plain text or binary data"
-        },
-        {
-          "return_type": "suspend fun deleteUser(): Response<Unit>",
-          "description": "For operations with no response body (204 No Content)",
-          "use_case": "DELETE or POST operations that return no JSON body"
-        },
-        {
-          "return_type": "suspend fun deleteUser(): Response<Void>",
-          "description": "Alternative for no-body responses — equivalent to Response<Unit>",
-          "use_case": "Legacy pattern — prefer Response<Unit> in Kotlin"
+          "annotation": "@DELETE",
+          "description": "Deletes a resource",
+          "example": "@DELETE(\"users/{id}\") suspend fun deleteUser(@Path(\"id\") id: Int)"
         }
       ]
     },
     {
       "type": "text",
       "heading": "What is OkHttp?",
-      "content": "OkHttp is the HTTP client that powers Retrofit under the hood, developed by Square. While Retrofit handles the high-level API definition and JSON parsing, OkHttp handles the actual network communication — opening connections, managing connection pools, handling redirects, retrying failed requests, and processing TLS/SSL. OkHttp's most powerful feature for Android developers is its Interceptor system, which lets you inspect and modify every request and response that passes through the client — perfect for adding auth headers, logging, caching, and error handling in one place."
+      "content": "OkHttp is the HTTP client used internally by Retrofit to perform network requests. It manages connections, handles caching, retries failed requests, and provides powerful interceptors that allow developers to inspect or modify requests and responses."
     },
     {
       "type": "bullet",
-      "heading": "Building the OkHttpClient",
+      "heading": "Key Features of OkHttp",
       "items": [
-        "Create with OkHttpClient.Builder() and configure it before passing to Retrofit",
-        "Set connect timeout: .connectTimeout(30, TimeUnit.SECONDS)",
-        "Set read timeout: .readTimeout(30, TimeUnit.SECONDS)",
-        "Set write timeout: .writeTimeout(30, TimeUnit.SECONDS)",
-        "Add logging interceptor for debug builds: .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })",
-        "Add auth interceptor: .addInterceptor(AuthInterceptor(tokenProvider))",
-        "Add network interceptor for cache: .addNetworkInterceptor(cacheInterceptor)",
-        "Enable response caching: .cache(Cache(cacheDir, cacheSize))",
-        "Build: val client = OkHttpClient.Builder().connectTimeout(...).addInterceptor(...).build()"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "OkHttp Interceptor Types",
-      "rows": [
-        {
-          "type": "Application Interceptor",
-          "added_with": "addInterceptor()",
-          "called": "Once per call — before any network activity",
-          "use_for": "Adding auth headers, request logging, retrying on 401"
-        },
-        {
-          "type": "Network Interceptor",
-          "added_with": "addNetworkInterceptor()",
-          "called": "Once per network request — after redirects and retries",
-          "use_for": "Cache headers, response body transformation, network-level logging"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Writing a Custom Auth Interceptor",
-      "items": [
-        "Create a class implementing okhttp3.Interceptor and override intercept(chain: Chain): Response",
-        "Get the original request: val original = chain.request()",
-        "Build a new request with the auth header: val request = original.newBuilder().header(\"Authorization\", \"Bearer $token\").build()",
-        "Proceed with the modified request: return chain.proceed(request)",
-        "For token refresh: check if response is 401, refresh the token, then retry the request with the new token",
-        "Inject the TokenProvider or SessionManager into the interceptor via constructor",
-        "Add to OkHttpClient: .addInterceptor(AuthInterceptor(tokenProvider))",
-        "Auth interceptors added with addInterceptor() run before the network call — ideal for adding headers"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "HttpLoggingInterceptor Log Levels",
-      "rows": [
-        {
-          "level": "NONE",
-          "logs": "Nothing",
-          "use_for": "Production builds — no sensitive data logged"
-        },
-        {
-          "level": "BASIC",
-          "logs": "Request method, URL, response status code, and response size",
-          "use_for": "Lightweight logging — confirm requests are being made"
-        },
-        {
-          "level": "HEADERS",
-          "logs": "Request and response headers in addition to BASIC info",
-          "use_for": "Debugging auth headers and response metadata"
-        },
-        {
-          "level": "BODY",
-          "logs": "Full request and response including headers and body JSON",
-          "use_for": "Development and debugging — never in production (may log sensitive data)"
-        }
+        "Connection pooling for efficient network usage",
+        "Built-in caching support",
+        "Automatic retries and redirects",
+        "Request and response interceptors",
+        "Configurable timeouts for network operations"
       ]
     },
     {
       "type": "text",
-      "heading": "Building the Retrofit Instance",
-      "content": "The Retrofit instance is the central configuration object that defines the base URL, the OkHttpClient (for networking), and the converter factory (for JSON parsing). It should be a singleton — created once and reused throughout the app. The Retrofit instance is used to create API service implementations by calling retrofit.create(YourApiService::class.java). With Hilt, you provide both the Retrofit instance and the API service as singletons in a @Module."
+      "heading": "OkHttp Interceptors",
+      "content": "Interceptors allow developers to intercept and modify network requests and responses. They are commonly used to add authentication headers, log requests, or handle errors globally."
     },
     {
       "type": "bullet",
-      "heading": "Retrofit.Builder Configuration",
+      "heading": "Common Interceptor Uses",
       "items": [
-        "baseUrl() — the base URL all endpoint paths are relative to; must end with a trailing slash: \"https://api.example.com/v1/\"",
-        "client() — provides the configured OkHttpClient with interceptors and timeouts",
-        "addConverterFactory(GsonConverterFactory.create()) — adds Gson JSON parsing support",
-        "addConverterFactory(MoshiConverterFactory.create(moshi)) — alternative: Moshi with Kotlin support",
-        "addConverterFactory(Json.asConverterFactory(\"application/json\".toMediaType())) — kotlinx.serialization",
-        "Multiple converter factories can be added — Retrofit tries them in order",
-        "build() — creates the Retrofit instance",
-        "retrofit.create(UserApiService::class.java) — generates the implementation of the API interface"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Providing Retrofit with Hilt",
-      "rows": [
-        {
-          "step": "1. Provide OkHttpClient",
-          "code_description": "@Provides @Singleton fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor).connectTimeout(30, SECONDS).build()"
-        },
-        {
-          "step": "2. Provide Retrofit",
-          "code_description": "@Provides @Singleton fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder().baseUrl(BASE_URL).client(client).addConverterFactory(GsonConverterFactory.create()).build()"
-        },
-        {
-          "step": "3. Provide ApiService",
-          "code_description": "@Provides @Singleton fun provideUserApiService(retrofit: Retrofit): UserApiService = retrofit.create(UserApiService::class.java)"
-        },
-        {
-          "step": "4. Inject into Repository",
-          "code_description": "class UserRepository @Inject constructor(private val api: UserApiService, private val dao: UserDao)"
-        },
-        {
-          "step": "5. Call from Repository",
-          "code_description": "suspend fun refresh() { val users = api.getUsers(); dao.insertAll(users.map { it.toEntity() }) }"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Handling Retrofit Errors",
-      "items": [
-        "Wrap Retrofit calls in try-catch in the Repository layer — never in the ViewModel",
-        "catch (e: HttpException) — server returned a non-2xx status code; e.code() gives the status code",
-        "catch (e: IOException) — network error: no connection, timeout, or DNS failure",
-        "Parse the error body: e.response()?.errorBody()?.string() — JSON string with error details from the server",
-        "Use Gson to parse error body: gson.fromJson(errorBody, ApiError::class.java)",
-        "Return Result.Success or Result.Error from the Repository to the ViewModel",
-        "For Response<T> return type: check response.isSuccessful before accessing response.body()",
-        "Never catch generic Exception without re-throwing or logging — silent failures are hard to debug"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Multipart File Upload with Retrofit",
-      "rows": [
-        {
-          "step": "1. Define interface",
-          "description": "@Multipart @POST(\"upload\") suspend fun uploadFile(@Part file: MultipartBody.Part, @Part(\"description\") description: RequestBody): UploadResponse"
-        },
-        {
-          "step": "2. Create RequestBody from file",
-          "description": "val requestFile = file.asRequestBody(\"image/jpeg\".toMediaTypeOrNull())"
-        },
-        {
-          "step": "3. Create MultipartBody.Part",
-          "description": "val body = MultipartBody.Part.createFormData(\"file\", file.name, requestFile)"
-        },
-        {
-          "step": "4. Create text part",
-          "description": "val description = \"My photo\".toRequestBody(\"text/plain\".toMediaTypeOrNull())"
-        },
-        {
-          "step": "5. Call the API",
-          "description": "val response = api.uploadFile(body, description)"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Retrofit with Response<T> — Handling Status Codes",
-      "items": [
-        "Use Response<T> return type when you need to inspect status code or headers: suspend fun getUser(): Response<User>",
-        "Check success: if (response.isSuccessful) { val user = response.body() }",
-        "Get status code: response.code() — e.g., 200, 404, 500",
-        "Get error body on failure: response.errorBody()?.string()",
-        "Get response headers: response.headers()[\"X-Request-Id\"]",
-        "response.body() is null on non-2xx responses — always check isSuccessful first",
-        "For 204 No Content: response.isSuccessful is true but response.body() is null — handle both cases",
-        "Using Response<T> instead of plain T gives you more control but adds more null checking"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Retrofit JSON Converters Comparison",
-      "rows": [
-        {
-          "converter": "Gson",
-          "dependency": "converter-gson",
-          "kotlin_support": "Basic — no native null safety or default values",
-          "setup": "GsonConverterFactory.create()",
-          "best_for": "Simple projects; widely used; familiar to most Android developers"
-        },
-        {
-          "converter": "Moshi",
-          "dependency": "converter-moshi + moshi-kotlin",
-          "kotlin_support": "Excellent — Kotlin-aware; supports default values and null safety",
-          "setup": "MoshiConverterFactory.create(Moshi.Builder().add(KotlinJsonAdapterFactory()).build())",
-          "best_for": "Kotlin-first projects needing better type safety than Gson"
-        },
-        {
-          "converter": "kotlinx.serialization",
-          "dependency": "retrofit2-kotlinx-serialization-converter",
-          "kotlin_support": "Native Kotlin — @Serializable annotation on data classes",
-          "setup": "Json.asConverterFactory(\"application/json\".toMediaType())",
-          "best_for": "Kotlin Multiplatform projects; fully Kotlin ecosystem"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Best Practices for Retrofit & OkHttp",
-      "items": [
-        "Always create Retrofit and OkHttpClient as singletons — creating per request wastes resources and connections",
-        "Use OkHttp interceptors for cross-cutting concerns: auth headers, logging, analytics, retry logic",
-        "Never add the logging interceptor in release builds — it may log sensitive tokens and user data",
-        "Set reasonable timeouts — default OkHttp timeout is 10 seconds; adjust based on your API's performance",
-        "Keep the base URL in a constants file or BuildConfig — never hardcode it in the Retrofit builder",
-        "Use suspend functions for all API calls — eliminates callback hell and integrates naturally with coroutines",
-        "Handle both HttpException and IOException separately — they represent different failure modes",
-        "Test with MockWebServer — provides a real local HTTP server for integration testing of API calls"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Retrofit Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Missing trailing slash in base URL",
-          "fix": "Base URL must end with /: \"https://api.example.com/v1/\" not \"https://api.example.com/v1\""
-        },
-        {
-          "mistake": "Using absolute URL paths starting with / in endpoints",
-          "fix": "Endpoint paths should be relative (\"users/{id}\") not absolute (\"/users/{id}\") — absolute paths drop the base URL path"
-        },
-        {
-          "mistake": "Calling API service functions on the main thread without coroutines",
-          "fix": "Always call suspend API functions from viewModelScope.launch or a Repository's coroutine context"
-        },
-        {
-          "mistake": "Creating a new Retrofit instance per network call",
-          "fix": "Create once as a @Singleton via Hilt — reuse the same instance throughout the app"
-        },
-        {
-          "mistake": "Logging full request bodies in production",
-          "fix": "Only add HttpLoggingInterceptor in debug builds: if (BuildConfig.DEBUG) builder.addInterceptor(loggingInterceptor)"
-        },
-        {
-          "mistake": "Not handling non-2xx responses when using plain T return type",
-          "fix": "Wrap calls in try-catch for HttpException or use Response<T> to inspect status codes explicitly"
-        },
-        {
-          "mistake": "Forgetting INTERNET permission in AndroidManifest",
-          "fix": "Add <uses-permission android:name=\"android.permission.INTERNET\" /> — without it all network calls fail silently"
-        }
+        "Adding Authorization headers for authenticated APIs",
+        "Logging request and response data during development",
+        "Handling token refresh logic",
+        "Monitoring or modifying network traffic"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Retrofit and OkHttp together form the definitive Android networking stack. Retrofit's annotation-driven API interface transforms your REST endpoints into clean Kotlin suspend functions with automatic JSON parsing, while OkHttp provides the robust transport layer with interceptors for auth, logging, and caching. Provide both as Hilt singletons, wrap all calls in Repository try-catch blocks with Result wrappers, and use the HttpLoggingInterceptor exclusively in debug builds. This combination delivers a networking layer that is clean, testable, performant, and production-ready."
+      "content": "Retrofit simplifies Android networking by converting REST API endpoints into Kotlin interface functions using annotations. It automatically handles HTTP requests, JSON parsing, and threading while relying on OkHttp as the underlying network client. OkHttp provides powerful features such as interceptors, caching, and connection management. Together, Retrofit and OkHttp form the standard networking stack used in modern Android applications."
     }
   ]
 }

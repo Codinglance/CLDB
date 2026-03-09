@@ -3,339 +3,55 @@
   "sections": [
     {
       "type": "text",
-      "heading": "Why Security Matters in Android Development",
-      "content": "Android apps handle sensitive user data — passwords, payment details, health records, private messages — making security a critical responsibility for every developer. A poorly secured app can expose users to data theft, account takeover, man-in-the-middle attacks, and unauthorized access to device resources. Android provides a layered security model: the Linux kernel enforces process isolation, each app runs in its own sandbox, and the platform provides APIs for secure data storage, encrypted communication, and authentication. Following security best practices protects your users, maintains their trust, satisfies Google Play's security requirements, and reduces your legal and compliance risk."
+      "heading": "Why Security Matters",
+      "content": "Android apps handle sensitive user data — passwords, payment info, messages — making security critical. A weak app risks data theft, account takeover, and unauthorized access. Android enforces a layered model: Linux kernel sandboxing, app sandbox, permissions, secure storage, and encrypted communication. Following best practices protects users, maintains trust, and meets Play Store security requirements."
     },
     {
       "type": "table",
-      "heading": "Android Security Layers",
+      "heading": "Security Layers & Developer Actions",
       "rows": [
-        {
-          "layer": "Linux Kernel",
-          "protection": "Process isolation — each app runs as a unique Linux user with its own UID",
-          "developer_action": "No action needed — enforced by the OS"
-        },
-        {
-          "layer": "App Sandbox",
-          "protection": "Apps cannot access each other's files or memory by default",
-          "developer_action": "Never expose private files via world-readable modes; use FileProvider for sharing"
-        },
-        {
-          "layer": "Permission System",
-          "protection": "Sensitive APIs and data require explicit user-granted permissions",
-          "developer_action": "Request only necessary permissions; handle denial gracefully"
-        },
-        {
-          "layer": "Network Security",
-          "protection": "HTTPS enforced by default on API 28+; cleartext traffic blocked",
-          "developer_action": "Use HTTPS everywhere; configure Network Security Config for certificate pinning"
-        },
-        {
-          "layer": "Data Encryption",
-          "protection": "Full-disk and file-based encryption on modern Android devices",
-          "developer_action": "Use EncryptedSharedPreferences and EncryptedFile for sensitive app data"
-        },
-        {
-          "layer": "Keystore System",
-          "protection": "Hardware-backed key storage — private keys never leave the secure hardware",
-          "developer_action": "Use Android Keystore for cryptographic key generation and storage"
-        }
+        {"layer": "Linux Kernel", "protection": "Process isolation per app", "developer_action": "No action needed"},
+        {"layer": "App Sandbox", "protection": "Apps isolated from each other", "developer_action": "Use FileProvider for sharing"},
+        {"layer": "Permissions", "protection": "User grants sensitive access", "developer_action": "Request only necessary permissions"},
+        {"layer": "Network Security", "protection": "HTTPS by default", "developer_action": "Use TLS & pin certificates"},
+        {"layer": "Data Encryption", "protection": "File-based encryption", "developer_action": "Use EncryptedSharedPreferences/EncryptedFile"},
+        {"layer": "Keystore", "protection": "Hardware-backed keys", "developer_action": "Store cryptographic keys securely"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Secure Data Storage",
+      "heading": "Key Practices",
       "items": [
-        "Never store sensitive data in plain SharedPreferences — it is stored as plaintext XML on the device",
-        "Use EncryptedSharedPreferences from Jetpack Security for encrypted key-value storage: EncryptedSharedPreferences.create(context, \"secret_prefs\", masterKey, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)",
-        "Use EncryptedFile for encrypting files at rest: EncryptedFile.Builder(context, file, masterKey, EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB).build()",
-        "Generate a MasterKey using the Keystore-backed AES256_GCM spec: MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()",
-        "Never store passwords in plaintext — store only salted hashes or use Android Keystore to store tokens",
-        "Do not store sensitive data in external storage — it is accessible to other apps and the user",
-        "Avoid logging sensitive data — strip all PII from Logcat logs before release",
-        "Use Android Keystore to store cryptographic keys — keys are hardware-backed and never exported"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Jetpack Security — Key Classes",
-      "rows": [
-        {
-          "class": "MasterKey",
-          "package": "androidx.security.crypto",
-          "purpose": "Generates or retrieves an AES-256 master key stored in the Android Keystore",
-          "example": "MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()"
-        },
-        {
-          "class": "EncryptedSharedPreferences",
-          "package": "androidx.security.crypto",
-          "purpose": "SharedPreferences implementation that encrypts both keys and values at rest",
-          "example": "EncryptedSharedPreferences.create(context, fileName, masterKey, keyScheme, valueScheme)"
-        },
-        {
-          "class": "EncryptedFile",
-          "package": "androidx.security.crypto",
-          "purpose": "Reads and writes files with AES-256-GCM encryption transparently",
-          "example": "EncryptedFile.Builder(context, file, masterKey, EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB).build()"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Network Security",
-      "content": "All network communication in your app should use HTTPS with TLS to prevent man-in-the-middle attacks and data interception. Since Android 9 (API 28), cleartext HTTP traffic is blocked by default — apps must explicitly opt in to allow it. The Network Security Configuration file (res/xml/network_security_config.xml) gives you declarative control over trust anchors, cleartext permissions, and certificate pinning without changing any code. Certificate pinning adds an extra layer of security by ensuring your app only trusts specific certificates or public keys, preventing attacks even if a certificate authority is compromised."
-    },
-    {
-      "type": "bullet",
-      "heading": "Network Security Configuration",
-      "items": [
-        "Declare in AndroidManifest.xml: android:networkSecurityConfig=\"@xml/network_security_config\"",
-        "Block all cleartext traffic (default on API 28+): <base-config cleartextTrafficPermitted=\"false\" />",
-        "Allow cleartext only for specific domains during development: <domain-config cleartextTrafficPermitted=\"true\"><domain includeSubdomains=\"true\">dev.example.com</domain></domain-config>",
-        "Add custom trust anchors for debug builds to trust user-installed certificates: <debug-overrides><trust-anchors><certificates src=\"user\" /></trust-anchors></debug-overrides>",
-        "Certificate pinning — pin a specific certificate: <pin-set><pin digest=\"SHA-256\">base64encodedHash==</pin></pin-set>",
-        "Always pin at least two certificates (primary + backup) to avoid being locked out during cert rotation",
-        "Generate pin hash: openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64",
-        "Test network security config with: adb shell cmd connectivity airplane-mode enable to simulate offline"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "HTTPS & TLS Best Practices",
-      "rows": [
-        {
-          "practice": "Use HTTPS for all endpoints",
-          "reason": "Encrypts data in transit — prevents eavesdropping and tampering",
-          "implementation": "All API base URLs must use https:// — enforce in Retrofit base URL"
-        },
-        {
-          "practice": "Validate SSL certificates",
-          "reason": "Default OkHttp validates certificates against system trust store",
-          "implementation": "Never use custom TrustManager that accepts all certificates — this disables SSL validation entirely"
-        },
-        {
-          "practice": "Certificate pinning",
-          "reason": "Prevents MITM attacks even if a CA is compromised",
-          "implementation": "Use Network Security Config or OkHttp CertificatePinner"
-        },
-        {
-          "practice": "Use OkHttp CertificatePinner",
-          "reason": "Programmatic pinning with fallback pin support",
-          "implementation": "CertificatePinner.Builder().add(\"api.example.com\", \"sha256/base64hash==\").build()"
-        },
-        {
-          "practice": "Disable TLS 1.0 and 1.1",
-          "reason": "Older TLS versions have known vulnerabilities",
-          "implementation": "Modern Android (API 29+) uses TLS 1.3 by default — OkHttp enforces modern cipher suites"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Android Keystore System",
-      "items": [
-        "Android Keystore stores cryptographic keys in secure hardware (TEE or StrongBox) — keys never leave the secure enclave",
-        "Generate a key pair in Keystore: val keyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, \"AndroidKeyStore\")",
-        "Specify key properties: KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY).setDigests(KeyProperties.DIGEST_SHA256).build()",
-        "Require user authentication to use the key: .setUserAuthenticationRequired(true).setUserAuthenticationValidityDurationSeconds(30)",
-        "Use setStrongBoxBacked(true) on supported devices to store keys in dedicated security chip (API 28+)",
-        "Retrieve stored key: KeyStore.getInstance(\"AndroidKeyStore\").apply { load(null) }.getEntry(alias, null) as KeyStore.PrivateKeyEntry",
-        "Keys generated in Keystore cannot be exported — they can only be used for cryptographic operations via the Keystore API",
-        "Use Keystore for: signing tokens, encrypting/decrypting data, biometric-gated operations"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Authentication & Biometrics",
-      "rows": [
-        {
-          "topic": "BiometricPrompt API",
-          "description": "System-provided biometric authentication UI — fingerprint, face, or iris depending on device",
-          "implementation": "BiometricPrompt(activity, executor, callback).authenticate(promptInfo)"
-        },
-        {
-          "topic": "BiometricManager",
-          "description": "Check if biometric authentication is available and enrolled before showing the prompt",
-          "implementation": "BiometricManager.from(context).canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)"
-        },
-        {
-          "topic": "Crypto-backed biometrics",
-          "description": "Tie Keystore key usage to biometric authentication — key only usable after successful biometric verification",
-          "implementation": "Pass CryptoObject(cipher) to BiometricPrompt.authenticate() — cipher initialized with Keystore key"
-        },
-        {
-          "topic": "Device credential fallback",
-          "description": "Allow PIN/pattern/password as fallback if biometrics fail or are not enrolled",
-          "implementation": "BiometricPrompt.PromptInfo.Builder().setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)"
-        },
-        {
-          "topic": "Token storage",
-          "description": "Store auth tokens in EncryptedSharedPreferences — never in plain SharedPreferences or plain files",
-          "implementation": "Use EncryptedSharedPreferences with a Keystore-backed MasterKey"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Protecting Against Common Vulnerabilities",
-      "items": [
-        "SQL Injection — always use Room's @Query with parameter binding; never concatenate user input into raw SQL strings",
-        "Content Provider exposure — set android:exported=\"false\" on ContentProviders not intended for other apps; use permissions to restrict access",
-        "Intent hijacking — use explicit Intents when starting your own components; never use implicit Intents for sensitive actions",
-        "Deep link validation — validate all incoming deep link parameters before use; never trust URL parameters blindly",
-        "Exported Activity exposure — set android:exported=\"false\" on Activities not meant to be launched by other apps",
-        "WebView security — disable JavaScript if not needed: webView.settings.javaScriptEnabled = false; never load arbitrary URLs from untrusted sources",
-        "WebView file access — disable file access: webView.settings.allowFileAccess = false; webView.settings.allowContentAccess = false",
-        "Backup exposure — sensitive data may be included in Android backups; use android:allowBackup=\"false\" or exclude sensitive files with backup rules"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "WebView Security Settings",
-      "rows": [
-        {
-          "setting": "javaScriptEnabled",
-          "default": "false",
-          "recommendation": "Disable unless your app explicitly requires JavaScript — enables XSS attack surface",
-          "code": "webView.settings.javaScriptEnabled = false"
-        },
-        {
-          "setting": "allowFileAccess",
-          "default": "false (API 30+)",
-          "recommendation": "Always disable — prevents WebView from reading local files via file:// URIs",
-          "code": "webView.settings.allowFileAccess = false"
-        },
-        {
-          "setting": "allowContentAccess",
-          "default": "true",
-          "recommendation": "Disable unless needed — prevents access to ContentProvider URIs from WebView",
-          "code": "webView.settings.allowContentAccess = false"
-        },
-        {
-          "setting": "addJavascriptInterface()",
-          "default": "N/A",
-          "recommendation": "Annotate exposed methods with @JavascriptInterface; only expose to trusted content; never expose to arbitrary URLs",
-          "code": "@JavascriptInterface fun onDataReceived(data: String) { /* handle */ }"
-        },
-        {
-          "setting": "setWebViewClient()",
-          "default": "N/A",
-          "recommendation": "Override shouldOverrideUrlLoading() to validate URLs before loading — reject unexpected schemes",
-          "code": "override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean { return !request.url.host.endsWith(\"example.com\") }"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Securing App Components",
-      "items": [
-        "Set android:exported=\"false\" on all Activities, Services, BroadcastReceivers, and ContentProviders not intentionally public",
-        "From API 31+, android:exported must be explicitly declared for components with intent filters — build will fail otherwise",
-        "Use custom permissions to restrict access to your exported components: android:permission=\"com.example.MY_PERMISSION\"",
-        "Validate all data received via Intents — never trust Intent extras from external sources without validation",
-        "Use PendingIntent.FLAG_IMMUTABLE for all PendingIntents (API 31+ requirement) to prevent PendingIntent hijacking",
-        "For BroadcastReceivers handling sensitive actions, use LocalBroadcastManager or specify a permission in sendBroadcast()",
-        "Avoid storing sensitive data in Intent extras passed between apps — other apps may intercept them",
-        "Use signature-level permissions for inter-app communication between your own apps"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "ProGuard & Code Obfuscation",
-      "rows": [
-        {
-          "topic": "Enable R8/ProGuard",
-          "description": "Shrinks, obfuscates, and optimizes code — makes reverse engineering significantly harder",
-          "implementation": "buildTypes { release { isMinifyEnabled = true; proguardFiles(getDefaultProguardFile(\"proguard-android-optimize.txt\"), \"proguard-rules.pro\") } }"
-        },
-        {
-          "topic": "Code obfuscation",
-          "description": "Renames classes, methods, and fields to meaningless names — harder to reverse engineer",
-          "implementation": "Enabled automatically with isMinifyEnabled = true and R8"
-        },
-        {
-          "topic": "Resource shrinking",
-          "description": "Removes unused resources from the APK — reduces attack surface and APK size",
-          "implementation": "isShrinkResources = true — requires isMinifyEnabled = true"
-        },
-        {
-          "topic": "Keep rules",
-          "description": "Preserve classes that must not be obfuscated — data classes, Retrofit interfaces, Room entities",
-          "implementation": "-keep class com.example.model.** { *; } in proguard-rules.pro"
-        },
-        {
-          "topic": "APK analysis",
-          "description": "Verify obfuscation worked by inspecting the release APK",
-          "implementation": "Android Studio > Build > Analyze APK — inspect classes.dex to verify obfuscation"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Sensitive Data — Do's and Don'ts",
-      "items": [
-        "DO: Use EncryptedSharedPreferences for tokens, API keys, and user preferences",
-        "DO: Use Android Keystore for cryptographic keys — never store raw keys in SharedPreferences or files",
-        "DO: Use HTTPS for all network communication — no exceptions",
-        "DO: Validate and sanitize all input from external sources — Intents, deep links, WebView, user input",
-        "DO: Obfuscate your release builds with R8/ProGuard",
-        "DON'T: Hardcode API keys, secrets, or credentials in source code or string resources — they are visible in the APK",
-        "DON'T: Log sensitive data — strip PII and tokens from all Logcat output before release",
-        "DON'T: Store sensitive data in external storage, SharedPreferences without encryption, or SQLite without encryption",
-        "DON'T: Trust data received via Intent extras, deep link parameters, or WebView without validation",
-        "DON'T: Use android:debuggable=\"true\" in release builds — always ensure it is false or absent in production"
+        "Use EncryptedSharedPreferences & EncryptedFile for sensitive data",
+        "Never store passwords or API keys in plain text or source code",
+        "Use Android Keystore for cryptographic keys and biometric gating",
+        "HTTPS & certificate pinning for all network traffic",
+        "Validate Intents, deep links, and WebView input",
+        "Lock down components: set android:exported=false where possible",
+        "Enable R8/ProGuard to obfuscate code and shrink resources",
+        "Harden WebViews: disable JavaScript and file access unless needed",
+        "Audit logs: never expose sensitive data",
+        "Use FLAG_IMMUTABLE for all PendingIntents (API 31+)"
       ]
     },
     {
       "type": "table",
       "heading": "Security Checklist Before Release",
       "rows": [
-        {
-          "check": "HTTPS enforced",
-          "description": "All API calls use HTTPS; cleartext traffic disabled in Network Security Config"
-        },
-        {
-          "check": "No hardcoded secrets",
-          "description": "No API keys, tokens, or passwords in source code, strings.xml, or BuildConfig fields"
-        },
-        {
-          "check": "Sensitive data encrypted",
-          "description": "EncryptedSharedPreferences and EncryptedFile used for all sensitive data at rest"
-        },
-        {
-          "check": "R8/ProGuard enabled",
-          "description": "isMinifyEnabled = true for release builds; proguard-rules verified"
-        },
-        {
-          "check": "android:debuggable false",
-          "description": "Release build is not debuggable — no debug flag in release buildType"
-        },
-        {
-          "check": "Exported components locked down",
-          "description": "android:exported explicitly set on all components; unexported components set to false"
-        },
-        {
-          "check": "No sensitive data in logs",
-          "description": "All Log.d/Log.e calls audited — no tokens, passwords, or PII in Logcat output"
-        },
-        {
-          "check": "Backup rules configured",
-          "description": "android:allowBackup set appropriately; sensitive files excluded from backup"
-        },
-        {
-          "check": "PendingIntent flags set",
-          "description": "All PendingIntents use FLAG_IMMUTABLE (API 31+ requirement)"
-        },
-        {
-          "check": "WebView hardened",
-          "description": "JavaScript disabled unless required; file access disabled; URL validation in shouldOverrideUrlLoading()"
-        }
+        {"check": "HTTPS enforced", "description": "All API calls use HTTPS; cleartext blocked"},
+        {"check": "No hardcoded secrets", "description": "No API keys or passwords in code"},
+        {"check": "Sensitive data encrypted", "description": "Use EncryptedSharedPreferences/EncryptedFile"},
+        {"check": "R8/ProGuard enabled", "description": "Code obfuscation and resource shrinking active"},
+        {"check": "Exported components locked", "description": "android:exported set explicitly"},
+        {"check": "Logs cleaned", "description": "No tokens, passwords, or PII in Logcat"},
+        {"check": "PendingIntent flags", "description": "Use FLAG_IMMUTABLE"},
+        {"check": "WebView hardened", "description": "JS & file access disabled unless needed"}
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Android security is a multi-layered discipline covering secure storage, encrypted networking, proper component exposure, and code obfuscation. Use EncryptedSharedPreferences and EncryptedFile for sensitive data at rest, Android Keystore for cryptographic keys, and HTTPS with certificate pinning for all network communication. Lock down app components by setting android:exported=\"false\" on private components, validate all external input from Intents and deep links, and harden WebViews by disabling JavaScript and file access where not needed. Enable R8/ProGuard obfuscation in release builds, strip all sensitive data from logs, and never hardcode secrets in source code. Run through the security checklist before every release to ensure your app meets both user expectations and Google Play's security requirements."
+      "content": "Security is multi-layered: store sensitive data encrypted, use Keystore for keys, enforce HTTPS with pinning, lock down components, validate all external input, harden WebViews, obfuscate code, and audit logs. Follow the checklist to meet Play Store and user security expectations."
     }
   ]
 }

@@ -4,352 +4,78 @@
     {
       "type": "text",
       "heading": "What is the Navigation Component?",
-      "content": "The Jetpack Navigation Component is a framework that simplifies implementing navigation between screens (destinations) in an Android app. It handles the complexity of Fragment transactions, back stack management, argument passing, deep linking, and transition animations — all from a single, visual navigation graph. It is the cornerstone of the Single Activity Architecture where one host Activity contains a NavHostFragment that swaps Fragments as the user navigates, replacing the old multi-Activity approach."
+      "content": "The Jetpack Navigation Component is a library that simplifies navigation between screens in an Android app. It manages Fragment transactions, back stack handling, argument passing, and deep linking using a centralized navigation graph. This approach supports the modern Single Activity Architecture where one Activity hosts multiple Fragments through a NavHostFragment."
     },
     {
       "type": "bullet",
       "heading": "Why Use the Navigation Component?",
       "items": [
-        "Centralized navigation map — all destinations and paths are defined in a single navigation graph XML file",
-        "Automatic back stack management — handles Fragment transactions and back stack without manual FragmentManager calls",
-        "Type-safe argument passing — Safe Args plugin generates typed classes for passing data between destinations",
-        "Deep link support — handles both explicit and implicit deep links to any destination in the graph",
-        "Transition animations — define enter, exit, popEnter, and popExit animations on each action",
-        "NavigationUI integration — connects BottomNavigationView, DrawerLayout, and Toolbar to the nav graph automatically",
-        "ViewModel scoping — scope a ViewModel to a navigation subgraph for shared state across a subset of screens",
-        "Conditional navigation — navigate to different destinations based on state (e.g., login check)"
+        "Centralized navigation graph that defines all screens and navigation paths",
+        "Automatic back stack management without manual FragmentManager transactions",
+        "Type-safe argument passing using the Safe Args plugin",
+        "Support for deep links to open specific screens directly",
+        "Built-in integration with Toolbar, BottomNavigationView, and Navigation Drawer",
+        "Animation support for screen transitions",
+        "ViewModel scoping for sharing data across multiple fragments"
       ]
     },
     {
       "type": "table",
-      "heading": "Navigation Component Core Concepts",
+      "heading": "Core Concepts",
       "rows": [
         {
           "concept": "Navigation Graph",
-          "description": "An XML resource file (res/navigation/) that defines all destinations and the actions (paths) between them"
+          "description": "XML file that defines destinations and navigation paths"
         },
         {
           "concept": "Destination",
-          "description": "A screen or endpoint in the navigation graph — typically a Fragment, Activity, or dialog"
+          "description": "A screen in the app such as a Fragment, Activity, or dialog"
         },
         {
           "concept": "Action",
-          "description": "A connection between two destinations defining how to navigate from one to the other"
+          "description": "A navigation path connecting one destination to another"
         },
         {
           "concept": "NavHostFragment",
-          "description": "A special Fragment in the Activity layout that acts as the container — it swaps destinations in and out"
+          "description": "Container fragment that swaps destinations in the Activity layout"
         },
         {
           "concept": "NavController",
-          "description": "The object that manages navigation within a NavHostFragment — call navigate() on it to trigger navigation"
-        },
-        {
-          "concept": "NavBackStackEntry",
-          "description": "Represents a destination on the back stack — used for scoping ViewModels and retrieving results"
+          "description": "Object that controls navigation actions and back stack"
         },
         {
           "concept": "Safe Args",
-          "description": "A Gradle plugin that generates type-safe classes for passing arguments between destinations"
-        },
-        {
-          "concept": "Deep Link",
-          "description": "A URI or pending intent that navigates directly to a specific destination in the graph"
+          "description": "Gradle plugin for type-safe argument passing between destinations"
         }
       ]
     },
     {
       "type": "text",
-      "heading": "Setting Up the Navigation Component",
-      "content": "To use the Navigation Component, add the navigation-fragment and navigation-ui dependencies to your app-level build.gradle.kts. Optionally add the Safe Args Gradle plugin for type-safe argument passing. Then create a navigation graph resource file in res/navigation/, add a NavHostFragment to your Activity layout, and get a NavController reference to trigger navigation from your Fragments."
+      "heading": "Basic Setup",
+      "content": "To use the Navigation Component, add the navigation-fragment and navigation-ui dependencies in Gradle. Create a navigation graph inside the res/navigation folder. Then place a NavHostFragment inside your Activity layout and connect it to the navigation graph using the app:navGraph attribute. Use NavController to navigate between destinations."
     },
     {
       "type": "bullet",
-      "heading": "Setup Steps",
+      "heading": "Basic Navigation Steps",
       "items": [
-        "Step 1: Add dependencies — implementation(\"androidx.navigation:navigation-fragment-ktx:2.7.x\") and navigation-ui-ktx",
-        "Step 2: Add Safe Args plugin to build.gradle.kts plugins block: id(\"androidx.navigation.safeargs.kotlin\")",
-        "Step 3: Create navigation graph — res/navigation/nav_graph.xml via New → Android Resource File → Navigation",
-        "Step 4: Add NavHostFragment to Activity layout with app:navGraph and app:defaultNavHost=\"true\"",
-        "Step 5: Get NavController in a Fragment: val navController = findNavController()",
-        "Step 6: Navigate using actions: navController.navigate(R.id.action_home_to_detail) or Safe Args directions",
-        "Step 7: Connect NavigationUI for BottomNavigationView: NavigationUI.setupWithNavController(bottomNav, navController)",
-        "Step 8: Handle the Up button in Activity: navController.navigateUp() or NavigationUI.navigateUp(navController, appBarConfig)"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Navigation Graph XML Elements",
-      "rows": [
-        {
-          "element": "<navigation>",
-          "description": "Root element of the graph; sets the app:startDestination to the first screen shown"
-        },
-        {
-          "element": "<fragment>",
-          "description": "Declares a Fragment destination with its android:id, android:name (class), and android:label"
-        },
-        {
-          "element": "<activity>",
-          "description": "Declares an Activity as a destination — used when navigating to a separate Activity"
-        },
-        {
-          "element": "<dialog>",
-          "description": "Declares a DialogFragment as a destination — shown as an overlay without replacing the current screen"
-        },
-        {
-          "element": "<action>",
-          "description": "Defines a path from one destination to another with optional animations and popUpTo behavior"
-        },
-        {
-          "element": "<argument>",
-          "description": "Declares a typed argument that must be passed when navigating to this destination"
-        },
-        {
-          "element": "<deepLink>",
-          "description": "Associates a URI pattern with this destination for implicit deep link handling"
-        },
-        {
-          "element": "<include>",
-          "description": "Includes another navigation graph file — used for modular navigation in large apps"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Navigating Between Destinations",
-      "items": [
-        "Get NavController: findNavController() in a Fragment, or findNavController(R.id.nav_host_fragment) in Activity",
-        "Navigate by action ID: navController.navigate(R.id.action_homeFragment_to_detailFragment)",
-        "Navigate by destination ID: navController.navigate(R.id.detailFragment) — no action needed",
-        "Navigate with Safe Args directions: navController.navigate(HomeFragmentDirections.actionHomeToDetail(userId = 42))",
-        "Navigate with a Bundle: navController.navigate(R.id.detailFragment, bundleOf(\"userId\" to 42))",
-        "Pop back stack: navController.popBackStack() — equivalent to pressing the Back button",
-        "Navigate and clear back stack: use popUpTo and popUpToInclusive in the action definition",
-        "Navigate to a deep link URI: navController.navigate(Uri.parse(\"myapp://detail/42\"))"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Action Attributes for Navigation",
-      "rows": [
-        {
-          "attribute": "app:destination",
-          "description": "The ID of the destination Fragment or screen this action navigates to"
-        },
-        {
-          "attribute": "app:popUpTo",
-          "description": "Pops the back stack up to (but not including) the specified destination before navigating"
-        },
-        {
-          "attribute": "app:popUpToInclusive",
-          "description": "When true, also pops the popUpTo destination itself from the back stack"
-        },
-        {
-          "attribute": "app:launchSingleTop",
-          "description": "If true, avoids creating a duplicate of the destination if it is already at the top of the stack"
-        },
-        {
-          "attribute": "app:enterAnim",
-          "description": "Animation played when the destination enters the screen"
-        },
-        {
-          "attribute": "app:exitAnim",
-          "description": "Animation played when the current destination exits the screen"
-        },
-        {
-          "attribute": "app:popEnterAnim",
-          "description": "Animation played when the previous destination re-enters after popping the back stack"
-        },
-        {
-          "attribute": "app:popExitAnim",
-          "description": "Animation played when the current destination exits when popped from the back stack"
-        }
+        "Add navigation dependencies in Gradle",
+        "Create a navigation graph XML file",
+        "Add NavHostFragment in the Activity layout",
+        "Get NavController using findNavController()",
+        "Navigate using navController.navigate(actionId)",
+        "Use Safe Args for type-safe argument passing",
+        "Use popBackStack() to return to the previous screen"
       ]
     },
     {
       "type": "text",
-      "heading": "Safe Args — Type-Safe Navigation",
-      "content": "Safe Args is a Gradle plugin that processes your navigation graph and generates type-safe Kotlin classes for every destination that has arguments and every action that navigates between them. Instead of building a Bundle manually and risking typos or wrong types, you use the generated Directions class to create navigation calls and the generated Args class to retrieve arguments in the destination Fragment. Safe Args catches argument type mismatches at compile time rather than at runtime."
-    },
-    {
-      "type": "bullet",
-      "heading": "Safe Args — Passing & Receiving Arguments",
-      "items": [
-        "Declare arguments in the navigation graph: <argument android:name=\"userId\" app:argType=\"integer\" android:defaultValue=\"0\" />",
-        "Supported argument types: integer, float, long, boolean, string, resource reference, custom Parcelable, Serializable, Enum",
-        "Navigate with generated Directions: navController.navigate(HomeFragmentDirections.actionHomeToDetail(userId = 42))",
-        "Retrieve in destination Fragment using the generated Args class: val args: DetailFragmentArgs by navArgs()",
-        "Access the argument: val userId = args.userId",
-        "by navArgs() is a Kotlin property delegate that lazily reads arguments from the Fragment's argument Bundle",
-        "Default values in <argument> make the argument optional — navigation still works without explicitly passing it",
-        "For nullable String: app:argType=\"string\" with app:nullable=\"true\" and android:defaultValue=\"@null\""
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Safe Args vs Manual Bundle Comparison",
-      "rows": [
-        {
-          "aspect": "Type safety",
-          "safe_args": "Yes — argument types enforced at compile time",
-          "manual_bundle": "No — wrong type causes runtime crash"
-        },
-        {
-          "aspect": "Null safety",
-          "safe_args": "Yes — nullable arguments declared explicitly in graph",
-          "manual_bundle": "No — must handle null manually"
-        },
-        {
-          "aspect": "Refactoring",
-          "safe_args": "Safe — renaming argument updates generated class; compile error if mismatched",
-          "manual_bundle": "Risky — string keys can silently mismatch"
-        },
-        {
-          "aspect": "Discoverability",
-          "safe_args": "High — IDE autocompletes generated Directions and Args classes",
-          "manual_bundle": "Low — must remember key strings manually"
-        },
-        {
-          "aspect": "Setup",
-          "safe_args": "Requires Safe Args Gradle plugin",
-          "manual_bundle": "No extra setup"
-        },
-        {
-          "aspect": "Recommendation",
-          "safe_args": "Always preferred for Navigation Component",
-          "manual_bundle": "Use only for non-Navigation Component cases"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "NavigationUI — Connecting to App Bars and Bottom Navigation",
-      "content": "NavigationUI is a utility class that connects your navigation graph to common UI patterns like the top app bar, bottom navigation bar, and navigation drawer. It automatically updates the toolbar title to match the destination label, handles the Up button, and highlights the correct tab in the BottomNavigationView based on the current destination. Using NavigationUI eliminates the manual wiring of back stack and title management."
-    },
-    {
-      "type": "bullet",
-      "heading": "NavigationUI Setup Patterns",
-      "items": [
-        "Get NavController in Activity: val navController = findNavController(R.id.nav_host_fragment)",
-        "Set up AppBar: NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)",
-        "Handle Up button in Activity: override onSupportNavigateUp() { return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp() }",
-        "Set up BottomNavigationView: NavigationUI.setupWithNavController(bottomNavigationView, navController)",
-        "Set up NavigationView (drawer): NavigationUI.setupWithNavController(navigationView, navController)",
-        "Define top-level destinations in AppBarConfiguration: AppBarConfiguration(setOf(R.id.homeFragment, R.id.profileFragment))",
-        "Top-level destinations show a hamburger icon instead of the Back arrow in the toolbar",
-        "NavigationUI.setupWithNavController on BottomNavigationView handles tab switching and back stack automatically"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "popUpTo and Back Stack Management",
-      "rows": [
-        {
-          "scenario": "Navigate to Home and clear entire back stack (e.g., after login)",
-          "setup": "app:popUpTo=\"@id/loginFragment\" app:popUpToInclusive=\"true\" on the action to homeFragment"
-        },
-        {
-          "scenario": "Bottom nav tab switching without stacking destinations",
-          "setup": "NavigationUI.setupWithNavController handles this automatically with saveState and restoreState"
-        },
-        {
-          "scenario": "Navigate to a destination and avoid duplicates",
-          "setup": "app:launchSingleTop=\"true\" on the action"
-        },
-        {
-          "scenario": "Go back to a specific destination in the back stack",
-          "setup": "navController.popBackStack(R.id.homeFragment, false) — false means don't pop homeFragment itself"
-        },
-        {
-          "scenario": "Clear back stack to root and relaunch",
-          "setup": "navController.popBackStack(R.id.homeFragment, true) then navController.navigate(R.id.homeFragment)"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Passing Results Between Destinations",
-      "items": [
-        "Use the Fragment Result API for passing one-time results back from a destination to the previous one",
-        "In the destination sending the result: setFragmentResult(\"requestKey\", bundleOf(\"result\" to value))",
-        "In the previous destination: setFragmentResultListener(\"requestKey\") { _, bundle -> val result = bundle.getString(\"result\") }",
-        "For ViewModel-scoped results, use a shared ViewModel scoped to the nav graph with by navGraphViewModels(R.id.nav_graph)",
-        "navController.previousBackStackEntry?.savedStateHandle?.set(\"key\", value) — alternative for passing results via back stack",
-        "navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Type>(\"key\") — observe result in the previous destination",
-        "The SavedStateHandle approach is simpler than the Fragment Result API for Navigation Component use cases",
-        "Avoid passing large objects as results — pass IDs and let the receiver fetch the full object from the ViewModel"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Deep Links in Navigation Component",
-      "rows": [
-        {
-          "type": "Explicit Deep Link",
-          "description": "Created programmatically using NavDeepLinkBuilder — used for notifications and widgets that navigate to a specific destination",
-          "example": "NavDeepLinkBuilder(context).setGraph(R.navigation.nav_graph).setDestination(R.id.detailFragment).setArguments(args).createPendingIntent()"
-        },
-        {
-          "type": "Implicit Deep Link",
-          "description": "Triggered by a URI, registered in the nav graph with <deepLink> and in AndroidManifest with <nav-graph>",
-          "example": "<deepLink app:uri=\"myapp://detail/{userId}\" /> in nav graph; <nav-graph android:value=\"@navigation/nav_graph\" /> in manifest"
-        },
-        {
-          "type": "Web URL Deep Link",
-          "description": "Handles https:// URLs — requires App Links verification with a Digital Asset Links JSON file on your server",
-          "example": "<deepLink app:uri=\"https://myapp.com/detail/{userId}\" />"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Scoping ViewModel to a Navigation Graph",
-      "items": [
-        "Use by navGraphViewModels(R.id.nav_graph) in a Fragment to scope a ViewModel to the entire navigation graph",
-        "All Fragments within that nav graph share the same ViewModel instance",
-        "The ViewModel is cleared when the user navigates out of the nav graph entirely",
-        "Ideal for multi-step form flows where data accumulates across multiple screens",
-        "For a subgraph: nest destinations in a <navigation> element with its own ID and use that ID in navGraphViewModels",
-        "This is more precise than activityViewModels() — the ViewModel is cleared when the subgraph is exited",
-        "Use it for checkout flows, onboarding sequences, or any wizard-style multi-screen interaction",
-        "The NavBackStackEntry for the graph is the LifecycleOwner for the graph-scoped ViewModel"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Navigation Component Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Calling navigate() multiple times rapidly (double-tap)",
-          "fix": "Check currentDestination before navigating: if (navController.currentDestination?.id == R.id.homeFragment) navigate()"
-        },
-        {
-          "mistake": "Not setting app:defaultNavHost=\"true\" on NavHostFragment",
-          "fix": "Add app:defaultNavHost=\"true\" so NavHostFragment intercepts the system Back button"
-        },
-        {
-          "mistake": "Using FragmentManager directly alongside Navigation Component",
-          "fix": "Let the Navigation Component manage all Fragment transactions — mixing causes back stack conflicts"
-        },
-        {
-          "mistake": "Passing complex objects without Parcelable",
-          "fix": "Implement @Parcelize on data classes or pass IDs and fetch the full object in the destination ViewModel"
-        },
-        {
-          "mistake": "Forgetting to add <nav-graph> to AndroidManifest for deep links",
-          "fix": "Add <nav-graph android:value=\"@navigation/nav_graph\" /> inside <activity> in AndroidManifest.xml"
-        },
-        {
-          "mistake": "Observing NavController destination changes in Fragment instead of Activity",
-          "fix": "Add OnDestinationChangedListener to NavController in the Activity for global destination tracking"
-        }
-      ]
+      "heading": "NavigationUI Integration",
+      "content": "NavigationUI helps connect the Navigation Component with common UI elements such as the Toolbar, BottomNavigationView, and Navigation Drawer. It automatically updates the toolbar title, handles the Up button, and highlights the correct navigation tab based on the current destination."
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "The Jetpack Navigation Component transforms screen navigation from a fragile, manually managed collection of Fragment transactions into a declarative, type-safe, visually inspectable system. By centralizing all destinations and paths in a navigation graph, using Safe Args for argument passing, NavigationUI for toolbar and tab integration, and NavGraph-scoped ViewModels for shared state, you get a navigation architecture that is robust, maintainable, and perfectly aligned with the Single Activity Architecture that modern Android development recommends."
+      "content": "The Navigation Component simplifies screen navigation in Android by using a centralized navigation graph, automatic back stack management, and type-safe argument passing. Combined with NavigationUI and Safe Args, it provides a clean, maintainable, and scalable navigation architecture for modern Android applications."
     }
   ]
 }

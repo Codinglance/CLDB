@@ -4,416 +4,101 @@
     {
       "type": "text",
       "heading": "What is Gson?",
-      "content": "Gson is a Java/Kotlin library developed by Google for converting objects to JSON strings (serialization) and JSON strings back into objects (deserialization). In Android networking, Gson is most commonly used as the converter factory for Retrofit — it automatically maps JSON API responses into your Kotlin data classes and vice versa. Gson works by inspecting field names and types using reflection and matching them to JSON keys. While newer libraries like Moshi and kotlinx.serialization offer better Kotlin support, Gson remains the most widely used JSON library in Android due to its simplicity and zero-configuration default behavior."
+      "content": "Gson is a JSON parsing library developed by Google that converts Kotlin/Java objects into JSON (serialization) and JSON back into objects (deserialization). In Android development, Gson is commonly used with Retrofit to automatically convert API responses into Kotlin data classes. Instead of manually reading JSON fields, Gson maps JSON keys to object properties using reflection."
     },
     {
       "type": "bullet",
       "heading": "Why Use Gson?",
       "items": [
-        "Zero configuration — works out of the box with no annotations required for simple data classes",
-        "Widely adopted — used in millions of Android apps; extensive documentation and community support",
-        "Retrofit integration — GsonConverterFactory plugs directly into Retrofit with a single line",
-        "Flexible — supports nested objects, generics, custom serializers, and type adapters",
-        "Handles null values — can serialize and deserialize null fields without crashing",
-        "Supports @SerializedName — maps JSON keys with different names (snake_case) to Kotlin properties (camelCase)",
-        "Bidirectional — the same configuration handles both serialization (object → JSON) and deserialization (JSON → object)",
-        "Handles unknown fields gracefully — ignores JSON keys that have no matching property in the data class"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Gson vs Moshi vs kotlinx.serialization",
-      "rows": [
-        {
-          "aspect": "Kotlin support",
-          "gson": "Limited — uses Java reflection; no Kotlin null safety awareness",
-          "moshi": "Good — Kotlin-aware via KotlinJsonAdapterFactory",
-          "kotlinx_serialization": "Native Kotlin — designed specifically for Kotlin"
-        },
-        {
-          "aspect": "Null safety",
-          "gson": "Poor — can set non-null Kotlin fields to null from JSON",
-          "moshi": "Better — respects Kotlin nullability annotations",
-          "kotlinx_serialization": "Best — compile-time null safety enforcement"
-        },
-        {
-          "aspect": "Default values",
-          "gson": "Ignores Kotlin default values — sets field to null/0 if missing in JSON",
-          "moshi": "Respects Kotlin default values with KotlinJsonAdapterFactory",
-          "kotlinx_serialization": "Fully supports Kotlin default parameter values"
-        },
-        {
-          "aspect": "Code generation",
-          "gson": "Reflection at runtime — no code generation needed",
-          "moshi": "Optional — KSP/kapt for codegen or reflection at runtime",
-          "kotlinx_serialization": "Compile-time code generation via Kotlin compiler plugin"
-        },
-        {
-          "aspect": "Performance",
-          "gson": "Slower — reflection-based",
-          "moshi": "Faster with codegen; slower with reflection",
-          "kotlinx_serialization": "Fastest — compile-time generated adapters, no reflection"
-        },
-        {
-          "aspect": "Setup complexity",
-          "gson": "Lowest — zero config for basic use",
-          "moshi": "Medium — requires KotlinJsonAdapterFactory or KSP setup",
-          "kotlinx_serialization": "Medium — requires compiler plugin and @Serializable annotation"
-        },
-        {
-          "aspect": "Recommendation",
-          "gson": "Simple projects or existing codebases",
-          "moshi": "Kotlin projects needing better safety than Gson",
-          "kotlinx_serialization": "New Kotlin or KMP projects"
-        }
+        "Simple and widely used JSON parsing library",
+        "Works automatically with Retrofit using GsonConverterFactory",
+        "Requires minimal configuration for basic parsing",
+        "Supports nested objects, lists, and complex structures",
+        "Handles unknown JSON fields safely",
+        "Supports annotations like @SerializedName for custom mapping"
       ]
     },
     {
       "type": "text",
       "heading": "Basic Gson Usage",
-      "content": "Gson can be used standalone — independent of Retrofit — for manual JSON parsing and serialization. The core Gson object is created using Gson() or GsonBuilder().create(). Deserialization converts a JSON string into a Kotlin object using fromJson(). Serialization converts a Kotlin object into a JSON string using toJson(). These operations are synchronous and should always be performed on a background thread when dealing with large payloads."
+      "content": "A Gson instance is used to convert JSON strings into Kotlin objects and vice versa. Deserialization converts JSON into objects using fromJson(), while serialization converts objects into JSON using toJson()."
     },
     {
       "type": "bullet",
       "heading": "Core Gson Operations",
       "items": [
-        "Create a Gson instance: val gson = Gson() — default configuration",
-        "Create with custom config: val gson = GsonBuilder().setDateFormat(\"yyyy-MM-dd\").create()",
-        "Deserialize JSON to object: val user = gson.fromJson(jsonString, User::class.java)",
-        "Deserialize JSON to list: val users = gson.fromJson(jsonString, Array<User>::class.java).toList()",
-        "Deserialize with TypeToken for generic types: val type = object : TypeToken<List<User>>() {}.type; val users = gson.fromJson(jsonString, type)",
-        "Serialize object to JSON: val json = gson.toJson(user)",
-        "Serialize list to JSON: val json = gson.toJson(userList)",
-        "Pretty-print JSON: val gson = GsonBuilder().setPrettyPrinting().create(); gson.toJson(user)",
-        "Parse JSON to JsonObject (dynamic): val obj = gson.fromJson(jsonString, JsonObject::class.java)"
+        "Create instance: val gson = Gson()",
+        "Convert JSON to object: gson.fromJson(jsonString, User::class.java)",
+        "Convert object to JSON: gson.toJson(user)",
+        "Convert JSON array to list using TypeToken for generic types",
+        "Use GsonBuilder() when custom configuration is needed"
       ]
     },
     {
       "type": "table",
-      "heading": "JSON to Kotlin Data Class — Basic Mapping",
+      "heading": "JSON Mapping to Kotlin",
       "rows": [
         {
-          "json_key": "\"id\": 1",
-          "kotlin_field": "val id: Int",
-          "notes": "JSON integer maps to Kotlin Int or Long"
+          "json": "\"id\": 1",
+          "kotlin": "val id: Int",
+          "description": "JSON number maps to Kotlin numeric types"
         },
         {
-          "json_key": "\"name\": \"Alice\"",
-          "kotlin_field": "val name: String",
-          "notes": "JSON string maps to Kotlin String"
+          "json": "\"name\": \"Alice\"",
+          "kotlin": "val name: String",
+          "description": "JSON string maps to Kotlin String"
         },
         {
-          "json_key": "\"is_active\": true",
-          "kotlin_field": "val isActive: Boolean",
-          "notes": "JSON boolean maps to Kotlin Boolean; field name mismatch requires @SerializedName"
+          "json": "\"is_active\": true",
+          "kotlin": "val isActive: Boolean",
+          "description": "Boolean mapping; may require @SerializedName"
         },
         {
-          "json_key": "\"score\": 98.5",
-          "kotlin_field": "val score: Double",
-          "notes": "JSON decimal maps to Double or Float"
+          "json": "\"tags\": [\"android\", \"kotlin\"]",
+          "kotlin": "val tags: List<String>",
+          "description": "JSON array maps to Kotlin List"
         },
         {
-          "json_key": "\"age\": null",
-          "kotlin_field": "val age: Int?",
-          "notes": "JSON null maps to Kotlin nullable type; use ? to avoid NullPointerException"
-        },
-        {
-          "json_key": "\"tags\": [\"kotlin\", \"android\"]",
-          "kotlin_field": "val tags: List<String>",
-          "notes": "JSON array of strings maps to List<String>"
-        },
-        {
-          "json_key": "\"address\": {\"city\": \"Delhi\"}",
-          "kotlin_field": "val address: Address",
-          "notes": "Nested JSON object maps to a nested Kotlin data class"
-        },
-        {
-          "json_key": "\"orders\": [{\"id\": 1}, {\"id\": 2}]",
-          "kotlin_field": "val orders: List<Order>",
-          "notes": "JSON array of objects maps to List<DataClass>"
+          "json": "\"address\": {\"city\": \"Delhi\"}",
+          "kotlin": "val address: Address",
+          "description": "Nested JSON objects map to nested data classes"
         }
       ]
     },
     {
       "type": "text",
-      "heading": "@SerializedName — Mapping JSON Keys to Kotlin Properties",
-      "content": "REST APIs commonly use snake_case for JSON keys (e.g., first_name, created_at, is_active) while Kotlin conventions use camelCase for property names (firstName, createdAt, isActive). Gson's @SerializedName annotation bridges this gap by specifying the exact JSON key name for a Kotlin property. When the JSON key and the Kotlin property name match exactly, no annotation is needed. When they differ, @SerializedName is required for correct mapping."
+      "heading": "@SerializedName Annotation",
+      "content": "Many APIs use snake_case JSON keys while Kotlin uses camelCase property names. The @SerializedName annotation allows Gson to map JSON keys to different Kotlin property names."
     },
     {
       "type": "bullet",
-      "heading": "@SerializedName Usage Patterns",
+      "heading": "Common @SerializedName Usage",
       "items": [
-        "Basic mapping: @SerializedName(\"first_name\") val firstName: String",
-        "Boolean with prefix mismatch: @SerializedName(\"is_active\") val isActive: Boolean",
-        "Timestamp field: @SerializedName(\"created_at\") val createdAt: String",
-        "Alternate names (Gson 2.4+): @SerializedName(value = \"userId\", alternate = [\"user_id\", \"uid\"]) val userId: Int",
-        "The alternate array lets Gson match multiple possible JSON key names to the same field",
-        "Nested @SerializedName: apply the annotation at every level where the key differs",
-        "Without @SerializedName: Gson uses the exact Kotlin property name as the JSON key",
-        "FieldNamingPolicy is an alternative to @SerializedName applied globally: GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "FieldNamingPolicy Options",
-      "rows": [
-        {
-          "policy": "IDENTITY (default)",
-          "behavior": "Uses the field name exactly as declared — no transformation",
-          "example": "firstName → \"firstName\""
-        },
-        {
-          "policy": "LOWER_CASE_WITH_UNDERSCORES",
-          "behavior": "Converts camelCase to snake_case automatically for all fields",
-          "example": "firstName → \"first_name\""
-        },
-        {
-          "policy": "LOWER_CASE_WITH_DASHES",
-          "behavior": "Converts camelCase to kebab-case",
-          "example": "firstName → \"first-name\""
-        },
-        {
-          "policy": "UPPER_CAMEL_CASE",
-          "behavior": "Capitalizes the first letter of each field name",
-          "example": "firstName → \"FirstName\""
-        },
-        {
-          "policy": "UPPER_CAMEL_CASE_WITH_SPACES",
-          "behavior": "Capitalizes and adds spaces between words",
-          "example": "firstName → \"First Name\""
-        }
+        "@SerializedName(\"first_name\") val firstName: String",
+        "@SerializedName(\"created_at\") val createdAt: String",
+        "@SerializedName(\"is_active\") val isActive: Boolean",
+        "Allows Kotlin naming conventions while matching API responses"
       ]
     },
     {
       "type": "text",
-      "heading": "GsonBuilder — Customizing Gson Behavior",
-      "content": "The default Gson() instance handles most use cases, but GsonBuilder provides fine-grained control over serialization and deserialization behavior. Use GsonBuilder when you need to configure date formats, null serialization, field naming policies, pretty printing, lenient parsing, or custom type adapters. The configured Gson instance should be a singleton — create it once and reuse it across your app."
+      "heading": "Gson with Retrofit",
+      "content": "Retrofit integrates directly with Gson using GsonConverterFactory. Once added to Retrofit's builder, Gson automatically converts API responses into Kotlin data classes and converts request bodies into JSON. This removes the need to manually call fromJson() or toJson() when making API requests."
     },
     {
       "type": "bullet",
-      "heading": "GsonBuilder Configuration Options",
+      "heading": "Retrofit Integration Steps",
       "items": [
-        "setDateFormat(\"yyyy-MM-dd'T'HH:mm:ss\") — parses ISO 8601 date strings into java.util.Date objects automatically",
-        "serializeNulls() — by default Gson skips null fields in serialization; this option includes them",
-        "setPrettyPrinting() — formats output JSON with indentation for readability (use in debug only)",
-        "setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES) — global snake_case conversion",
-        "excludeFieldsWithoutExposeAnnotation() — only serialize/deserialize fields annotated with @Expose",
-        "registerTypeAdapter(Date::class.java, dateAdapter) — registers a custom TypeAdapter for specific types",
-        "registerTypeHierarchyAdapter(Animal::class.java, adapter) — handles polymorphic types",
-        "setLenient() — parses malformed JSON that violates strict JSON spec (use with caution)",
-        "disableHtmlEscaping() — prevents escaping of special HTML characters like < > & in JSON strings"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Handling Generics with TypeToken",
-      "rows": [
-        {
-          "use_case": "Deserialize List<User>",
-          "code": "val type = object : TypeToken<List<User>>() {}.type; val users = gson.fromJson(json, type)",
-          "notes": "TypeToken captures generic type information at runtime — required for generic collections"
-        },
-        {
-          "use_case": "Deserialize Map<String, User>",
-          "code": "val type = object : TypeToken<Map<String, User>>() {}.type; val map = gson.fromJson(json, type)",
-          "notes": "Required for any generic type — Gson cannot infer the type from Class alone"
-        },
-        {
-          "use_case": "Deserialize wrapped response",
-          "code": "val type = object : TypeToken<ApiResponse<List<User>>>() {}.type; val response = gson.fromJson(json, type)",
-          "notes": "Nested generics like ApiResponse<List<User>> also require TypeToken"
-        },
-        {
-          "use_case": "With Retrofit (automatic)",
-          "code": "suspend fun getUsers(): List<User> — Retrofit + Gson handle TypeToken internally",
-          "notes": "Retrofit automatically resolves generic return types — no manual TypeToken needed"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Custom TypeAdapters",
-      "items": [
-        "A TypeAdapter tells Gson exactly how to read and write a specific type — overrides default behavior",
-        "Extend TypeAdapter<YourType> and implement write(writer, value) and read(reader): YourType",
-        "Register with: GsonBuilder().registerTypeAdapter(YourType::class.java, YourTypeAdapter())",
-        "Use case: parsing a Date from a Unix timestamp integer instead of a formatted string",
-        "Use case: parsing a Boolean from a 0/1 integer API that returns numbers instead of true/false",
-        "Use case: polymorphic JSON where the type field determines which subclass to deserialize into",
-        "JsonDeserializer<T> is a simpler alternative to TypeAdapter for deserialization only",
-        "JsonSerializer<T> is the complementary interface for serialization only"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common JSON Parsing Challenges & Solutions",
-      "rows": [
-        {
-          "challenge": "API uses snake_case, Kotlin uses camelCase",
-          "solution": "@SerializedName on each field or GsonBuilder().setFieldNamingPolicy(LOWER_CASE_WITH_UNDERSCORES)"
-        },
-        {
-          "challenge": "Date field comes as a formatted string",
-          "solution": "GsonBuilder().setDateFormat(\"yyyy-MM-dd'T'HH:mm:ss'Z'\") to auto-parse into java.util.Date"
-        },
-        {
-          "challenge": "Date field comes as a Unix timestamp (Long)",
-          "solution": "Keep the field as Long in the data class and convert manually, or use a custom TypeAdapter"
-        },
-        {
-          "challenge": "Non-null Kotlin field receives null from JSON",
-          "solution": "Make the field nullable (String?) or provide a default value; consider switching to Moshi or kotlinx.serialization"
-        },
-        {
-          "challenge": "Kotlin data class default values ignored",
-          "solution": "Gson ignores Kotlin defaults — use @SerializedName with a fallback or switch to Moshi/kotlinx.serialization"
-        },
-        {
-          "challenge": "API response wraps data in a generic envelope",
-          "solution": "Create a generic wrapper: data class ApiResponse<T>(val data: T, val status: String)"
-        },
-        {
-          "challenge": "JSON field name is a Kotlin reserved word",
-          "solution": "@SerializedName(\"class\") val className: String — rename in Kotlin, map to original in JSON"
-        },
-        {
-          "challenge": "Polymorphic types — different subclasses based on a type field",
-          "solution": "Register a RuntimeTypeAdapterFactory or custom JsonDeserializer to handle type discrimination"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Gson with Retrofit — Integration",
-      "items": [
-        "Add the converter: Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())",
-        "Pass a custom Gson instance: GsonConverterFactory.create(customGson) — use this for date formats and field naming",
-        "Retrofit uses Gson to automatically deserialize the response body into your return type",
-        "Retrofit uses Gson to automatically serialize @Body parameters into JSON",
-        "No manual fromJson() or toJson() calls needed — Retrofit and Gson handle everything",
-        "For List return types: suspend fun getUsers(): List<User> — Gson handles the array via Retrofit's TypeToken resolution",
-        "Error body is NOT automatically parsed — use gson.fromJson(e.response()?.errorBody()?.string(), ApiError::class.java) manually",
-        "Null responses from the API (204 No Content) should use Response<Unit> not Unit — to avoid NullPointerException"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Gson @Expose Annotation",
-      "rows": [
-        {
-          "usage": "Enable @Expose filtering",
-          "description": "Call excludeFieldsWithoutExposeAnnotation() on GsonBuilder — only @Expose fields are included"
-        },
-        {
-          "usage": "@Expose",
-          "description": "Marks a field for both serialization and deserialization — equivalent to @Expose(serialize = true, deserialize = true)"
-        },
-        {
-          "usage": "@Expose(serialize = false)",
-          "description": "Field is deserialized from JSON but not included when serializing to JSON"
-        },
-        {
-          "usage": "@Expose(deserialize = false)",
-          "description": "Field is included when serializing to JSON but ignored when parsing from JSON"
-        },
-        {
-          "usage": "No @Expose on field",
-          "description": "Field is excluded from both serialization and deserialization when filtering is enabled"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Parsing Dynamic or Unknown JSON",
-      "items": [
-        "Use JsonObject when the JSON structure is unknown or dynamic at compile time",
-        "Parse to JsonObject: val obj = gson.fromJson(jsonString, JsonObject::class.java)",
-        "Read a field: obj.get(\"name\")?.asString",
-        "Check if field exists: obj.has(\"optionalField\")",
-        "Get nested object: obj.getAsJsonObject(\"address\").get(\"city\")?.asString",
-        "Get array: obj.getAsJsonArray(\"tags\").map { it.asString }",
-        "Use JsonElement as a property type in data classes for fields that can be any JSON value",
-        "For semi-dynamic responses, use Map<String, JsonElement> as a data class field type"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Gson JsonElement Types",
-      "rows": [
-        {
-          "type": "JsonObject",
-          "represents": "A JSON object { }",
-          "access_method": "get(key), getAsJsonObject(key), has(key)"
-        },
-        {
-          "type": "JsonArray",
-          "represents": "A JSON array [ ]",
-          "access_method": "get(index), size(), iterator()"
-        },
-        {
-          "type": "JsonPrimitive",
-          "represents": "A JSON string, number, or boolean",
-          "access_method": "asString, asInt, asBoolean, asDouble"
-        },
-        {
-          "type": "JsonNull",
-          "represents": "A JSON null value",
-          "access_method": "isJsonNull() to check; no value to extract"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Gson Pitfalls Specific to Kotlin",
-      "items": [
-        "Non-null Kotlin fields can be set to null by Gson — Gson does not respect Kotlin's type system",
-        "Kotlin data class default values are ignored — Gson bypasses the constructor entirely using reflection",
-        "val fields can be set by Gson despite being immutable in Kotlin — Gson uses reflection to write to fields",
-        "data class with no-arg constructor required for some use cases — use default values for all parameters",
-        "Sealed classes and interfaces are not supported by Gson natively — use custom TypeAdapter",
-        "object (singleton) classes are not deserialized correctly — Gson creates a new instance instead",
-        "Kotlin companion object fields are excluded by Gson — this is usually desired behavior",
-        "Use @Transient to exclude a field from Gson: @Transient val computedValue: String = \"\" — Gson ignores @Transient fields"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Gson Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Not using @SerializedName for snake_case API fields",
-          "fix": "Add @SerializedName(\"field_name\") or configure FieldNamingPolicy globally in GsonBuilder"
-        },
-        {
-          "mistake": "Using non-nullable Kotlin types for fields that can be null in JSON",
-          "fix": "Always use nullable types (String?, Int?) for JSON fields that may be absent or null"
-        },
-        {
-          "mistake": "Relying on Kotlin default parameter values with Gson",
-          "fix": "Gson ignores defaults — either use @SerializedName fallback or switch to Moshi/kotlinx.serialization"
-        },
-        {
-          "mistake": "Deserializing generic types without TypeToken",
-          "fix": "Use object : TypeToken<List<User>>() {}.type for generic deserialization outside Retrofit"
-        },
-        {
-          "mistake": "Parsing JSON on the main thread",
-          "fix": "Run fromJson() inside withContext(Dispatchers.Default) for large payloads"
-        },
-        {
-          "mistake": "Creating a new Gson instance for every parse operation",
-          "fix": "Gson instances are thread-safe — create once as a singleton and reuse"
-        },
-        {
-          "mistake": "Trying to parse error bodies automatically with Retrofit + Gson",
-          "fix": "Error bodies must be parsed manually: gson.fromJson(e.response()?.errorBody()?.string(), ApiError::class.java)"
-        }
+        "Add GsonConverterFactory dependency",
+        "Configure Retrofit.Builder() with addConverterFactory(GsonConverterFactory.create())",
+        "Define API interfaces returning Kotlin data classes",
+        "Retrofit automatically parses JSON responses using Gson"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Gson is the most widely used JSON library in Android, offering zero-configuration JSON parsing that integrates seamlessly with Retrofit through GsonConverterFactory. Use @SerializedName to handle snake_case API responses, GsonBuilder for custom date formats and field naming policies, and TypeToken for generic type deserialization outside Retrofit. Be aware of Gson's Kotlin limitations — particularly around null safety and default values — and consider Moshi or kotlinx.serialization for new Kotlin-first projects where compile-time type safety is a priority. Regardless of which library you choose, understanding JSON parsing fundamentals makes you effective with any of them."
+      "content": "Gson is a popular JSON parsing library in Android that converts JSON data into Kotlin objects and back. It integrates seamlessly with Retrofit, allowing API responses to be automatically mapped to data classes. Features such as @SerializedName help handle differences between JSON key naming and Kotlin property naming, making networking code cleaner and easier to maintain."
     }
   ]
 }

@@ -3,301 +3,61 @@
   "sections": [
     {
       "type": "text",
-      "heading": "What are Deep Links and App Links?",
-      "content": "Deep links are URIs that navigate users directly to a specific screen or content inside your app, bypassing the home screen or app launcher. Android supports three types of deep links: standard deep links (custom URI schemes like myapp://), web deep links (HTTP/HTTPS URLs handled by your app alongside browsers), and Android App Links (verified HTTPS URLs that open exclusively in your app without a disambiguation dialog). App Links, introduced in Android 6.0 (API 23), require domain ownership verification via a Digital Asset Links JSON file hosted on your server. Deep links are essential for features like push notification navigation, email marketing CTAs, QR code scanning, web-to-app handoff, and cross-app navigation."
+      "heading": "Overview",
+      "content": "Deep links navigate users directly to specific app content. Android supports custom scheme links (myapp://), web deep links (HTTP/HTTPS), and Android App Links (verified HTTPS URLs opening directly in the app). App Links require domain verification via a Digital Asset Links JSON file and provide the highest security. Deep links are essential for notifications, marketing, QR codes, and web-to-app navigation."
     },
     {
       "type": "table",
-      "heading": "Deep Link Types Comparison",
+      "heading": "Deep Link Types",
       "rows": [
-        {
-          "type": "Custom Scheme Deep Link",
-          "example": "myapp://product/123",
-          "verification_required": "No",
-          "disambiguation_dialog": "No — if only one app handles the scheme",
-          "security": "Low — any app can register the same custom scheme",
-          "use_case": "Simple internal navigation; cross-app linking between your own apps"
-        },
-        {
-          "type": "Web Deep Link (HTTP/HTTPS)",
-          "example": "https://example.com/product/123",
-          "verification_required": "No",
-          "disambiguation_dialog": "Yes — user must choose between browser and app",
-          "security": "Medium — no verification; browser shown as fallback",
-          "use_case": "Universal links with browser fallback; basic web-to-app linking"
-        },
-        {
-          "type": "Android App Link",
-          "example": "https://example.com/product/123",
-          "verification_required": "Yes — Digital Asset Links JSON file on server",
-          "disambiguation_dialog": "No — opens directly in app; browser fallback if app not installed",
-          "security": "High — domain ownership verified by Android system",
-          "use_case": "Production web-to-app linking; push notification navigation; QR codes"
-        }
+        {"type": "Custom Scheme", "security": "Low", "verification_required": "No", "use_case": "Internal or cross-app navigation"},
+        {"type": "Web Deep Link", "security": "Medium", "verification_required": "No", "use_case": "Browser fallback links"},
+        {"type": "Android App Link", "security": "High", "verification_required": "Yes", "use_case": "Public web-to-app, push notifications, QR codes"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Declaring Deep Links in the Manifest",
+      "heading": "Manifest & Intent Filters",
       "items": [
-        "Deep links are declared as intent filters on the target Activity in AndroidManifest.xml",
-        "Required intent filter actions: android.intent.action.VIEW",
-        "Required intent filter categories: android.intent.category.DEFAULT and android.intent.category.BROWSABLE",
-        "Custom scheme example: <data android:scheme=\"myapp\" android:host=\"product\" />",
-        "Web deep link example: <data android:scheme=\"https\" android:host=\"example.com\" android:pathPrefix=\"/product\" />",
-        "Multiple <data> elements can be combined in one intent filter to handle multiple URL patterns",
-        "Use android:pathPrefix for prefix matching, android:path for exact matching, android:pathPattern for regex-style matching",
-        "Set android:autoVerify=\"true\" on the intent filter to enable App Link verification (API 23+)"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Intent Filter Data Attributes",
-      "rows": [
-        {
-          "attribute": "android:scheme",
-          "description": "URL scheme — use 'https' for App Links, custom string for custom scheme links",
-          "example": "android:scheme=\"https\""
-        },
-        {
-          "attribute": "android:host",
-          "description": "Domain name the link targets — must match your verified domain for App Links",
-          "example": "android:host=\"example.com\""
-        },
-        {
-          "attribute": "android:pathPrefix",
-          "description": "Matches URLs whose path starts with the given string",
-          "example": "android:pathPrefix=\"/product\""
-        },
-        {
-          "attribute": "android:path",
-          "description": "Matches only the exact path specified",
-          "example": "android:path=\"/home\""
-        },
-        {
-          "attribute": "android:pathPattern",
-          "description": "Matches paths using a limited regex — use .* for wildcards",
-          "example": "android:pathPattern=\"/product/.*\""
-        },
-        {
-          "attribute": "android:pathSuffix",
-          "description": "Matches URLs whose path ends with the given string (API 31+)",
-          "example": "android:pathSuffix=\"/details\""
-        },
-        {
-          "attribute": "android:port",
-          "description": "Optional port number to match — omit for standard HTTP/HTTPS ports",
-          "example": "android:port=\"8080\""
-        },
-        {
-          "attribute": "android:autoVerify",
-          "description": "Set to true on the intent filter to trigger App Link domain verification at install time",
-          "example": "android:autoVerify=\"true\""
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Android App Links — Domain Verification",
-      "content": "Android App Links require you to prove ownership of the domain by hosting a Digital Asset Links JSON file at a well-known location on your web server. The Android system fetches this file at app install time (and periodically thereafter) to verify the association between your domain and your app. Once verified, Android routes matching HTTPS URLs directly to your app without showing a disambiguation dialog. If verification fails, the links fall back to web deep link behavior — showing the disambiguation dialog. Verification requires the server to be publicly accessible and return the correct Content-Type header with the JSON file."
-    },
-    {
-      "type": "bullet",
-      "heading": "Setting Up Digital Asset Links",
-      "items": [
-        "Host the file at: https://example.com/.well-known/assetlinks.json",
-        "The server must serve the file over HTTPS with Content-Type: application/json",
-        "File format: [{\"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": {\"namespace\": \"android_app\", \"package_name\": \"com.example.app\", \"sha256_cert_fingerprints\": [\"AA:BB:CC:...\"]}}]",
-        "Get your SHA-256 fingerprint: keytool -list -v -keystore release.jks -alias key0 | grep SHA256",
-        "For debug builds use the debug keystore fingerprint: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android",
-        "Include fingerprints for both debug and release keystores during development",
-        "Add android:autoVerify=\"true\" to the intent filter in the manifest",
-        "Test verification: adb shell pm get-app-links --user cur com.example.app — look for 'verified' status",
-        "Use Google's Digital Asset Links API to validate your file: https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://example.com",
-        "Re-verification is triggered on app reinstall or system update — keep the assetlinks.json file live permanently"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "App Link Verification States",
-      "rows": [
-        {
-          "state": "verified",
-          "meaning": "Domain ownership confirmed — URLs open directly in app with no dialog",
-          "check_command": "adb shell pm get-app-links --user cur com.example.app"
-        },
-        {
-          "state": "legacy_failure",
-          "meaning": "Verification attempted but failed — falls back to disambiguation dialog behavior",
-          "check_command": "adb shell pm get-app-links --user cur com.example.app"
-        },
-        {
-          "state": "none",
-          "meaning": "No verification attempted — android:autoVerify not set or no HTTPS intent filter",
-          "check_command": "adb shell pm get-app-links --user cur com.example.app"
-        },
-        {
-          "state": "approved",
-          "meaning": "User manually approved the app to handle the domain in system settings",
-          "check_command": "Settings > Apps > your app > Open by default"
-        }
+        "Declare intent filters on target Activity with VIEW action, DEFAULT and BROWSABLE categories",
+        "Use <data> elements with scheme, host, pathPrefix, path, pathPattern, autoVerify=\"true\"",
+        "Combine multiple <data> elements for multiple URL patterns",
+        "Set android:autoVerify=\"true\" for App Links (API 23+)"
       ]
     },
     {
       "type": "bullet",
-      "heading": "Handling Deep Links in an Activity",
+      "heading": "Handling Deep Links",
       "items": [
-        "Retrieve the incoming Intent in onCreate(): val uri: Uri? = intent?.data",
-        "Also handle deep links delivered to a running Activity in onNewIntent(): override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); handleDeepLink(intent.data) }",
-        "Parse path segments: uri?.pathSegments — returns a list of path components e.g. ['product', '123']",
-        "Parse query parameters: uri?.getQueryParameter(\"id\") — returns the value of the 'id' query param",
-        "Parse the full URI string: uri?.toString() — for custom logic or regex matching",
-        "Always validate the URI before using it — never trust deep link parameters blindly",
-        "Sanitize path and query parameters — treat them as untrusted external input",
-        "Navigate to the correct screen using NavController: navController.navigate(deepLinkUri) or with explicit directions"
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Deep Links with Jetpack Navigation Component",
-      "content": "Jetpack Navigation Component has first-class support for deep links, making it the recommended way to handle deep link navigation in modern Android apps. You can declare deep link URIs directly in the navigation graph XML on the destination fragment or activity, and the Navigation Component automatically handles parsing the URI, extracting arguments, and navigating to the correct destination — including building the correct back stack. There are two types: explicit deep links (using PendingIntent for notifications) and implicit deep links (URI-based, handled from Intent data)."
-    },
-    {
-      "type": "bullet",
-      "heading": "Declaring Deep Links in Navigation Graph",
-      "items": [
-        "Add a <deepLink> element inside the destination in nav_graph.xml: <fragment android:id=\"@+id/productFragment\"><deepLink app:uri=\"https://example.com/product/{productId}\" /></fragment>",
-        "Use {placeholders} in the URI pattern to extract arguments — they map to the destination's arguments automatically",
-        "Arguments declared in <argument> tags are populated from the URI placeholders automatically by Navigation",
-        "Add the nav-graph to the manifest intent filter: <nav-graph android:value=\"@navigation/nav_graph\" /> — replaces manually writing all intent filters",
-        "The NavHostFragment must be in the Activity that handles the deep link Intent",
-        "Handle implicit deep links: navController.handleDeepLink(intent) — call in Activity.onCreate() and onNewIntent()",
-        "Query parameters are also supported: app:uri=\"https://example.com/search?query={searchQuery}\"",
-        "Multiple <deepLink> elements can be added to a single destination for different URI patterns"
+        "Retrieve Intent data in onCreate() and onNewIntent()",
+        "Parse path segments and query parameters safely",
+        "Validate and sanitize all URI input",
+        "Navigate using NavController or Navigation Component"
       ]
     },
     {
       "type": "table",
-      "heading": "Explicit vs Implicit Deep Links in Navigation",
+      "heading": "Navigation Component",
       "rows": [
-        {
-          "type": "Implicit Deep Link",
-          "trigger": "User taps a URL in a browser, email, or another app",
-          "handling": "Android routes the Intent to the Activity; NavController.handleDeepLink() navigates to the destination",
-          "back_stack": "Back stack built from the navigation graph — Back navigates up through parent destinations",
-          "use_case": "Web-to-app links, QR codes, universal links"
-        },
-        {
-          "type": "Explicit Deep Link",
-          "trigger": "App creates a PendingIntent targeting a specific destination — used in notifications",
-          "handling": "NavDeepLinkBuilder creates a PendingIntent that launches the app and navigates to the destination",
-          "back_stack": "Synthetic back stack created — Back navigates up through specified parent destinations",
-          "use_case": "Push notification tap actions, widget tap actions, shortcuts"
-        }
+        {"type": "Implicit", "trigger": "Browser or external link", "handling": "NavController.handleDeepLink()", "use_case": "Web-to-app, QR codes"},
+        {"type": "Explicit", "trigger": "PendingIntent via notification", "handling": "NavDeepLinkBuilder", "use_case": "Notification or shortcut actions"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Explicit Deep Links for Notifications — NavDeepLinkBuilder",
+      "heading": "Best Practices & Testing",
       "items": [
-        "Use NavDeepLinkBuilder to create a PendingIntent that navigates to a specific destination when the notification is tapped",
-        "val pendingIntent = NavDeepLinkBuilder(context).setComponentName(MainActivity::class.java).setGraph(R.navigation.nav_graph).setDestination(R.id.productFragment).setArguments(bundleOf(\"productId\" to \"123\")).createPendingIntent()",
-        "Pass the PendingIntent to NotificationCompat.Builder: .setContentIntent(pendingIntent)",
-        "NavDeepLinkBuilder automatically builds a synthetic back stack based on the navigation graph",
-        "The synthetic back stack means tapping Back from the destination goes to the parent screen, not to the previous app",
-        "setComponentName() specifies which Activity hosts the NavHostFragment",
-        "setArguments() passes a Bundle of arguments that map to the destination's declared arguments",
-        "Alternatively use: findNavController().createDeepLink().setDestination(R.id.productFragment).createPendingIntent()"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Deep Link Use Cases",
-      "rows": [
-        {
-          "use_case": "Push Notification Navigation",
-          "implementation": "Use NavDeepLinkBuilder to create a PendingIntent targeting the specific destination; pass as notification's contentIntent",
-          "deep_link_type": "Explicit Deep Link"
-        },
-        {
-          "use_case": "Email / SMS Marketing Link",
-          "implementation": "Use App Links (HTTPS) pointing to your domain; host assetlinks.json for verified direct-open behavior",
-          "deep_link_type": "Android App Link"
-        },
-        {
-          "use_case": "QR Code Scanning",
-          "implementation": "Encode an HTTPS App Link URL in the QR code; scan with any reader and the verified App Link opens your app directly",
-          "deep_link_type": "Android App Link"
-        },
-        {
-          "use_case": "Cross-App Navigation (your own apps)",
-          "implementation": "Use custom URI scheme or explicit Intent with package name targeting; no server setup needed",
-          "deep_link_type": "Custom Scheme Deep Link"
-        },
-        {
-          "use_case": "App Shortcuts",
-          "implementation": "Declare shortcut intents with deep link URIs in shortcuts.xml; use NavDeepLinkBuilder for dynamic shortcuts",
-          "deep_link_type": "Explicit Deep Link"
-        },
-        {
-          "use_case": "Web-to-App Handoff",
-          "implementation": "Detect mobile browser on your website; redirect to App Link URL; falls back to web page if app not installed",
-          "deep_link_type": "Android App Link"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Testing Deep Links",
-      "items": [
-        "Test with adb: adb shell am start -W -a android.intent.action.VIEW -d \"https://example.com/product/123\" com.example.app",
-        "Test custom scheme: adb shell am start -W -a android.intent.action.VIEW -d \"myapp://product/123\" com.example.app",
-        "Verify App Link status: adb shell pm get-app-links --user cur com.example.app",
-        "Reset App Link verification: adb shell pm set-app-links --package com.example.app 0 all",
-        "Re-trigger verification: adb shell pm verify-app-links --re-verify com.example.app",
-        "Validate assetlinks.json online: https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://example.com&relation=delegate_permission/common.handle_all_urls",
-        "Test in Android Studio: Run > Edit Configurations > Deep Link tab — enter URI and launch directly",
-        "Test back stack behavior — verify that Back navigates correctly after arriving via deep link"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Deep Link Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Not handling deep links in onNewIntent()",
-          "fix": "Override onNewIntent() in your Activity and call handleDeepLink(intent.data) — deep links to a running app are delivered here, not onCreate()"
-        },
-        {
-          "mistake": "Forgetting android:category BROWSABLE in the intent filter",
-          "fix": "BROWSABLE is required for the system to route HTTP/HTTPS URLs to your app — omitting it means web links won't open your app"
-        },
-        {
-          "mistake": "Not validating deep link parameters",
-          "fix": "Always validate and sanitize URI path segments and query parameters — treat them as untrusted external input to prevent injection attacks"
-        },
-        {
-          "mistake": "assetlinks.json not accessible over HTTPS",
-          "fix": "The file must be served at https://example.com/.well-known/assetlinks.json with correct Content-Type — redirects are not followed by the verifier"
-        },
-        {
-          "mistake": "Only including release keystore fingerprint in assetlinks.json",
-          "fix": "Include both debug and release keystore SHA-256 fingerprints in the assetlinks.json during development and testing"
-        },
-        {
-          "mistake": "Not setting android:launchMode for the deep link Activity",
-          "fix": "Use android:launchMode=\"singleTask\" or handle onNewIntent() to prevent multiple instances of the Activity being created on repeated deep link taps"
-        },
-        {
-          "mistake": "Using custom URI schemes for public-facing links",
-          "fix": "Custom URI schemes (myapp://) offer no ownership verification — any app can intercept them; use verified App Links for public URLs"
-        }
+        "Use App Links for public URLs with assetlinks.json verification",
+        "Include both debug and release keystore fingerprints",
+        "Test via adb: start Intents, check app link status, verify back stack",
+        "Avoid custom URI schemes for public links",
+        "Set launchMode or handle onNewIntent() to prevent duplicate Activities"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Deep links and App Links allow users to navigate directly to specific content in your app from the web, notifications, QR codes, and other apps. Use Android App Links (verified HTTPS URLs) for all public-facing links — they open your app directly without a disambiguation dialog and provide the strongest security through domain verification via the Digital Asset Links JSON file. Declare deep links in your navigation graph using <deepLink> elements and let the Navigation Component handle URI parsing, argument extraction, and back stack construction automatically. Use NavDeepLinkBuilder to create PendingIntents for notification tap actions with a proper synthetic back stack. Always handle deep links in both onCreate() and onNewIntent(), validate all incoming URI parameters, and test thoroughly with adb commands before release."
+      "content": "Use verified Android App Links for public-facing deep links, declare them in your navigation graph, handle both onCreate() and onNewIntent(), validate all parameters, and test thoroughly. Use NavDeepLinkBuilder for notifications and explicit deep links to build a correct back stack automatically. App Links ensure secure, seamless navigation from web, email, QR codes, and other apps."
     }
   ]
 }

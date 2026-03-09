@@ -4,429 +4,114 @@
     {
       "type": "text",
       "heading": "Theming in Jetpack Compose",
-      "content": "Jetpack Compose uses MaterialTheme as its theming system — a composable that provides a consistent set of design tokens (colors, typography, and shapes) to the entire composable tree beneath it. Any composable inside MaterialTheme can read these tokens via MaterialTheme.colorScheme, MaterialTheme.typography, and MaterialTheme.shapes. Material3 (Material Design 3) is the current version, introduced with Android 12's dynamic color system and a refined visual language. Unlike the View system where theming required XML styles and attribute resolution, Compose theming is pure Kotlin and fully type-safe — the compiler prevents you from using non-existent color or typography tokens."
+      "content": "Jetpack Compose uses MaterialTheme to provide colors, typography, and shapes consistently across the composable tree. Material3 (Material Design 3) introduces dynamic color on Android 12+, updated components, and type-safe Kotlin-based theming, eliminating XML styles and attribute lookups."
     },
     {
       "type": "bullet",
       "heading": "Why Material3 Theming?",
       "items": [
-        "Consistent design — all composables automatically use theme colors, typography, and shapes without manual styling",
-        "Dark mode — switch between light and dark color schemes by providing different ColorScheme objects",
-        "Dynamic color — on Android 12+, automatically generate a color scheme from the user's wallpaper",
-        "Type safety — color and typography tokens are properties on typed objects; typos cause compile errors",
-        "Single source of truth — change the theme in one place and it propagates to all components in the app",
-        "CompositionLocal — MaterialTheme uses CompositionLocal under the hood; you can provide custom themes for subsections",
-        "Customizable — override individual tokens without replacing the entire theme",
-        "Material You — Material3 implements Google's Material You design language used across Android 12+ system apps"
+        "Consistent design with automatic theme token usage",
+        "Dark mode support via light/dark ColorSchemes",
+        "Dynamic color on Android 12+ from wallpaper",
+        "Type safety prevents typos in color/typography tokens",
+        "Single source of truth: change theme once to update all components",
+        "Customizable via CompositionLocal for subsections",
+        "Override individual tokens without full theme replacement",
+        "Material You support with updated components"
       ]
     },
     {
       "type": "table",
       "heading": "Material2 vs Material3",
       "rows": [
-        {
-          "aspect": "Package",
-          "material2": "androidx.compose.material (material)",
-          "material3": "androidx.compose.material3 (material3)"
-        },
-        {
-          "aspect": "Color system",
-          "material2": "primary, primaryVariant, secondary, background, surface, error + on-colors",
-          "material3": "Expanded palette: primary, secondary, tertiary, error, surface variants, tonal surfaces + on-colors"
-        },
-        {
-          "aspect": "Dynamic color",
-          "material2": "Not supported",
-          "material3": "Supported on Android 12+ via dynamicLightColorScheme() and dynamicDarkColorScheme()"
-        },
-        {
-          "aspect": "Typography",
-          "material2": "h1-h6, subtitle1-2, body1-2, button, caption, overline",
-          "material3": "displayLarge-Small, headlineLarge-Small, titleLarge-Small, bodyLarge-Small, labelLarge-Small"
-        },
-        {
-          "aspect": "Shapes",
-          "material2": "small, medium, large",
-          "material3": "extraSmall, small, medium, large, extraLarge, full"
-        },
-        {
-          "aspect": "Components",
-          "material2": "TopAppBar, BottomNavigation, Scaffold, etc.",
-          "material3": "Updated variants: TopAppBar, NavigationBar, NavigationRail, BottomSheet, etc."
-        },
-        {
-          "aspect": "Recommendation",
-          "material2": "Legacy — use only for projects already on Material2",
-          "material3": "Recommended for all new projects"
-        }
+        {"aspect": "Package", "material2": "androidx.compose.material", "material3": "androidx.compose.material3"},
+        {"aspect": "Color system", "material2": "primary, primaryVariant, secondary, background, surface, error", "material3": "Expanded palette including tertiary, tonal surfaces"},
+        {"aspect": "Dynamic color", "material2": "Not supported", "material3": "Supported on Android 12+"},
+        {"aspect": "Typography", "material2": "h1-h6, subtitle1-2, body1-2, button, caption", "material3": "displayLarge-Small, headlineLarge-Small, titleLarge-Small, bodyLarge-Small, labelLarge-Small"},
+        {"aspect": "Shapes", "material2": "small, medium, large", "material3": "extraSmall to full"},
+        {"aspect": "Components", "material2": "TopAppBar, BottomNavigation", "material3": "Updated variants: TopAppBar, NavigationBar, BottomSheet"},
+        {"aspect": "Recommendation", "material2": "Legacy", "material3": "Recommended for new projects"}
       ]
     },
     {
       "type": "text",
       "heading": "Setting Up a Custom Material3 Theme",
-      "content": "A custom Material3 theme is a composable function that wraps MaterialTheme with your app's specific color scheme, typography, and shapes. The standard project structure creates an AppTheme composable in a dedicated Theme.kt file. This composable determines whether to use the light or dark color scheme based on the system setting, optionally applies dynamic color on Android 12+, and calls MaterialTheme with the resolved tokens. All other composables in the app are wrapped inside AppTheme at the root."
+      "content": "Create a composable AppTheme that wraps MaterialTheme with light/dark ColorSchemes, Typography, and Shapes. Use dynamic color on Android 12+, and wrap all app content inside AppTheme for consistent theming."
     },
     {
       "type": "bullet",
       "heading": "Theme.kt Structure",
       "items": [
-        "Define a LightColorScheme and DarkColorScheme using lightColorScheme() and darkColorScheme() with your brand colors",
-        "Create the AppTheme composable with a darkTheme parameter defaulting to isSystemInDarkTheme()",
-        "Add a dynamicColor parameter (default true on API 31+): if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)",
-        "Apply dynamic color: val colorScheme = if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)",
-        "Fall back to custom scheme: else if (darkTheme) DarkColorScheme else LightColorScheme",
-        "Call MaterialTheme: MaterialTheme(colorScheme = colorScheme, typography = AppTypography, shapes = AppShapes, content = content)",
+        "Define LightColorScheme and DarkColorScheme with brand colors",
+        "Create AppTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true) { MaterialTheme(...) { content() } }",
         "Apply in MainActivity: setContent { AppTheme { NavHost(...) } }",
-        "Use Material Theme Builder (m3.material.io) to generate a complete color scheme from your brand color"
+        "Use Material Theme Builder to generate full color schemes"
       ]
     },
     {
       "type": "table",
       "heading": "Material3 ColorScheme Roles",
       "rows": [
-        {
-          "role": "primary",
-          "description": "Main brand color — used for key action buttons, active states, FAB",
-          "on_color": "onPrimary — text/icons on primary color surfaces"
-        },
-        {
-          "role": "primaryContainer",
-          "description": "Softer tonal container for primary — used for chips, cards with primary intent",
-          "on_color": "onPrimaryContainer — text/icons on primary container"
-        },
-        {
-          "role": "secondary",
-          "description": "Complementary accent color — used for secondary actions and highlights",
-          "on_color": "onSecondary"
-        },
-        {
-          "role": "secondaryContainer",
-          "description": "Softer tonal container for secondary — filter chips, selected states",
-          "on_color": "onSecondaryContainer"
-        },
-        {
-          "role": "tertiary",
-          "description": "Third accent color for contrasting elements — badges, decorative highlights",
-          "on_color": "onTertiary"
-        },
-        {
-          "role": "error",
-          "description": "Error state color — used for error text fields, error messages, destructive actions",
-          "on_color": "onError"
-        },
-        {
-          "role": "background",
-          "description": "Page/screen background color — behind all other content",
-          "on_color": "onBackground — body text on background"
-        },
-        {
-          "role": "surface",
-          "description": "Component surface color — cards, sheets, dialogs, menus",
-          "on_color": "onSurface — text/icons on surface"
-        },
-        {
-          "role": "surfaceVariant",
-          "description": "Alternative surface for differentiation — text fields, chips",
-          "on_color": "onSurfaceVariant — secondary text on surface variant"
-        },
-        {
-          "role": "outline",
-          "description": "Border and divider color — text field outlines, list dividers",
-          "on_color": "outlineVariant — lower-emphasis borders"
-        }
+        {"role": "primary", "description": "Main brand color for actions, FAB", "on_color": "onPrimary"},
+        {"role": "secondary", "description": "Accent color for highlights", "on_color": "onSecondary"},
+        {"role": "tertiary", "description": "Contrasting elements", "on_color": "onTertiary"},
+        {"role": "error", "description": "Error states", "on_color": "onError"},
+        {"role": "background", "description": "Screen background", "on_color": "onBackground"},
+        {"role": "surface", "description": "Cards, sheets, dialogs", "on_color": "onSurface"}
       ]
     },
     {
       "type": "bullet",
       "heading": "Using Theme Colors in Composables",
       "items": [
-        "Access colors: MaterialTheme.colorScheme.primary, .surface, .onBackground, etc.",
-        "Background color: Modifier.background(MaterialTheme.colorScheme.surface)",
-        "Text color: Text(text, color = MaterialTheme.colorScheme.onSurface)",
-        "Icon tint: Icon(icon, tint = MaterialTheme.colorScheme.primary)",
-        "Container color in Card: Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant))",
-        "Button color override: Button(colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary))",
-        "Surface composable automatically uses theme surface color and applies the correct on-surface content color",
-        "Never hardcode Color values in reusable composables — always reference MaterialTheme.colorScheme tokens"
+        "Text: color = MaterialTheme.colorScheme.onSurface",
+        "Background: Modifier.background(MaterialTheme.colorScheme.surface)",
+        "Icon tint: tint = MaterialTheme.colorScheme.primary",
+        "Card: CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)",
+        "Button: ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)",
+        "Never hardcode colors; always reference MaterialTheme tokens"
       ]
     },
     {
       "type": "table",
       "heading": "Material3 Typography Scale",
       "rows": [
-        {
-          "token": "displayLarge",
-          "default_size": "57sp",
-          "use_for": "Hero text, large headlines on marketing screens"
-        },
-        {
-          "token": "displayMedium",
-          "default_size": "45sp",
-          "use_for": "Large feature titles"
-        },
-        {
-          "token": "displaySmall",
-          "default_size": "36sp",
-          "use_for": "Prominent screen titles"
-        },
-        {
-          "token": "headlineLarge",
-          "default_size": "32sp",
-          "use_for": "Section headers, screen titles"
-        },
-        {
-          "token": "headlineMedium",
-          "default_size": "28sp",
-          "use_for": "Card titles, dialog headings"
-        },
-        {
-          "token": "headlineSmall",
-          "default_size": "24sp",
-          "use_for": "Subsection headers"
-        },
-        {
-          "token": "titleLarge",
-          "default_size": "22sp",
-          "use_for": "Top app bar title, prominent labels"
-        },
-        {
-          "token": "titleMedium",
-          "default_size": "16sp",
-          "use_for": "List item titles, emphasized body text"
-        },
-        {
-          "token": "titleSmall",
-          "default_size": "14sp",
-          "use_for": "Supporting titles, secondary list text"
-        },
-        {
-          "token": "bodyLarge",
-          "default_size": "16sp",
-          "use_for": "Primary body text, default text style"
-        },
-        {
-          "token": "bodyMedium",
-          "default_size": "14sp",
-          "use_for": "Secondary body text, descriptions"
-        },
-        {
-          "token": "bodySmall",
-          "default_size": "12sp",
-          "use_for": "Captions, footnotes, helper text"
-        },
-        {
-          "token": "labelLarge",
-          "default_size": "14sp",
-          "use_for": "Button text, tab labels, navigation labels"
-        },
-        {
-          "token": "labelMedium",
-          "default_size": "12sp",
-          "use_for": "Chip labels, badge text"
-        },
-        {
-          "token": "labelSmall",
-          "default_size": "11sp",
-          "use_for": "Overlines, fine print, annotation text"
-        }
+        {"token": "displayLarge", "default_size": "57sp", "use_for": "Hero text"},
+        {"token": "headlineMedium", "default_size": "28sp", "use_for": "Card titles"},
+        {"token": "titleLarge", "default_size": "22sp", "use_for": "App bar title"},
+        {"token": "bodyLarge", "default_size": "16sp", "use_for": "Primary body text"},
+        {"token": "labelSmall", "default_size": "11sp", "use_for": "Overlines/fine print"}
       ]
     },
     {
       "type": "text",
-      "heading": "Custom Typography",
-      "content": "Custom typography is defined by creating a Typography object and specifying TextStyle values for each of the fifteen type scale roles. Each TextStyle accepts fontFamily, fontWeight, fontSize, lineHeight, letterSpacing, and other text properties. To use a custom font, add the font files to the res/font/ directory, create a FontFamily referencing them, and assign the FontFamily to the TextStyle values in your Typography object."
-    },
-    {
-      "type": "bullet",
-      "heading": "Setting Up Custom Fonts and Typography",
-      "items": [
-        "Add font files to res/font/: my_font_regular.ttf, my_font_bold.ttf",
-        "Alternatively use Google Fonts Compose library: implementation(\"androidx.compose.ui:ui-text-google-fonts:1.x.x\")",
-        "Create FontFamily: val MyFont = FontFamily(Font(R.font.my_font_regular, FontWeight.Normal), Font(R.font.my_font_bold, FontWeight.Bold))",
-        "With Google Fonts: val provider = GoogleFont.Provider(...); val MyFont = FontFamily(Font(GoogleFont(\"Roboto\"), provider))",
-        "Create Typography object: val AppTypography = Typography(bodyLarge = TextStyle(fontFamily = MyFont, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp))",
-        "Override only the roles you need — unspecified roles use Material3 defaults",
-        "Pass to MaterialTheme: MaterialTheme(typography = AppTypography, ...)",
-        "Access in composables: Text(text, style = MaterialTheme.typography.bodyLarge)"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Material3 Shape Scale",
-      "rows": [
-        {
-          "token": "extraSmall",
-          "default": "RoundedCornerShape(4.dp)",
-          "used_by": "Tooltip, snackbar"
-        },
-        {
-          "token": "small",
-          "default": "RoundedCornerShape(8.dp)",
-          "used_by": "Chip, text field, small button"
-        },
-        {
-          "token": "medium",
-          "default": "RoundedCornerShape(12.dp)",
-          "used_by": "Card, dialog, menu"
-        },
-        {
-          "token": "large",
-          "default": "RoundedCornerShape(16.dp)",
-          "used_by": "Bottom sheet, navigation drawer"
-        },
-        {
-          "token": "extraLarge",
-          "default": "RoundedCornerShape(28.dp)",
-          "used_by": "FAB, extended FAB"
-        },
-        {
-          "token": "full",
-          "default": "RoundedCornerShape(50%)",
-          "used_by": "Pill-shaped buttons, circular components"
-        }
-      ]
+      "heading": "Custom Typography & Fonts",
+      "content": "Define a Typography object with custom TextStyle roles. Add font files in res/font, create a FontFamily, assign it to TextStyle, and pass Typography to MaterialTheme. Use Google Fonts Compose library if needed."
     },
     {
       "type": "bullet",
       "heading": "Custom Shapes",
       "items": [
-        "Create Shapes object: val AppShapes = Shapes(small = RoundedCornerShape(4.dp), medium = RoundedCornerShape(8.dp), large = RoundedCornerShape(0.dp))",
-        "Pass to MaterialTheme: MaterialTheme(shapes = AppShapes, ...)",
-        "Access in composables: Surface(shape = MaterialTheme.shapes.medium) { ... }",
-        "Card automatically uses MaterialTheme.shapes.medium — override per instance with the shape parameter",
-        "Use CutCornerShape for angular brand aesthetics: CutCornerShape(8.dp)",
-        "Use CircleShape constant for circular components: Modifier.clip(CircleShape)",
-        "Shapes apply to both clipping and background rendering — clip and background shape must match for borders",
-        "Component-level overrides: Button(shape = RoundedCornerShape(4.dp)) overrides theme shape for that specific Button"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Dynamic Color — Material You",
-      "rows": [
-        {
-          "aspect": "What it is",
-          "description": "Android 12+ feature that generates a five-color tonal palette from the user's wallpaper and applies it as the app's color scheme"
-        },
-        {
-          "aspect": "API requirement",
-          "description": "Build.VERSION.SDK_INT >= Build.VERSION_CODES.S (API 31) — falls back to custom theme on older devices"
-        },
-        {
-          "aspect": "Light scheme",
-          "description": "dynamicLightColorScheme(context) — generates a light color scheme from the wallpaper palette"
-        },
-        {
-          "aspect": "Dark scheme",
-          "description": "dynamicDarkColorScheme(context) — generates a dark color scheme from the wallpaper palette"
-        },
-        {
-          "aspect": "Implementation",
-          "description": "val colorScheme = when { dynamicColor && Build.VERSION.SDK_INT >= S -> if (dark) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx); dark -> DarkColorScheme; else -> LightColorScheme }"
-        },
-        {
-          "aspect": "User opt-out",
-          "description": "Some apps provide a settings toggle to disable dynamic color — pass dynamicColor = false to AppTheme"
-        }
+        "Define Shapes object with extraSmall, small, medium, large, full",
+        "Pass to MaterialTheme: MaterialTheme(shapes = AppShapes)",
+        "Access in composables: Surface(shape = MaterialTheme.shapes.medium)",
+        "Override per component if needed with shape parameter"
       ]
     },
     {
       "type": "bullet",
-      "heading": "Dark Mode Implementation",
+      "heading": "Dynamic Color & Dark Mode",
       "items": [
-        "Detect system dark mode: isSystemInDarkTheme() — returns true when device is in dark mode",
-        "Pass to AppTheme: AppTheme(darkTheme = isSystemInDarkTheme()) { content }",
-        "Define separate LightColorScheme and DarkColorScheme with appropriate color values",
-        "Dark scheme: use darker, less saturated surfaces; lighter on-colors for text and icons",
-        "Compose Material3 components automatically adapt to the active color scheme — no manual dark mode handling needed",
-        "Force dark mode for preview: @Preview(uiMode = UI_MODE_NIGHT_YES) @Composable fun DarkPreview() { AppTheme(darkTheme = true) { MyComposable() } }",
-        "App-level dark mode toggle: store preference in DataStore; pass stored value to AppTheme instead of isSystemInDarkTheme()",
-        "Status bar and navigation bar colors: use WindowCompat and accompanist-systemuicontroller or Activity's enableEdgeToEdge() to match theme"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "CompositionLocal — Custom Theme Values",
-      "rows": [
-        {
-          "concept": "CompositionLocal",
-          "description": "A mechanism to pass values implicitly through the composable tree without explicit parameter passing",
-          "example": "MaterialTheme uses CompositionLocalProvider internally for colorScheme, typography, and shapes"
-        },
-        {
-          "concept": "Creating a custom CompositionLocal",
-          "description": "val LocalSpacing = compositionLocalOf { Spacing() } — provides a default value",
-          "example": "data class Spacing(val small: Dp = 8.dp, val medium: Dp = 16.dp, val large: Dp = 32.dp)"
-        },
-        {
-          "concept": "Providing a value",
-          "description": "CompositionLocalProvider(LocalSpacing provides customSpacing) { content() }",
-          "example": "Wrap in AppTheme to provide custom spacing globally"
-        },
-        {
-          "concept": "Reading the value",
-          "description": "val spacing = LocalSpacing.current",
-          "example": "Modifier.padding(LocalSpacing.current.medium)"
-        },
-        {
-          "concept": "staticCompositionLocalOf",
-          "description": "Use when the value rarely changes — triggers full recomposition of the entire subtree if changed; more efficient when stable",
-          "example": "val LocalAppConfig = staticCompositionLocalOf { AppConfig() }"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Extending MaterialTheme with Custom Tokens",
-      "items": [
-        "Create a custom extension object: object AppThemeExt { val LocalExtraColors = compositionLocalOf { ExtraColors() } }",
-        "Define ExtraColors data class: data class ExtraColors(val success: Color = Color(0xFF4CAF50), val warning: Color = Color(0xFFFFC107))",
-        "Provide in AppTheme: CompositionLocalProvider(AppThemeExt.LocalExtraColors provides ExtraColors()) { MaterialTheme(...) { content() } }",
-        "Add extension property on MaterialTheme: val MaterialTheme.extraColors: ExtraColors @Composable get() = AppThemeExt.LocalExtraColors.current",
-        "Access in composables: val success = MaterialTheme.extraColors.success",
-        "Use this pattern for brand-specific tokens not covered by Material3: success, warning, brand accent",
-        "Define light and dark variants of custom colors and switch them based on darkTheme parameter",
-        "Keep custom tokens minimal — use Material3 roles as much as possible before adding custom ones"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Theming Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Hardcoding Color values in reusable composables",
-          "fix": "Always use MaterialTheme.colorScheme tokens — hardcoded colors break dark mode and theming"
-        },
-        {
-          "mistake": "Using Material2 and Material3 components together",
-          "fix": "Never mix the two libraries in the same project — they have incompatible theming systems and cause visual conflicts"
-        },
-        {
-          "mistake": "Not applying AppTheme in @Preview composables",
-          "fix": "Wrap preview content in AppTheme { } to see correct colors and typography in the preview panel"
-        },
-        {
-          "mistake": "Ignoring the content color system",
-          "fix": "MaterialTheme automatically provides the correct content color (onPrimary, onSurface, etc.) via CompositionLocal — use LocalContentColor.current instead of hardcoding text colors"
-        },
-        {
-          "mistake": "Not providing both light and dark color schemes",
-          "fix": "Always define both LightColorScheme and DarkColorScheme — a missing dark scheme means dark mode uses light colors"
-        },
-        {
-          "mistake": "Applying dynamic color without an API level check",
-          "fix": "Always guard dynamic color with Build.VERSION.SDK_INT >= Build.VERSION_CODES.S — it crashes on older devices"
-        },
-        {
-          "mistake": "Defining TextStyle font sizes in px instead of sp",
-          "fix": "Always use sp for text sizes in TextStyle — sp respects the user's system font size accessibility preference"
-        }
+        "Use dynamicLightColorScheme() / dynamicDarkColorScheme() on Android 12+",
+        "Detect dark mode: isSystemInDarkTheme()",
+        "Wrap content: AppTheme(darkTheme = isSystemInDarkTheme()) { ... }",
+        "Compose Material3 components adapt automatically to color scheme"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Material3 theming in Jetpack Compose provides a complete, type-safe design token system for colors, typography, and shapes that propagates automatically through the entire composable tree via MaterialTheme. Define light and dark ColorScheme objects with your brand colors, a Typography object with your custom fonts, and a Shapes object with your brand radii — then wrap your app in an AppTheme composable that selects the appropriate scheme. Take advantage of dynamic color on Android 12+ for Material You integration, extend the theme with custom CompositionLocal values for app-specific tokens, and always reference MaterialTheme tokens rather than hardcoding values to ensure consistent, dark-mode-ready UI across your entire app."
+      "content": "Material3 in Compose provides a type-safe, dynamic, and consistent UI system. Define light/dark ColorSchemes, Typography, and Shapes, wrap your app in AppTheme, use dynamic color on Android 12+, extend with CompositionLocal for custom tokens, and always reference MaterialTheme tokens to ensure dark-mode-ready, consistent UI."
     }
   ]
 }

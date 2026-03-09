@@ -4,355 +4,49 @@
     {
       "type": "text",
       "heading": "What is MVVM?",
-      "content": "MVVM (Model-View-ViewModel) is a software architectural pattern that separates an application into three distinct layers: the Model (data and business logic), the View (UI layer — Activities, Fragments, XML), and the ViewModel (the bridge between Model and View that holds and manages UI-related data). MVVM is the officially recommended architecture for Android apps by Google, and it forms the foundation of the Android Jetpack component suite. Its core benefit is a clean separation of concerns — your UI code never directly touches your data sources, and your data logic never depends on Android UI classes."
+      "content": "MVVM (Model-View-ViewModel) is a popular architectural pattern used in modern Android development. It separates an application into three layers: Model, View, and ViewModel. The Model handles data and business logic, the View displays the UI (Activities, Fragments, XML), and the ViewModel manages UI-related data and acts as a bridge between the Model and the View. This separation improves maintainability and scalability."
     },
     {
       "type": "bullet",
-      "heading": "Why MVVM for Android?",
+      "heading": "Why Use MVVM?",
       "items": [
-        "Separation of concerns — UI logic, business logic, and data access are clearly divided into separate layers",
-        "Testability — ViewModel and Model layers have no Android UI dependencies and can be unit tested on the JVM",
-        "Lifecycle awareness — ViewModel survives configuration changes (screen rotation) without re-fetching data",
-        "Reactive UI — View observes ViewModel data using LiveData or StateFlow and updates automatically",
-        "Single source of truth — ViewModel holds the UI state; the View only renders what the ViewModel exposes",
-        "Officially recommended by Google — all Jetpack components (ViewModel, LiveData, Room, Navigation) are designed for MVVM",
-        "Easier maintenance — changes to data sources or UI don't ripple across all layers",
-        "Supports unidirectional data flow — data flows down from ViewModel to View; events flow up from View to ViewModel"
+        "Clear separation of UI, business logic, and data layers",
+        "Improves testability because ViewModel has no UI dependencies",
+        "ViewModel survives configuration changes like screen rotation",
+        "Reactive UI updates using LiveData or StateFlow",
+        "Easier maintenance and scalability for large apps"
       ]
     },
     {
       "type": "table",
-      "heading": "MVVM Layers Explained",
+      "heading": "MVVM Layers",
       "rows": [
         {
           "layer": "Model",
-          "responsibility": "Represents the data and business logic of the app",
-          "contains": "Data classes, Repository, Room Database, Retrofit API service, DataStore",
-          "android_classes": "Data classes, Repository class, RoomDatabase, ApiService"
+          "responsibility": "Handles data and business logic",
+          "examples": "Repository, Room Database, API services"
         },
         {
           "layer": "View",
-          "responsibility": "Displays the UI and forwards user events to the ViewModel",
-          "contains": "XML layouts, Activities, Fragments — no business logic",
-          "android_classes": "Activity, Fragment, XML layout files, RecyclerView Adapters"
+          "responsibility": "Displays UI and captures user input",
+          "examples": "Activity, Fragment, XML layouts"
         },
         {
           "layer": "ViewModel",
-          "responsibility": "Holds and manages UI state; exposes data to the View; handles user actions",
-          "contains": "LiveData/StateFlow, business logic calls, Repository interactions",
-          "android_classes": "ViewModel, AndroidViewModel, LiveData, StateFlow, MutableStateFlow"
+          "responsibility": "Holds UI state and communicates with Model",
+          "examples": "ViewModel, LiveData, StateFlow"
         }
       ]
     },
     {
       "type": "text",
       "heading": "MVVM Data Flow",
-      "content": "In MVVM, data flows in one direction: the Model provides data to the ViewModel, and the ViewModel exposes it to the View. The View observes the ViewModel's data streams (LiveData or StateFlow) and re-renders itself whenever the data changes. User interactions in the View trigger function calls on the ViewModel — never directly on the Model. The ViewModel then calls the Repository (part of the Model layer) to fetch, update, or delete data, and the result flows back up through the observable data stream to update the View automatically."
-    },
-    {
-      "type": "bullet",
-      "heading": "MVVM Data Flow Step by Step",
-      "items": [
-        "1. User interacts with the View (e.g., taps a button, types in a field)",
-        "2. View calls a function on the ViewModel (e.g., viewModel.loadUsers())",
-        "3. ViewModel calls the Repository to fetch or modify data",
-        "4. Repository fetches data from a local database (Room) or remote API (Retrofit)",
-        "5. Repository returns the result to the ViewModel (via suspend function, Flow, or callback)",
-        "6. ViewModel updates its LiveData or StateFlow with the new data or UI state",
-        "7. View observes the LiveData/StateFlow and automatically updates the UI to reflect the new state",
-        "8. The View never directly calls the Repository or Database — all data access goes through the ViewModel"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "MVVM vs Other Architecture Patterns",
-      "rows": [
-        {
-          "aspect": "UI holds logic",
-          "mvc": "Yes — Activity/Fragment contains both UI and logic",
-          "mvp": "No — Presenter holds logic, View is passive",
-          "mvvm": "No — ViewModel holds logic, View only observes"
-        },
-        {
-          "aspect": "Testability",
-          "mvc": "Hard — UI and logic are tightly coupled",
-          "mvp": "Good — Presenter can be tested with mock View",
-          "mvvm": "Excellent — ViewModel has no UI dependencies"
-        },
-        {
-          "aspect": "Lifecycle awareness",
-          "mvc": "No",
-          "mvp": "No — Presenter must be manually attached/detached",
-          "mvvm": "Yes — ViewModel survives configuration changes"
-        },
-        {
-          "aspect": "Boilerplate",
-          "mvc": "Low initially, grows messy",
-          "mvp": "High — interface for every View action",
-          "mvvm": "Medium — structured but scalable"
-        },
-        {
-          "aspect": "Google recommendation",
-          "mvc": "No",
-          "mvp": "No",
-          "mvvm": "Yes — official Android architecture recommendation"
-        },
-        {
-          "aspect": "Data binding",
-          "mvc": "Manual",
-          "mvp": "Manual via interface",
-          "mvvm": "Automatic via LiveData/StateFlow observation"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "The ViewModel Layer",
-      "content": "The ViewModel is the central piece of MVVM in Android. It is a lifecycle-aware class provided by the Jetpack ViewModel library that stores and manages UI-related data. The ViewModel is created the first time the system requests it and lives until the associated Activity or Fragment is permanently finished — not recreated. This means it automatically survives screen rotation, language changes, and other configuration changes, eliminating the need to refetch data or save complex state manually."
-    },
-    {
-      "type": "bullet",
-      "heading": "ViewModel Responsibilities",
-      "items": [
-        "Hold UI state — expose data to the View using LiveData, StateFlow, or StateFlow<UiState>",
-        "Survive configuration changes — data is retained across screen rotations without re-fetching",
-        "Handle user events — expose functions that the View calls in response to user interactions",
-        "Call the Repository — request data operations (fetch, insert, update, delete) from the data layer",
-        "Apply business logic — filter, sort, transform, or combine data before exposing it to the View",
-        "Manage loading and error states — expose a UiState sealed class to represent loading, success, and error",
-        "Never reference Activity, Fragment, or View — doing so causes memory leaks and breaks testability",
-        "Never perform UI operations — no Toast, no Navigation calls — delegate these back to the View via events"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "The Model Layer — What It Contains",
-      "rows": [
-        {
-          "component": "Data Classes",
-          "description": "Plain Kotlin data classes representing entities (e.g., User, Product, Order)",
-          "example": "data class User(val id: Int, val name: String, val email: String)"
-        },
-        {
-          "component": "Repository",
-          "description": "Single source of truth for data — abstracts local and remote data sources from the ViewModel",
-          "example": "class UserRepository(private val dao: UserDao, private val api: UserApi)"
-        },
-        {
-          "component": "Room DAO",
-          "description": "Data Access Object — defines database operations as Kotlin functions",
-          "example": "interface UserDao { @Query(\"SELECT * FROM users\") fun getAllUsers(): Flow<List<User>> }"
-        },
-        {
-          "component": "Retrofit API Service",
-          "description": "Interface defining HTTP endpoints for remote data fetching",
-          "example": "interface UserApiService { @GET(\"users\") suspend fun getUsers(): List<User> }"
-        },
-        {
-          "component": "DataStore / SharedPreferences",
-          "description": "Local key-value storage for user preferences and settings",
-          "example": "UserPreferencesRepository wrapping DataStore<Preferences>"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "The View Layer Rules",
-      "items": [
-        "The View (Activity or Fragment) is responsible only for rendering UI and capturing user input",
-        "Observe LiveData or StateFlow from the ViewModel and update Views accordingly",
-        "Forward all user actions to the ViewModel — do not handle business logic in the View",
-        "Use viewLifecycleOwner (not 'this') when observing in Fragments to prevent stale observers",
-        "Never instantiate Repository or data sources directly in the View — always go through ViewModel",
-        "Keep UI logic minimal — if you're writing more than a few lines of logic in a Fragment, it likely belongs in the ViewModel",
-        "Use sealed class UiState to handle loading, success, and error states driven by the ViewModel",
-        "Navigation and dialogs can be triggered from the View in response to ViewModel events (SingleLiveEvent or Channel)"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "UiState Pattern — Modeling Screen State",
-      "rows": [
-        {
-          "state": "Loading",
-          "description": "Data is being fetched — show a ProgressBar or shimmer",
-          "sealed_class": "sealed class UiState { object Loading : UiState() }"
-        },
-        {
-          "state": "Success",
-          "description": "Data fetched successfully — show the content",
-          "sealed_class": "data class Success<T>(val data: T) : UiState()"
-        },
-        {
-          "state": "Error",
-          "description": "Something went wrong — show an error message and retry option",
-          "sealed_class": "data class Error(val message: String) : UiState()"
-        },
-        {
-          "state": "Empty",
-          "description": "Request succeeded but no data exists — show an empty state illustration",
-          "sealed_class": "object Empty : UiState()"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "LiveData vs StateFlow in ViewModel",
-      "items": [
-        "LiveData is lifecycle-aware — only delivers updates when the observer is in STARTED or RESUMED state",
-        "StateFlow always has a value — it requires an initial value and exposes the current state at any time",
-        "StateFlow is a Kotlin coroutines construct — it integrates naturally with suspend functions and Flow",
-        "LiveData is simpler to set up for beginners — no coroutine scope needed in the View",
-        "StateFlow requires collecting with repeatOnLifecycle(Lifecycle.State.STARTED) in Fragments for lifecycle safety",
-        "Use MutableLiveData internally in ViewModel, expose as LiveData to the View",
-        "Use MutableStateFlow internally, expose as StateFlow to the View",
-        "SharedFlow is used for one-time events (navigation, Snackbar) that should not replay on recomposition"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "LiveData vs StateFlow Comparison",
-      "rows": [
-        {
-          "aspect": "Lifecycle awareness",
-          "livedata": "Built-in — only delivers to active observers",
-          "stateflow": "Manual — use repeatOnLifecycle() in the View"
-        },
-        {
-          "aspect": "Initial value",
-          "livedata": "Not required — starts as null",
-          "stateflow": "Required — must provide an initial value"
-        },
-        {
-          "aspect": "Coroutine integration",
-          "livedata": "Limited — use liveData {} builder or asLiveData()",
-          "stateflow": "Native — first-class coroutine support"
-        },
-        {
-          "aspect": "One-time events",
-          "livedata": "SingleLiveEvent workaround needed",
-          "stateflow": "Use SharedFlow or Channel"
-        },
-        {
-          "aspect": "Transformation",
-          "livedata": "map(), switchMap(), MediatorLiveData",
-          "stateflow": "map(), combine(), flatMapLatest() — richer operators"
-        },
-        {
-          "aspect": "Recommended for",
-          "livedata": "Simple state in beginner or legacy MVVM projects",
-          "stateflow": "Modern projects — especially with Jetpack Compose"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Repository Pattern in MVVM",
-      "items": [
-        "The Repository is the single source of truth — it decides whether to return cached local data or fetch fresh remote data",
-        "The ViewModel only talks to the Repository — it has no knowledge of Room, Retrofit, or DataStore directly",
-        "Repository abstracts the data source — swapping Room for Realm or Retrofit for Ktor requires no ViewModel changes",
-        "Repository coordinates multiple data sources: check local cache first, fetch from network if stale or missing",
-        "Expose data as Flow<T> from the Repository so the ViewModel and View react to changes automatically",
-        "Repository is typically injected into the ViewModel using Hilt dependency injection",
-        "Each feature area typically has its own Repository (UserRepository, ProductRepository, OrderRepository)",
-        "Repository is a plain Kotlin class — no Android dependencies — making it easily unit testable"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "MVVM Project Package Structure",
-      "rows": [
-        {
-          "package": "ui/ (or presentation/)",
-          "contains": "Activities, Fragments, XML layouts, RecyclerView Adapters, ViewModels",
-          "layer": "View + ViewModel"
-        },
-        {
-          "package": "ui/home/",
-          "contains": "HomeFragment.kt, HomeViewModel.kt, fragment_home.xml",
-          "layer": "View + ViewModel (feature-based grouping)"
-        },
-        {
-          "package": "data/",
-          "contains": "Repository classes, Room database, DAO interfaces, API service interfaces",
-          "layer": "Model"
-        },
-        {
-          "package": "data/local/",
-          "contains": "AppDatabase.kt, UserDao.kt, Room entities",
-          "layer": "Model — local data source"
-        },
-        {
-          "package": "data/remote/",
-          "contains": "ApiService.kt, Retrofit instance, DTOs (Data Transfer Objects)",
-          "layer": "Model — remote data source"
-        },
-        {
-          "package": "domain/ (optional)",
-          "contains": "Use case classes that encapsulate single business operations",
-          "layer": "Domain — between Model and ViewModel (used in Clean Architecture)"
-        },
-        {
-          "package": "di/",
-          "contains": "Hilt modules for dependency injection — provides Repository, Database, ApiService",
-          "layer": "Dependency injection infrastructure"
-        },
-        {
-          "package": "model/ (or domain/model/)",
-          "contains": "Data classes representing business entities (User, Product, Order)",
-          "layer": "Model — shared across layers"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "One-Time Events from ViewModel to View",
-      "items": [
-        "Some actions should happen once — show a Snackbar, navigate to another screen, show a dialog",
-        "LiveData is not ideal for one-time events — it replays the last value to new observers (e.g., after rotation)",
-        "SingleLiveEvent is a common workaround — a LiveData subclass that only delivers to one observer once",
-        "SharedFlow with replay=0 is the modern coroutine-based approach for one-time events",
-        "Channel<Event> with receiveAsFlow() is another clean pattern for one-time UI events",
-        "In the View, collect one-time events in a separate flow collection alongside the UI state",
-        "Event types: NavigateToDetail, ShowSnackbar, ShowDialog, RequestPermission — model as a sealed class",
-        "Never trigger navigation or Snackbar directly from the ViewModel — expose events and let the View react"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "MVVM Common Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Holding Activity or Fragment reference in ViewModel",
-          "fix": "Never store View references in ViewModel — use AndroidViewModel only for applicationContext if needed"
-        },
-        {
-          "mistake": "Calling Repository directly from Activity or Fragment",
-          "fix": "All data access must go through the ViewModel — View only observes data"
-        },
-        {
-          "mistake": "Putting business logic in the Fragment",
-          "fix": "Move filtering, sorting, and transformation logic to the ViewModel or Repository"
-        },
-        {
-          "mistake": "Using LiveData for one-time events without SingleLiveEvent",
-          "fix": "Use SharedFlow(replay=0) or Channel for events that should fire exactly once"
-        },
-        {
-          "mistake": "Observing LiveData with 'this' (Fragment) instead of viewLifecycleOwner",
-          "fix": "Always use viewLifecycleOwner in Fragments to prevent stale observers after back stack return"
-        },
-        {
-          "mistake": "Creating ViewModel manually with constructor",
-          "fix": "Use by viewModels() or by activityViewModels() delegate — let Jetpack manage the lifecycle"
-        }
-      ]
+      "content": "In MVVM, the View interacts with the ViewModel instead of accessing data directly. The ViewModel requests data from the Repository (Model layer) and exposes it through observable data like LiveData or StateFlow. The View observes these data streams and updates the UI automatically when the data changes."
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "MVVM is not just a pattern — it is the foundation of scalable, testable, and maintainable Android development. By keeping your View dumb (it only observes and renders), your ViewModel focused (it manages state and delegates data operations), and your Model clean (it provides data through Repositories), you build apps that are easy to test, easy to change, and resilient to Android lifecycle complexity. Every major Jetpack component — ViewModel, LiveData, Room, Navigation, Hilt — is designed to work within the MVVM pattern, making it the natural choice for modern Android."
+      "content": "MVVM helps build scalable and maintainable Android applications by separating responsibilities across layers. The View handles UI, the ViewModel manages UI state, and the Model provides data through repositories. This architecture improves code organization, lifecycle handling, and testing."
     }
   ]
 }

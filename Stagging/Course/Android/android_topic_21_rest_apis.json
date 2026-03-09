@@ -4,406 +4,106 @@
     {
       "type": "text",
       "heading": "What is a REST API?",
-      "content": "A REST (Representational State Transfer) API is a standardized architectural style for building web services that communicate over HTTP. It defines a set of rules for how clients (like Android apps) request and receive data from servers. REST APIs are the backbone of modern mobile app networking — they power everything from user authentication and fetching feeds to submitting forms and syncing data. In Android, your app acts as the client, sending HTTP requests to a server and receiving responses — typically formatted as JSON — that you parse and display in your UI."
+      "content": "A REST (Representational State Transfer) API is a common architecture used for communication between a client and a server over HTTP. In Android development, the app acts as the client that sends requests to a server and receives responses containing data. These responses are usually formatted as JSON, which the app parses into Kotlin objects and displays in the UI."
     },
     {
       "type": "bullet",
-      "heading": "Core REST Principles",
+      "heading": "Core REST Concepts",
       "items": [
-        "Client-Server — the client (Android app) and server are separate; the server manages data, the client handles UI",
-        "Stateless — each HTTP request is independent; the server does not store client session state between requests",
-        "Uniform Interface — resources are identified by URLs (endpoints); interactions happen through standard HTTP methods",
-        "Resource-based — everything is a resource (User, Product, Order) identified by a unique URI",
-        "Representation — resources are transferred as a representation, most commonly JSON or XML",
-        "Layered System — the client doesn't know if it's talking directly to the server or through intermediaries (proxies, CDNs)",
-        "Cacheable — responses can indicate whether they are cacheable, improving performance for repeated requests",
-        "JSON is the standard — virtually all modern REST APIs use JSON (JavaScript Object Notation) for data exchange"
+        "Client-Server — the Android app sends requests, the server manages data",
+        "Stateless — each request is independent and contains all required information",
+        "Resource-based — everything is treated as a resource such as users, products, or posts",
+        "Resources are identified by URLs called endpoints",
+        "Standard HTTP methods define the action performed on a resource",
+        "Responses usually return JSON data"
       ]
     },
     {
       "type": "table",
-      "heading": "HTTP Methods and Their Meaning",
+      "heading": "Common HTTP Methods",
       "rows": [
         {
           "method": "GET",
-          "purpose": "Retrieve a resource or list of resources from the server",
-          "body": "None",
-          "idempotent": "Yes",
-          "example": "GET /users — fetch all users; GET /users/42 — fetch user with ID 42"
+          "purpose": "Retrieve data from the server",
+          "example": "GET /users"
         },
         {
           "method": "POST",
-          "purpose": "Create a new resource on the server",
-          "body": "JSON body with new resource data",
-          "idempotent": "No",
-          "example": "POST /users — create a new user with body {\"name\": \"Alice\"}"
+          "purpose": "Create a new resource",
+          "example": "POST /users"
         },
         {
           "method": "PUT",
-          "purpose": "Replace an entire existing resource with new data",
-          "body": "Full resource JSON body",
-          "idempotent": "Yes",
-          "example": "PUT /users/42 — replace user 42's entire data"
+          "purpose": "Replace an existing resource",
+          "example": "PUT /users/1"
         },
         {
           "method": "PATCH",
-          "purpose": "Partially update an existing resource — only changed fields",
-          "body": "Partial JSON body with only updated fields",
-          "idempotent": "No",
-          "example": "PATCH /users/42 — update only the email field of user 42"
+          "purpose": "Partially update a resource",
+          "example": "PATCH /users/1"
         },
         {
           "method": "DELETE",
-          "purpose": "Remove a resource from the server",
-          "body": "None typically",
-          "idempotent": "Yes",
-          "example": "DELETE /users/42 — permanently delete user with ID 42"
-        },
-        {
-          "method": "HEAD",
-          "purpose": "Same as GET but returns only headers, not the response body",
-          "body": "None",
-          "idempotent": "Yes",
-          "example": "HEAD /users/42 — check if user exists without downloading the full response"
+          "purpose": "Remove a resource",
+          "example": "DELETE /users/1"
         }
       ]
     },
     {
       "type": "text",
-      "heading": "HTTP Request Anatomy",
-      "content": "Every HTTP request sent from your Android app to a server has the same structure: a method (GET, POST, etc.), a URL (the endpoint), headers (metadata about the request), and optionally a body (data sent with POST/PUT/PATCH requests). Understanding each part is essential for correctly configuring your Retrofit calls and debugging network issues."
-    },
-    {
-      "type": "bullet",
-      "heading": "HTTP Request Components",
-      "items": [
-        "Method — the HTTP verb: GET, POST, PUT, PATCH, DELETE",
-        "URL — the full endpoint: https://api.example.com/v1/users/42",
-        "Base URL — the common prefix: https://api.example.com/v1/",
-        "Path — the resource path after base URL: /users/42",
-        "Query Parameters — key-value pairs after '?': /users?page=1&limit=20&sort=name",
-        "Headers — metadata key-value pairs: Content-Type, Authorization, Accept, User-Agent",
-        "Body — the JSON payload for POST/PUT/PATCH requests: {\"name\": \"Alice\", \"email\": \"alice@example.com\"}",
-        "Content-Type header — tells the server the format of the body: application/json",
-        "Accept header — tells the server the format the client expects in response: application/json",
-        "Authorization header — carries authentication credentials: Bearer eyJhbGciOiJIUzI1NiJ9..."
-      ]
+      "heading": "HTTP Request Structure",
+      "content": "An HTTP request contains several parts. The method defines the action, the URL specifies the endpoint, headers include metadata such as content type or authentication tokens, and the body contains the data being sent to the server (usually JSON). For example, when creating a new user, the app sends a POST request with a JSON body describing the user."
     },
     {
       "type": "table",
-      "heading": "HTTP Response Status Codes",
+      "heading": "Important HTTP Status Codes",
       "rows": [
         {
           "code": "200 OK",
-          "category": "2xx Success",
-          "meaning": "Request succeeded — response body contains the requested data"
+          "meaning": "Request succeeded and returned data"
         },
         {
           "code": "201 Created",
-          "category": "2xx Success",
-          "meaning": "Resource created successfully — typically returned after a POST request"
-        },
-        {
-          "code": "204 No Content",
-          "category": "2xx Success",
-          "meaning": "Request succeeded but no response body — common for DELETE operations"
+          "meaning": "Resource created successfully"
         },
         {
           "code": "400 Bad Request",
-          "category": "4xx Client Error",
-          "meaning": "The request was malformed — invalid JSON, missing required fields, or bad parameters"
+          "meaning": "Invalid request data"
         },
         {
           "code": "401 Unauthorized",
-          "category": "4xx Client Error",
-          "meaning": "Authentication required or failed — missing or invalid token/credentials"
-        },
-        {
-          "code": "403 Forbidden",
-          "category": "4xx Client Error",
-          "meaning": "Authenticated but not authorized — user does not have permission for this resource"
+          "meaning": "Authentication required or failed"
         },
         {
           "code": "404 Not Found",
-          "category": "4xx Client Error",
-          "meaning": "The requested resource does not exist on the server"
-        },
-        {
-          "code": "409 Conflict",
-          "category": "4xx Client Error",
-          "meaning": "Request conflicts with current state — e.g., creating a duplicate email account"
-        },
-        {
-          "code": "422 Unprocessable Entity",
-          "category": "4xx Client Error",
-          "meaning": "Request is well-formed but semantically invalid — validation errors on submitted data"
-        },
-        {
-          "code": "429 Too Many Requests",
-          "category": "4xx Client Error",
-          "meaning": "Rate limit exceeded — client is sending too many requests; must slow down"
+          "meaning": "Resource does not exist"
         },
         {
           "code": "500 Internal Server Error",
-          "category": "5xx Server Error",
-          "meaning": "Unexpected server-side error — not the client's fault; retry with backoff"
-        },
-        {
-          "code": "503 Service Unavailable",
-          "category": "5xx Server Error",
-          "meaning": "Server temporarily unavailable — maintenance or overload; retry later"
+          "meaning": "Server encountered an error"
         }
       ]
     },
     {
       "type": "text",
-      "heading": "JSON — The Language of REST APIs",
-      "content": "JSON (JavaScript Object Notation) is a lightweight, human-readable data format used by virtually all modern REST APIs. It represents data as key-value pairs (objects) and ordered lists (arrays). In Android, you parse JSON responses into Kotlin data classes using libraries like Gson, Moshi, or kotlinx.serialization. Understanding JSON structure is fundamental to correctly defining your data model classes and configuring your JSON parser."
+      "heading": "JSON in REST APIs",
+      "content": "JSON (JavaScript Object Notation) is the most common format used in REST APIs for transferring data. It represents information as key-value pairs and arrays. In Android, JSON responses are converted into Kotlin data classes using libraries such as Gson, Moshi, or kotlinx.serialization."
     },
     {
       "type": "bullet",
-      "heading": "JSON Structure Basics",
+      "heading": "Basic JSON Structure",
       "items": [
-        "Object — curly braces containing key-value pairs: {\"id\": 1, \"name\": \"Alice\", \"active\": true}",
-        "Array — square brackets containing ordered values: [{\"id\": 1}, {\"id\": 2}]",
-        "String values are in double quotes: \"name\": \"Alice\"",
-        "Number values are unquoted: \"age\": 25, \"score\": 98.5",
-        "Boolean values: \"active\": true, \"deleted\": false",
-        "Null values: \"middleName\": null",
-        "Nested objects: \"address\": {\"city\": \"Delhi\", \"country\": \"India\"}",
-        "Array of objects: \"orders\": [{\"id\": 1, \"total\": 99.99}, {\"id\": 2, \"total\": 49.50}]",
-        "The root of a JSON response can be either an object { } or an array [ ]"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "JSON to Kotlin Data Class Mapping",
-      "rows": [
-        {
-          "json": "{\"id\": 1, \"name\": \"Alice\", \"email\": \"alice@example.com\"}",
-          "kotlin": "data class User(val id: Int, val name: String, val email: String)"
-        },
-        {
-          "json": "{\"is_active\": true, \"created_at\": \"2024-01-15\"}",
-          "kotlin": "data class Status(@SerializedName(\"is_active\") val isActive: Boolean, @SerializedName(\"created_at\") val createdAt: String)"
-        },
-        {
-          "json": "{\"user\": {\"id\": 1, \"name\": \"Alice\"}, \"token\": \"abc123\"}",
-          "kotlin": "data class AuthResponse(val user: User, val token: String)"
-        },
-        {
-          "json": "[{\"id\": 1}, {\"id\": 2}, {\"id\": 3}]",
-          "kotlin": "Root is List<Item> — Retrofit returns List<Item> directly for array responses"
-        },
-        {
-          "json": "{\"data\": [{\"id\": 1}], \"total\": 100, \"page\": 1}",
-          "kotlin": "data class PaginatedResponse<T>(val data: List<T>, val total: Int, val page: Int)"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Common API Patterns",
-      "content": "Most REST APIs follow predictable patterns for structuring their endpoints, handling authentication, and formatting responses. Understanding these patterns helps you quickly integrate any new API into your Android app and anticipate how to handle responses, errors, and pagination."
-    },
-    {
-      "type": "bullet",
-      "heading": "RESTful URL Patterns",
-      "items": [
-        "Collection endpoint: GET /users — returns a list of all users",
-        "Single resource: GET /users/{id} — returns one user by ID",
-        "Create: POST /users — creates a new user with body data",
-        "Update (full): PUT /users/{id} — replaces the user completely",
-        "Update (partial): PATCH /users/{id} — updates only specified fields",
-        "Delete: DELETE /users/{id} — removes the user",
-        "Nested resources: GET /users/{id}/orders — returns orders belonging to a specific user",
-        "Filtering: GET /products?category=electronics&minPrice=100",
-        "Sorting: GET /users?sort=name&order=asc",
-        "Pagination: GET /users?page=2&limit=20 or GET /users?cursor=abc123"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Authentication Types in REST APIs",
-      "rows": [
-        {
-          "type": "API Key",
-          "how_it_works": "A static key passed as a header or query parameter",
-          "header_example": "X-API-Key: your_api_key_here or ?api_key=your_key",
-          "use_case": "Public APIs, weather services, map APIs"
-        },
-        {
-          "type": "Bearer Token (JWT)",
-          "how_it_works": "A signed token obtained after login, passed in Authorization header",
-          "header_example": "Authorization: Bearer eyJhbGci...",
-          "use_case": "Most modern apps — login returns a JWT used for subsequent requests"
-        },
-        {
-          "type": "Basic Auth",
-          "how_it_works": "Base64-encoded username:password passed in Authorization header",
-          "header_example": "Authorization: Basic dXNlcjpwYXNz",
-          "use_case": "Simple internal APIs; not recommended for production mobile apps"
-        },
-        {
-          "type": "OAuth 2.0",
-          "how_it_works": "Token-based authorization flow; app gets access token from auth server",
-          "header_example": "Authorization: Bearer access_token_here",
-          "use_case": "Sign in with Google, Facebook, GitHub — delegated authorization"
-        },
-        {
-          "type": "Refresh Token",
-          "how_it_works": "Short-lived access token + long-lived refresh token; refresh token gets new access token",
-          "header_example": "POST /auth/refresh with {\"refresh_token\": \"...\"} body",
-          "use_case": "Keeping users logged in without requiring re-authentication"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Common HTTP Headers in Android Networking",
-      "items": [
-        "Content-Type: application/json — tells the server the request body is JSON; required for POST/PUT/PATCH",
-        "Accept: application/json — tells the server to return JSON; usually default for REST APIs",
-        "Authorization: Bearer {token} — carries the auth token; added to all authenticated requests",
-        "User-Agent: MyApp/1.0 Android/14 — identifies your app to the server for analytics and debugging",
-        "Cache-Control: no-cache — instructs the server not to serve a cached response",
-        "Accept-Language: en-US — requests localized content in the specified language",
-        "X-Request-ID: uuid — unique ID per request; useful for distributed tracing and debugging",
-        "In Retrofit: add persistent headers via OkHttp Interceptor so they are sent automatically on every request"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Pagination Strategies",
-      "rows": [
-        {
-          "strategy": "Page-based",
-          "parameters": "?page=1&limit=20",
-          "response": "Returns items for that page number",
-          "pros_cons": "Simple to implement; items can shift between pages if data changes"
-        },
-        {
-          "strategy": "Offset-based",
-          "parameters": "?offset=0&limit=20",
-          "response": "Returns items starting from the offset",
-          "pros_cons": "Flexible; same shifting problem as page-based when items are inserted"
-        },
-        {
-          "strategy": "Cursor-based",
-          "parameters": "?cursor=eyJpZCI6MjB9&limit=20",
-          "response": "Returns items after the cursor; response includes next cursor",
-          "pros_cons": "Stable — no item shifting; more complex; cannot jump to arbitrary pages"
-        },
-        {
-          "strategy": "Keyset / Seek",
-          "parameters": "?after_id=42&limit=20",
-          "response": "Returns items where ID > after_id",
-          "pros_cons": "Very performant with database indexes; requires stable sort key"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Error Handling Strategies for API Calls",
-      "items": [
-        "Check HTTP status code — any 2xx means success; 4xx is a client error; 5xx is a server error",
-        "Parse error response body — APIs often return JSON error details: {\"error\": \"email_taken\", \"message\": \"Email already in use\"}",
-        "Handle network errors — IOException means no connectivity or timeout; not an HTTP error",
-        "Handle HttpException — Retrofit throws HttpException for non-2xx responses when using suspend functions",
-        "Use try-catch in Repository: try { val response = api.getUsers() } catch (e: HttpException) { } catch (e: IOException) { }",
-        "Use Result<T> wrapper to propagate success and error states cleanly to the ViewModel",
-        "Implement exponential backoff for 5xx errors — wait 1s, then 2s, then 4s before retrying",
-        "Never show raw technical error messages to the user — map error codes to user-friendly strings"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Network Error Types in Android",
-      "rows": [
-        {
-          "error_type": "IOException",
-          "cause": "No internet connectivity, DNS failure, connection timeout, server unreachable",
-          "handling": "Show offline message; retry with connectivity check"
-        },
-        {
-          "error_type": "SocketTimeoutException",
-          "cause": "Server took too long to respond — exceeds the configured timeout",
-          "handling": "Show retry option; increase timeout or check server health"
-        },
-        {
-          "error_type": "HttpException (4xx)",
-          "cause": "Client error — bad request, unauthorized, not found, validation failed",
-          "handling": "Parse error body for details; show appropriate user message; 401 → redirect to login"
-        },
-        {
-          "error_type": "HttpException (5xx)",
-          "cause": "Server error — internal error, service unavailable",
-          "handling": "Show generic error message; implement retry with exponential backoff"
-        },
-        {
-          "error_type": "SSLHandshakeException",
-          "cause": "SSL certificate validation failed — invalid, expired, or self-signed cert",
-          "handling": "Never disable SSL validation in production; fix the server certificate"
-        },
-        {
-          "error_type": "JsonSyntaxException",
-          "cause": "API returned malformed JSON or unexpected schema",
-          "handling": "Log the raw response for debugging; show generic error to user"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Testing and Debugging REST APIs",
-      "items": [
-        "Use Postman or Insomnia to test API endpoints manually before writing Android code",
-        "Check the API documentation — look for base URL, endpoint paths, required headers, and request/response schemas",
-        "Use Android Studio's Network Inspector or OkHttp logging interceptor to inspect actual requests and responses",
-        "Add OkHttp's HttpLoggingInterceptor to log full request/response bodies in debug builds",
-        "Use MockWebServer (from OkHttp) to mock API responses in unit and integration tests",
-        "Inspect the raw JSON response before writing Kotlin data classes — use jsonformatter.org or Postman",
-        "Enable strict mode in Gson/Moshi to catch unknown JSON fields early in development",
-        "Test error scenarios explicitly — disable network, return 401, return 500 — don't only test the happy path"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "REST API Best Practices for Android",
-      "rows": [
-        {
-          "practice": "Always perform network calls on a background thread",
-          "reason": "Network on main thread throws NetworkOnMainThreadException and freezes the UI"
-        },
-        {
-          "practice": "Use Retrofit with coroutines (suspend functions)",
-          "reason": "Clean, structured concurrency with automatic thread switching via OkHttp dispatcher"
-        },
-        {
-          "practice": "Cache responses in Room database",
-          "reason": "Enables offline access and reduces unnecessary network requests"
-        },
-        {
-          "practice": "Never hardcode API keys or tokens in source code",
-          "reason": "Keys in source code are exposed in version control and decompiled APKs"
-        },
-        {
-          "practice": "Use HTTPS for all API communication",
-          "reason": "HTTP is insecure — all data is transmitted in plaintext and can be intercepted"
-        },
-        {
-          "practice": "Implement request timeout and retry logic",
-          "reason": "Mobile networks are unreliable — without timeouts, requests can hang indefinitely"
-        },
-        {
-          "practice": "Handle all status codes explicitly",
-          "reason": "Only handling 200 OK leaves your app broken for common scenarios like 401, 404, or 503"
-        }
+        "Objects use curly braces: { \"id\": 1, \"name\": \"Alice\" }",
+        "Arrays use square brackets: [ { \"id\": 1 }, { \"id\": 2 } ]",
+        "Strings are in double quotes",
+        "Numbers and booleans are not quoted",
+        "Objects and arrays can be nested"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "REST APIs and HTTP form the communication backbone of virtually every Android app that connects to the internet. Understanding HTTP methods (GET, POST, PUT, PATCH, DELETE), status codes, headers, JSON structure, authentication patterns, and error handling gives you the foundation to confidently integrate any web service into your app. In the next topics, you will learn how Retrofit and OkHttp implement these HTTP concepts in Android with a clean, type-safe, coroutine-friendly API that removes all the low-level networking boilerplate."
+      "content": "REST APIs allow Android apps to communicate with servers using HTTP requests. Each request uses a method such as GET or POST and targets a specific URL endpoint. The server returns responses with status codes and JSON data. Understanding HTTP methods, status codes, and JSON structure provides the foundation for implementing networking in Android apps using tools like Retrofit and OkHttp."
     }
   ]
 }

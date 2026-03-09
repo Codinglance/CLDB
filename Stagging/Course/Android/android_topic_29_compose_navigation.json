@@ -4,369 +4,64 @@
     {
       "type": "text",
       "heading": "Navigation in Jetpack Compose",
-      "content": "Jetpack Compose uses the Navigation Compose library to handle screen-to-screen navigation. It follows the same Single Activity Architecture philosophy as the View-based Navigation Component, but replaces XML nav graphs and Fragment transactions with a Kotlin DSL and composable destinations. The core components are the NavController (which tracks the back stack and current destination), the NavHost (which renders the current destination composable), and the navigation graph (defined in Kotlin as a lambda inside NavHost). Navigation Compose integrates natively with Hilt for ViewModel injection per destination and with the system back button out of the box."
+      "content": "Jetpack Compose uses the Navigation Compose library to manage screen-to-screen navigation. Instead of XML navigation graphs and fragments, navigation is defined directly in Kotlin using composable functions. The system follows the Single Activity Architecture where each screen is represented as a composable destination."
     },
     {
       "type": "bullet",
-      "heading": "Why Navigation Compose?",
+      "heading": "Why Use Navigation Compose?",
       "items": [
-        "No XML — navigation graph is defined in Kotlin code alongside the UI",
-        "Type-safe arguments — pass data between destinations as typed route parameters",
-        "Back stack management — NavController maintains the back stack automatically; back button works by default",
-        "Deep link support — destinations can be tied to URLs for external deep linking",
-        "Lifecycle-aware — each destination composable has its own lifecycle and ViewModel scope",
-        "Hilt integration — hiltViewModel() scopes ViewModels correctly to the navigation destination",
-        "Nested navigation — nest NavHosts for bottom navigation tabs with independent back stacks",
-        "Animations — enter, exit, pop-enter, and pop-exit transitions between destinations"
+        "Navigation graph defined completely in Kotlin",
+        "Automatic back stack management",
+        "Easy argument passing between screens",
+        "Lifecycle-aware destinations",
+        "Works well with ViewModel and Hilt"
       ]
     },
     {
       "type": "table",
-      "heading": "Navigation Compose Core Components",
+      "heading": "Core Navigation Components",
       "rows": [
         {
           "component": "NavController",
-          "description": "Tracks navigation state and back stack; used to navigate, pop, and pass arguments",
-          "creation": "val navController = rememberNavController()"
+          "description": "Controls navigation actions and manages the back stack",
+          "example": "val navController = rememberNavController()"
         },
         {
           "component": "NavHost",
-          "description": "Composable that renders the current destination from the nav graph; hosts the navigation graph DSL",
-          "creation": "NavHost(navController, startDestination = \"home\") { composable(\"home\") { HomeScreen() } }"
+          "description": "Container that displays the current destination",
+          "example": "NavHost(navController, startDestination = \"home\")"
         },
         {
           "component": "composable(route)",
-          "description": "Registers a composable as a navigation destination with a route string",
-          "creation": "composable(\"profile/{userId}\") { backStackEntry -> ProfileScreen(backStackEntry.arguments?.getString(\"userId\")) }"
-        },
-        {
-          "component": "NavBackStackEntry",
-          "description": "Represents a destination on the back stack; holds arguments and is the ViewModel owner for the destination",
-          "creation": "Provided as a lambda parameter inside composable { backStackEntry -> }"
-        },
-        {
-          "component": "NavGraphBuilder",
-          "description": "DSL scope inside NavHost's lambda where you register destinations with composable() and nested navigation()",
-          "creation": "NavHost(...) { /* NavGraphBuilder scope */ composable(...) {} }"
-        },
-        {
-          "component": "NavOptions",
-          "description": "Controls how navigation affects the back stack: popUpTo, launchSingleTop, restoreState",
-          "creation": "navController.navigate(route, navOptions { popUpTo(\"home\") { inclusive = true } })"
+          "description": "Defines a screen destination inside the navigation graph",
+          "example": "composable(\"home\") { HomeScreen() }"
         }
       ]
     },
     {
       "type": "text",
-      "heading": "Setting Up Navigation Compose",
-      "content": "Navigation Compose requires a dedicated dependency separate from the standard Jetpack Navigation library. Once added, the setup involves creating a NavController with rememberNavController(), defining a NavHost with a start destination, and registering each screen as a composable destination inside the NavHost's graph builder lambda. The NavController should be created at the top-most composable level (typically in MainActivity or a root AppNavigation composable) and passed down to composables that need to trigger navigation."
+      "heading": "Basic Navigation Setup",
+      "content": "To use Navigation Compose, add the navigation-compose dependency, create a NavController using rememberNavController(), and define a NavHost with a start destination. Each screen is registered using the composable() function inside the NavHost."
     },
     {
       "type": "bullet",
-      "heading": "Setup Steps",
+      "heading": "Navigation Actions",
       "items": [
-        "Add dependency: implementation(\"androidx.navigation:navigation-compose:2.7.x\")",
-        "For Hilt integration: implementation(\"androidx.hilt:hilt-navigation-compose:1.2.x\")",
-        "Create NavController at the root: val navController = rememberNavController()",
-        "Wrap your root composable with NavHost: NavHost(navController = navController, startDestination = \"home\")",
-        "Register each screen inside NavHost: composable(\"home\") { HomeScreen(navController) }",
-        "Each route string must be unique across the entire navigation graph",
-        "Do not create NavController deep inside the composable tree — create at root, pass as parameter or use CompositionLocal",
-        "For Hilt ViewModels in destinations: val viewModel: MyViewModel = hiltViewModel() — scoped to the back stack entry"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Route Definition Patterns",
-      "rows": [
-        {
-          "pattern": "Simple route",
-          "definition": "composable(\"home\") { HomeScreen() }",
-          "navigate": "navController.navigate(\"home\")",
-          "use_case": "Screens with no required arguments"
-        },
-        {
-          "pattern": "Required path argument",
-          "definition": "composable(\"profile/{userId}\") { entry -> ProfileScreen(entry.arguments?.getString(\"userId\") ?: \"\") }",
-          "navigate": "navController.navigate(\"profile/42\")",
-          "use_case": "Pass a required ID or value as part of the URL path"
-        },
-        {
-          "pattern": "Optional query argument",
-          "definition": "composable(\"search?query={query}\", arguments = listOf(navArgument(\"query\") { defaultValue = \"\" })) { entry -> SearchScreen(entry.arguments?.getString(\"query\")) }",
-          "navigate": "navController.navigate(\"search?query=android\")",
-          "use_case": "Optional filter or pre-fill values that have a sensible default"
-        },
-        {
-          "pattern": "Multiple arguments",
-          "definition": "composable(\"item/{categoryId}/{itemId}\") { entry -> ItemScreen(entry.arguments?.getString(\"categoryId\"), entry.arguments?.getString(\"itemId\")) }",
-          "navigate": "navController.navigate(\"item/electronics/42\")",
-          "use_case": "Screens that require multiple pieces of identifying information"
-        },
-        {
-          "pattern": "Integer argument with type",
-          "definition": "composable(\"user/{id}\", arguments = listOf(navArgument(\"id\") { type = NavType.IntType })) { entry -> UserScreen(entry.arguments?.getInt(\"id\") ?: 0) }",
-          "navigate": "navController.navigate(\"user/42\")",
-          "use_case": "Strongly-typed integer argument — avoids string parsing"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Navigating Between Screens",
-      "items": [
-        "Basic navigation: navController.navigate(\"profile/42\")",
-        "Pop back stack: navController.popBackStack() — goes back to the previous destination",
-        "Pop to a specific destination: navController.popBackStack(\"home\", inclusive = false)",
-        "Pop and navigate (replace current): navController.navigate(\"home\") { popUpTo(\"home\") { inclusive = true } }",
-        "Navigate with launchSingleTop: navController.navigate(route) { launchSingleTop = true } — prevents duplicate back stack entries",
-        "Navigate and clear entire back stack: navController.navigate(\"login\") { popUpTo(0) { inclusive = true } } — used for logout",
-        "Navigate up (same as back): navController.navigateUp()",
-        "Check if can navigate up: navController.previousBackStackEntry != null"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "NavOptions — Back Stack Control",
-      "rows": [
-        {
-          "option": "popUpTo(route)",
-          "description": "Pops all destinations off the back stack up to (but not including) the specified route before navigating",
-          "example": "navController.navigate(\"home\") { popUpTo(\"home\") }"
-        },
-        {
-          "option": "popUpTo(route) { inclusive = true }",
-          "description": "Pops up to AND including the specified route — removes it from the back stack too",
-          "example": "navController.navigate(\"home\") { popUpTo(\"home\") { inclusive = true } }"
-        },
-        {
-          "option": "launchSingleTop = true",
-          "description": "If the top of the back stack is already this destination, do not push another copy",
-          "example": "navController.navigate(\"home\") { launchSingleTop = true }"
-        },
-        {
-          "option": "restoreState = true",
-          "description": "Restore the saved state of the destination if it was previously saved with saveState = true",
-          "example": "navController.navigate(tab.route) { restoreState = true }"
-        },
-        {
-          "option": "popUpTo { saveState = true }",
-          "description": "Saves the state of the popped destination so it can be restored when navigating back to it",
-          "example": "popUpTo(currentRoute) { saveState = true }"
-        }
+        "Navigate to screen: navController.navigate(\"profile\")",
+        "Go back: navController.popBackStack()",
+        "Navigate up: navController.navigateUp()",
+        "Prevent duplicate screens using launchSingleTop"
       ]
     },
     {
       "type": "text",
-      "heading": "Passing Arguments Between Screens",
-      "content": "Navigation Compose passes data between destinations through route arguments embedded in the route string — similar to URL path and query parameters. Arguments are declared with navArgument() inside the composable() definition and read from the NavBackStackEntry inside the destination composable. For required data, use path parameters (/profile/{userId}). For optional data with defaults, use query parameters (?sort=name). Navigation Compose supports String, Int, Float, Long, Boolean, and Parcelable argument types."
-    },
-    {
-      "type": "bullet",
-      "heading": "Argument Types and navArgument Configuration",
-      "items": [
-        "NavType.StringType — default type; any string value",
-        "NavType.IntType — integer value; parse failure throws an exception",
-        "NavType.LongType — long integer; useful for timestamps and large IDs",
-        "NavType.FloatType — floating point value",
-        "NavType.BoolType — boolean true/false",
-        "NavType.EnumType<MyEnum>(MyEnum::class.java) — enum value passed as its name string",
-        "Nullable strings: navArgument(\"name\") { type = NavType.StringType; nullable = true; defaultValue = null }",
-        "Default values: navArgument(\"page\") { type = NavType.IntType; defaultValue = 1 }",
-        "Read arguments safely: entry.arguments?.getString(\"key\") ?: defaultValue",
-        "For complex objects: serialize to JSON string and pass as a String argument; deserialize in the destination"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Returning Results to the Previous Screen",
-      "rows": [
-        {
-          "step": "1. Navigate to destination",
-          "description": "navController.navigate(\"picker\") from the calling screen"
-        },
-        {
-          "step": "2. Set result in destination",
-          "description": "navController.previousBackStackEntry?.savedStateHandle?.set(\"selectedItem\", item) — set before popping"
-        },
-        {
-          "step": "3. Pop the destination",
-          "description": "navController.popBackStack() — returns to the calling screen after setting the result"
-        },
-        {
-          "step": "4. Observe result in caller",
-          "description": "val result = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow(\"selectedItem\", null)?.collectAsStateWithLifecycle()"
-        },
-        {
-          "step": "5. Consume and clear result",
-          "description": "navController.currentBackStackEntry?.savedStateHandle?.remove<Item>(\"selectedItem\") — clear after consuming to prevent re-processing"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "Nested Navigation and Bottom Navigation",
-      "content": "Real apps typically have multiple navigation sections — bottom navigation tabs each with their own independent back stack. Navigation Compose supports this through nested navigation graphs, where each tab has its own nested graph with its own start destination. The key to making bottom navigation work correctly is using the right NavOptions combination when switching tabs: launchSingleTop to avoid duplicate stack entries, saveState and restoreState to preserve each tab's back stack when the user switches between them."
-    },
-    {
-      "type": "bullet",
-      "heading": "Bottom Navigation Implementation Pattern",
-      "items": [
-        "Define sealed class for bottom nav destinations with route, icon, and label properties",
-        "Create nested navigation graphs: navigation(startDestination = \"home\", route = \"home_graph\") { composable(\"home\") { HomeScreen() } }",
-        "Use Scaffold with bottomBar slot: bottomBar = { BottomNavigationBar(navController) }",
-        "Track current destination: val currentDestination = navController.currentBackStackEntryAsState().value?.destination",
-        "Highlight active tab: NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true)",
-        "Navigate to tab with correct options: navController.navigate(tab.route) { popUpTo(navController.graph.findStartDestination().id) { saveState = true }; launchSingleTop = true; restoreState = true }",
-        "currentBackStackEntryAsState() — returns State<NavBackStackEntry?> that recomposes on navigation",
-        "hierarchy — checks if any ancestor destination matches — handles nested graphs correctly"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Nested Navigation Graph Structure",
-      "rows": [
-        {
-          "structure": "Root NavHost",
-          "description": "Top-level NavHost with startDestination pointing to the main app graph or auth graph",
-          "example": "NavHost(navController, startDestination = \"main_graph\") { mainGraph(); authGraph() }"
-        },
-        {
-          "structure": "Nested graph function",
-          "description": "Extension function on NavGraphBuilder defining a group of related destinations",
-          "example": "fun NavGraphBuilder.mainGraph() { navigation(startDestination = \"home\", route = \"main_graph\") { composable(\"home\") { HomeScreen() }; composable(\"settings\") { SettingsScreen() } } }"
-        },
-        {
-          "structure": "Auth graph",
-          "description": "Separate nested graph for login/signup flow that is popped entirely on successful login",
-          "example": "fun NavGraphBuilder.authGraph() { navigation(startDestination = \"login\", route = \"auth_graph\") { composable(\"login\") { LoginScreen() }; composable(\"signup\") { SignupScreen() } } }"
-        },
-        {
-          "structure": "Navigate after login",
-          "description": "Pop the entire auth graph from the stack after successful authentication",
-          "example": "navController.navigate(\"main_graph\") { popUpTo(\"auth_graph\") { inclusive = true } }"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "ViewModels with Navigation Compose",
-      "items": [
-        "Use hiltViewModel() inside a composable destination for Hilt-injected ViewModels: val viewModel: HomeViewModel = hiltViewModel()",
-        "The ViewModel is scoped to the NavBackStackEntry — it is created when the destination is entered and cleared when it is popped",
-        "Do not use viewModel() directly — it scopes the ViewModel to the Activity, not the destination",
-        "Share a ViewModel between destinations: val parentEntry = remember(navController) { navController.getBackStackEntry(\"parent_route\") }; val sharedViewModel: SharedViewModel = hiltViewModel(parentEntry)",
-        "This pattern scopes the ViewModel to a parent graph route — it lives as long as that graph is on the back stack",
-        "Pass events up to the ViewModel: NavBackStackEntry.savedStateHandle is accessible from the ViewModel for receiving results",
-        "Never pass NavController into the ViewModel — it creates a lifecycle leak and makes the ViewModel untestable",
-        "Pass navigation callbacks as lambda parameters: HomeScreen(onNavigateToProfile = { id -> navController.navigate(\"profile/$id\") })"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Navigation Events — Avoiding NavController in ViewModel",
-      "rows": [
-        {
-          "approach": "Navigation lambda parameter",
-          "description": "Pass navigation actions as lambda callbacks from the NavHost level down to composables",
-          "example": "composable(\"home\") { HomeScreen(onProfileClick = { id -> navController.navigate(\"profile/$id\") }) }"
-        },
-        {
-          "approach": "One-time event Channel",
-          "description": "ViewModel exposes a Channel<NavigationEvent>; composable collects in LaunchedEffect and triggers navigation",
-          "example": "LaunchedEffect(Unit) { viewModel.navigationEvents.collect { event -> when(event) { is NavigationEvent.GoToProfile -> navController.navigate(\"profile/${event.id}\") } } }"
-        },
-        {
-          "approach": "SharedFlow for navigation events",
-          "description": "Similar to Channel but using SharedFlow — ensures the event is not replayed after rotation",
-          "example": "val events: SharedFlow<NavEvent> = _events.asSharedFlow(); LaunchedEffect(Unit) { events.collect { handleNavEvent(it) } }"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Type-Safe Navigation with Kotlin Serialization (Navigation 2.8+)",
-      "items": [
-        "Navigation 2.8 introduced type-safe routes using @Serializable data classes instead of route strings",
-        "Define routes as serializable objects: @Serializable object HomeRoute; @Serializable data class ProfileRoute(val userId: Int)",
-        "Register destinations with typed routes: composable<HomeRoute> { HomeScreen() }; composable<ProfileRoute> { entry -> val route: ProfileRoute = entry.toRoute(); ProfileScreen(route.userId) }",
-        "Navigate with typed route: navController.navigate(ProfileRoute(userId = 42))",
-        "Arguments are automatically serialized/deserialized — no manual string parsing",
-        "Add dependency: implementation(\"org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.x\")",
-        "Apply plugin: id(\"org.jetbrains.kotlin.plugin.serialization\")",
-        "Type-safe navigation is the recommended approach for new projects on Navigation 2.8+"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Deep Links in Navigation Compose",
-      "rows": [
-        {
-          "step": "1. Declare deep link",
-          "description": "Add deepLinks parameter to composable(): composable(\"profile/{userId}\", deepLinks = listOf(navDeepLink { uriPattern = \"https://myapp.com/profile/{userId}\" }))"
-        },
-        {
-          "step": "2. Add intent filter to manifest",
-          "description": "In AndroidManifest.xml add <intent-filter> with <action android:name=\"android.intent.action.VIEW\" />, <category BROWSABLE />, and <data android:host=\"myapp.com\" android:scheme=\"https\" />"
-        },
-        {
-          "step": "3. Handle deep link intent",
-          "description": "Pass the Activity's intent to NavHost: NavHost(navController, startDestination, builder = { ... }) and NavController handles it with handleDeepLink(intent)"
-        },
-        {
-          "step": "4. Test deep link",
-          "description": "adb shell am start -W -a android.intent.action.VIEW -d \"https://myapp.com/profile/42\" com.yourpackage"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Best Practices for Compose Navigation",
-      "items": [
-        "Define all route strings as constants in a sealed class or object to avoid typos: object Routes { const val HOME = \"home\" }",
-        "Create NavGraph builder extension functions to organize large navigation graphs into logical sections",
-        "Never pass NavController into ViewModels — pass navigation callbacks as lambdas or use event channels",
-        "Always use launchSingleTop = true for bottom navigation to prevent duplicate tab entries",
-        "Use saveState and restoreState for bottom navigation tabs to preserve each tab's back stack",
-        "Scope ViewModels to navigation destinations using hiltViewModel() — not viewModel()",
-        "Use type-safe navigation (Navigation 2.8+) for new projects to eliminate route string typos entirely",
-        "Extract navigation logic into a dedicated AppNavigation composable to keep MainActivity clean"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Navigation Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Creating NavController deep inside the composable tree",
-          "fix": "Create NavController once at the root level with rememberNavController() and pass it down or use CompositionLocal"
-        },
-        {
-          "mistake": "Passing NavController into the ViewModel",
-          "fix": "Pass navigation lambdas as parameters to composables or emit navigation events from the ViewModel via Channel or SharedFlow"
-        },
-        {
-          "mistake": "Not using launchSingleTop for bottom navigation",
-          "fix": "Without launchSingleTop, tapping the same bottom nav tab repeatedly creates multiple copies of that destination on the stack"
-        },
-        {
-          "mistake": "Not using hiltViewModel() in navigation destinations",
-          "fix": "viewModel() scopes to the Activity — use hiltViewModel() so the ViewModel is scoped to the NavBackStackEntry and cleared on pop"
-        },
-        {
-          "mistake": "Using route strings with hardcoded values scattered across the codebase",
-          "fix": "Centralize all route strings in a Routes object or migrate to type-safe navigation with @Serializable route classes"
-        },
-        {
-          "mistake": "Navigating in the composable body on every composition",
-          "fix": "Trigger navigation only from event handlers or LaunchedEffect — never call navController.navigate() directly in the composable body"
-        }
-      ]
+      "heading": "Passing Arguments",
+      "content": "Data can be passed between screens using route parameters. For example: composable(\"profile/{userId}\") defines a route that expects a userId argument. When navigating, call navController.navigate(\"profile/42\"). The destination composable reads the value from the NavBackStackEntry arguments."
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Navigation Compose brings the power of Jetpack Navigation to the Compose world with a pure Kotlin DSL, eliminating XML nav graphs and Fragment transactions entirely. The NavController tracks the back stack, the NavHost renders the current destination, and composable() registers each screen. Pass data between screens via typed route arguments, return results through SavedStateHandle, and structure bottom navigation with nested graphs and the correct saveState and restoreState NavOptions. Use hiltViewModel() for destination-scoped ViewModels, keep NavController out of ViewModels, and migrate to type-safe navigation with @Serializable routes for new projects on Navigation 2.8 and above."
+      "content": "Navigation Compose simplifies navigation in modern Android apps by replacing XML navigation graphs with a Kotlin-based DSL. Using NavController, NavHost, and composable destinations, developers can easily manage navigation, pass arguments, and maintain a clean architecture."
     }
   ]
 }

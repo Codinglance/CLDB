@@ -4,7 +4,7 @@
     {
       "type": "text",
       "heading": "What is Unit Testing?",
-      "content": "Unit testing is the practice of testing individual units of code — typically a single function, class, or module — in isolation from the rest of the system. In Android development, unit tests run on the JVM (not on a device or emulator), making them extremely fast and suitable for testing business logic, ViewModels, repositories, utility functions, and data transformations. JUnit is the standard Java/Kotlin testing framework that provides test runner infrastructure, assertions, and lifecycle annotations. Mockito is the most popular mocking library for JVM tests — it allows you to create fake implementations of dependencies so you can test a class in complete isolation. Fast, reliable unit tests are the foundation of a healthy test suite and enable confident refactoring."
+      "content": "Unit testing verifies individual units of code—functions, classes, or modules—in isolation. On Android, unit tests run on the JVM, making them fast for testing ViewModels, repositories, utility functions, and data transformations. JUnit provides annotations, assertions, and lifecycle support, while Mockito enables mocking dependencies, stubbing return values, and verifying interactions. Reliable unit tests allow confident refactoring and catch regressions early."
     },
     {
       "type": "table",
@@ -15,16 +15,16 @@
           "location": "JVM — src/test/",
           "speed": "Very fast — milliseconds per test",
           "coverage": "70% of test suite",
-          "tools": "JUnit 4/5, Mockito, Truth, Turbine",
-          "tests": "ViewModels, Repositories, UseCases, Mappers, Utility classes"
+          "tools": "JUnit, Mockito, Truth, Turbine",
+          "tests": "ViewModels, Repositories, UseCases, Mappers, Utilities"
         },
         {
           "level": "Integration Tests",
           "location": "Device/Emulator — src/androidTest/",
           "speed": "Medium — seconds per test",
           "coverage": "20% of test suite",
-          "tools": "JUnit 4, Robolectric, Room in-memory, Hilt testing",
-          "tests": "Database queries, Repository with real Room, Navigation flows"
+          "tools": "JUnit, Robolectric, Room in-memory, Hilt",
+          "tests": "Database queries, Repositories with real Room, Navigation flows"
         },
         {
           "level": "UI / End-to-End Tests",
@@ -38,292 +38,148 @@
     },
     {
       "type": "bullet",
-      "heading": "Setting Up Unit Testing Dependencies",
+      "heading": "Setting Up Dependencies",
       "items": [
-        "JUnit 4: testImplementation(\"junit:junit:4.13.2\") — standard test runner for Android unit tests",
-        "Mockito Kotlin: testImplementation(\"org.mockito.kotlin:mockito-kotlin:5.x.x\") — idiomatic Kotlin Mockito wrapper",
-        "MockitoCore: testImplementation(\"org.mockito:mockito-core:5.x.x\") — core Mockito library",
-        "Google Truth: testImplementation(\"com.google.truth:truth:1.x.x\") — fluent assertion library, more readable than JUnit assertions",
-        "AndroidX Test Core: testImplementation(\"androidx.test:core-ktx:1.x.x\") — for testing Android components on JVM",
-        "Coroutines Test: testImplementation(\"org.jetbrains.kotlinx:kotlinx-coroutines-test:1.x.x\") — for testing suspend functions and flows",
-        "Turbine: testImplementation(\"app.cash.turbine:turbine:1.x.x\") — for testing Kotlin Flow emissions",
-        "Arch Core Testing: testImplementation(\"androidx.arch.core:core-testing:2.x.x\") — provides InstantTaskExecutorRule for LiveData testing"
+        "JUnit 4: testImplementation(\"junit:junit:4.13.2\")",
+        "Mockito Kotlin: testImplementation(\"org.mockito.kotlin:mockito-kotlin:5.x.x\")",
+        "MockitoCore: testImplementation(\"org.mockito:mockito-core:5.x.x\")",
+        "Google Truth: testImplementation(\"com.google.truth:truth:1.x.x\")",
+        "AndroidX Test Core: testImplementation(\"androidx.test:core-ktx:1.x.x\")",
+        "Coroutines Test: testImplementation(\"org.jetbrains.kotlinx:kotlinx-coroutines-test:1.x.x\")",
+        "Turbine: testImplementation(\"app.cash.turbine:turbine:1.x.x\")",
+        "Arch Core Testing: testImplementation(\"androidx.arch.core:core-testing:2.x.x\")"
       ]
-    },
-    {
-      "type": "text",
-      "heading": "JUnit 4 Fundamentals",
-      "content": "JUnit 4 is the most widely used testing framework in Android development. Tests are plain Kotlin or Java classes with methods annotated with @Test. JUnit provides lifecycle annotations to run setup and teardown code before and after tests. Each test method should be independent — it should not rely on state from other tests. A good unit test follows the AAA pattern: Arrange (set up the test data and dependencies), Act (call the method under test), Assert (verify the result is correct). Test class names conventionally end with Test, and test method names should clearly describe what is being tested and what the expected outcome is."
     },
     {
       "type": "table",
       "heading": "JUnit 4 Annotations",
       "rows": [
-        {
-          "annotation": "@Test",
-          "purpose": "Marks a method as a test case — JUnit will discover and run it",
-          "example": "@Test fun `given valid input, when calculate is called, then returns correct result`() { }"
-        },
-        {
-          "annotation": "@Before",
-          "purpose": "Runs before each test method — use for common setup like creating the class under test",
-          "example": "@Before fun setUp() { viewModel = HomeViewModel(mockRepository) }"
-        },
-        {
-          "annotation": "@After",
-          "purpose": "Runs after each test method — use for cleanup like closing resources",
-          "example": "@After fun tearDown() { Dispatchers.resetMain() }"
-        },
-        {
-          "annotation": "@BeforeClass",
-          "purpose": "Runs once before all tests in the class — must be on a companion object @JvmStatic method",
-          "example": "@BeforeClass @JvmStatic fun setUpClass() { /* one-time setup */ }"
-        },
-        {
-          "annotation": "@AfterClass",
-          "purpose": "Runs once after all tests in the class — must be on a companion object @JvmStatic method",
-          "example": "@AfterClass @JvmStatic fun tearDownClass() { /* one-time cleanup */ }"
-        },
-        {
-          "annotation": "@Ignore",
-          "purpose": "Skips the test — use temporarily with a reason; avoid leaving ignored tests long-term",
-          "example": "@Ignore(\"Flaky — tracked in issue #123\") @Test fun skippedTest() { }"
-        },
-        {
-          "annotation": "@Rule",
-          "purpose": "Applies a TestRule to modify test behavior — e.g. InstantTaskExecutorRule, MainDispatcherRule",
-          "example": "@get:Rule val instantTaskRule = InstantTaskExecutorRule()"
-        }
+        {"annotation": "@Test", "purpose": "Marks a test method", "example": "@Test fun `example test`() { }"},
+        {"annotation": "@Before", "purpose": "Runs before each test", "example": "@Before fun setUp() { }"},
+        {"annotation": "@After", "purpose": "Runs after each test", "example": "@After fun tearDown() { }"},
+        {"annotation": "@BeforeClass", "purpose": "Runs once before all tests", "example": "@BeforeClass @JvmStatic fun init() { }"},
+        {"annotation": "@AfterClass", "purpose": "Runs once after all tests", "example": "@AfterClass @JvmStatic fun cleanup() { }"},
+        {"annotation": "@Ignore", "purpose": "Skips the test", "example": "@Ignore(\"Reason\") @Test fun skippedTest() { }"},
+        {"annotation": "@Rule", "purpose": "Applies TestRule", "example": "@get:Rule val rule = InstantTaskExecutorRule()"}
       ]
     },
     {
       "type": "bullet",
       "heading": "Writing Your First Unit Test",
       "items": [
-        "Create test file in src/test/java/com/example/app/ mirroring the package of the class under test",
-        "Name the test class after the class being tested: HomeViewModelTest for HomeViewModel",
-        "Use backtick method names for readable test descriptions: fun `given empty list, when load is called, then state is empty`()",
-        "Follow AAA pattern: // Arrange val input = listOf(1, 2, 3); // Act val result = calculator.sum(input); // Assert assertThat(result).isEqualTo(6)",
-        "Each test should test exactly one behavior — if a test has multiple unrelated assertions it should be split",
-        "Tests must be deterministic — same input always produces same output; avoid randomness or time-dependent logic",
-        "Run tests: right-click the test class in Android Studio > Run, or ./gradlew test from terminal",
-        "View test results in Android Studio test runner panel or build/reports/tests/testDebugUnitTest/index.html"
+        "Create test in src/test/java matching class package",
+        "Name class after class under test: HomeViewModelTest",
+        "Use backticks for descriptive method names",
+        "Follow AAA pattern: Arrange, Act, Assert",
+        "Test one behavior per method, keep tests deterministic",
+        "Run tests via Android Studio or ./gradlew test",
+        "Check results in test runner panel or reports"
       ]
     },
     {
       "type": "table",
       "heading": "Assertions — JUnit vs Truth",
       "rows": [
-        {
-          "scenario": "Equality check",
-          "junit": "assertEquals(expected, actual)",
-          "truth": "assertThat(actual).isEqualTo(expected)"
-        },
-        {
-          "scenario": "Null check",
-          "junit": "assertNull(value) / assertNotNull(value)",
-          "truth": "assertThat(value).isNull() / assertThat(value).isNotNull()"
-        },
-        {
-          "scenario": "Boolean check",
-          "junit": "assertTrue(condition) / assertFalse(condition)",
-          "truth": "assertThat(condition).isTrue() / assertThat(condition).isFalse()"
-        },
-        {
-          "scenario": "Collection contains",
-          "junit": "assertTrue(list.contains(item))",
-          "truth": "assertThat(list).contains(item)"
-        },
-        {
-          "scenario": "Collection size",
-          "junit": "assertEquals(3, list.size)",
-          "truth": "assertThat(list).hasSize(3)"
-        },
-        {
-          "scenario": "Collection is empty",
-          "junit": "assertTrue(list.isEmpty())",
-          "truth": "assertThat(list).isEmpty()"
-        },
-        {
-          "scenario": "Exception thrown",
-          "junit": "@Test(expected = IllegalArgumentException::class)",
-          "truth": "assertThrows<IllegalArgumentException> { methodUnderTest() }"
-        },
-        {
-          "scenario": "String contains",
-          "junit": "assertTrue(str.contains(\"expected\"))",
-          "truth": "assertThat(str).contains(\"expected\")"
-        }
+        {"scenario": "Equality check", "junit": "assertEquals(expected, actual)", "truth": "assertThat(actual).isEqualTo(expected)"},
+        {"scenario": "Null check", "junit": "assertNull(value)", "truth": "assertThat(value).isNull()"},
+        {"scenario": "Boolean check", "junit": "assertTrue(cond)", "truth": "assertThat(cond).isTrue()"},
+        {"scenario": "Collection contains", "junit": "assertTrue(list.contains(item))", "truth": "assertThat(list).contains(item)"},
+        {"scenario": "Exception thrown", "junit": "@Test(expected=...)","truth": "assertThrows<Exception> { method() }"}
       ]
     },
     {
       "type": "text",
       "heading": "Mocking with Mockito",
-      "content": "Mocking is the practice of replacing a real dependency with a fake object that you control in tests. This allows you to test a class in isolation without needing real databases, network connections, or other external systems. Mockito lets you create mock objects, define what they return when their methods are called (stubbing), and verify that specific methods were called with expected arguments (verification). The mockito-kotlin library provides idiomatic Kotlin extensions like mock<T>(), whenever(), and argumentCaptor<T>() that work seamlessly with Kotlin's type system and null safety."
+      "content": "Mockito allows mocking dependencies so classes can be tested in isolation. Stub return values with whenever(), verify method calls, and use mockito-kotlin extensions (mock<T>(), argumentCaptor<T>()) for idiomatic Kotlin tests."
     },
     {
       "type": "bullet",
       "heading": "Mockito Core Usage",
       "items": [
-        "Create a mock: val mockRepository: UserRepository = mock() — using mockito-kotlin",
-        "Annotated mock: @Mock lateinit var mockRepository: UserRepository — requires @RunWith(MockitoJUnitRunner::class) or MockitoAnnotations.openMocks(this) in @Before",
-        "Stub a return value: whenever(mockRepository.getUser(1)).thenReturn(fakeUser)",
-        "Stub a suspend function: whenever(mockRepository.getUserAsync(1)).thenReturn(fakeUser)",
-        "Stub to throw: whenever(mockRepository.getUser(1)).thenThrow(RuntimeException(\"Network error\"))",
-        "Verify a method was called: verify(mockRepository).getUser(1)",
-        "Verify call count: verify(mockRepository, times(2)).getUser(any())",
-        "Verify never called: verify(mockRepository, never()).deleteUser(any())",
-        "Argument matchers: any(), eq(value), anyString(), anyInt() — use when you don't care about the exact argument value",
-        "Capture arguments: val captor = argumentCaptor<User>(); verify(mockRepository).saveUser(captor.capture()); assertThat(captor.firstValue.name).isEqualTo(\"Alice\")"
+        "Create mock: val mockRepo: UserRepository = mock()",
+        "@Mock lateinit var mockRepo: UserRepository — requires MockitoJUnitRunner or openMocks()",
+        "Stub return: whenever(mockRepo.getUser(1)).thenReturn(fakeUser)",
+        "Stub suspend: whenever(mockRepo.getUserAsync(1)).thenReturn(fakeUser)",
+        "Throw exception: whenever(mockRepo.getUser(1)).thenThrow(RuntimeException(\"Error\"))",
+        "Verify call: verify(mockRepo).getUser(1)",
+        "Verify times: verify(mockRepo, times(2)).getUser(any())",
+        "Argument matchers: any(), eq(value), anyInt()",
+        "Capture args: val captor = argumentCaptor<User>(); verify(mockRepo).saveUser(captor.capture())"
       ]
     },
     {
       "type": "table",
       "heading": "Mockito Stubbing Patterns",
       "rows": [
-        {
-          "pattern": "thenReturn(value)",
-          "description": "Returns the specified value when the stubbed method is called",
-          "example": "whenever(repo.getUser(1)).thenReturn(User(1, \"Alice\"))"
-        },
-        {
-          "pattern": "thenThrow(exception)",
-          "description": "Throws the specified exception when the stubbed method is called",
-          "example": "whenever(repo.getUser(1)).thenThrow(IOException(\"Network error\"))"
-        },
-        {
-          "pattern": "thenAnswer { }",
-          "description": "Executes a lambda and returns its result — useful for dynamic responses based on input arguments",
-          "example": "whenever(repo.getUser(any())).thenAnswer { invocation -> User(invocation.getArgument(0), \"User\") }"
-        },
-        {
-          "pattern": "doNothing().when(mock).method()",
-          "description": "Stubs a void method to do nothing — required for Unit-returning methods",
-          "example": "doNothing().whenever(analyticsTracker).track(any())"
-        },
-        {
-          "pattern": "thenReturn(first, second)",
-          "description": "Returns different values on successive calls to the same method",
-          "example": "whenever(repo.getToken()).thenReturn(\"expired\", \"refreshed\")"
-        }
+        {"pattern": "thenReturn(value)", "description": "Returns value when called", "example": "whenever(repo.getUser(1)).thenReturn(User(1,\"Alice\"))"},
+        {"pattern": "thenThrow(exception)", "description": "Throws exception when called", "example": "whenever(repo.getUser(1)).thenThrow(IOException(\"Error\"))"},
+        {"pattern": "thenAnswer { }", "description": "Executes lambda for dynamic response", "example": "whenever(repo.getUser(any())).thenAnswer { invocation -> User(invocation.getArgument(0),\"User\") }"}
       ]
     },
     {
       "type": "bullet",
-      "heading": "Testing Coroutines with kotlinx-coroutines-test",
+      "heading": "Testing Coroutines",
       "items": [
-        "Use runTest { } block to run suspend functions in tests — it automatically advances virtual time and handles coroutine execution",
-        "Replace Dispatchers.Main with a test dispatcher using MainDispatcherRule: class MainDispatcherRule(val dispatcher: TestDispatcher = UnconfinedTestDispatcher()) : TestWatcher() { override fun starting(desc: Description) { Dispatchers.setMain(dispatcher) }; override fun finished(desc: Description) { Dispatchers.resetMain() } }",
-        "Apply the rule: @get:Rule val mainDispatcherRule = MainDispatcherRule()",
-        "UnconfinedTestDispatcher — executes coroutines eagerly without suspending; good for simple ViewModel tests",
-        "StandardTestDispatcher — requires explicit advancement of time with advanceUntilIdle() or runCurrent(); good for precise timing tests",
-        "Advance time: advanceUntilIdle() — runs all pending coroutines to completion",
-        "Test Flow emissions with Turbine: viewModel.uiState.test { val state = awaitItem(); assertThat(state).isEqualTo(expected); cancelAndIgnoreRemainingEvents() }",
-        "Use turbine's awaitItem(), awaitComplete(), awaitError() to assert specific Flow events in sequence"
+        "Use runTest { } for suspend functions",
+        "Replace Dispatchers.Main with MainDispatcherRule",
+        "Use UnconfinedTestDispatcher for simple tests, StandardTestDispatcher for precise timing",
+        "Advance time with advanceUntilIdle()",
+        "Test Flow with Turbine: awaitItem(), awaitComplete(), awaitError()"
       ]
     },
     {
       "type": "table",
       "heading": "Testing ViewModels",
       "rows": [
-        {
-          "aspect": "MainDispatcherRule",
-          "description": "Replaces Dispatchers.Main with a test dispatcher so ViewModels that use viewModelScope can run in unit tests",
-          "implementation": "@get:Rule val mainDispatcherRule = MainDispatcherRule()"
-        },
-        {
-          "aspect": "InstantTaskExecutorRule",
-          "description": "Makes LiveData execute synchronously on the calling thread — required for LiveData-based ViewModel tests",
-          "implementation": "@get:Rule val instantTaskRule = InstantTaskExecutorRule()"
-        },
-        {
-          "aspect": "Mocking dependencies",
-          "description": "Pass mock repositories and use cases to the ViewModel constructor — never test ViewModel with real network or database",
-          "implementation": "viewModel = HomeViewModel(mockRepository, mockAnalytics)"
-        },
-        {
-          "aspect": "Testing StateFlow",
-          "description": "Collect StateFlow values in a test coroutine using Turbine or by reading .value directly after advancing coroutines",
-          "implementation": "viewModel.uiState.test { assertThat(awaitItem()).isEqualTo(HomeUiState.Loading) }"
-        },
-        {
-          "aspect": "Testing LiveData",
-          "description": "Observe LiveData value directly via .value after triggering the action — works with InstantTaskExecutorRule",
-          "implementation": "viewModel.loadUser(); assertThat(viewModel.user.value).isEqualTo(expectedUser)"
-        },
-        {
-          "aspect": "Testing one-shot events",
-          "description": "Test SharedFlow events or Channel events using Turbine — assert they are emitted exactly once",
-          "implementation": "viewModel.events.test { assertThat(awaitItem()).isInstanceOf(NavigateToDetail::class.java) }"
-        }
+        {"aspect": "MainDispatcherRule", "description": "Replaces Dispatchers.Main", "implementation": "@get:Rule val mainDispatcherRule = MainDispatcherRule()"},
+        {"aspect": "InstantTaskExecutorRule", "description": "Executes LiveData synchronously", "implementation": "@get:Rule val instantTaskRule = InstantTaskExecutorRule()"},
+        {"aspect": "Mocking dependencies", "description": "Pass mocks to ViewModel constructor", "implementation": "viewModel = HomeViewModel(mockRepo)"},
+        {"aspect": "StateFlow", "description": "Collect values in test coroutine", "implementation": "viewModel.uiState.test { assertThat(awaitItem()).isEqualTo(HomeUiState.Loading) }"},
+        {"aspect": "LiveData", "description": "Check value via .value after action", "implementation": "viewModel.loadUser(); assertThat(viewModel.user.value).isEqualTo(expectedUser)"}
       ]
     },
     {
       "type": "bullet",
       "heading": "Fakes vs Mocks",
       "items": [
-        "Mocks — generated by Mockito; you stub specific methods and verify calls; best for simple dependencies with few methods",
-        "Fakes — hand-written in-memory implementations of an interface; best for complex dependencies like repositories",
-        "Example fake repository: class FakeUserRepository : UserRepository { private val users = mutableListOf<User>(); override suspend fun getUser(id: Int) = users.find { it.id == id }; override suspend fun saveUser(user: User) { users.add(user) } }",
-        "Fakes are more maintainable than mocks for interfaces with many methods — you implement behavior rather than stub every call",
-        "Fakes can be shared across multiple test classes — define them in the test source set",
-        "Prefer fakes for repositories and data sources; prefer mocks for analytics, loggers, and simple single-method interfaces",
-        "Fakes make tests less brittle — they don't break when you add new methods to an interface (unlike mocks that require new stubs)",
-        "Keep fakes simple — they should behave like the real implementation but use in-memory storage"
+        "Mocks — generated by Mockito, stub methods and verify calls",
+        "Fakes — in-memory implementations for complex dependencies",
+        "Fakes are reusable, less brittle, and better for repositories",
+        "Mocks are good for simple single-method interfaces",
+        "Keep fakes simple and deterministic"
       ]
     },
     {
       "type": "table",
       "heading": "Common Unit Testing Mistakes",
       "rows": [
-        {
-          "mistake": "Testing implementation details instead of behavior",
-          "fix": "Test what a function does (its output and side effects), not how it does it internally — avoid verifying every internal method call"
-        },
-        {
-          "mistake": "Not using MainDispatcherRule for ViewModel tests",
-          "fix": "ViewModels use viewModelScope which requires Dispatchers.Main — without the rule, coroutines will fail with 'Module with Main dispatcher had failed to initialize'"
-        },
-        {
-          "mistake": "Using Thread.sleep() to wait for async operations",
-          "fix": "Use runTest { } with advanceUntilIdle() or Turbine — Thread.sleep() makes tests slow and flaky"
-        },
-        {
-          "mistake": "Mocking the class under test",
-          "fix": "Only mock dependencies of the class under test — never mock the actual class you are testing"
-        },
-        {
-          "mistake": "Tests depending on each other or shared mutable state",
-          "fix": "Create fresh instances of the class under test in @Before — each test must be fully independent"
-        },
-        {
-          "mistake": "Not testing error and edge cases",
-          "fix": "Write tests for: empty lists, null inputs, network errors, exceptions, boundary values — not just the happy path"
-        },
-        {
-          "mistake": "Overly complex test setup",
-          "fix": "If setup is complex, the class under test likely has too many dependencies — consider refactoring to improve separation of concerns"
-        }
+        {"mistake": "Testing implementation details", "fix": "Test behavior, not internal calls"},
+        {"mistake": "Not using MainDispatcherRule", "fix": "Replace Dispatchers.Main for ViewModel tests"},
+        {"mistake": "Using Thread.sleep()", "fix": "Use runTest { } with advanceUntilIdle()"},
+        {"mistake": "Mocking class under test", "fix": "Only mock dependencies"},
+        {"mistake": "Shared mutable state between tests", "fix": "Use fresh instances in @Before"},
+        {"mistake": "Ignoring error/edge cases", "fix": "Test empty, null, exception, and boundary cases"},
+        {"mistake": "Overly complex setup", "fix": "Refactor to reduce dependencies"}
       ]
     },
     {
       "type": "bullet",
       "heading": "Test Naming Conventions",
       "items": [
-        "Use backtick names for descriptive test names: fun `given user is logged out, when refresh is called, then navigates to login`()",
-        "Follow the pattern: given [precondition], when [action], then [expected outcome]",
-        "Alternative pattern: [method name]_[scenario]_[expected result]: fun getUser_whenUserExists_returnsUser()",
-        "Test class name should match the class under test: HomeViewModelTest tests HomeViewModel",
-        "Group related tests using nested inner classes annotated with @Nested (JUnit 5) or use separate test files per feature",
-        "Use @DisplayName in JUnit 5 for human-readable test names in reports: @DisplayName(\"Given a valid user ID, when getUser is called, returns the correct user\")",
-        "Avoid generic names like test1(), testSuccess(), testError() — they provide no information about what is being tested",
-        "Name test data clearly: val validUser = User(1, \"Alice\"); val invalidUser = User(-1, \"\") — makes test intent obvious"
+        "Use backticks for descriptive names: `given user logged out, when refresh, then navigates to login`",
+        "Pattern: given [precondition], when [action], then [expected outcome]",
+        "Alternative: method_scenario_expected: getUser_whenUserExists_returnsUser()",
+        "Test class name matches class under test",
+        "Use @Nested for grouping (JUnit 5) or separate files per feature",
+        "Use @DisplayName for human-readable test reports",
+        "Avoid generic names like test1(), testSuccess()",
+        "Name test data clearly to reflect intent"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Unit testing with JUnit and Mockito is the foundation of a robust Android test suite. Place unit tests in src/test/ for fast JVM execution, follow the AAA pattern (Arrange, Act, Assert), and use Google Truth for readable assertions. Use Mockito to mock dependencies and isolate the class under test — stub return values with whenever() and verify interactions with verify(). For coroutine-based code, use runTest { } with MainDispatcherRule and Turbine for Flow testing. Prefer fakes over mocks for complex repository interfaces. Always test edge cases and error paths alongside the happy path, keep tests independent by creating fresh instances in @Before, and use descriptive backtick method names that clearly communicate the scenario being tested. Fast, reliable unit tests enable confident refactoring and catch regressions before they reach production."
+      "content": "Unit testing with JUnit and Mockito ensures reliable, maintainable, and fast tests. Place tests in src/test/, follow AAA, use Truth for assertions, Mockito for mocks, Turbine for Flow, and prefer fakes for complex dependencies. Test edge cases, keep tests independent, and use descriptive method names. Proper unit testing enables confident refactoring and prevents regressions."
     }
   ]
 }

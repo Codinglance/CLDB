@@ -3,71 +3,48 @@
   "sections": [
     {
       "type": "text",
-      "heading": "What is the AndroidManifest.xml?",
-      "content": "The AndroidManifest.xml is a required configuration file that lives at the root of every Android project's main source set (src/main/). It acts as the blueprint of your app — telling the Android system everything it needs to know about your app before it runs any code. Every Activity, Service, Broadcast Receiver, and Content Provider must be declared here, along with permissions, hardware requirements, and app metadata."
+      "heading": "What is AndroidManifest.xml?",
+      "content": "AndroidManifest.xml is a required configuration file in every Android app. It tells the Android system about the app’s components, permissions, hardware requirements, and entry point before the app runs."
     },
     {
       "type": "bullet",
       "heading": "What the Manifest Declares",
       "items": [
-        "The app's package name (unique identifier on the device and Play Store)",
-        "All Activities, Services, Broadcast Receivers, and Content Providers",
-        "Permissions the app needs (e.g., INTERNET, CAMERA, LOCATION)",
-        "The minimum and target Android API levels",
-        "Required hardware and software features (e.g., camera, GPS)",
-        "The app's launcher icon and label",
-        "Intent filters that define how components respond to implicit Intents",
-        "App-level metadata (e.g., API keys, Firebase config)"
+        "App package name (unique identifier)",
+        "All app components (Activities, Services, Receivers, Providers)",
+        "Permissions required by the app",
+        "Minimum and target Android versions",
+        "Hardware/software features required",
+        "App icon, label, and theme"
       ]
     },
     {
-      "type": "text",
-      "heading": "Basic Manifest Structure",
-      "content": "The manifest file uses XML syntax and always starts with the <manifest> root element containing the package attribute. Inside it, the <application> element wraps all component declarations and app-wide settings. At minimum, every Android app must have at least one Activity declared with a MAIN action and LAUNCHER category so the system knows which screen to open when the user taps the app icon."
-    },
-    {
       "type": "table",
-      "heading": "Top-Level Manifest Elements",
+      "heading": "Main Manifest Elements",
       "rows": [
         {
           "element": "<manifest>",
-          "description": "Root element; contains the package name and versioning attributes"
-        },
-        {
-          "element": "<uses-permission>",
-          "description": "Declares a permission the app needs (e.g., INTERNET, READ_CONTACTS)"
-        },
-        {
-          "element": "<uses-feature>",
-          "description": "Declares required hardware/software features (e.g., camera, Bluetooth)"
-        },
-        {
-          "element": "<uses-sdk>",
-          "description": "Specifies minSdkVersion and targetSdkVersion (usually set in Gradle)"
+          "description": "Root element containing package name"
         },
         {
           "element": "<application>",
-          "description": "Container for all app components and app-wide attributes like icon and theme"
+          "description": "Contains all app components and app-level settings"
         },
         {
           "element": "<activity>",
-          "description": "Declares an Activity component and its intent filters"
+          "description": "Declares a screen (UI component)"
         },
         {
           "element": "<service>",
-          "description": "Declares a Service component for background processing"
+          "description": "Runs background tasks without UI"
         },
         {
           "element": "<receiver>",
-          "description": "Declares a BroadcastReceiver that listens for system or app events"
+          "description": "Handles system or app broadcast events"
         },
         {
           "element": "<provider>",
-          "description": "Declares a ContentProvider for sharing data between apps"
-        },
-        {
-          "element": "<meta-data>",
-          "description": "Key-value pairs for component or app-level configuration metadata"
+          "description": "Shares data between apps"
         }
       ]
     },
@@ -75,224 +52,82 @@
       "type": "bullet",
       "heading": "Important <application> Attributes",
       "items": [
-        "android:label – The app name displayed to the user on the home screen and in settings",
-        "android:icon – Reference to the launcher icon drawable (e.g., @mipmap/ic_launcher)",
-        "android:roundIcon – Round version of the launcher icon for supported launchers",
-        "android:theme – The default theme applied to all activities (e.g., @style/Theme.AppCompat)",
-        "android:allowBackup – Whether the app's data is backed up to Google Drive (true/false)",
-        "android:supportsRtl – Whether the app supports right-to-left layouts for RTL languages",
-        "android:networkSecurityConfig – Points to an XML file defining network security rules",
-        "android:name – Points to a custom Application subclass if you have one"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Declaring an Activity in the Manifest",
-      "rows": [
-        {
-          "attribute": "android:name",
-          "description": "Fully qualified or relative class name of the Activity (e.g., .MainActivity)"
-        },
-        {
-          "attribute": "android:label",
-          "description": "Title shown in the action bar or task switcher for this Activity"
-        },
-        {
-          "attribute": "android:exported",
-          "description": "Whether other apps can launch this Activity (true for launcher Activity)"
-        },
-        {
-          "attribute": "android:screenOrientation",
-          "description": "Locks orientation: portrait, landscape, or unspecified (default)"
-        },
-        {
-          "attribute": "android:launchMode",
-          "description": "Controls how the Activity is instantiated: standard, singleTop, singleTask, singleInstance"
-        },
-        {
-          "attribute": "android:parentActivityName",
-          "description": "Enables the Up button by declaring this Activity's logical parent"
-        },
-        {
-          "attribute": "<intent-filter>",
-          "description": "Defines what Intents this Activity responds to (action, category, data)"
-        }
+        "android:label – App name shown to users",
+        "android:icon – Launcher icon",
+        "android:theme – Default theme for the app",
+        "android:allowBackup – Allows backup to Google Drive",
+        "android:supportsRtl – Supports right-to-left layouts"
       ]
     },
     {
       "type": "text",
       "heading": "Intent Filters",
-      "content": "An intent filter tells the Android system what types of Intents a component can respond to. For the launcher Activity, you must include the MAIN action and LAUNCHER category so Android knows this is the entry point of your app. Other components can declare filters to respond to implicit intents like sharing, viewing URLs, or opening specific file types."
+      "content": "Intent filters define what type of intents a component can respond to. The launcher Activity must include MAIN action and LAUNCHER category so Android knows which screen to open when the user launches the app."
     },
     {
       "type": "table",
-      "heading": "Common Intent Filter Actions & Categories",
+      "heading": "Common Intent Filter Actions",
       "rows": [
         {
-          "element": "action: MAIN",
-          "description": "Marks this Activity as the entry point of the application"
+          "action": "MAIN",
+          "purpose": "Entry point of the application"
         },
         {
-          "element": "category: LAUNCHER",
-          "description": "Places the app icon in the device's launcher/home screen"
+          "action": "VIEW",
+          "purpose": "Display data like URLs or files"
         },
         {
-          "element": "action: VIEW",
-          "description": "Activity can display data (e.g., open a URL in a browser)"
+          "action": "SEND",
+          "purpose": "Share data with other apps"
         },
         {
-          "element": "action: SEND",
-          "description": "Activity can send data to another app (e.g., share text or image)"
-        },
-        {
-          "element": "action: PICK",
-          "description": "Activity lets the user select a piece of data (e.g., contact, image)"
-        },
-        {
-          "element": "category: DEFAULT",
-          "description": "Required for Activities that respond to implicit intents"
-        },
-        {
-          "element": "category: BROWSABLE",
-          "description": "Allows the Activity to be started from a web browser via a link"
-        },
-        {
-          "element": "data: android:scheme",
-          "description": "Specifies URI scheme (http, https, custom) for deep link handling"
+          "action": "PICK",
+          "purpose": "Select data such as contacts or images"
         }
       ]
     },
     {
       "type": "bullet",
-      "heading": "App Permissions in the Manifest",
+      "heading": "App Permissions",
       "items": [
-        "Normal permissions are granted automatically at install time (e.g., INTERNET, VIBRATE)",
-        "Dangerous permissions require explicit user approval at runtime (e.g., CAMERA, LOCATION)",
-        "Declare all permissions inside <manifest> but outside <application> using <uses-permission>",
-        "android.permission.INTERNET – Required for any network/HTTP calls",
-        "android.permission.ACCESS_FINE_LOCATION – GPS-level precise location access",
-        "android.permission.CAMERA – Access to device camera hardware",
-        "android.permission.READ_EXTERNAL_STORAGE – Read files from shared storage (pre-API 33)",
-        "android.permission.POST_NOTIFICATIONS – Required to show notifications on Android 13+"
+        "Declared using <uses-permission> in the manifest",
+        "Normal permissions are granted automatically",
+        "Dangerous permissions require runtime user approval",
+        "Examples: INTERNET, CAMERA, LOCATION, MICROPHONE"
       ]
     },
     {
       "type": "table",
-      "heading": "Normal vs Dangerous Permissions",
+      "heading": "Permission Types",
       "rows": [
         {
           "type": "Normal",
-          "granted": "Automatically at install",
-          "user_prompt": "No",
-          "examples": "INTERNET, VIBRATE, NFC, BLUETOOTH"
+          "description": "Granted automatically at install time"
         },
         {
           "type": "Dangerous",
-          "granted": "Must be requested at runtime",
-          "user_prompt": "Yes (dialog shown to user)",
-          "examples": "CAMERA, LOCATION, READ_CONTACTS, MICROPHONE"
+          "description": "Requires runtime permission request"
         },
         {
           "type": "Signature",
-          "granted": "Only if same signing key",
-          "user_prompt": "No",
-          "examples": "Used between apps from same developer"
-        },
-        {
-          "type": "Special",
-          "granted": "Via Settings screen",
-          "user_prompt": "Redirected to Settings",
-          "examples": "MANAGE_EXTERNAL_STORAGE, SYSTEM_ALERT_WINDOW"
+          "description": "Granted only to apps with same signing key"
         }
       ]
     },
     {
       "type": "bullet",
-      "heading": "Declaring Other App Components",
+      "heading": "Common Manifest Mistakes",
       "items": [
-        "<service android:name='.MyService'> – Declares a background Service component",
-        "Add android:foregroundServiceType for foreground services on Android 9+",
-        "<receiver android:name='.MyReceiver' android:exported='false'> – Declares a BroadcastReceiver",
-        "Receivers with intent filters for system events should set exported='true' carefully",
-        "<provider android:name='.MyProvider' android:authorities='com.example.provider'> – Declares a ContentProvider",
-        "Providers require android:exported and android:authorities attributes to function",
-        "From Android 12 (API 31)+, all components with intent filters must explicitly set android:exported"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "android:exported Rules (API 31+)",
-      "rows": [
-        {
-          "component": "Launcher Activity",
-          "exported_value": "true",
-          "reason": "Must be accessible from the device launcher"
-        },
-        {
-          "component": "Other Activities (internal only)",
-          "exported_value": "false",
-          "reason": "Should not be started by external apps"
-        },
-        {
-          "component": "Service (internal)",
-          "exported_value": "false",
-          "reason": "Prevent other apps from binding or starting the service"
-        },
-        {
-          "component": "BroadcastReceiver (system events)",
-          "exported_value": "true",
-          "reason": "System needs to deliver broadcasts to it"
-        },
-        {
-          "component": "ContentProvider",
-          "exported_value": "false (default for API 17+)",
-          "reason": "Only expose if sharing data with other apps"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Common Manifest Mistakes to Avoid",
-      "items": [
-        "Forgetting to declare a new Activity — causes ActivityNotFoundException crash at runtime",
-        "Missing android:exported on components with intent filters on API 31+ — causes build failure",
-        "Not declaring INTERNET permission — causes NetworkOnMainThreadException or silent failures",
-        "Declaring dangerous permissions only in manifest without runtime request — permission denied",
-        "Setting minSdkVersion too low without testing on older devices — compatibility crashes",
-        "Hardcoding API keys in meta-data without securing them — security vulnerability",
-        "Leaving debug-only permissions (e.g., READ_LOGS) in release builds"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Merged Manifest: How Libraries Add to Your Manifest",
-      "rows": [
-        {
-          "concept": "Manifest Merger",
-          "description": "Android merges manifests from your app, libraries, and SDKs into one final manifest at build time"
-        },
-        {
-          "concept": "View Merged Manifest",
-          "description": "In Android Studio, open AndroidManifest.xml and click the 'Merged Manifest' tab at the bottom"
-        },
-        {
-          "concept": "Conflict Resolution",
-          "description": "Use tools:replace or tools:remove attributes to override library manifest entries"
-        },
-        {
-          "concept": "Firebase / Play Services",
-          "description": "These libraries automatically inject their own permissions and components via manifest merger"
-        },
-        {
-          "concept": "tools:node='remove'",
-          "description": "Removes a specific element injected by a library from the final merged manifest"
-        }
+        "Forgetting to declare a new Activity",
+        "Missing android:exported on API 31+",
+        "Not declaring INTERNET permission for network calls",
+        "Requesting dangerous permissions without runtime handling"
       ]
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "The AndroidManifest.xml is the foundation of every Android app. It registers all components, declares permissions, and defines how the system interacts with your app. A well-configured manifest prevents runtime crashes and ensures your app behaves correctly across different Android versions and devices. Always double-check the manifest after adding new components, libraries, or permissions."
+      "content": "AndroidManifest.xml is the central configuration file of an Android app. It defines app components, permissions, and how the system interacts with your app. Proper configuration prevents crashes and ensures smooth app behavior."
     }
   ]
 }

@@ -4,366 +4,73 @@
     {
       "type": "text",
       "heading": "What is Room?",
-      "content": "Room is the official Android Jetpack library for local database persistence, built as an abstraction layer on top of SQLite. While SQLite is powerful, writing raw SQL queries directly in Android code is error-prone, verbose, and produces no compile-time verification of SQL correctness. Room solves this by mapping Kotlin data classes to database tables, validating SQL at compile time, and providing a clean coroutine and Flow-based API for all database operations. Room is the recommended solution for any app that needs to persist structured data locally on the device."
+      "content": "Room is the official Android Jetpack library used for local database storage. It acts as an abstraction layer on top of SQLite, making database operations easier and safer. Instead of writing complex SQLite code manually, developers define data models using Kotlin classes and Room automatically generates the database implementation. Room also validates SQL queries at compile time, reducing runtime errors and improving code reliability."
     },
     {
       "type": "bullet",
       "heading": "Why Use Room?",
       "items": [
-        "Compile-time SQL verification — incorrect queries cause build errors, not runtime crashes",
-        "No boilerplate — Room generates all the SQLite cursor and ContentValues code automatically",
-        "Kotlin coroutine support — suspend functions for one-shot operations, Flow for reactive queries",
-        "Flow integration — database changes automatically emit new values through a Flow observable",
-        "Type converters — store non-primitive types like Date, List, or custom objects using TypeConverters",
-        "Migration support — structured database schema migrations with version tracking",
-        "Relationship support — @Relation annotation for one-to-one, one-to-many, and many-to-many relationships",
-        "Test friendly — in-memory database for fast, isolated unit and integration tests"
+        "Compile-time SQL validation to catch query errors early",
+        "Simplifies database operations compared to raw SQLite",
+        "Supports Kotlin coroutines and suspend functions",
+        "Provides reactive queries using Kotlin Flow",
+        "Reduces boilerplate code by generating database logic",
+        "Supports migrations for updating database schemas",
+        "Integrates well with modern Android architecture (MVVM)"
       ]
     },
     {
       "type": "table",
-      "heading": "Room Core Components",
+      "heading": "Core Components of Room",
       "rows": [
         {
           "component": "@Entity",
-          "description": "A Kotlin data class annotated to represent a database table — each property maps to a column",
-          "example": "@Entity(tableName = \"users\") data class User(@PrimaryKey val id: Int, val name: String)"
+          "description": "Represents a database table using a Kotlin data class"
         },
         {
           "component": "@Dao",
-          "description": "Data Access Object — an interface containing annotated functions for all database operations",
-          "example": "@Dao interface UserDao { @Query(\"SELECT * FROM users\") fun getAllUsers(): Flow<List<User>> }"
+          "description": "Defines database operations such as insert, update, delete, and queries"
         },
         {
           "component": "@Database",
-          "description": "Abstract class that extends RoomDatabase — the main entry point for creating and accessing the database",
-          "example": "@Database(entities = [User::class], version = 1) abstract class AppDatabase : RoomDatabase()"
+          "description": "The main database class that connects entities and DAOs"
         },
         {
           "component": "RoomDatabase",
-          "description": "The base class that Room generates — manages the SQLite database connection and provides DAO instances",
-          "example": "AppDatabase.getInstance(context).userDao()"
-        },
-        {
-          "component": "TypeConverter",
-          "description": "A class containing @TypeConverter functions that convert unsupported types to/from Room-supported types",
-          "example": "@TypeConverter fun fromDate(date: Date): Long = date.time"
-        },
-        {
-          "component": "Migration",
-          "description": "A class that defines SQL statements to migrate the database schema from one version to another",
-          "example": "val MIGRATION_1_2 = object : Migration(1, 2) { override fun migrate(db: SupportSQLiteDatabase) { ... } }"
+          "description": "Base class that manages the database connection and provides DAO instances"
         }
       ]
     },
     {
       "type": "text",
-      "heading": "Setting Up Room",
-      "content": "To use Room, add the room-runtime and room-ktx dependencies to your app-level build.gradle.kts, along with the Room annotation processor (kapt or KSP). KSP (Kotlin Symbol Processing) is the modern and faster alternative to kapt and is now the recommended processor for Room. Once dependencies are added, you define your Entity classes, DAO interfaces, and Database class — Room generates the implementation at compile time."
+      "heading": "Entities (Tables)",
+      "content": "Entities represent tables in the Room database. Each entity is a Kotlin data class annotated with @Entity. The properties of the class become columns in the database table, and one field is usually marked as the primary key using @PrimaryKey."
+    },
+    {
+      "type": "text",
+      "heading": "Data Access Objects (DAO)",
+      "content": "DAO interfaces define how the app interacts with the database. They contain functions annotated with Room annotations such as @Insert, @Update, @Delete, and @Query. Room generates the implementation automatically during compilation."
     },
     {
       "type": "bullet",
-      "heading": "Room Setup Steps",
+      "heading": "Common DAO Operations",
       "items": [
-        "Step 1: Add Room dependencies — implementation(\"androidx.room:room-runtime:2.6.x\") and room-ktx",
-        "Step 2: Add KSP processor — ksp(\"androidx.room:room-compiler:2.6.x\") — or kapt if using kapt",
-        "Step 3: Apply KSP plugin in build.gradle.kts: id(\"com.google.devtools.ksp\")",
-        "Step 4: Create Entity data classes annotated with @Entity",
-        "Step 5: Create DAO interfaces annotated with @Dao with your query functions",
-        "Step 6: Create the Database abstract class annotated with @Database",
-        "Step 7: Build the database instance using Room.databaseBuilder() — typically a singleton",
-        "Step 8: Inject the DAO into your Repository using Hilt for dependency injection"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "@Entity Annotations & Attributes",
-      "rows": [
-        {
-          "annotation": "@Entity(tableName = \"users\")",
-          "description": "Marks the class as a Room table; tableName overrides the default (class name lowercase)"
-        },
-        {
-          "annotation": "@PrimaryKey",
-          "description": "Marks a field as the primary key; add autoGenerate = true to auto-increment integer IDs"
-        },
-        {
-          "annotation": "@PrimaryKey(autoGenerate = true)",
-          "description": "Auto-generates a unique integer ID for each new row — use with val id: Int = 0 as default"
-        },
-        {
-          "annotation": "@ColumnInfo(name = \"full_name\")",
-          "description": "Overrides the column name in the database — useful for matching existing database schemas"
-        },
-        {
-          "annotation": "@Ignore",
-          "description": "Tells Room to ignore this field — it will not be persisted to the database"
-        },
-        {
-          "annotation": "@Embedded",
-          "description": "Flattens a nested object's fields into the parent table's columns — avoids a separate table"
-        },
-        {
-          "annotation": "@ForeignKey",
-          "description": "Defines a foreign key relationship with another Entity table for referential integrity"
-        },
-        {
-          "annotation": "@Index",
-          "description": "Creates a database index on one or more columns to speed up queries on those columns"
-        }
+        "@Insert — add new data to the database",
+        "@Query — read data using SQL queries",
+        "@Update — modify existing rows",
+        "@Delete — remove data from the table",
+        "Queries can return Flow for reactive updates when the database changes"
       ]
     },
     {
       "type": "text",
-      "heading": "Data Access Objects (DAOs)",
-      "content": "The DAO is the heart of Room's query API. It is a Kotlin interface where each function is annotated with a Room query annotation and Room generates the full SQLite implementation at compile time. DAOs support all CRUD operations — Create (Insert), Read (Query), Update, and Delete — as well as complex custom SQL queries. Functions can return plain values, nullable values, suspend functions for coroutines, or Flow for reactive observation."
-    },
-    {
-      "type": "bullet",
-      "heading": "DAO Query Annotations",
-      "items": [
-        "@Insert — inserts one or more entities; returns Long (row ID) or List<Long> for bulk inserts",
-        "@Insert(onConflict = OnConflictStrategy.REPLACE) — replaces existing row on primary key conflict",
-        "@Insert(onConflict = OnConflictStrategy.IGNORE) — ignores insert if row with same primary key exists",
-        "@Update — updates existing entities matched by primary key; returns Int (number of rows updated)",
-        "@Delete — deletes entities matched by primary key; returns Int (number of rows deleted)",
-        "@Query(\"SELECT * FROM users\") — executes a custom SQL SELECT query",
-        "@Query(\"SELECT * FROM users WHERE id = :userId\") — parameterized query with :paramName syntax",
-        "@RawQuery — accepts a SupportSQLiteQuery object for fully dynamic queries built at runtime"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "DAO Return Types",
-      "rows": [
-        {
-          "return_type": "suspend fun insert(entity): Long",
-          "description": "One-shot insert — returns the row ID of the inserted entity; must be called from a coroutine"
-        },
-        {
-          "return_type": "suspend fun getUser(id: Int): User?",
-          "description": "One-shot query — returns the result once; nullable if no matching row exists"
-        },
-        {
-          "return_type": "fun getAllUsers(): Flow<List<User>>",
-          "description": "Reactive query — emits a new list every time the users table changes; no suspend needed"
-        },
-        {
-          "return_type": "fun getUserFlow(id: Int): Flow<User?>",
-          "description": "Reactive single entity — emits updated User or null whenever the matching row changes"
-        },
-        {
-          "return_type": "suspend fun update(entity): Int",
-          "description": "One-shot update — returns the number of rows updated"
-        },
-        {
-          "return_type": "suspend fun delete(entity): Int",
-          "description": "One-shot delete — returns the number of rows deleted"
-        },
-        {
-          "return_type": "suspend fun deleteAll()",
-          "description": "Deletes all rows — typically used with @Query(\"DELETE FROM table_name\")"
-        },
-        {
-          "return_type": "suspend fun getCount(): Int",
-          "description": "Returns a scalar value — useful for COUNT, SUM, or other aggregate queries"
-        }
-      ]
-    },
-    {
-      "type": "text",
-      "heading": "The @Database Class",
-      "content": "The @Database class is the central access point for the entire Room database. It is an abstract class that extends RoomDatabase and lists all Entity classes in the entities array, along with a version number. The version number is critical — incrementing it without providing a Migration causes Room to destroy and recreate the database by default, losing all data. The @Database class also declares abstract functions that return each DAO interface, which Room implements automatically."
-    },
-    {
-      "type": "bullet",
-      "heading": "Creating the Database Singleton",
-      "items": [
-        "Use the singleton pattern — only one database instance should exist in the entire app",
-        "Create with Room.databaseBuilder(context, AppDatabase::class.java, \"app_database.db\").build()",
-        "Use @Volatile on the INSTANCE field to ensure visibility across threads",
-        "Use synchronized(this) {} block with double-checked locking to prevent multiple instantiations",
-        "With Hilt: provide the database in a @Module with @Provides @Singleton to ensure a single instance",
-        "Use .fallbackToDestructiveMigration() during development to allow schema changes without migrations",
-        "Never use fallbackToDestructiveMigration() in production — it deletes all user data on schema change",
-        "Use .allowMainThreadQueries() only in tests — never in production code"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "OnConflictStrategy Options",
-      "rows": [
-        {
-          "strategy": "REPLACE",
-          "behavior": "Deletes the conflicting row and inserts the new one — effectively an upsert",
-          "use_case": "Syncing remote data to local — always want the latest version"
-        },
-        {
-          "strategy": "IGNORE",
-          "behavior": "Silently ignores the insert if a conflict exists — keeps the original row",
-          "use_case": "Insert only if not exists — avoid duplicate entries"
-        },
-        {
-          "strategy": "ABORT",
-          "behavior": "Rolls back the current transaction and throws an exception on conflict",
-          "use_case": "Strict insert — you must handle the conflict explicitly"
-        },
-        {
-          "strategy": "FAIL",
-          "behavior": "Throws an exception but does not roll back previous operations in the transaction",
-          "use_case": "Rarely used — prefer ABORT for clarity"
-        },
-        {
-          "strategy": "NONE",
-          "behavior": "Default SQLite behavior — depends on the constraint definition",
-          "use_case": "Default — let SQLite decide based on the constraint type"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "TypeConverters — Storing Complex Types",
-      "items": [
-        "Room natively supports: Int, Long, Float, Double, String, Boolean, ByteArray, and their nullable counterparts",
-        "For all other types (Date, List, custom objects), you must provide a TypeConverter",
-        "Create a class with @TypeConverter functions: one to convert FROM the type TO a supported type, and one to convert back",
-        "Example: convert Date to Long (timestamp): @TypeConverter fun dateToLong(date: Date?) = date?.time",
-        "Example: convert Long back to Date: @TypeConverter fun longToDate(value: Long?) = value?.let { Date(it) }",
-        "Register converters with @TypeConverters(MyConverters::class) on the @Database class",
-        "For List<String>, convert to/from JSON String using Gson or Kotlin serialization",
-        "Avoid storing large lists as JSON in a single column — normalize into a separate related table instead"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Room Relationships",
-      "rows": [
-        {
-          "relationship": "One-to-One",
-          "description": "One parent entity has exactly one child entity",
-          "implementation": "Use @Embedded or @Relation with a data class holding both entities; query with @Transaction"
-        },
-        {
-          "relationship": "One-to-Many",
-          "description": "One parent entity has multiple child entities (e.g., User has many Orders)",
-          "implementation": "Data class with parent and List<Child>; @Relation(parentColumn = \"id\", entityColumn = \"userId\")"
-        },
-        {
-          "relationship": "Many-to-Many",
-          "description": "Multiple entities on both sides (e.g., Students and Courses)",
-          "implementation": "Create a cross-reference @Entity with two foreign keys; use @Relation with associateBy = Junction"
-        },
-        {
-          "relationship": "@Transaction",
-          "description": "Required on queries that load relationships — ensures the parent and children are read atomically",
-          "implementation": "Annotate the DAO function with @Transaction to wrap the multi-table read in a single transaction"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Database Migrations",
-      "items": [
-        "Every time you change the database schema (add column, rename table, etc.), increment the version number in @Database",
-        "Provide a Migration object: val MIGRATION_1_2 = object : Migration(1, 2) { override fun migrate(db: SupportSQLiteDatabase) { db.execSQL(\"ALTER TABLE users ADD COLUMN age INTEGER NOT NULL DEFAULT 0\") } }",
-        "Pass migrations to the builder: Room.databaseBuilder(...).addMigrations(MIGRATION_1_2).build()",
-        "Room validates the migration — if the resulting schema does not match the expected schema, it throws an exception",
-        "For development only: .fallbackToDestructiveMigration() skips migration and recreates the database",
-        "Test migrations using MigrationTestHelper from the room-testing artifact",
-        "Auto-migrations (Room 2.4+): @AutoMigration(from = 1, to = 2) in @Database — handles simple schema changes automatically",
-        "Complex migrations (column renames, table merges) still require manual Migration objects"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Room Database Builder Options",
-      "rows": [
-        {
-          "option": "databaseBuilder(context, Class, name)",
-          "description": "Creates a persistent database file on disk with the given name"
-        },
-        {
-          "option": "inMemoryDatabaseBuilder(context, Class)",
-          "description": "Creates a temporary in-memory database — data lost when process ends; used for testing"
-        },
-        {
-          "option": ".addMigrations(vararg migrations)",
-          "description": "Provides Migration objects for schema upgrades between versions"
-        },
-        {
-          "option": ".fallbackToDestructiveMigration()",
-          "description": "Drops and recreates database when no migration is found — loses all data; development only"
-        },
-        {
-          "option": ".addTypeConverter(converterInstance)",
-          "description": "Provides a TypeConverter instance when it has dependencies that cannot be auto-created"
-        },
-        {
-          "option": ".setQueryCoroutineContext(Dispatchers.IO)",
-          "description": "Specifies the coroutine context for database queries (Room 2.5+)"
-        },
-        {
-          "option": ".allowMainThreadQueries()",
-          "description": "Permits synchronous queries on the main thread — only for unit tests, never in production"
-        },
-        {
-          "option": ".createFromAsset(\"database.db\")",
-          "description": "Pre-populates the database from a SQLite file bundled in the assets/ folder"
-        }
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Room with Hilt — Providing Database and DAO",
-      "items": [
-        "In a Hilt @Module, provide the database as a @Singleton: @Provides @Singleton fun provideDatabase(@ApplicationContext context: Context): AppDatabase",
-        "Build the database: Room.databaseBuilder(context, AppDatabase::class.java, \"app_db\").build()",
-        "Provide the DAO from the database instance: @Provides fun provideUserDao(db: AppDatabase): UserDao = db.userDao()",
-        "DAO does not need @Singleton — it is a thin wrapper and lightweight to create",
-        "Inject the DAO into the Repository constructor: class UserRepository @Inject constructor(private val dao: UserDao)",
-        "The ViewModel receives the Repository via Hilt — it never directly touches Room or the DAO",
-        "Add migration instances to the builder in the Hilt module before calling .build()",
-        "Use @ApplicationContext to get the application context — never inject Activity context into a Singleton"
-      ]
-    },
-    {
-      "type": "table",
-      "heading": "Common Room Mistakes to Avoid",
-      "rows": [
-        {
-          "mistake": "Running Room queries on the main thread",
-          "fix": "Use suspend functions in DAO and call from viewModelScope, or return Flow which runs on IO automatically"
-        },
-        {
-          "mistake": "Incrementing database version without a Migration",
-          "fix": "Always provide a Migration object or use fallbackToDestructiveMigration() only during development"
-        },
-        {
-          "mistake": "Exposing Room entities directly to the ViewModel and UI",
-          "fix": "Map Room entities to domain model classes in the Repository before exposing to upper layers"
-        },
-        {
-          "mistake": "Creating multiple database instances",
-          "fix": "Use the singleton pattern or Hilt @Singleton scope — one AppDatabase instance for the app lifetime"
-        },
-        {
-          "mistake": "Using @Query without @Transaction for relationship queries",
-          "fix": "Always add @Transaction to DAO functions that query multiple related tables"
-        },
-        {
-          "mistake": "Storing large JSON blobs in a single column",
-          "fix": "Normalize data into separate related tables with proper foreign key relationships"
-        },
-        {
-          "mistake": "Not testing migrations",
-          "fix": "Use MigrationTestHelper and in-memory database in tests to verify migration correctness"
-        }
-      ]
+      "heading": "Room Database Class",
+      "content": "The database class is annotated with @Database and extends RoomDatabase. It lists all entity classes and provides abstract methods to access DAO interfaces. Usually, the database is created as a singleton instance so that only one database connection exists during the app's lifecycle."
     },
     {
       "type": "text",
       "heading": "Summary",
-      "content": "Room is the definitive solution for local database persistence in Android. It wraps SQLite with a type-safe, compile-time-verified, coroutine-friendly API that integrates naturally with the Repository pattern and the broader Jetpack ecosystem. Define your schema with @Entity, declare your operations with @Dao, wire everything together in @Database, and provide a singleton instance via Hilt. Use Flow for reactive database queries that automatically update your UI whenever data changes, and always provide proper Migrations when evolving your schema in production apps."
+      "content": "Room simplifies SQLite database management in Android by providing a type-safe and structured API. Using entities, DAOs, and a database class, developers can easily store and retrieve structured data locally. With coroutine and Flow support, Room integrates smoothly with modern Android architectures like MVVM, making it the recommended solution for local database persistence."
     }
   ]
 }
