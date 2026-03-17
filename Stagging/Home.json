@@ -103,13 +103,13 @@
       "meta": "15 Problems • 1.5 hrs"
     },
     {
-      "id": "course_1",
-      "tag": "COURSE",
+       "id": "k1",
+      "tag": "CHEAT_SHEET",
       "badge": "NEW",
-      "icon": "🎓",
-      "title": "System Design Basics",
-      "subtitle": "Learn scalable architecture patterns from scratch",
-      "meta": "8 Chapters • 3 hrs"
+      "icon": "📄",
+      "title": "Kotlin Basics",
+      "subtitle": "val/var, null safety, lambdas & more",
+      "meta": "1 Sheet • 30 mins"
     }
   ],
   "banners": [
