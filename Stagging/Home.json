@@ -75,6 +75,7 @@
     {
       "id": "dsa_1",
       "tag": "DSA",
+        "categoryId": "DSA",
       "badge": "NEW",
       "icon": "</>",
       "isMono": true,
@@ -84,6 +85,7 @@
     },
     {
       "id": "dsa_2",
+        "categoryId": "DSA",
       "tag": "DSA",
       "badge": "HOT",
       "icon": "</>",
@@ -96,6 +98,7 @@
       "id": "dsa_3",
       "tag": "DSA",
       "badge": "NEW",
+        "categoryId": "DSA",
       "icon": "</>",
       "isMono": true,
       "title": "Graph Algorithms",
@@ -103,8 +106,9 @@
       "meta": "15 Problems • 1.5 hrs"
     },
     {
-       "id": "k1",
+      "id": "k1",
       "tag": "CHEAT_SHEET",
+              "categoryId": "Kotlin",
       "badge": "NEW",
       "icon": "📄",
       "title": "Kotlin Basics",
