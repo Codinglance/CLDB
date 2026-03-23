@@ -73,46 +73,23 @@
   },
   "newlyAdded": [
     {
-      "id": "dsa_1",
-      "tag": "DSA",
-        "categoryId": "DSA",
-      "badge": "NEW",
-      "icon": "</>",
-      "isMono": true,
-      "title": "Binary Search Tree",
-      "subtitle": "Master BST operations with interactive examples",
-      "meta": "12 Problems • 45 mins"
-    },
-    {
-      "id": "dsa_2",
-        "categoryId": "DSA",
-      "tag": "DSA",
-      "badge": "HOT",
-      "icon": "</>",
-      "isMono": true,
-      "title": "Dynamic Programming",
-      "subtitle": "Crack DP problems with top-down & bottom-up patterns",
-      "meta": "20 Problems • 2 hrs"
-    },
-    {
-      "id": "dsa_3",
-      "tag": "DSA",
-      "badge": "NEW",
-        "categoryId": "DSA",
-      "icon": "</>",
-      "isMono": true,
-      "title": "Graph Algorithms",
-      "subtitle": "BFS, DFS, Dijkstra & more — with visual walkthroughs",
-      "meta": "15 Problems • 1.5 hrs"
-    },
-    {
       "id": "k1",
       "tag": "CHEAT_SHEET",
-              "categoryId": "Kotlin",
+      "categoryId": "Kotlin",
       "badge": "NEW",
       "icon": "📄",
       "title": "Kotlin Basics",
       "subtitle": "val/var, null safety, lambdas & more",
+      "meta": "1 Sheet • 30 mins"
+    },
+    {
+      "id": "k1",
+      "tag": "CHEAT_SHEET",
+      "categoryId": "Git",
+      "badge": "NEW",
+      "icon": "📄",
+      "title": "Git Basic to Advance",
+      "subtitle": "Git Cheat Sheet",
       "meta": "1 Sheet • 30 mins"
     }
   ],
