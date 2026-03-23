@@ -1,631 +1,649 @@
 {
+  "id": "kotlin",
   "title": "Kotlin Cheat Sheet",
-  "subTitle": "Basics, Functions, Classes & OOP and more",
-  "emoji": "📝",
-  "tag":"Basics",
-  "key":"Kotlin",
   "categories": [
     {
-      "id": "basics",
-      "label": "Basics",
-      "emoji": "📦",
-      "items": [
+      "heading": "Variables",
+      "topics": [
         {
-          "id": "basics_1",
-          "type": "CONCEPT",
-          "title": "val vs var",
-          "badge": "Core",
-          "body": "val is immutable (read-only) — like final in Java. var is mutable. Always prefer val; use var only when reassignment is truly needed."
+          "topic": "val",
+          "desc": "Immutable (read-only) variable",
+          "code": "val name: String = \"Kotlin\""
         },
         {
-          "id": "basics_2",
-          "type": "CODE",
-          "title": "Null Safety",
-          "body": "Kotlin eliminates NPEs at compile time by distinguishing nullable (String?) from non-nullable (String).",
-          "language": "kotlin",
-          "code": "val name: String? = null\n\n// Safe call — returns null if name is null\nval length = name?.length          // Int?\n\n// Elvis operator — provide a default\nval display = name ?: \"Anonymous\"\n\n// let block — runs only when non-null\nname?.let { n -> println(\"Hello, $n\") }\n\n// Non-null assertion — throws if null, avoid!\nval forced = name!!.length"
+          "topic": "var",
+          "desc": "Mutable variable",
+          "code": "var count = 0"
         },
         {
-          "id": "basics_3",
-          "type": "CODE",
-          "title": "Basic Types",
-          "body": "Kotlin's type system unifies primitives and objects. At runtime, Int/Double etc. compile to JVM primitives where possible.",
-          "language": "kotlin",
-          "code": "val i: Int     = 42\nval l: Long    = 42L\nval d: Double  = 3.14\nval f: Float   = 3.14f\nval b: Boolean = true\nval c: Char    = 'A'\nval s: String  = \"Hello\"\n\n// Type inference — compiler deduces the type\nval inferred = 100        // Int\nval text     = \"Kotlin\"   // String\n\n// String templates\nval msg = \"Value is $i and double is ${i * 2}\""
+          "topic": "const val",
+          "desc": "Compile-time constant",
+          "code": "const val PI = 3.14"
         },
         {
-          "id": "basics_4",
-          "type": "CODE",
-          "title": "when Expression",
-          "body": "when is Kotlin's switch on steroids — it's an expression, supports arbitrary conditions, and is exhaustive on sealed/enum types.",
-          "language": "kotlin",
-          "code": "val x = 5\n\n// As expression\nval label = when (x) {\n    1       -> \"one\"\n    2, 3    -> \"two or three\"\n    in 4..9 -> \"four to nine\"\n    else    -> \"other\"\n}\n\n// Without argument — replaces if/else chain\nval msg = when {\n    x < 0   -> \"negative\"\n    x == 0  -> \"zero\"\n    else    -> \"positive\"\n}\n\n// Smart cast inside when\nfun describe(obj: Any) = when (obj) {\n    is Int    -> \"Int: $obj\"\n    is String -> \"String length ${obj.length}\"\n    else      -> \"unknown\"\n}"
+          "topic": "lateinit var",
+          "desc": "Late-initialized non-null variable",
+          "code": "lateinit var db: Database"
         },
         {
-          "id": "basics_5",
-          "type": "CODE",
-          "title": "Ranges & Loops",
-          "body": "Kotlin ranges are concise and compile to efficient index loops on the JVM.",
-          "language": "kotlin",
-          "code": "// Closed range (includes 10)\nfor (i in 1..10) print(i)\n\n// Half-open range (excludes 10)\nfor (i in 1 until 10) print(i)\n\n// Step and reversed\nfor (i in 10 downTo 1 step 2) print(i)\n\n// Iterate a list with index\nval fruits = listOf(\"apple\", \"banana\", \"cherry\")\nfor ((index, value) in fruits.withIndex()) {\n    println(\"$index -> $value\")\n}\n\n// while\nvar n = 0\nwhile (n < 5) { n++ }\n\n// repeat\nrepeat(3) { println(\"tick\") }"
-        },
-        {
-          "id": "basics_6",
-          "type": "TIP",
-          "title": "Use data classes for models",
-          "badge": "Best Practice",
-          "body": "data class auto-generates equals(), hashCode(), toString() and copy(). Perfect for API models, DTOs and UI state objects."
-        },
-        {
-          "id": "basics_7",
-          "type": "WARNING",
-          "title": "Avoid the !! operator",
-          "badge": "Pitfall",
-          "body": "!! throws NullPointerException at runtime when the value is null. Use safe calls (?.), let blocks, or require() instead."
-        },
-        {
-          "id": "basics_8",
-          "type": "TABLE",
-          "title": "Equality Operators",
-          "body": "Kotlin distinguishes structural from referential equality.",
-          "tableHeaders": [
-            "Operator",
-            "Meaning",
-            "Calls"
-          ],
-          "tableRows": [
-            [
-              "==",
-              "Structural equality",
-              "equals()"
-            ],
-            [
-              "!=",
-              "Structural inequality",
-              "!equals()"
-            ],
-            [
-              "===",
-              "Referential equality",
-              "pointer check"
-            ],
-            [
-              "!==",
-              "Referential inequality",
-              "pointer check"
-            ]
-          ]
+          "topic": "by lazy { }",
+          "desc": "Value computed only on first access",
+          "code": "val heavy by lazy { load() }"
         }
       ]
     },
     {
-      "id": "functions",
-      "label": "Functions",
-      "emoji": "🔧",
-      "items": [
+      "heading": "Null Safety",
+      "topics": [
         {
-          "id": "fn_1",
-          "type": "CODE",
-          "title": "Function Syntax",
-          "body": "Kotlin functions are first-class citizens. Single-expression functions use = instead of a block body.",
-          "language": "kotlin",
-          "code": "// Standard function\nfun greet(name: String): String {\n    return \"Hello, $name\"\n}\n\n// Single-expression (return type inferred)\nfun double(x: Int) = x * 2\n\n// Default parameters — reduce overloads\nfun log(msg: String, level: String = \"INFO\") {\n    println(\"[$level] $msg\")\n}\n\n// Named arguments — order doesn't matter\nlog(level = \"WARN\", msg = \"low memory\")\n\n// Varargs\nfun sum(vararg nums: Int) = nums.sum()\nsum(1, 2, 3, 4)"
+          "topic": "String?",
+          "desc": "Nullable type declaration",
+          "code": "val s: String? = null"
         },
         {
-          "id": "fn_2",
-          "type": "CODE",
-          "title": "Lambdas & Higher-Order Functions",
-          "body": "Lambdas are function literals. Pass them as parameters or store them in variables.",
-          "language": "kotlin",
-          "code": "// Lambda type: (ParamType) -> ReturnType\nval square: (Int) -> Int = { x -> x * x }\n\n// 'it' implicit single-parameter shorthand\nval isEven: (Int) -> Boolean = { it % 2 == 0 }\n\n// Trailing lambda syntax (last param)\nlistOf(1, 2, 3).forEach { println(it) }\n\n// Higher-order function\nfun operate(a: Int, b: Int, op: (Int, Int) -> Int) = op(a, b)\n\nval result = operate(3, 4) { x, y -> x * y } // 12\n\n// Returning a lambda\nfun multiplier(factor: Int): (Int) -> Int = { it * factor }\nval triple = multiplier(3)\ntriple(5) // 15"
+          "topic": "?.",
+          "desc": "Safe call — returns null if receiver is null",
+          "code": "val len = s?.length"
         },
         {
-          "id": "fn_3",
-          "type": "CODE",
-          "title": "Inline Functions",
-          "body": "inline copies the lambda body at the call site, eliminating object allocation overhead — ideal for higher-order utility functions.",
-          "language": "kotlin",
-          "code": "inline fun measureMs(block: () -> Unit): Long {\n    val start = System.currentTimeMillis()\n    block()\n    return System.currentTimeMillis() - start\n}\n\nval elapsed = measureMs {\n    Thread.sleep(100)\n}\n\n// crossinline — lambda can't use non-local return\ninline fun runSafe(crossinline block: () -> Unit) {\n    try { block() } catch (e: Exception) { }\n}\n\n// noinline — specific param excluded from inlining\ninline fun doWork(noinline callback: () -> Unit) {\n    storeCallback(callback) // can be stored/passed\n}"
+          "topic": "?:",
+          "desc": "Elvis operator — use right side if left is null",
+          "code": "val safe = s ?: \"default\""
         },
         {
-          "id": "fn_4",
-          "type": "CODE",
-          "title": "Extension Functions",
-          "body": "Extend any class without inheritance. Resolved statically at compile time.",
-          "language": "kotlin",
-          "code": "fun String.toTitleCase(): String =\n    split(\" \").joinToString(\" \") {\n        it.replaceFirstChar { c -> c.uppercase() }\n    }\n\nval title = \"hello world\".toTitleCase() // \"Hello World\"\n\n// Extension on nullable receiver\nfun String?.orEmpty(): String = this ?: \"\"\n\n// Extension property\nval String.wordCount: Int get() = trim().split(\"\\\\s+\".toRegex()).size\n\n// Generic extension\nfun <T> List<T>.secondOrNull(): T? = if (size >= 2) this[1] else null"
+          "topic": "!!",
+          "desc": "Force unwrap — throws NullPointerException if null",
+          "code": "val forced = s!!.length"
         },
         {
-          "id": "fn_5",
-          "type": "TABLE",
-          "title": "Scope Functions Reference",
-          "body": "Choose the right scope function for the job.",
-          "tableHeaders": [
-            "Fn",
-            "Ref",
-            "Returns",
-            "Use When"
-          ],
-          "tableRows": [
-            [
-              "let",
-              "it",
-              "Lambda result",
-              "Transform non-null / chain ops"
-            ],
-            [
-              "run",
-              "this",
-              "Lambda result",
-              "Config object + compute result"
-            ],
-            [
-              "with",
-              "this",
-              "Lambda result",
-              "Group calls, no receiver needed"
-            ],
-            [
-              "apply",
-              "this",
-              "Object itself",
-              "Builder pattern, init object"
-            ],
-            [
-              "also",
-              "it",
-              "Object itself",
-              "Side effects, logging"
-            ]
-          ]
-        },
-        {
-          "id": "fn_6",
-          "type": "TIP",
-          "title": "Prefer named args over boolean flags",
-          "badge": "Best Practice",
-          "body": "foo(true, false) is unreadable. Use named args: foo(active = true, visible = false). Even better — replace boolean params with an enum or dedicated data class."
+          "topic": "as?",
+          "desc": "Safe cast — returns null instead of throwing",
+          "code": "val str = obj as? String"
         }
       ]
     },
     {
-      "id": "classes",
-      "label": "Classes & OOP",
-      "emoji": "🏛️",
-      "items": [
+      "heading": "String Templates",
+      "topics": [
         {
-          "id": "cls_1",
-          "type": "CODE",
-          "title": "Class Anatomy",
-          "body": "Kotlin merges the constructor and property declaration into the class header.",
-          "language": "kotlin",
-          "code": "// Primary constructor + properties in header\nclass Person(\n    val name: String,           // immutable property\n    var age: Int,               // mutable property\n    private val id: String,     // private\n) {\n    // Secondary constructor must delegate to primary\n    constructor(name: String) : this(name, 0, UUID.randomUUID().toString())\n\n    // Init block runs after primary constructor\n    init {\n        require(age >= 0) { \"Age must be non-negative\" }\n    }\n\n    // Computed property\n    val isAdult: Boolean get() = age >= 18\n\n    // Member function\n    fun greet() = \"Hi, I'm $name\"\n}"
+          "topic": "$variable",
+          "desc": "Embed a variable directly in a string",
+          "code": "val x = 5\n\"Value: $x\""
         },
         {
-          "id": "cls_2",
-          "type": "CODE",
-          "title": "Data Classes",
-          "body": "data class auto-generates equals, hashCode, toString, copy and componentN functions.",
-          "language": "kotlin",
-          "code": "data class User(\n    val id: Long,\n    val name: String,\n    val email: String,\n)\n\nval alice = User(1, \"Alice\", \"alice@example.com\")\n\n// Structural equality\nval alice2 = User(1, \"Alice\", \"alice@example.com\")\nprintln(alice == alice2)  // true\n\n// copy — change only what you need\nval bob = alice.copy(id = 2, name = \"Bob\")\n\n// Destructuring via componentN\nval (id, name, email) = alice\nprintln(name) // \"Alice\""
+          "topic": "${expression}",
+          "desc": "Embed any expression in a string",
+          "code": "\"Double: ${x * 2}\""
         },
         {
-          "id": "cls_3",
-          "type": "CODE",
-          "title": "Sealed Classes for UI State",
-          "body": "Sealed classes restrict the class hierarchy — perfect for exhaustive when.",
-          "language": "kotlin",
-          "code": "sealed class UiState<out T> {\n    object Loading : UiState<Nothing>()\n    data class Success<T>(val data: T) : UiState<T>()\n    data class Error(val msg: String) : UiState<Nothing>()\n}\n\nwhen (val s = state.collectAsState().value) {\n    is UiState.Loading -> LoadingSpinner()\n    is UiState.Success -> UserList(s.data)\n    is UiState.Error   -> ErrorBanner(s.msg)\n}"
-        },
-        {
-          "id": "cls_4",
-          "type": "CODE",
-          "title": "Object & Companion Object",
-          "body": "object creates a singleton. companion object holds class-level members (like static in Java).",
-          "language": "kotlin",
-          "code": "// Singleton object\nobject AppConfig {\n    const val BASE_URL = \"https://api.example.com\"\n    var debug = false\n}\n\n// Companion object — accessed via class name\nclass ApiClient private constructor(val url: String) {\n    companion object {\n        private var instance: ApiClient? = null\n\n        fun getInstance(): ApiClient =\n            instance ?: ApiClient(AppConfig.BASE_URL).also { instance = it }\n    }\n}\n\nval client = ApiClient.getInstance()\n\n// Anonymous object (ad-hoc interface implementation)\nval comparator = object : Comparator<Int> {\n    override fun compare(a: Int, b: Int) = a - b\n}"
-        },
-        {
-          "id": "cls_5",
-          "type": "CODE",
-          "title": "Interfaces & Abstract Classes",
-          "body": "Interfaces can have default implementations. Use abstract class when you need state or a constructor.",
-          "language": "kotlin",
-          "code": "interface Drawable {\n    fun draw()                           // abstract\n    fun hide() { println(\"hidden\") }     // default impl\n    val color: String get() = \"black\"    // default property\n}\n\ninterface Clickable {\n    fun onClick()\n}\n\n// Multiple interface implementation\nclass Button : Drawable, Clickable {\n    override fun draw() { println(\"draw button\") }\n    override fun onClick() { println(\"click!\") }\n}\n\nabstract class Shape(val name: String) {\n    abstract fun area(): Double\n    fun describe() = \"$name with area ${area()}\"\n}\n\nclass Circle(val radius: Double) : Shape(\"Circle\") {\n    override fun area() = Math.PI * radius * radius\n}"
-        },
-        {
-          "id": "cls_6",
-          "type": "CODE",
-          "title": "Enum Classes",
-          "body": "Enums are type-safe constant sets. They can carry properties and implement interfaces.",
-          "language": "kotlin",
-          "code": "enum class Direction { NORTH, SOUTH, EAST, WEST }\n\n// Enum with properties and functions\nenum class HttpStatus(val code: Int, val message: String) {\n    OK(200, \"OK\"),\n    NOT_FOUND(404, \"Not Found\"),\n    SERVER_ERROR(500, \"Internal Server Error\");\n\n    val isSuccess get() = code in 200..299\n}\n\nval status = HttpStatus.OK\nprintln(status.code)      // 200\nprintln(status.isSuccess) // true\n\n// Enum utility functions\nHttpStatus.values()             // array of all entries\nHttpStatus.valueOf(\"NOT_FOUND\") // by name"
-        },
-        {
-          "id": "cls_7",
-          "type": "CODE",
-          "title": "Delegation",
-          "body": "by keyword delegates interface implementation or property access to another object — eliminating boilerplate.",
-          "language": "kotlin",
-          "code": "// Interface delegation\ninterface Printer { fun print(s: String) }\nclass ConsolePrinter : Printer { override fun print(s: String) = println(s) }\n\nclass LoggingPrinter(private val p: Printer) : Printer by p {\n    override fun print(s: String) {\n        println(\"[LOG] $s\")\n        p.print(s)\n    }\n}\n\n// Property delegation\nclass Example {\n    // lazy — computed once on first access\n    val heavy by lazy { expensiveComputation() }\n\n    // observable — callback on every change\n    var name: String by Delegates.observable(\"init\") { _, old, new ->\n        println(\"$old -> $new\")\n    }\n\n    // Map delegation\n    val map = mutableMapOf(\"key\" to 42)\n    val key: Int by map\n}"
-        },
-        {
-          "id": "cls_8",
-          "type": "TIP",
-          "title": "Prefer composition over inheritance",
-          "badge": "Best Practice",
-          "body": "Kotlin classes are final by default — you must opt in with open. This nudges you toward composition. Use interface delegation (by) to share behaviour without deep hierarchies."
+          "topic": "\"\"\" \"\"\"",
+          "desc": "Raw multi-line string, no escape needed",
+          "code": "\"\"\"Hello\n   World\"\"\""
         }
       ]
     },
     {
-      "id": "collections",
-      "label": "Collections",
-      "emoji": "📚",
-      "items": [
+      "heading": "Functions",
+      "topics": [
         {
-          "id": "col_1",
-          "type": "TABLE",
-          "title": "Collection Types",
-          "body": "Kotlin separates read-only and mutable collection interfaces.",
-          "tableHeaders": [
-            "Type",
-            "Read-only",
-            "Mutable"
-          ],
-          "tableRows": [
-            [
-              "List",
-              "listOf()",
-              "mutableListOf() / arrayListOf()"
-            ],
-            [
-              "Set",
-              "setOf()",
-              "mutableSetOf() / hashSetOf()"
-            ],
-            [
-              "Map",
-              "mapOf()",
-              "mutableMapOf() / hashMapOf()"
-            ],
-            [
-              "Array",
-              "arrayOf()",
-              "Array(size) { … }"
-            ]
-          ]
+          "topic": "fun",
+          "desc": "Declare a function",
+          "code": "fun greet(name: String = \"World\") {\n  println(\"Hello $name\")\n}"
         },
         {
-          "id": "col_2",
-          "type": "CODE",
-          "title": "Transformations",
-          "body": "map, filter, flatMap and friends are lazy-friendly and return new collections.",
-          "language": "kotlin",
-          "code": "val nums = listOf(1, 2, 3, 4, 5, 6)\n\n// map — transform each element\nval doubled = nums.map { it * 2 }           // [2,4,6,8,10,12]\n\n// filter — keep matching elements\nval evens = nums.filter { it % 2 == 0 }     // [2,4,6]\n\n// filterNot\nval odds = nums.filterNot { it % 2 == 0 }   // [1,3,5]\n\n// flatMap — map then flatten\nval nested = listOf(listOf(1,2), listOf(3,4))\nval flat = nested.flatMap { it }             // [1,2,3,4]\n\n// mapNotNull — map + drop nulls\nval maybes = listOf(\"1\", \"x\", \"3\")\nval ints = maybes.mapNotNull { it.toIntOrNull() } // [1,3]"
+          "topic": "Single-expression fun",
+          "desc": "Return value using = instead of a block body",
+          "code": "fun double(x: Int) = x * 2"
         },
         {
-          "id": "col_3",
-          "type": "CODE",
-          "title": "Aggregations",
-          "body": "Terminal operations that fold a collection down to a single value.",
-          "language": "kotlin",
-          "code": "val nums = listOf(3, 1, 4, 1, 5, 9, 2, 6)\n\nnums.sum()                        // 31\nnums.count()                      // 8\nnums.count { it > 3 }             // 4\nnums.min()                        // 1\nnums.max()                        // 9\nnums.average()                    // 3.875\nnums.any { it > 8 }               // true\nnums.all { it > 0 }               // true\nnums.none { it < 0 }              // true\nnums.first { it > 4 }             // 5\nnums.firstOrNull { it > 100 }     // null\n\n// fold — accumulate with seed\nnums.fold(0) { acc, n -> acc + n } // 31\n\n// reduce — first elem is acc\nnums.reduce { acc, n -> acc + n }  // 31\n\n// groupBy — Map<K, List<T>>\nnums.groupBy { if (it % 2 == 0) \"even\" else \"odd\" }"
+          "topic": "vararg",
+          "desc": "Accept variable number of arguments",
+          "code": "fun sum(vararg nums: Int) = nums.sum()"
         },
         {
-          "id": "col_4",
-          "type": "CODE",
-          "title": "Sorting & Ordering",
-          "body": "Kotlin provides concise sort, sortBy, sortedWith for all common ordering needs.",
-          "language": "kotlin",
-          "code": "data class Person(val name: String, val age: Int)\nval people = listOf(Person(\"Charlie\", 30), Person(\"Alice\", 25), Person(\"Bob\", 30))\n\n// Natural order\nlistOf(3,1,2).sorted()              // [1,2,3]\nlistOf(3,1,2).sortedDescending()    // [3,2,1]\n\n// Sort by property\npeople.sortedBy { it.age }\npeople.sortedByDescending { it.name }\n\n// Multi-key sort with compareBy\npeople.sortedWith(compareBy({ it.age }, { it.name }))\n\n// In-place sort on mutable list\nval m = mutableListOf(3,1,2)\nm.sort()"
+          "topic": "infix",
+          "desc": "Call function like an operator without dot/parens",
+          "code": "infix fun Int.add(y: Int) = this + y\n3 add 4"
         },
         {
-          "id": "col_5",
-          "type": "CODE",
-          "title": "Sequences — Lazy Pipelines",
-          "body": "Sequences process elements lazily, one at a time through the chain — more efficient for large or infinite data.",
-          "language": "kotlin",
-          "code": "// Eager (List) — creates intermediate lists\nval eagerResult = (1..1_000_000)\n    .filter { it % 2 == 0 }\n    .map { it * 3 }\n    .take(5)\n\n// Lazy (Sequence) — no intermediate lists\nval lazyResult = (1..1_000_000).asSequence()\n    .filter { it % 2 == 0 }\n    .map { it * 3 }\n    .take(5)\n    .toList()                  // terminal op kicks off processing\n\n// Infinite sequence\nval naturals = generateSequence(1) { it + 1 }\nval firstTenSquares = naturals.map { it * it }.take(10).toList()"
+          "topic": "inline",
+          "desc": "Inline the function body at call site",
+          "code": "inline fun run(block: () -> Unit) = block()"
         },
         {
-          "id": "col_6",
-          "type": "CODE",
-          "title": "Map Operations",
-          "body": "Maps have their own rich set of transformations and access helpers.",
-          "language": "kotlin",
-          "code": "val scores = mapOf(\"Alice\" to 90, \"Bob\" to 75, \"Charlie\" to 88)\n\n// Access\nscores[\"Alice\"]                          // 90 (nullable)\nscores.getOrDefault(\"Dave\", 0)           // 0\nscores.getOrElse(\"Dave\") { 0 }           // 0\n\n// Transform\nscores.mapValues { (_, v) -> v + 5 }     // bump all scores\nscores.filterValues { it >= 80 }         // high scorers\nscores.filterKeys { it.startsWith(\"A\") } // filter by key\n\n// Destructuring in for\nfor ((name, score) in scores) {\n    println(\"$name: $score\")\n}\n\n// Merge two maps\nval extra = mapOf(\"Eve\" to 95)\nval merged = scores + extra"
-        },
-        {
-          "id": "col_7",
-          "type": "TIP",
-          "title": "Use Sequence for large collections",
-          "badge": "Performance",
-          "body": "When chaining 3+ operations on 1000+ element lists, wrap with .asSequence() to avoid materialising intermediate lists. Always add a terminal operator like toList() or first() at the end."
+          "topic": "tailrec",
+          "desc": "Optimize tail-recursive function into a loop",
+          "code": "tailrec fun factorial(n: Int, acc: Int = 1): Int =\n  if (n == 1) acc else factorial(n - 1, n * acc)"
         }
       ]
     },
     {
-      "id": "coroutines",
-      "label": "Basics",
-      "emoji": "⚡",
-      "items": [
+      "heading": "Lambdas & Higher-Order Functions",
+      "topics": [
         {
-          "id": "coro_1",
-          "type": "CONCEPT",
-          "title": "What Are Coroutines?",
-          "badge": "Core",
-          "body": "Coroutines are light-weight threads managed by Kotlin. They suspend (not block) the thread, letting it do other work. Thousands can run concurrently on a handful of real threads."
+          "topic": "Lambda expression",
+          "desc": "Anonymous function stored in a variable",
+          "code": "val square: (Int) -> Int = { it * it }"
         },
         {
-          "id": "coro_2",
-          "type": "CODE",
-          "title": "launch vs async",
-          "body": "launch is fire-and-forget. async returns Deferred<T> — await() it to get the result.",
-          "language": "kotlin",
-          "code": "// launch — fire and forget, returns Job\nviewModelScope.launch {\n    repository.syncData()\n}\n\n// async — parallel execution, returns Deferred<T>\nviewModelScope.launch {\n    val userDeferred  = async { api.getUser() }\n    val postsDeferred = async { api.getPosts() }\n    val user  = userDeferred.await()\n    val posts = postsDeferred.await()\n    update(user, posts)\n}\n\n// withContext — switch dispatcher without a new coroutine\nval bitmap = withContext(Dispatchers.IO) {\n    loadBitmapFromDisk(path)\n}"
+          "topic": "it",
+          "desc": "Implicit name for single lambda parameter",
+          "code": "listOf(1, 2, 3).filter { it > 1 }"
         },
         {
-          "id": "coro_3",
-          "type": "TABLE",
-          "title": "Dispatchers Reference",
-          "body": "Pick the right dispatcher to avoid blocking the main thread.",
-          "tableHeaders": [
-            "Dispatcher",
-            "Threads",
-            "Use For"
-          ],
-          "tableRows": [
-            [
-              "Main",
-              "1 (UI thread)",
-              "UI updates, ViewModel logic"
-            ],
-            [
-              "IO",
-              "Up to 64",
-              "Network, disk, database"
-            ],
-            [
-              "Default",
-              "CPU count",
-              "CPU-intensive, sorting, parsing"
-            ],
-            [
-              "Unconfined",
-              "Caller's",
-              "Testing, advanced only"
-            ],
-            [
-              "Main.immediate",
-              "1 (UI)",
-              "Already on Main — no dispatch"
-            ]
-          ]
+          "topic": "->",
+          "desc": "Separate parameters from lambda body",
+          "code": "val add = { a: Int, b: Int -> a + b }"
         },
         {
-          "id": "coro_4",
-          "type": "CODE",
-          "title": "Structured Concurrency & Scopes",
-          "body": "Coroutine scopes ensure child coroutines are cancelled when the parent is. Never launch in GlobalScope in production.",
-          "language": "kotlin",
-          "code": "// ViewModel — auto-cancelled when VM is cleared\nclass MyViewModel : ViewModel() {\n    fun load() {\n        viewModelScope.launch { /* ... */ }\n    }\n}\n\n// Custom scope with SupervisorJob — children fail independently\nclass Repo {\n    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)\n\n    fun fetch() = scope.launch { /* ... */ }\n    fun clear() = scope.cancel()\n}\n\n// coroutineScope — suspends until all children finish\nsuspend fun loadAll() = coroutineScope {\n    val a = async { fetchA() }\n    val b = async { fetchB() }\n    a.await() + b.await()\n}"
-        },
-        {
-          "id": "coro_5",
-          "type": "CODE",
-          "title": "Exception Handling",
-          "body": "Use try/catch inside coroutines or a CoroutineExceptionHandler for unhandled exceptions.",
-          "language": "kotlin",
-          "code": "// try/catch works naturally in suspend functions\nviewModelScope.launch {\n    try {\n        val data = api.fetchData()\n        _state.value = UiState.Success(data)\n    } catch (e: IOException) {\n        _state.value = UiState.Error(e.message ?: \"IO error\")\n    } catch (e: CancellationException) {\n        throw e  // Always re-throw cancellation!\n    }\n}\n\n// CoroutineExceptionHandler — last-resort handler\nval handler = CoroutineExceptionHandler { _, throwable ->\n    logError(throwable)\n}\nscope.launch(handler) {\n    riskyOperation()\n}\n\n// async exceptions surface only on await()\nval deferred = async { riskyOperation() }\ntry { deferred.await() } catch (e: Exception) { /* handle */ }"
-        },
-        {
-          "id": "coro_6",
-          "type": "CODE",
-          "title": "Cancellation & Timeouts",
-          "body": "Cancellation is cooperative — check isActive or use cancellable suspend functions.",
-          "language": "kotlin",
-          "code": "val job = launch {\n    repeat(1000) { i ->\n        if (!isActive) return@launch\n        doWork(i)\n    }\n}\n\njob.cancel()\njob.join()          // await completion of cancellation\njob.cancelAndJoin() // convenience\n\n// Timeout — throws TimeoutCancellationException\nval result = withTimeout(5_000L) {\n    api.slowRequest()\n}\n\n// Null on timeout instead of exception\nval safe = withTimeoutOrNull(5_000L) {\n    api.slowRequest()\n} ?: defaultValue"
-        },
-        {
-          "id": "coro_7",
-          "type": "WARNING",
-          "title": "Never block inside a coroutine",
-          "badge": "Pitfall",
-          "body": "Calling Thread.sleep(), blocking I/O or synchronized {} inside a coroutine blocks the thread, killing concurrency. Use delay() instead of sleep(), and always wrap blocking calls in withContext(Dispatchers.IO)."
+          "topic": "Function reference (::)",
+          "desc": "Pass an existing function as a lambda",
+          "code": "listOf(1, 2, 3).map(::square)"
         }
       ]
     },
     {
-      "id": "flows",
-      "label": "Flows",
-      "emoji": "🌊",
-      "items": [
+      "heading": "Control Flow",
+      "topics": [
         {
-          "id": "flow_1",
-          "type": "CONCEPT",
-          "title": "Flow vs LiveData",
-          "badge": "Core",
-          "body": "Flow is Kotlin-native, cold, and composable. StateFlow/SharedFlow replace LiveData in pure-Kotlin layers. Flow is lifecycle-unaware by default — use repeatOnLifecycle or collectAsStateWithLifecycle in Android."
+          "topic": "if / else",
+          "desc": "Can be used as an expression that returns a value",
+          "code": "val res = if (x > 0) \"pos\" else \"neg\""
         },
         {
-          "id": "flow_2",
-          "type": "CODE",
-          "title": "Creating Flows",
-          "body": "Flows are cold — nothing runs until collected. Use flow { } builder for custom emission logic.",
-          "language": "kotlin",
-          "code": "// Basic flow builder\nval counter: Flow<Int> = flow {\n    var i = 0\n    while (true) {\n        emit(i++)\n        delay(1_000)\n    }\n}\n\n// flowOf — fixed set of values\nval nums = flowOf(1, 2, 3)\n\n// asFlow — from Iterable, sequence, etc.\nval fromList = listOf(1, 2, 3).asFlow()\n\n// channelFlow — concurrent emission\nval cf = channelFlow {\n    launch { send(fetchA()) }\n    launch { send(fetchB()) }\n}"
+          "topic": "when",
+          "desc": "Pattern matching — Kotlin's replacement for switch",
+          "code": "when (x) {\n  1 -> println(\"one\")\n  in 2..5 -> println(\"2-5\")\n  else -> println(\"other\")\n}"
         },
         {
-          "id": "flow_3",
-          "type": "CODE",
-          "title": "Flow Operators",
-          "body": "Flows support map, filter, transform and many more intermediate operators that are lazy until collected.",
-          "language": "kotlin",
-          "code": "flow { emit(1); emit(2); emit(3) }\n    .map { it * 10 }\n    .filter { it > 10 }\n    .onEach { println(\"upstream: $it\") }\n    .collect { println(\"collected: $it\") }\n\n// transform — emit any number per upstream item\n.transform { value ->\n    emit(\"raw: $value\")\n    emit(\"x2:  ${value * 2}\")\n}\n\n// flatMapLatest — cancel previous on new emission\nsearchQuery\n    .debounce(300)\n    .flatMapLatest { query -> searchRepo(query) }\n    .collect { results -> show(results) }\n\n// zip — combine two flows element-by-element\nflowA.zip(flowB) { a, b -> \"$a/$b\" }\n\n// combine — re-emit on either change\ncombine(nameFlow, ageFlow) { name, age -> \"$name ($age)\" }"
+          "topic": "for loop",
+          "desc": "Iterate over any range or collection",
+          "code": "for (i in 1..5) println(i)"
         },
         {
-          "id": "flow_4",
-          "type": "CODE",
-          "title": "StateFlow & SharedFlow",
-          "body": "StateFlow is a hot, state-holding flow. SharedFlow is a hot broadcast channel.",
-          "language": "kotlin",
-          "code": "// StateFlow — always has a value, replays latest\nclass MyViewModel : ViewModel() {\n    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)\n    val uiState: StateFlow<UiState> = _uiState.asStateFlow()\n\n    fun load() {\n        viewModelScope.launch {\n            _uiState.value = UiState.Success(fetch())\n        }\n    }\n}\n\n// SharedFlow — for events (configurable replay)\nprivate val _events = MutableSharedFlow<Event>()\nval events: SharedFlow<Event> = _events.asSharedFlow()\n\nfun triggerNav(route: String) {\n    viewModelScope.launch { _events.emit(Event.Navigate(route)) }\n}\n\n// Collect safely in Fragment\nviewLifecycleOwner.lifecycleScope.launch {\n    repeatOnLifecycle(Lifecycle.State.STARTED) {\n        viewModel.uiState.collect { render(it) }\n    }\n}"
-        },
-        {
-          "id": "flow_5",
-          "type": "CODE",
-          "title": "Flow Error Handling",
-          "body": "catch operator handles upstream exceptions without terminating the flow.",
-          "language": "kotlin",
-          "code": "repository.dataFlow\n    .map { transform(it) }\n    .catch { e ->\n        emit(emptyList())          // emit fallback\n        logError(e)\n    }\n    .onCompletion { cause ->\n        if (cause != null) logError(cause)\n        else println(\"completed normally\")\n    }\n    .collect { render(it) }\n\n// retry — resubscribe on failure\napiFlow\n    .retry(retries = 3) { cause ->\n        cause is IOException\n    }\n    .collect { /* ... */ }"
-        },
-        {
-          "id": "flow_6",
-          "type": "TABLE",
-          "title": "Flow vs StateFlow vs SharedFlow",
-          "body": "Quick reference for choosing the right hot/cold flow type.",
-          "tableHeaders": [
-            "",
-            "Flow",
-            "StateFlow",
-            "SharedFlow"
-          ],
-          "tableRows": [
-            [
-              "Hot/Cold",
-              "Cold",
-              "Hot",
-              "Hot"
-            ],
-            [
-              "Initial val",
-              "No",
-              "Yes",
-              "No"
-            ],
-            [
-              "Replay",
-              "0",
-              "1 (latest)",
-              "Configurable"
-            ],
-            [
-              "Use for",
-              "Streams",
-              "UI state",
-              "One-time events"
-            ]
-          ]
+          "topic": "while / do-while",
+          "desc": "Standard loop constructs",
+          "code": "while (x > 0) { x-- }"
         }
       ]
     },
     {
-      "id": "generics",
-      "label": "Generics",
-      "emoji": "🧬",
-      "items": [
+      "heading": "Classes",
+      "topics": [
         {
-          "id": "gen_1",
-          "type": "CODE",
-          "title": "Generic Functions & Classes",
-          "body": "Type parameters let you write code that works across types while remaining type-safe.",
-          "language": "kotlin",
-          "code": "// Generic function\nfun <T> List<T>.second(): T? = if (size >= 2) this[1] else null\n\n// Generic class\nclass Box<T>(val value: T) {\n    fun map(transform: (T) -> T): Box<T> = Box(transform(value))\n}\n\nval intBox = Box(42)\nval strBox = Box(\"hello\")\n\n// Multiple type params\nclass Pair<A, B>(val first: A, val second: B)\n\n// Reified — access T at runtime (only in inline functions)\ninline fun <reified T> Any.isType() = this is T\n42.isType<Int>()    // true\n\"hi\".isType<Int>()  // false"
+          "topic": "class",
+          "desc": "Regular class definition",
+          "code": "class Person(val name: String)"
         },
         {
-          "id": "gen_2",
-          "type": "CODE",
-          "title": "Variance: in, out, *",
-          "body": "out (covariant) = produces T. in (contravariant) = consumes T. * = unknown projection.",
-          "language": "kotlin",
-          "code": "// out — covariant: can read, not write\ninterface Producer<out T> {\n    fun produce(): T\n}\nval animals: Producer<Animal> = dogProducer  // OK\n\n// in — contravariant: can write, not read\ninterface Consumer<in T> {\n    fun consume(item: T)\n}\nval dogs: Consumer<Dog> = animalConsumer     // OK\n\n// Star projection — unknown type\nfun printAll(list: List<*>) {\n    for (item in list) println(item)        // item is Any?\n}\n\n// Upper bound constraint\nfun <T : Comparable<T>> max(a: T, b: T) = if (a > b) a else b\n\n// Multiple bounds\nfun <T> process(item: T) where T : Cloneable, T : Serializable { }"
+          "topic": "data class",
+          "desc": "Auto-generates equals, hashCode, toString, copy",
+          "code": "data class User(val id: Int, val name: String)"
         },
         {
-          "id": "gen_3",
-          "type": "TIP",
-          "title": "Use out for read-only API return types",
-          "badge": "Best Practice",
-          "body": "Declare List<out T> or Producer<out T> to make your API more flexible. Callers can assign a List<Dog> to a List<Animal> — impossible without out."
+          "topic": "object",
+          "desc": "Singleton — only one instance ever exists",
+          "code": "object Config { val debug = true }"
+        },
+        {
+          "topic": "companion object",
+          "desc": "Static-like members tied to the class",
+          "code": "class User {\n  companion object {\n    fun create() = User()\n  }\n}"
+        },
+        {
+          "topic": "sealed class",
+          "desc": "Restricted class hierarchy — all subclasses must be in same file",
+          "code": "sealed class Result<T> {\n  data class Success<T>(val data: T) : Result<T>()\n  data class Error<T>(val msg: String) : Result<T>()\n}"
+        },
+        {
+          "topic": "enum class",
+          "desc": "Fixed set of named constants",
+          "code": "enum class Direction { NORTH, SOUTH, EAST, WEST }"
+        },
+        {
+          "topic": "open class",
+          "desc": "Allow class to be subclassed (classes are final by default)",
+          "code": "open class Animal(val name: String)\nclass Dog(name: String) : Animal(name)"
+        },
+        {
+          "topic": "abstract class",
+          "desc": "Cannot be instantiated, must be subclassed",
+          "code": "abstract class Shape {\n  abstract fun area(): Double\n}"
         }
       ]
     },
     {
-      "id": "advanced",
-      "label": "Advanced",
-      "emoji": "🚀",
-      "items": [
+      "heading": "Interfaces & Inheritance",
+      "topics": [
         {
-          "id": "adv_1",
-          "type": "CODE",
-          "title": "Operator Overloading",
-          "body": "Kotlin lets you overload a fixed set of operators via named functions marked with operator.",
-          "language": "kotlin",
-          "code": "data class Vector(val x: Double, val y: Double) {\n    operator fun plus(other: Vector)   = Vector(x + other.x, y + other.y)\n    operator fun minus(other: Vector)  = Vector(x - other.x, y - other.y)\n    operator fun times(scalar: Double) = Vector(x * scalar, y * scalar)\n    operator fun unaryMinus()          = Vector(-x, -y)\n\n    operator fun component1() = x\n    operator fun component2() = y\n}\n\nval v1 = Vector(1.0, 2.0)\nval v2 = Vector(3.0, 4.0)\nval sum = v1 + v2           // Vector(4.0, 6.0)\nval (x, y) = sum            // destructuring"
+          "topic": "interface",
+          "desc": "Contract with optional default implementations",
+          "code": "interface Clickable {\n  fun onClick()\n  fun onLongClick() = onClick()\n}"
         },
         {
-          "id": "adv_2",
-          "type": "CODE",
-          "title": "DSL with Lambda Receivers",
-          "body": "Lambda-with-receiver (Type.() -> Unit) enables type-safe builder DSLs.",
-          "language": "kotlin",
-          "code": "class Tag(val name: String) {\n    private val children = mutableListOf<Tag>()\n    var text: String = \"\"\n\n    fun tag(name: String, block: Tag.() -> Unit): Tag {\n        val child = Tag(name).apply(block)\n        children.add(child)\n        return child\n    }\n\n    fun build(): String = if (children.isEmpty())\n        \"<$name>$text</$name>\"\n    else\n        \"<$name>${children.joinToString(\"\") { it.build() }}</$name>\"\n}\n\nfun html(block: Tag.() -> Unit) = Tag(\"html\").apply(block).build()\n\nval page = html {\n    tag(\"body\") {\n        tag(\"h1\") { text = \"Hello\" }\n        tag(\"p\")  { text = \"World\" }\n    }\n}"
+          "topic": "override",
+          "desc": "Override a function or property from parent/interface",
+          "code": "class Button : Clickable {\n  override fun onClick() { println(\"clicked\") }\n}"
         },
         {
-          "id": "adv_3",
-          "type": "CODE",
-          "title": "Value Classes",
-          "body": "Inline/value classes wrap a single value with zero runtime overhead — great for type-safe IDs.",
-          "language": "kotlin",
-          "code": "@JvmInline\nvalue class UserId(val id: Long)\n\n@JvmInline\nvalue class Email(val value: String) {\n    init { require('@' in value) { \"Invalid email\" } }\n}\n\nfun getUser(id: UserId): User = TODO()\n\nval userId = UserId(42L)\nval user = getUser(userId)        // OK\n// getUser(42L) — compile error!"
+          "topic": "Delegation (by)",
+          "desc": "Delegate interface implementation to another object",
+          "code": "class LoggingList<T>(val inner: MutableList<T>) : MutableList<T> by inner"
+        }
+      ]
+    },
+    {
+      "heading": "Visibility Modifiers",
+      "topics": [
+        {
+          "topic": "public",
+          "desc": "Visible everywhere — default modifier",
+          "code": "public val name = \"Kotlin\""
         },
         {
-          "id": "adv_4",
-          "type": "CODE",
-          "title": "Destructuring Declarations",
-          "body": "Any class with componentN() operator functions supports destructuring — data classes get these for free.",
-          "language": "kotlin",
-          "code": "// data class — free component functions\ndata class Point(val x: Int, val y: Int)\nval (x, y) = Point(3, 4)\n\n// Map entries\nval map = mapOf(\"a\" to 1, \"b\" to 2)\nfor ((key, value) in map) println(\"$key=$value\")\n\n// Custom destructuring\nclass Color(val r: Int, val g: Int, val b: Int) {\n    operator fun component1() = r\n    operator fun component2() = g\n    operator fun component3() = b\n}\nval (r, g, b) = Color(255, 128, 0)\n\n// Ignore unwanted components with _\nval (_, lastName) = fullName.split(\" \")"
+          "topic": "private",
+          "desc": "Visible only in the same class or file",
+          "code": "private val secret = \"hidden\""
         },
         {
-          "id": "adv_5",
-          "type": "TABLE",
-          "title": "Kotlin Annotations Cheatsheet",
-          "body": "Common annotations you'll encounter in Kotlin projects.",
-          "tableHeaders": [
-            "Annotation",
-            "Purpose"
-          ],
-          "tableRows": [
-            [
-              "@JvmStatic",
-              "Expose companion member as Java static"
-            ],
-            [
-              "@JvmOverloads",
-              "Generate Java overloads for default-param fns"
-            ],
-            [
-              "@JvmField",
-              "Expose property as Java field (no getter/setter)"
-            ],
-            [
-              "@JvmInline",
-              "Mark a value class for JVM inlining"
-            ],
-            [
-              "@Volatile",
-              "Mark field as volatile (Java equivalent)"
-            ],
-            [
-              "@Synchronized",
-              "Synchronize method (Java equivalent)"
-            ],
-            [
-              "@Deprecated",
-              "Mark API as deprecated with replacement"
-            ]
-          ]
+          "topic": "protected",
+          "desc": "Visible in the class and its subclasses",
+          "code": "protected fun init() { }"
+        },
+        {
+          "topic": "internal",
+          "desc": "Visible within the same module only",
+          "code": "internal val helper = Helper()"
+        }
+      ]
+    },
+    {
+      "heading": "Collections — Create",
+      "topics": [
+        {
+          "topic": "listOf()",
+          "desc": "Create an immutable list",
+          "code": "val list = listOf(1, 2, 3)"
+        },
+        {
+          "topic": "mutableListOf()",
+          "desc": "Create a mutable list you can add/remove from",
+          "code": "val mut = mutableListOf(\"a\", \"b\")"
+        },
+        {
+          "topic": "setOf()",
+          "desc": "Immutable set — no duplicate values",
+          "code": "val set = setOf(1, 2, 2) // {1, 2}"
+        },
+        {
+          "topic": "mapOf()",
+          "desc": "Immutable key-value map",
+          "code": "val map = mapOf(\"a\" to 1, \"b\" to 2)"
+        },
+        {
+          "topic": "emptyList() / emptyMap()",
+          "desc": "Create an empty typed collection",
+          "code": "val empty = emptyList<String>()"
+        }
+      ]
+    },
+    {
+      "heading": "Collections — Transform",
+      "topics": [
+        {
+          "topic": ".map { }",
+          "desc": "Transform every element, returns new list",
+          "code": "listOf(1, 2, 3).map { it * 2 } // [2, 4, 6]"
+        },
+        {
+          "topic": ".filter { }",
+          "desc": "Keep only elements matching the condition",
+          "code": "listOf(1, 2, 3).filter { it > 1 } // [2, 3]"
+        },
+        {
+          "topic": ".flatMap { }",
+          "desc": "Map each element to a list, then flatten the result",
+          "code": "listOf(1, 2).flatMap { listOf(it, it * 10) }"
+        },
+        {
+          "topic": ".groupBy { }",
+          "desc": "Group elements into a Map by a key",
+          "code": "listOf(\"a\", \"bb\", \"cc\").groupBy { it.length }"
+        },
+        {
+          "topic": ".sortedBy { }",
+          "desc": "Return a new list sorted by a selector",
+          "code": "users.sortedBy { it.name }"
+        },
+        {
+          "topic": ".distinct()",
+          "desc": "Remove duplicate elements",
+          "code": "listOf(1, 1, 2, 3).distinct() // [1, 2, 3]"
+        },
+        {
+          "topic": ".zip(other)",
+          "desc": "Pair elements of two lists by index",
+          "code": "listOf(1, 2).zip(listOf(\"a\", \"b\"))"
+        },
+        {
+          "topic": ".chunked(n)",
+          "desc": "Split list into sub-lists of size n",
+          "code": "listOf(1,2,3,4).chunked(2) // [[1,2],[3,4]]"
+        }
+      ]
+    },
+    {
+      "heading": "Collections — Aggregate",
+      "topics": [
+        {
+          "topic": ".sum() / .sumOf { }",
+          "desc": "Sum all numeric elements",
+          "code": "listOf(1, 2, 3).sum() // 6"
+        },
+        {
+          "topic": ".count { }",
+          "desc": "Count elements matching a condition",
+          "code": "listOf(1, 2, 3).count { it > 1 } // 2"
+        },
+        {
+          "topic": ".any { }",
+          "desc": "Returns true if at least one element matches",
+          "code": "listOf(1, 2, 3).any { it > 2 } // true"
+        },
+        {
+          "topic": ".all { }",
+          "desc": "Returns true only if every element matches",
+          "code": "listOf(2, 4, 6).all { it % 2 == 0 } // true"
+        },
+        {
+          "topic": ".none { }",
+          "desc": "Returns true if no elements match",
+          "code": "listOf(1, 2, 3).none { it > 5 } // true"
+        },
+        {
+          "topic": ".fold(init) { }",
+          "desc": "Accumulate a result starting from an initial value",
+          "code": "listOf(1,2,3).fold(0) { acc, x -> acc + x } // 6"
+        },
+        {
+          "topic": ".first { } / .find { }",
+          "desc": "first throws if not found; find returns null",
+          "code": "listOf(1, 2, 3).find { it > 1 } // 2"
+        }
+      ]
+    },
+    {
+      "heading": "Extension Functions",
+      "topics": [
+        {
+          "topic": "Extension function",
+          "desc": "Add a new function to any existing class without modifying it",
+          "code": "fun String.shout() = uppercase() + \"!\"\n\"hello\".shout() // \"HELLO!\""
+        },
+        {
+          "topic": "Extension property",
+          "desc": "Add a computed property to any existing class",
+          "code": "val String.lastChar: Char\n  get() = this[length - 1]\n\"Kotlin\".lastChar // 'n'"
+        }
+      ]
+    },
+    {
+      "heading": "Scope Functions",
+      "topics": [
+        {
+          "topic": ".let { it }",
+          "desc": "Run a block, refer to object as 'it'. Good for null-safe calls and transforms",
+          "code": "name?.let { println(it.uppercase()) }"
+        },
+        {
+          "topic": ".apply { this }",
+          "desc": "Configure an object and return the same object. Great for builders",
+          "code": "TextView(ctx).apply {\n  text = \"Hello\"\n  textSize = 16f\n}"
+        },
+        {
+          "topic": ".also { it }",
+          "desc": "Perform a side effect and return the original object unchanged",
+          "code": "createUser().also { log(it) }"
+        },
+        {
+          "topic": ".run { this }",
+          "desc": "Execute a block and return the block's result. Object is 'this'",
+          "code": "val len = \"Hello\".run { length }"
+        },
+        {
+          "topic": "with(obj) { }",
+          "desc": "Operate on an object and return a result. Not an extension function",
+          "code": "val result = with(user) { \"$name is $age\" }"
+        }
+      ]
+    },
+    {
+      "heading": "Ranges",
+      "topics": [
+        {
+          "topic": "1..10",
+          "desc": "Inclusive range from 1 to 10",
+          "code": "for (i in 1..10) println(i)"
+        },
+        {
+          "topic": "1 until 10",
+          "desc": "Exclusive range — does not include 10",
+          "code": "for (i in 1 until 10) println(i)"
+        },
+        {
+          "topic": "10 downTo 1",
+          "desc": "Descending range from 10 to 1",
+          "code": "for (i in 10 downTo 1) println(i)"
+        },
+        {
+          "topic": "step n",
+          "desc": "Jump by n each iteration",
+          "code": "for (i in 1..10 step 2) println(i) // 1,3,5,7,9"
+        }
+      ]
+    },
+    {
+      "heading": "Coroutines",
+      "topics": [
+        {
+          "topic": "suspend fun",
+          "desc": "Function that can pause execution without blocking the thread",
+          "code": "suspend fun fetchData(): String {\n  delay(1000)\n  return \"data\"\n}"
+        },
+        {
+          "topic": "launch { }",
+          "desc": "Start a coroutine that runs fire-and-forget (no return value)",
+          "code": "viewModelScope.launch {\n  val data = fetchData()\n}"
+        },
+        {
+          "topic": "async { } / await()",
+          "desc": "Start a coroutine that returns a value; await() to get the result",
+          "code": "val deferred = async { fetchData() }\nval result = deferred.await()"
+        },
+        {
+          "topic": "withContext",
+          "desc": "Switch the coroutine dispatcher for a block of code",
+          "code": "val result = withContext(Dispatchers.IO) {\n  readFromDisk()\n}"
+        },
+        {
+          "topic": "delay(ms)",
+          "desc": "Suspend coroutine for a given time without blocking",
+          "code": "delay(1000) // waits 1 second"
+        }
+      ]
+    },
+    {
+      "heading": "Dispatchers",
+      "topics": [
+        {
+          "topic": "Dispatchers.Main",
+          "desc": "Runs on the UI (main) thread — for UI updates on Android",
+          "code": "launch(Dispatchers.Main) { textView.text = \"Done\" }"
+        },
+        {
+          "topic": "Dispatchers.IO",
+          "desc": "Optimized for network calls and disk reads/writes",
+          "code": "withContext(Dispatchers.IO) { api.fetch() }"
+        },
+        {
+          "topic": "Dispatchers.Default",
+          "desc": "For CPU-heavy work like sorting or parsing large data",
+          "code": "withContext(Dispatchers.Default) { heavyCompute() }"
+        }
+      ]
+    },
+    {
+      "heading": "Flow",
+      "topics": [
+        {
+          "topic": "flow { emit() }",
+          "desc": "Cold stream — only runs when collected",
+          "code": "val numbers = flow {\n  emit(1)\n  emit(2)\n  emit(3)\n}"
+        },
+        {
+          "topic": ".collect { }",
+          "desc": "Terminal operator that starts collecting emitted values",
+          "code": "numbers.collect { println(it) }"
+        },
+        {
+          "topic": "StateFlow",
+          "desc": "Hot stream that always holds the latest value — great for UI state",
+          "code": "val _state = MutableStateFlow(0)\nval state: StateFlow<Int> = _state"
+        },
+        {
+          "topic": "SharedFlow",
+          "desc": "Hot broadcast stream — multiple collectors receive the same events",
+          "code": "val events = MutableSharedFlow<String>()"
+        },
+        {
+          "topic": ".map / .filter / .stateIn",
+          "desc": "Transform, filter flow emissions or convert a Flow into a StateFlow",
+          "code": "flow.map { it * 2 }.filter { it > 2 }"
+        }
+      ]
+    },
+    {
+      "heading": "Generics",
+      "topics": [
+        {
+          "topic": "<T>",
+          "desc": "Generic type parameter",
+          "code": "fun <T> identity(value: T): T = value"
+        },
+        {
+          "topic": "<T : Type>",
+          "desc": "Upper bound — T must be a subtype of Type",
+          "code": "fun <T : Comparable<T>> max(a: T, b: T) =\n  if (a > b) a else b"
+        },
+        {
+          "topic": "out T (covariant)",
+          "desc": "Type can only produce T — safe to read, not write",
+          "code": "class Box<out T>(val value: T)"
+        },
+        {
+          "topic": "in T (contravariant)",
+          "desc": "Type can only consume T — safe to write, not read",
+          "code": "class Printer<in T> { fun print(value: T) { } }"
+        },
+        {
+          "topic": "reified T",
+          "desc": "Access the generic type at runtime inside an inline function",
+          "code": "inline fun <reified T> isType(obj: Any) = obj is T"
+        }
+      ]
+    },
+    {
+      "heading": "Type Checks & Casts",
+      "topics": [
+        {
+          "topic": "is (smart cast)",
+          "desc": "Check type — compiler automatically casts inside the block",
+          "code": "if (obj is String) {\n  println(obj.length) // auto-cast to String\n}"
+        },
+        {
+          "topic": "as",
+          "desc": "Unsafe cast — throws ClassCastException if wrong type",
+          "code": "val str = obj as String"
+        },
+        {
+          "topic": "as?",
+          "desc": "Safe cast — returns null instead of throwing",
+          "code": "val str = obj as? String // null if not a String"
+        },
+        {
+          "topic": "when with is",
+          "desc": "Pattern match on type — each branch is smart-cast",
+          "code": "when (obj) {\n  is Int -> obj + 1\n  is String -> obj.length\n}"
+        }
+      ]
+    },
+    {
+      "heading": "Exception Handling",
+      "topics": [
+        {
+          "topic": "try / catch / finally",
+          "desc": "Catch exceptions; finally always runs regardless of result",
+          "code": "try {\n  riskyOp()\n} catch (e: IOException) {\n  log(e)\n} finally {\n  cleanup()\n}"
+        },
+        {
+          "topic": "try as expression",
+          "desc": "try-catch can return a value directly",
+          "code": "val x = try { parse() } catch (e: Exception) { 0 }"
+        },
+        {
+          "topic": "runCatching { }",
+          "desc": "Wraps a block in a Result<T> — no need to write try/catch",
+          "code": "val result = runCatching { riskyOp() }\n  .getOrDefault(\"fallback\")"
+        }
+      ]
+    },
+    {
+      "heading": "Delegation",
+      "topics": [
+        {
+          "topic": "by lazy { }",
+          "desc": "Compute the value only on first access, then cache it",
+          "code": "val config by lazy { loadConfig() }"
+        },
+        {
+          "topic": "by observable",
+          "desc": "Run a callback whenever the property value changes",
+          "code": "var name by observable(\"init\") {\n  _, old, new -> log(\"$old -> $new\")\n}"
+        },
+        {
+          "topic": "by vetoable",
+          "desc": "Conditionally allow or reject property value changes",
+          "code": "var age by vetoable(0) { _, _, new -> new >= 0 }"
+        }
+      ]
+    },
+    {
+      "heading": "Best Practices",
+      "topics": [
+        {
+          "topic": "Prefer val over var",
+          "desc": "Always start with val; only change to var if mutation is needed",
+          "code": "val name = \"Kotlin\" // preferred\nvar count = 0       // only if needed"
+        },
+        {
+          "topic": "Use data class for models",
+          "desc": "Gets equals, hashCode, toString, copy for free",
+          "code": "data class User(val id: Int, val name: String)"
+        },
+        {
+          "topic": "Prefer sealed class over enum for state",
+          "desc": "Each subclass can carry different data",
+          "code": "sealed class UiState {\n  object Loading : UiState()\n  data class Success(val data: List<String>) : UiState()\n  data class Error(val msg: String) : UiState()\n}"
+        },
+        {
+          "topic": "Avoid !!",
+          "desc": "Use safe calls or Elvis operator to handle nulls gracefully",
+          "code": "// Bad\nval len = name!!.length\n// Good\nval len = name?.length ?: 0"
+        },
+        {
+          "topic": "Use when as an expression",
+          "desc": "Assign the result of when directly to a variable",
+          "code": "val label = when (status) {\n  Status.OK -> \"Success\"\n  Status.ERROR -> \"Failed\"\n}"
         }
       ]
     }
