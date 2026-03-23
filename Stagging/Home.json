@@ -104,8 +104,8 @@
     }
   ],
 "app_config": {
-  "min_version": 10,
-  "latest_version": 10,
+  "min_version": 7,
+  "latest_version": 7,
   "update_url": ""
 }
 
