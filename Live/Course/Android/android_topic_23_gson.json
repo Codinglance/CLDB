@@ -1,0 +1,104 @@
+{
+  "title": "Gson & JSON Parsing",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Gson?",
+      "content": "Gson is a JSON parsing library developed by Google that converts Kotlin/Java objects into JSON (serialization) and JSON back into objects (deserialization). In Android development, Gson is commonly used with Retrofit to automatically convert API responses into Kotlin data classes. Instead of manually reading JSON fields, Gson maps JSON keys to object properties using reflection."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Gson?",
+      "items": [
+        "Simple and widely used JSON parsing library",
+        "Works automatically with Retrofit using GsonConverterFactory",
+        "Requires minimal configuration for basic parsing",
+        "Supports nested objects, lists, and complex structures",
+        "Handles unknown JSON fields safely",
+        "Supports annotations like @SerializedName for custom mapping"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Basic Gson Usage",
+      "content": "A Gson instance is used to convert JSON strings into Kotlin objects and vice versa. Deserialization converts JSON into objects using fromJson(), while serialization converts objects into JSON using toJson()."
+    },
+    {
+      "type": "bullet",
+      "heading": "Core Gson Operations",
+      "items": [
+        "Create instance: val gson = Gson()",
+        "Convert JSON to object: gson.fromJson(jsonString, User::class.java)",
+        "Convert object to JSON: gson.toJson(user)",
+        "Convert JSON array to list using TypeToken for generic types",
+        "Use GsonBuilder() when custom configuration is needed"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "JSON Mapping to Kotlin",
+      "rows": [
+        {
+          "json": "\"id\": 1",
+          "kotlin": "val id: Int",
+          "description": "JSON number maps to Kotlin numeric types"
+        },
+        {
+          "json": "\"name\": \"Alice\"",
+          "kotlin": "val name: String",
+          "description": "JSON string maps to Kotlin String"
+        },
+        {
+          "json": "\"is_active\": true",
+          "kotlin": "val isActive: Boolean",
+          "description": "Boolean mapping; may require @SerializedName"
+        },
+        {
+          "json": "\"tags\": [\"android\", \"kotlin\"]",
+          "kotlin": "val tags: List<String>",
+          "description": "JSON array maps to Kotlin List"
+        },
+        {
+          "json": "\"address\": {\"city\": \"Delhi\"}",
+          "kotlin": "val address: Address",
+          "description": "Nested JSON objects map to nested data classes"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "@SerializedName Annotation",
+      "content": "Many APIs use snake_case JSON keys while Kotlin uses camelCase property names. The @SerializedName annotation allows Gson to map JSON keys to different Kotlin property names."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common @SerializedName Usage",
+      "items": [
+        "@SerializedName(\"first_name\") val firstName: String",
+        "@SerializedName(\"created_at\") val createdAt: String",
+        "@SerializedName(\"is_active\") val isActive: Boolean",
+        "Allows Kotlin naming conventions while matching API responses"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Gson with Retrofit",
+      "content": "Retrofit integrates directly with Gson using GsonConverterFactory. Once added to Retrofit's builder, Gson automatically converts API responses into Kotlin data classes and converts request bodies into JSON. This removes the need to manually call fromJson() or toJson() when making API requests."
+    },
+    {
+      "type": "bullet",
+      "heading": "Retrofit Integration Steps",
+      "items": [
+        "Add GsonConverterFactory dependency",
+        "Configure Retrofit.Builder() with addConverterFactory(GsonConverterFactory.create())",
+        "Define API interfaces returning Kotlin data classes",
+        "Retrofit automatically parses JSON responses using Gson"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Gson is a popular JSON parsing library in Android that converts JSON data into Kotlin objects and back. It integrates seamlessly with Retrofit, allowing API responses to be automatically mapped to data classes. Features such as @SerializedName help handle differences between JSON key naming and Kotlin property naming, making networking code cleaner and easier to maintain."
+    }
+  ]
+}

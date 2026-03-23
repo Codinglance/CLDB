@@ -1,0 +1,82 @@
+{
+  "title": "WorkManager",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is WorkManager?",
+      "content": "WorkManager is Android Jetpack’s library for deferrable, guaranteed background work. It ensures tasks run even if the app is killed or the device restarts. Unlike coroutines or Services, it handles lifecycle and system constraints automatically, making it ideal for tasks like syncing data, uploading logs, or periodic maintenance."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use WorkManager",
+      "items": [
+        "Upload logs or analytics when network is available",
+        "Sync data periodically or after connectivity restores",
+        "Process images or media files in background",
+        "Schedule notifications or cleanup tasks",
+        "Chain dependent tasks sequentially or in parallel",
+        "Apply constraints: network, charging, idle, storage"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "WorkManager vs Alternatives",
+      "rows": [
+        {
+          "factor": "Guaranteed execution",
+          "workmanager": "Yes — survives process death/reboot",
+          "coroutines": "No — stops with process",
+          "foreground_service": "Only while service runs",
+          "alarmmanager": "Yes — extra setup needed"
+        },
+        {
+          "factor": "Constraints support",
+          "workmanager": "Yes",
+          "coroutines": "Manual",
+          "foreground_service": "Manual",
+          "alarmmanager": "No"
+        },
+        {
+          "factor": "Precise timing",
+          "workmanager": "No — system may defer",
+          "coroutines": "Yes",
+          "foreground_service": "Yes",
+          "alarmmanager": "Yes — exact time"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Core Components",
+      "items": [
+        "Worker / CoroutineWorker — implement doWork()",
+        "WorkRequest — OneTime or Periodic",
+        "WorkManager — enqueue and manage tasks",
+        "WorkInfo — observe task status and output",
+        "Constraints — network, charging, idle, storage",
+        "Data — pass input/output between workers"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Worker Results",
+      "items": [
+        "Result.success() — completed",
+        "Result.success(outputData) — completed with output",
+        "Result.failure() — permanent failure",
+        "Result.retry() — retry later"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use constraints for battery efficiency",
+        "Keep Data <10KB; long work >10 min requires foreground",
+        "Avoid exact-time tasks — use AlarmManager if needed",
+        "Observe WorkInfo in UI, not inside Worker",
+        "Use Hilt for dependency injection via @HiltWorker"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "title": "WorkManager",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is WorkManager?",
+      "content": "WorkManager is Android Jetpack’s library for deferrable, guaranteed background work. It ensures tasks run even if the app is killed or the device restarts, persisting work in a database. Unlike coroutines or Services, it handles lifecycle and system constraints automatically."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use WorkManager",
+      "items": [
+        "Upload logs, analytics, or user content when network is available",
+        "Sync data periodically or on connectivity restore",
+        "Process images or media files in background",
+        "Deferred notifications or cleanup tasks",
+        "Chain tasks where step B depends on step A",
+        "Tasks with constraints: network, charging, storage"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "WorkManager vs Alternatives",
+      "rows": [
+        {
+          "factor": "Guaranteed execution",
+          "workmanager": "Yes — survives process death/reboot",
+          "coroutines": "No",
+          "foreground_service": "Foreground only",
+          "alarmmanager": "Yes — extra setup needed"
+        },
+        {
+          "factor": "Constraints support",
+          "workmanager": "Yes",
+          "coroutines": "Manual",
+          "foreground_service": "Manual",
+          "alarmmanager": "No"
+        },
+        {
+          "factor": "Precise timing",
+          "workmanager": "No — system may defer",
+          "coroutines": "Yes",
+          "foreground_service": "Yes",
+          "alarmmanager": "Yes — exact time"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Core Components",
+      "content": "Worker/CoroutineWorker (doWork logic), WorkRequest (OneTime or Periodic), WorkManager instance (enqueue/manage), WorkInfo (status/output), Constraints (network, charging, idle, storage), Data (input/output)."
+    },
+    {
+      "type": "bullet",
+      "heading": "Worker Results",
+      "items": [
+        "Result.success() — done",
+        "Result.success(outputData) — done with data",
+        "Result.failure() — permanent failure",
+        "Result.retry() — temporary failure"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Enqueue & Chain Work",
+      "items": [
+        "enqueue(), enqueueUniqueWork(), enqueueUniquePeriodicWork()",
+        "beginWith().then().enqueue() for sequential work",
+        "combine() for parallel work",
+        "Output data flows automatically between chained workers"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use constraints for battery efficiency",
+        "Keep Data <10KB; work >10 min requires foreground",
+        "Avoid exact-time tasks — use AlarmManager",
+        "Observe WorkInfo in UI, not inside Worker",
+        "Use Hilt for dependency injection via @HiltWorker"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "title": "View Binding & Data Binding",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is View Binding?",
+      "content": "View Binding is a feature that generates a binding class for each XML layout file. Instead of using findViewById(), developers access views through the generated binding object. Each view with an android:id becomes a property of the binding class, providing type-safe and null-safe access. It is the recommended way to interact with views in modern Android development."
+    },
+    {
+      "type": "bullet",
+      "heading": "Advantages of View Binding",
+      "items": [
+        "Type-safe view access with no casting required",
+        "Reduces boilerplate code compared to findViewById()",
+        "Compile-time verification of view references",
+        "Faster and safer than older approaches like Kotlin synthetics",
+        "Automatically generates binding classes for all layouts"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Using View Binding",
+      "content": "In Activities, inflate the binding class inside onCreate() and set the content view using binding.root. In Fragments, use a nullable backing property because the view lifecycle is shorter than the Fragment lifecycle. The binding should be initialized in onCreateView() and cleared in onDestroyView() to prevent memory leaks."
+    },
+    {
+      "type": "text",
+      "heading": "What is Data Binding?",
+      "content": "Data Binding is a more powerful library that allows UI components in XML to bind directly to data sources such as ViewModels. It supports binding expressions like @{viewModel.userName}, which automatically update the UI when data changes. It also supports two-way binding (@={}) where user input updates the ViewModel automatically."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "View Binding is simple, fast, and recommended for most Android projects because it removes the need for findViewById(). Data Binding provides more advanced features such as binding expressions and reactive UI updates, making it useful in MVVM architectures where the UI is driven by ViewModel data."
+    }
+  ]
+}

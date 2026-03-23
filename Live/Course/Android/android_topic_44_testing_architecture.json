@@ -1,0 +1,46 @@
+{
+  "title": "Testing ViewModel & Repository",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Test?",
+      "content": "ViewModel and Repository contain core app logic in Android MVVM. Testing ensures UI state, events, and data handling work correctly without a device or network. ViewModel tests cover state transitions, navigation, and error handling. Repository tests cover data source selection, caching, mapping, and error propagation."
+    },
+    {
+      "type": "table",
+      "heading": "Testing Strategy",
+      "rows": [
+        {"layer":"ViewModel","test_type":"Unit","tools":"JUnit, Mockito, Turbine, Coroutines Test","focus":"UI state, events, SavedStateHandle"},
+        {"layer":"Repository","test_type":"Unit","tools":"JUnit, Mockito, Coroutines Test, Turbine","focus":"Cache, data source, error handling"},
+        {"layer":"Room DAO","test_type":"Instrumented","tools":"JUnit, Room in-memory, Coroutines Test","focus":"Queries, Flow emissions"},
+        {"layer":"UseCase","test_type":"Unit","tools":"JUnit, Mockito, Coroutines Test","focus":"Business rules, data transformation"},
+        {"layer":"Mapper","test_type":"Unit","tools":"JUnit, Truth","focus":"Field mapping, null/default handling"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Practices",
+      "items": [
+        "Apply MainDispatcherRule to replace Dispatchers.Main in ViewModel tests",
+        "Use Turbine to test StateFlow/SharedFlow sequences and one-shot events",
+        "Mock dependencies or use Fakes for repositories",
+        "Test caching scenarios: hit, miss, stale, network error",
+        "Test Room DAO with in-memory database",
+        "Use SavedStateHandle in tests for arguments and state restoration",
+        "Use test data builders to reduce boilerplate"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Not using MainDispatcherRule",
+        "Testing with real repositories or Room DB",
+        "Not advancing coroutines before asserting",
+        "Skipping error and empty state tests",
+        "Missing SavedStateHandle in ViewModel",
+        "Not cancelling Turbine collections"
+      ]
+    }
+  ]
+}

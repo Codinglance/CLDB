@@ -1,0 +1,162 @@
+{
+  "title": "XML Layouts & Views",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are XML Layouts?",
+      "content": "Android UI in the traditional View system is defined using XML layout files inside res/layout/. These files describe a hierarchy of Views (UI elements) and ViewGroups (layout containers). At runtime Android inflates the XML into View objects and displays them on screen. XML keeps UI design separate from Kotlin code."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Concepts",
+      "items": [
+        "Views are UI elements like TextView, Button, ImageView",
+        "ViewGroups arrange Views (LinearLayout, ConstraintLayout)",
+        "Layouts are inflated in Activity using setContentView()",
+        "Views have attributes like id, width, height, padding",
+        "Views can be accessed using findViewById or View Binding"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Width & Height Values",
+      "rows": [
+        {
+          "value": "match_parent",
+          "description": "View fills entire parent size"
+        },
+        {
+          "value": "wrap_content",
+          "description": "View size fits its content"
+        },
+        {
+          "value": "0dp",
+          "description": "Match constraints in ConstraintLayout"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Dimension Units",
+      "rows": [
+        {
+          "unit": "dp",
+          "use": "Layout sizes, margins, padding"
+        },
+        {
+          "unit": "sp",
+          "use": "Text sizes"
+        },
+        {
+          "unit": "px",
+          "use": "Avoid using in layouts"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Important View Attributes",
+      "items": [
+        "android:id – unique identifier for the view",
+        "android:layout_width / height – size of the view",
+        "android:padding – inner spacing",
+        "android:layout_margin – outer spacing",
+        "android:background – background color or drawable",
+        "android:visibility – visible, invisible, or gone"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Android Views",
+      "rows": [
+        {
+          "view": "TextView",
+          "purpose": "Displays text"
+        },
+        {
+          "view": "EditText",
+          "purpose": "User text input"
+        },
+        {
+          "view": "Button",
+          "purpose": "Clickable action button"
+        },
+        {
+          "view": "ImageView",
+          "purpose": "Displays images"
+        },
+        {
+          "view": "CheckBox",
+          "purpose": "Selectable option"
+        },
+        {
+          "view": "RecyclerView",
+          "purpose": "Efficient scrollable list"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "TextView Important Attributes",
+      "items": [
+        "android:text – displayed text",
+        "android:textSize – text size in sp",
+        "android:textColor – text color",
+        "android:gravity – text alignment",
+        "android:maxLines – limit text lines"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "View Visibility",
+      "rows": [
+        {
+          "visibility": "visible",
+          "behavior": "Shown normally"
+        },
+        {
+          "visibility": "invisible",
+          "behavior": "Hidden but still takes space"
+        },
+        {
+          "visibility": "gone",
+          "behavior": "Hidden and removed from layout"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Accessing Views in Kotlin",
+      "items": [
+        "findViewById() – traditional method",
+        "View Binding – modern recommended approach",
+        "Enable View Binding in build.gradle",
+        "Access views with binding.viewId"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Handling Clicks",
+      "items": [
+        "setOnClickListener { } for click events",
+        "Use binding.button.setOnClickListener { }",
+        "Avoid android:onClick in XML"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use ConstraintLayout for better performance",
+        "Avoid deep nested layouts",
+        "Use resources for strings, colors, and dimensions",
+        "Use View Binding instead of findViewById"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "XML layouts define the UI structure in Android using Views and ViewGroups. Understanding layout attributes, common Views, and using View Binding allows developers to build clean, maintainable, and responsive Android interfaces."
+    }
+  ]
+}

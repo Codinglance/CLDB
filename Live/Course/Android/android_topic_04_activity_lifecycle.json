@@ -1,0 +1,115 @@
+{
+  "title": "Activities & Activity Lifecycle",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is an Activity?",
+      "content": "An Activity represents a single screen in an Android app, such as a login page or home screen. It handles user interaction and displays the UI. Activities are managed by the Android system and must be declared in the AndroidManifest.xml."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Characteristics of an Activity",
+      "items": [
+        "Represents one screen with a user interface",
+        "Must be declared in AndroidManifest.xml",
+        "Usually extends AppCompatActivity",
+        "Has a lifecycle managed by Android OS",
+        "Can communicate with other Activities using Intents",
+        "Can host multiple Fragments"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is the Activity Lifecycle?",
+      "content": "The Activity lifecycle is the sequence of states an Activity goes through from creation to destruction. Android provides lifecycle callback methods so the app can manage resources and respond to state changes properly."
+    },
+    {
+      "type": "table",
+      "heading": "Main Lifecycle Methods",
+      "rows": [
+        {
+          "method": "onCreate()",
+          "purpose": "Initialize UI and setup resources"
+        },
+        {
+          "method": "onStart()",
+          "purpose": "Activity becomes visible"
+        },
+        {
+          "method": "onResume()",
+          "purpose": "Activity becomes interactive"
+        },
+        {
+          "method": "onPause()",
+          "purpose": "Activity loses focus"
+        },
+        {
+          "method": "onStop()",
+          "purpose": "Activity is no longer visible"
+        },
+        {
+          "method": "onDestroy()",
+          "purpose": "Activity is destroyed and resources are released"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Lifecycle Flow",
+      "items": [
+        "App starts → onCreate → onStart → onResume",
+        "User presses Home → onPause → onStop",
+        "User returns to app → onRestart → onStart → onResume",
+        "User presses Back → onPause → onStop → onDestroy"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Activity States",
+      "rows": [
+        {
+          "state": "Resumed",
+          "description": "Activity is running and interactive"
+        },
+        {
+          "state": "Paused",
+          "description": "Partially visible but not interactive"
+        },
+        {
+          "state": "Stopped",
+          "description": "Completely hidden in background"
+        },
+        {
+          "state": "Destroyed",
+          "description": "Removed from memory"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Activity Launch Modes",
+      "items": [
+        "standard – default behavior, new instance every time",
+        "singleTop – reuse if already at top of stack",
+        "singleTask – single instance in the task",
+        "singleInstance – runs in its own task"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Initialize UI in onCreate()",
+        "Release resources in onPause() or onStop()",
+        "Use ViewModel to survive configuration changes",
+        "Avoid heavy work inside lifecycle callbacks",
+        "Use lifecycleScope for coroutines"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Activities are the foundation of Android UI. Understanding lifecycle callbacks helps developers manage resources correctly, handle configuration changes, and create stable Android applications."
+    }
+  ]
+}

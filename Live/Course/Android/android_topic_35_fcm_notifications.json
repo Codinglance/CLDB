@@ -1,0 +1,58 @@
+{
+  "title": "Push Notifications with FCM",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Firebase Cloud Messaging?",
+      "content": "FCM is Google's cross-platform messaging solution for sending push notifications and data messages to Android, iOS, and web apps. Apps receive a unique registration token to target messages. Notification messages are displayed automatically in the background, while data messages are always delivered to FirebaseMessagingService for custom handling."
+    },
+    {
+      "type": "bullet",
+      "heading": "FCM Message Types",
+      "items": [
+        "Notification — system displays automatically, simple alerts",
+        "Data — app handles everything, silent sync or custom UI",
+        "Combined — background auto-display plus extra data payload"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setup Steps",
+      "items": [
+        "Create Firebase project, add Android app, download google-services.json",
+        "Add Firebase plugin and dependencies in build.gradle",
+        "Extend FirebaseMessagingService: override onMessageReceived() and onNewToken()",
+        "Declare service in manifest with MESSAGING_EVENT intent filter",
+        "Create NotificationChannel on API 26+, request POST_NOTIFICATIONS on API 33+",
+        "Send FCM token to backend"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Notification Handling",
+      "items": [
+        "Build notification with NotificationCompat.Builder",
+        "Set small icon, title, text, PendingIntent for tap",
+        "Use unique IDs for different notifications",
+        "Show immediately; enqueue WorkManager for heavy processing",
+        "Handle tap deep links via intent extras in MainActivity"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use data messages for critical payloads",
+        "Always update backend with latest FCM token",
+        "Create channels once; use proper importance levels",
+        "Request POST_NOTIFICATIONS on Android 13+",
+        "Keep onMessageReceived() fast; delegate heavy tasks"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "FCM allows reliable push notifications with fine-grained control. Use FirebaseMessagingService for message handling, manage tokens carefully, create channels for Android 8+, request permissions on Android 13+, and display notifications with NotificationCompat for full control. Use topics for broadcast messaging and keep processing lightweight in onMessageReceived()."
+    }
+  ]
+}

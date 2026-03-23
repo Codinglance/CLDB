@@ -1,0 +1,107 @@
+{
+  "title": "UI Testing with Espresso",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Espresso?",
+      "content": "Espresso is Android's UI testing framework for writing reliable instrumented tests that run on devices or emulators. It synchronizes with the UI thread automatically, eliminating the need for sleep() calls. Tests live in src/androidTest/ and are ideal for verifying user flows, navigation, and UI state changes."
+    },
+    {
+      "type": "table",
+      "heading": "Espresso vs Other UI Testing Tools",
+      "rows": [
+        {"tool": "Espresso", "scope": "Single app", "speed": "Fast", "best_for": "UI flows, View interactions", "location": "src/androidTest/"},
+        {"tool": "UI Automator", "scope": "Cross-app", "speed": "Slower", "best_for": "System UI interactions", "location": "src/androidTest/"},
+        {"tool": "Compose Testing", "scope": "Compose UI", "speed": "Fast", "best_for": "Compose component tests", "location": "src/androidTest/"},
+        {"tool": "Robolectric", "scope": "JVM", "speed": "Very fast", "best_for": "Integration without device", "location": "src/test/"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setup Dependencies",
+      "items": [
+        "Espresso core, intents, contrib, idling-resource",
+        "AndroidX Test runner & rules, JUnit 4",
+        "Set testInstrumentationRunner in build.gradle.kts",
+        "Disable animations for stable tests"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Core Concepts",
+      "content": "Espresso uses ViewMatchers to find views, ViewActions to interact, and ViewAssertions to verify. Example: onView(withId(R.id.submit)).perform(click()).check(matches(isDisplayed())). For AdapterViews, use onData()."
+    },
+    {
+      "type": "table",
+      "heading": "Three-Part Structure",
+      "rows": [
+        {"part": "ViewMatcher", "function": "onView(matcher)", "purpose": "Finds view", "example": "onView(withId(R.id.email))"},
+        {"part": "ViewAction", "function": ".perform(action)", "purpose": "Interact with view", "example": ".perform(typeText(\"test\"))"},
+        {"part": "ViewAssertion", "function": ".check(assertion)", "purpose": "Verify view", "example": ".check(matches(isDisplayed()))"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common ViewMatchers",
+      "items": ["withId(), withText(), withHint(), withContentDescription()", "isDisplayed(), isEnabled(), isChecked()", "allOf(), anyOf(), withParent()"]
+    },
+    {
+      "type": "table",
+      "heading": "ViewActions Examples",
+      "rows": [
+        {"action": "click()", "description": "Tap view", "example": "onView(...).perform(click())"},
+        {"action": "typeText()", "description": "Type text", "example": ".perform(typeText(\"abc\"))"},
+        {"action": "scrollTo()", "description": "Scroll to view", "example": ".perform(scrollTo())"},
+        {"action": "pressBack()", "description": "System back", "example": ".perform(pressBack())"},
+        {"action": "swipeLeft()/swipeRight()", "description": "Swipe view", "example": ".perform(swipeLeft())"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "ViewAssertions Examples",
+      "items": ["matches(isDisplayed()), matches(not(isDisplayed()))", "matches(withText(\"text\"))", "matches(isEnabled()), matches(not(isEnabled()))", "doesNotExist(), withContentDescription()"]
+    },
+    {
+      "type": "text",
+      "heading": "ActivityScenario & Fragments",
+      "content": "Use ActivityScenario or ActivityScenarioRule to launch and control Activities. FragmentScenario allows isolated Fragment tests. Move lifecycle states, recreate Activity, or run code on main thread easily."
+    },
+    {
+      "type": "bullet",
+      "heading": "ActivityScenario Usage",
+      "items": ["@get:Rule val activityRule = ActivityScenarioRule(MainActivity::class.java)", "ActivityScenario.launch(MainActivity::class.java)", "scenario.onActivity { ... }", "scenario.moveToState(), scenario.recreate()"]
+    },
+    {
+      "type": "table",
+      "heading": "RecyclerView Testing",
+      "rows": [
+        {"action": "scrollToPosition()", "description": "Scroll to adapter position", "example": "RecyclerViewActions.scrollToPosition(10)"},
+        {"action": "actionOnItemAtPosition()", "description": "Action on item at position", "example": "actionOnItemAtPosition(0, click())"},
+        {"action": "actionOnItem(matcher)", "description": "Action on matched item", "example": "actionOnItem(hasDescendant(withText(\"Alice\")), click())"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Espresso Intents",
+      "items": ["Intents.init()/release() or IntentsRule", "Verify Intent: intended(hasComponent())", "Stub outgoing Intents to prevent real app launch", "Check extras: hasExtra()"]
+    },
+    {
+      "type": "table",
+      "heading": "Idling Resources",
+      "rows": [
+        {"concept": "CountingIdlingResource", "description": "Tracks async operations, idle when counter=0", "example": "increment() before call, decrement() in callback"},
+        {"concept": "OkHttp IdlingResource", "description": "Tracks network calls automatically", "example": "OkHttp3IdlingResource.create(\"OkHttp\", client)"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": ["Disable animations", "Avoid Thread.sleep()", "Match views by ID not text", "Use RecyclerViewActions for lists", "Tests must be independent", "Use Android Test Orchestrator for CI"]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Espresso enables reliable Android UI testing with automatic synchronization, fluent API (ViewMatchers, ViewActions, ViewAssertions), ActivityScenario, RecyclerViewActions, Intents testing, and IdlingResources. Follow best practices for stable, maintainable tests executed via ./gradlew connectedAndroidTest."
+    }
+  ]
+}

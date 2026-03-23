@@ -1,0 +1,42 @@
+{
+  "title": "ViewModel & LiveData",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is ViewModel?",
+      "content": "ViewModel is a Jetpack architecture component that stores and manages UI-related data in a lifecycle-aware way. It is designed to survive configuration changes such as screen rotation, preventing unnecessary data reloads. ViewModel keeps UI data separate from Activities and Fragments, making code easier to maintain and test."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use ViewModel?",
+      "items": [
+        "Survives configuration changes like screen rotation",
+        "Separates UI logic from the View layer",
+        "Prevents memory leaks by avoiding UI references",
+        "Supports coroutines using viewModelScope",
+        "Improves testability of business logic"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is LiveData?",
+      "content": "LiveData is a lifecycle-aware observable data holder. It allows UI components such as Activities and Fragments to observe data changes from the ViewModel. LiveData only sends updates when the observer is in an active lifecycle state, preventing crashes and unnecessary UI updates."
+    },
+    {
+      "type": "bullet",
+      "heading": "LiveData Key Points",
+      "items": [
+        "Automatically respects lifecycle states",
+        "Observers receive updates only when active",
+        "MutableLiveData is used internally in ViewModel",
+        "Expose data as LiveData to the View layer",
+        "Supports thread-safe updates using setValue() and postValue()"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "ViewModel manages UI-related data and survives configuration changes, while LiveData provides a lifecycle-aware way to observe data updates. Together they help build stable, maintainable, and reactive Android applications following the MVVM architecture."
+    }
+  ]
+}

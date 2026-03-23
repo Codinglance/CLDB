@@ -1,0 +1,109 @@
+{
+  "title": "REST APIs & HTTP Basics",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is a REST API?",
+      "content": "A REST (Representational State Transfer) API is a common architecture used for communication between a client and a server over HTTP. In Android development, the app acts as the client that sends requests to a server and receives responses containing data. These responses are usually formatted as JSON, which the app parses into Kotlin objects and displays in the UI."
+    },
+    {
+      "type": "bullet",
+      "heading": "Core REST Concepts",
+      "items": [
+        "Client-Server — the Android app sends requests, the server manages data",
+        "Stateless — each request is independent and contains all required information",
+        "Resource-based — everything is treated as a resource such as users, products, or posts",
+        "Resources are identified by URLs called endpoints",
+        "Standard HTTP methods define the action performed on a resource",
+        "Responses usually return JSON data"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common HTTP Methods",
+      "rows": [
+        {
+          "method": "GET",
+          "purpose": "Retrieve data from the server",
+          "example": "GET /users"
+        },
+        {
+          "method": "POST",
+          "purpose": "Create a new resource",
+          "example": "POST /users"
+        },
+        {
+          "method": "PUT",
+          "purpose": "Replace an existing resource",
+          "example": "PUT /users/1"
+        },
+        {
+          "method": "PATCH",
+          "purpose": "Partially update a resource",
+          "example": "PATCH /users/1"
+        },
+        {
+          "method": "DELETE",
+          "purpose": "Remove a resource",
+          "example": "DELETE /users/1"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "HTTP Request Structure",
+      "content": "An HTTP request contains several parts. The method defines the action, the URL specifies the endpoint, headers include metadata such as content type or authentication tokens, and the body contains the data being sent to the server (usually JSON). For example, when creating a new user, the app sends a POST request with a JSON body describing the user."
+    },
+    {
+      "type": "table",
+      "heading": "Important HTTP Status Codes",
+      "rows": [
+        {
+          "code": "200 OK",
+          "meaning": "Request succeeded and returned data"
+        },
+        {
+          "code": "201 Created",
+          "meaning": "Resource created successfully"
+        },
+        {
+          "code": "400 Bad Request",
+          "meaning": "Invalid request data"
+        },
+        {
+          "code": "401 Unauthorized",
+          "meaning": "Authentication required or failed"
+        },
+        {
+          "code": "404 Not Found",
+          "meaning": "Resource does not exist"
+        },
+        {
+          "code": "500 Internal Server Error",
+          "meaning": "Server encountered an error"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "JSON in REST APIs",
+      "content": "JSON (JavaScript Object Notation) is the most common format used in REST APIs for transferring data. It represents information as key-value pairs and arrays. In Android, JSON responses are converted into Kotlin data classes using libraries such as Gson, Moshi, or kotlinx.serialization."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic JSON Structure",
+      "items": [
+        "Objects use curly braces: { \"id\": 1, \"name\": \"Alice\" }",
+        "Arrays use square brackets: [ { \"id\": 1 }, { \"id\": 2 } ]",
+        "Strings are in double quotes",
+        "Numbers and booleans are not quoted",
+        "Objects and arrays can be nested"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "REST APIs allow Android apps to communicate with servers using HTTP requests. Each request uses a method such as GET or POST and targets a specific URL endpoint. The server returns responses with status codes and JSON data. Understanding HTTP methods, status codes, and JSON structure provides the foundation for implementing networking in Android apps using tools like Retrofit and OkHttp."
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "title": "Introduction to Android Development",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Android?",
+      "content": "Android is an open-source, Linux-based mobile operating system developed by Google. It powers billions of smartphones, tablets, smartwatches, TVs, and cars worldwide. Android apps are primarily built using Kotlin (or Java) and run on the Android Runtime (ART)."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Learn Android Development?",
+      "items": [
+        "Largest mobile OS market share globally (70%+)",
+        "Huge job market and freelance opportunities",
+        "Backed by Google with regular updates",
+        "Rich ecosystem: Jetpack, Material Design, Firebase",
+        "Supports both Kotlin and Java",
+        "Publish apps to 2.5+ billion active devices"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Android vs iOS Development",
+      "rows": [
+        {
+          "feature": "Language",
+          "android": "Kotlin / Java",
+          "ios": "Swift / Objective-C"
+        },
+        {
+          "feature": "IDE",
+          "android": "Android Studio",
+          "ios": "Xcode"
+        },
+        {
+          "feature": "OS Required",
+          "android": "Windows / Mac / Linux",
+          "ios": "macOS only"
+        },
+        {
+          "feature": "Publishing Cost",
+          "android": "$25 one-time fee",
+          "ios": "$99/year"
+        },
+        {
+          "feature": "Market Share",
+          "android": "~72% globally",
+          "ios": "~27% globally"
+        },
+        {
+          "feature": "UI Framework",
+          "android": "XML / Jetpack Compose",
+          "ios": "UIKit / SwiftUI"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "History of Android",
+      "content": "Android was founded in 2003 by Andy Rubin and acquired by Google in 2005. The first commercial Android device (HTC Dream) was released in 2008. Since then, Android has evolved through versions named after desserts (Cupcake, Donut, Oreo, Pie) and now follows numeric versioning (Android 12, 13, 14, 15)."
+    },
+    {
+      "type": "bullet",
+      "heading": "Core Components of an Android App",
+      "items": [
+        "Activity – A single screen with a user interface",
+        "Fragment – A reusable portion of UI within an Activity",
+        "Service – Runs background tasks without a UI",
+        "Broadcast Receiver – Listens for system-wide events (e.g., battery low)",
+        "Content Provider – Manages shared app data (e.g., contacts)",
+        "Intent – Messaging object used to communicate between components"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Android App File Structure",
+      "rows": [
+        {
+          "folder": "manifests/",
+          "purpose": "AndroidManifest.xml – app config, permissions, components"
+        },
+        {
+          "folder": "java/ (or kotlin/)",
+          "purpose": "All your Kotlin/Java source code files"
+        },
+        {
+          "folder": "res/layout/",
+          "purpose": "XML files defining the UI screens"
+        },
+        {
+          "folder": "res/drawable/",
+          "purpose": "Images, icons, and vector assets"
+        },
+        {
+          "folder": "res/values/",
+          "purpose": "Strings, colors, dimensions, themes"
+        },
+        {
+          "folder": "Gradle Scripts/",
+          "purpose": "Build configuration and dependency management"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Tools You Will Use",
+      "items": [
+        "Android Studio – Official IDE for Android development",
+        "Android Emulator – Virtual device to test your apps",
+        "Gradle – Build system for Android projects",
+        "ADB (Android Debug Bridge) – Command-line tool for device communication",
+        "Logcat – Real-time log viewer for debugging",
+        "Firebase – Google's backend platform for Android apps"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Android Development: Traditional XML vs Jetpack Compose",
+      "rows": [
+        {
+          "aspect": "UI Building",
+          "xml_views": "XML layout files",
+          "jetpack_compose": "Kotlin code (Composable functions)"
+        },
+        {
+          "aspect": "Learning Curve",
+          "xml_views": "Familiar for beginners",
+          "jetpack_compose": "Modern, but requires Kotlin knowledge"
+        },
+        {
+          "aspect": "State Management",
+          "xml_views": "Manual (LiveData, findViewById)",
+          "jetpack_compose": "Built-in with remember & State"
+        },
+        {
+          "aspect": "Google Recommendation",
+          "xml_views": "Legacy (still widely used)",
+          "jetpack_compose": "Recommended for new projects"
+        },
+        {
+          "aspect": "Performance",
+          "xml_views": "Good",
+          "jetpack_compose": "Optimized with recomposition"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "What You Will Build in This Course",
+      "items": [
+        "Your first Hello World Android App",
+        "Multi-screen apps using Activities & Fragments",
+        "Apps that fetch data from the internet using Retrofit",
+        "Local database apps using Room",
+        "Modern UIs using Jetpack Compose",
+        "Production-ready apps following MVVM architecture"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Prerequisites",
+      "content": "Before starting Android development, you should have a basic understanding of Kotlin programming (variables, functions, classes, and null safety). Familiarity with OOP concepts like inheritance and interfaces is also helpful. No prior Android experience is required — this course starts from the ground up."
+    }
+  ]
+}

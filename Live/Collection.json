@@ -1,0 +1,900 @@
+{
+  "category": "Java Collections",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the Java Collection Framework?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "collections",
+        "java",
+        "basics"
+      ],
+      "title": "What is the Java Collection Framework?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Java Collection Framework (JCF) is a set of classes and interfaces that provide a unified architecture to store and manipulate groups of objects. Key Interfaces:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Java Collection Framework",
+          "items": [
+            "List",
+            "Set",
+            "Queue",
+            "Map"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Reduces programming effort",
+            "Increases performance",
+            "Provides standard data structures"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 2,
+      "question": "Difference between Collection and Collections?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "collections",
+        "java"
+      ],
+      "title": "Difference between Collection and Collections?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Collection",
+          "items": [
+            "It is an interface in Java (java.util.Collection)",
+            "Represents a group of objects (elements)",
+            "Root interface of List, Set, and Queue",
+            "Used to store and manipulate data",
+            "Example: List, Set, Queue"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Collections",
+          "items": [
+            "It is a utility class in Java (java.util.Collections)",
+            "Provides static helper methods to work with collections",
+            "Used for sorting, searching, reversing, synchronizing, etc.",
+            "Does not store data itself",
+            "Example methods: sort(), reverse(), shuffle(), synchronizedList()"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 3,
+      "question": "Difference between List, Set, and Map?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "list",
+        "set",
+        "map"
+      ],
+      "title": "Difference between List, Set, and Map?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "List",
+          "items": [
+            "Allows duplicate elements",
+            "Maintains insertion order",
+            "Elements are accessed using an index",
+            "Common implementations: ArrayList, LinkedList",
+            "Example: [A, B, A]"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Set",
+          "items": [
+            "Does not allow duplicates",
+            "Does not guarantee order (except LinkedHashSet)",
+            "No index-based access",
+            "Common implementations: HashSet, LinkedHashSet, TreeSet",
+            "Example: [A, B]"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Map",
+          "items": [
+            "Stores data as key–value pairs",
+            "Keys must be unique, values can be duplicate",
+            "No direct relationship to Collection interface",
+            "Accessed using keys",
+            "Common implementations: HashMap, LinkedHashMap, TreeMap",
+            "Example: {1=A, 2=B}"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 4,
+      "question": "Difference between Array and ArrayList?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "array",
+        "arraylist"
+      ],
+      "title": "Difference between Array and ArrayList?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Array",
+          "items": [
+            "Fixed size (cannot grow or shrink)",
+            "Can store primitive types and objects",
+            "Faster access due to direct memory allocation",
+            "Length is accessed using array.length",
+            "Part of core language (not in Collections framework)",
+            "Example: int[] arr = new int[5]"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "ArrayList",
+          "items": [
+            "Dynamic size (grows and shrinks automatically)",
+            "Stores objects only (primitives via wrapper classes)",
+            "Slightly slower than arrays due to resizing overhead",
+            "Size is accessed using arrayList.size()",
+            "Part of Collections framework",
+            "Example: ArrayList<Integer> list = new ArrayList<>()"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 5,
+      "question": "Difference between ArrayList and LinkedList?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "arraylist",
+        "linkedlist"
+      ],
+      "title": "Difference between ArrayList and LinkedList?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "ArrayList",
+          "items": [
+            "Uses a dynamic array internally",
+            "Faster random access (get(index))",
+            "Slower insertion/deletion in the middle (shifting needed)",
+            "Better for read-heavy operations",
+            "More memory-efficient than LinkedList",
+            "Implements List interface"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "LinkedList",
+          "items": [
+            "Uses a doubly linked list internally",
+            "Slower random access (must traverse nodes)",
+            "Faster insertion/deletion (no shifting)",
+            "Better for insert/delete-heavy operations",
+            "Uses more memory (stores node pointers)",
+            "Implements List and Deque interfaces"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 6,
+      "question": "Difference between HashSet and TreeSet?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "hashset",
+        "treeset"
+      ],
+      "title": "Difference between HashSet and TreeSet?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "HashSet",
+          "items": [
+            "Stores elements using a hash table",
+            "Does not maintain any order",
+            "Faster performance for add, remove, and search (O(1) average)",
+            "Allows one null element",
+            "Uses hashCode() and equals()",
+            "Example: [C, A, B]"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "TreeSet",
+          "items": [
+            "Stores elements in a sorted tree (Red-Black Tree)",
+            "Maintains sorted order (natural or comparator)",
+            "Slower than HashSet (O(log n))",
+            "Does not allow null elements",
+            "Uses compareTo() or Comparator",
+            "Example: [A, B, C]"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 7,
+      "question": "Difference between HashMap and Hashtable?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "hashmap",
+        "hashtable"
+      ],
+      "title": "Difference between HashMap and Hashtable?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "HashMap",
+          "items": [
+            "Stores data as key–value pairs using a hash table",
+            "Not synchronized (not thread-safe)",
+            "Faster performance due to no locking",
+            "Allows one null key and multiple null values",
+            "Uses fail-fast iterator",
+            "Part of Java Collections Framework",
+            "Preferred in modern applications"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Hashtable",
+          "items": [
+            "Stores data as key–value pairs using a hash table",
+            "Synchronized (thread-safe by default)",
+            "Slower due to synchronization overhead",
+            "Does not allow null key or null value",
+            "Uses Enumeration (not fail-fast)",
+            "Legacy class (introduced in Java 1.0)",
+            "Mainly used for legacy code"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 8,
+      "question": "Difference between HashMap and ConcurrentHashMap?",
+      "section": "Basic Level",
+      "difficulty": "Medium",
+      "tags": [
+        "hashmap",
+        "concurrency"
+      ],
+      "title": "Difference between HashMap and ConcurrentHashMap?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "HashMap",
+          "items": [
+            "Stores data as key–value pairs using a hash table"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Not thread-safe",
+          "items": [
+            "Faster in single-threaded environments",
+            "Allows one null key and multiple null values",
+            "Uses fail-fast iterator",
+            "Not suitable for concurrent access without external synchronization",
+            "Commonly used in non-concurrent applications"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "ConcurrentHashMap",
+          "items": [
+            "Stores data as key–value pairs using a hash table",
+            "Thread-safe for concurrent access",
+            "High performance using fine-grained locking / lock-free techniques",
+            "Does not allow null keys or null values",
+            "Uses weakly consistent iterator (no ConcurrentModificationException)",
+            "Supports concurrent read and write operations",
+            "Preferred for multi-threaded and concurrent applications"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 9,
+      "question": "Difference between Iterator and ListIterator?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "iterator"
+      ],
+      "title": "Difference between Iterator and ListIterator?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Iterator",
+          "items": [
+            "Used to traverse elements in a Collection",
+            "Supports forward direction only",
+            "Works with all collection types (List, Set, etc.)",
+            "Allows remove() operation",
+            "Cannot add or replace elements",
+            "Available via iterator()",
+            "Suitable for simple iteration"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "ListIterator",
+          "items": [
+            "Used to traverse elements in a List",
+            "Supports both forward and backward traversal",
+            "Works only with List implementations",
+            "Allows add(), remove(), and set() operations",
+            "Provides index-based methods like nextIndex() and previousIndex()",
+            "Available via listIterator()",
+            "Useful when modifying a list during iteration"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 10,
+      "question": "What is Generics in Collections?",
+      "section": "Basic Level",
+      "difficulty": "Easy",
+      "tags": [
+        "generics"
+      ],
+      "title": "What is Generics in Collections?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Generics",
+          "items": [
+            "Allow defining type-safe collections",
+            "Specify the type of objects a collection can store",
+            "Introduced in Java 5",
+            "Eliminates the need for explicit type casting",
+            "Errors are caught at compile time, not runtime",
+            "Improve code readability and safety"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Generics in Collections",
+          "items": [
+            "Used with collections like List<T>, Set<T>, Map<K, V>",
+            "Prevent storing wrong object types",
+            "Enable reusable and flexible code",
+            "Work with wrapper classes (not primitives)",
+            "Example:"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Generics in Collections",
+          "content": "",
+          "language": "java",
+          "code": "      List<String> names = new ArrayList<>();"
+        },
+        {
+          "type": "bullet",
+          "heading": "Generics in Collections",
+          "items": [
+            "Only String objects are allowed*"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 11,
+      "question": "Difference between fail-fast and fail-safe iterators?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "iterator",
+        "concurrency"
+      ],
+      "title": "Difference between fail-fast and fail-safe iterators?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Fail-fast Iterator",
+          "items": [
+            "Throws ConcurrentModificationException",
+            "Detects structural modification during iteration",
+            "Works on the original collection",
+            "Stops iteration immediately on modification",
+            "Used in collections like ArrayList, HashMap",
+            "Ensures data consistency",
+            "Faster and lightweight"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Fail-safe Iterator",
+          "items": [
+            "Does not throw ConcurrentModificationException",
+            "Allows modification during iteration",
+            "Works on a copy of the collection",
+            "Iteration continues safely",
+            "Used in Concurrent collections like ConcurrentHashMap",
+            "May not reflect latest changes",
+            "Slightly more memory overhead"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 12,
+      "question": "What is ConcurrentModificationException? When does it occur?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "exception",
+        "collections"
+      ],
+      "title": "What is ConcurrentModificationException? When does it occur?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "ConcurrentModificationException (Little Longer):",
+          "items": [
+            "A runtime exception in Java thrown by fail-fast iterators",
+            "Occurs when a collection is structurally modified during iteration",
+            "Common when using for-each loops and calling add() or remove()",
+            "Seen with non-thread-safe collections like ArrayList and HashMap",
+            "Can happen in multi-threaded environments without proper synchronization",
+            "Prevented by using Iterator.remove(), synchronization, or concurrent collections like ConcurrentHashMap"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 13,
+      "question": "How does HashMap work internally?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "hashmap"
+      ],
+      "title": "How does HashMap work internally?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "HashMap stores data in an array of buckets.",
+            "Each bucket holds Node objects containing key, value, hash, and next.",
+            "When put(key, value) is called:",
+            "hashCode() of the key is generated.",
+            "Bucket index is calculated using (capacity - 1) & hash.",
+            "If the bucket is empty, the entry is stored directly.",
+            "If a collision occurs:",
+            "Keys are compared using equals().",
+            "New entries are stored in a LinkedList.",
+            "If entries exceed 8, it converts to a Red-Black Tree (Java 8+).",
+            "get(key) uses the same hash and index to find the value.",
+            "Uses a load factor (0.75) to decide resizing.",
+            "When threshold is crossed, capacity doubles and entries are rehashed.",
+            "Allows one null key and multiple null values.",
+            "Average time complexity for get() and put() is O(1)."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1.5 min"
+    },
+    {
+      "id": 14,
+      "question": "Difference between HashMap and LinkedHashMap?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "hashmap",
+        "linkedhashmap"
+      ],
+      "title": "Difference between HashMap and LinkedHashMap?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "HashMap",
+          "items": [
+            "Stores key–value pairs using a hash table",
+            "Does not maintain any order",
+            "Faster than LinkedHashMap",
+            "Allows one null key and multiple null values",
+            "Uses hashing only",
+            "Iteration order is unpredictable",
+            "Uses less memory"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "LinkedHashMap",
+          "items": [
+            "Stores key–value pairs using hash table + doubly linked list",
+            "Maintains insertion order (or access order if enabled)",
+            "Slightly slower due to extra linked list",
+            "Allows one null key and multiple null values",
+            "Iteration order is predictable",
+            "Uses more memory",
+            "Useful for LRU cache implementations"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 15,
+      "question": "Difference between TreeMap and HashMap?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "treemap",
+        "hashmap"
+      ],
+      "title": "Difference between TreeMap and HashMap?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "HashMap",
+          "items": [
+            "Stores key–value pairs using a hash table",
+            "Does not maintain any order",
+            "Faster for get() and put() (O(1) average)",
+            "Allows one null key and multiple null values",
+            "Uses hashCode() and equals()",
+            "Suitable for high-performance lookups",
+            "Not sorted"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "TreeMap",
+          "items": [
+            "Stores key–value pairs using a Red-Black Tree",
+            "Maintains sorted order (natural or Comparator)",
+            "Slower than HashMap (O(log n))",
+            "Does not allow null keys (allows null values)",
+            "Uses compareTo() or Comparator",
+            "Useful when sorted data is required",
+            "Implements NavigableMap"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 16,
+      "question": "Time complexity of common operations in collections?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "complexity"
+      ],
+      "title": "Time complexity of common operations in collections?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Array / ArrayList",
+          "items": [
+            "Access → O(1)",
+            "Add (end) → O(1) amortized",
+            "Insert / Remove → O(n)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "LinkedList",
+          "items": [
+            "Access → O(n)",
+            "Add / Remove (ends) → O(1)",
+            "Search → O(n)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "HashMap / HashSet",
+          "items": [
+            "Put / Get / Remove → O(1) average",
+            "Worst case → O(n) (or O(log n) in Java 8+)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "TreeMap / TreeSet",
+          "items": [
+            "Put / Get / Remove → O(log n)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Queue / Deque",
+          "items": [
+            "Add / Remove / Peek → O(1)"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 17,
+      "question": "How does equals() and hashCode() affect HashMap?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "hashcode",
+        "equals"
+      ],
+      "title": "How does equals() and hashCode() affect HashMap?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "hashCode() is used to decide the bucket index where the key is stored.",
+            "equals() is used to identify the exact key within that bucket.",
+            "When inserting (put):",
+            "HashMap first checks hashCode()",
+            "If hash matches, it then checks equals()",
+            "If equals() returns true, the value is replaced",
+            "When retrieving (get):",
+            "Same hashCode() finds the bucket",
+            "equals() finds the matching key",
+            "If *hashCode()8 is not overridden properly:",
+            "Keys may go to wrong buckets → poor performance",
+            "If equals() is not overridden:",
+            "Duplicate keys may be stored → data inconsistency",
+            "Contract rule:",
+            "If equals() is true, hashCode() must be same"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "In short:",
+          "content": "hashCode() decides where the key goes, equals() decides which key it is."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 18,
+      "question": "Difference between Comparable and Comparator?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "comparable",
+        "comparator"
+      ],
+      "title": "Difference between Comparable and Comparator?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Comparable",
+          "items": [
+            "Used to define natural sorting order",
+            "Implemented by the class itself",
+            "Has only one sorting logic",
+            "Method: compareTo(Object o)",
+            "Modifies the original class",
+            "Located in java.lang",
+            "Used by default in sorting methods"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Comparator",
+          "items": [
+            "Used to define custom sorting order",
+            "Implemented as a separate class or lambda",
+            "Allows multiple sorting logics",
+            "Method: compare(Object o1, Object o2)",
+            "Does not modify the original class",
+            "Located in java.util",
+            "Used when custom sorting is required"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Comparator",
+          "content": "One-line interview tip: Comparable is for natural ordering, Comparator is for custom ordering."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 19,
+      "question": "How do you make a collection thread-safe?",
+      "section": "Intermediate Level",
+      "difficulty": "Medium",
+      "tags": [
+        "threadsafe"
+      ],
+      "title": "How do you make a collection thread-safe?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Use synchronized collections:"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Collections.synchronizedMap()",
+          "items": [
+            "Use concurrent collections:"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "CopyOnWriteArraySet",
+          "items": [
+            "Use legacy thread-safe classes:",
+            "Vector, Hashtable (not recommended now)",
+            "Apply manual synchronization:",
+            "Use synchronized blocks while accessing collections",
+            "Prefer concurrent collections for better performance in multi-threaded apps"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "CopyOnWriteArraySet",
+          "content": "Note: Use concurrent collections instead of synchronizing normal collections for better scalability."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 20,
+      "question": "Difference between Collections.synchronizedList() and CopyOnWriteArrayList?",
+      "section": "Intermediate Level",
+      "difficulty": "Hard",
+      "tags": [
+        "concurrency"
+      ],
+      "title": "Difference between Collections.synchronizedList() and CopyOnWriteArrayList?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Collections.synchronizedList()",
+          "items": [
+            "Makes a list thread-safe using synchronization",
+            "Uses a single lock for all operations",
+            "Read and write operations block each other",
+            "Iterator is fail-fast (needs manual synchronization)",
+            "Better when writes are frequent",
+            "Lower memory overhead"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "CopyOnWriteArrayList",
+          "items": [
+            "Thread-safe using copy-on-write mechanism",
+            "No locking for read operations",
+            "Write operations create a new copy of the array",
+            "Iterator is fail-safe",
+            "Best when reads are frequent and writes are rare",
+            "Higher memory overhead"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "CopyOnWriteArrayList",
+          "content": "Note: synchronizedList locks everything, CopyOnWriteArrayList optimizes for concurrent reads."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1.5 min"
+    }
+  ]
+}

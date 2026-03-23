@@ -1,0 +1,47 @@
+{
+  "title": "Compose Layouts & Modifiers",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Compose Layout Basics",
+      "content": "Jetpack Compose uses a constraint-based layout system. Each composable receives size constraints from its parent, measures its children, and then places them on the screen. Unlike the old View system, Compose measures each UI element only once, making layouts efficient and predictable."
+    },
+    {
+      "type": "bullet",
+      "heading": "Core Layout Composables",
+      "items": [
+        "Column – arranges items vertically",
+        "Row – arranges items horizontally",
+        "Box – stacks items on top of each other",
+        "LazyColumn – efficient vertical scrolling list",
+        "LazyRow – horizontal scrolling list"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Arrangement & Alignment",
+      "content": "Column and Row support arrangement and alignment to control how children are positioned. Arrangement controls spacing along the main axis, while alignment positions items on the cross axis."
+    },
+    {
+      "type": "text",
+      "heading": "Modifiers",
+      "content": "Modifiers define a composable’s appearance, size, behavior, and interactions. They are chained together, and their order matters. Common modifiers include size, padding, background, border, and clickable."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Modifiers",
+      "items": [
+        "Modifier.padding() – adds spacing around content",
+        "Modifier.fillMaxWidth() – fills available width",
+        "Modifier.size() – sets exact size",
+        "Modifier.background() – sets background color",
+        "Modifier.clickable() – handles click events"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Compose layouts rely on simple primitives like Column, Row, and Box. Modifiers allow developers to control layout, styling, and interactions, making UI building flexible and concise."
+    }
+  ]
+}

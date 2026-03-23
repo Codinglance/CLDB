@@ -1,0 +1,84 @@
+{
+    "title": "Kotlin Coroutines Basics",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. What is a Coroutine?",
+            "content": "A coroutine is a lightweight thread. Unlike real threads, coroutines are inexpensive and you can run thousands of them on a single thread. They allow asynchronous programming without blocking the UI thread."
+        },
+        {
+            "type": "bullet",
+            "heading": "Key Concept: Suspend vs Blocking",
+            "items": [
+                "Blocking: A thread waits for a task to finish and cannot do other work (bad for UI).",
+                "Suspending: A coroutine pauses without blocking the thread, allowing other work to run. It resumes when the task completes."
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "2A. suspend Functions",
+            "content": "Functions marked with 'suspend' can be paused and resumed. They can only be called from another suspend function or inside a coroutine.",
+            "language": "kotlin",
+            "code": "suspend fun fetchUserData(): String {\n    delay(2000)\n    return \"User: Samy\"\n}"
+        },
+        {
+            "type": "text",
+            "heading": "2B. Coroutine Scope",
+            "content": "A coroutine scope defines the lifecycle of coroutines. In Android, scopes like lifecycleScope ensure coroutines are cancelled automatically when the Activity or Fragment is destroyed."
+        },
+        {
+            "type": "text",
+            "heading": "2C. Coroutine Builders",
+            "content": "Coroutine builders are used to start coroutines."
+        },
+        {
+            "type": "bullet",
+            "heading": "Common Builders",
+            "items": [
+                "launch: Starts a coroutine and does not return a result (fire-and-forget).",
+                "async: Starts a coroutine and returns Deferred<T>, allowing you to retrieve a result using await()."
+            ]
+        },
+        {
+            "type": "table",
+            "heading": "3. Dispatchers (Where the Code Runs)",
+            "rows": [
+                {
+                    "dispatcher": "Dispatchers.Main",
+                    "useCase": "Updating the UI (TextViews, Buttons)."
+                },
+                {
+                    "dispatcher": "Dispatchers.IO",
+                    "useCase": "Networking, Disk read/write operations."
+                },
+                {
+                    "dispatcher": "Dispatchers.Default",
+                    "useCase": "CPU-intensive work (sorting, image processing)."
+                }
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "4. Simple Coroutine Example (Android)",
+            "content": "This example shows how to perform background work and then switch back to the Main thread to update the UI.",
+            "language": "kotlin",
+            "code": "lifecycleScope.launch(Dispatchers.IO) {\n    val result = fetchUserData()\n\n    withContext(Dispatchers.Main) {\n        binding.textView.text = result\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "5. Structured Concurrency",
+            "content": "Coroutines follow a hierarchy. If a parent coroutine is cancelled, all of its child coroutines are cancelled automatically. This prevents background tasks from leaking or continuing after the UI is destroyed."
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Coroutines are lightweight and do not block threads.",
+                "The 'suspend' keyword allows functions to pause without blocking.",
+                "launch starts a coroutine; async returns a value.",
+                "Dispatchers determine which thread the coroutine runs on.",
+                "Structured concurrency prevents memory leaks in Android."
+            ]
+        }
+    ]
+}

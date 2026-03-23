@@ -1,0 +1,79 @@
+{
+  "title": "Dependency Injection with Hilt",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Dependency Injection?",
+      "content": "Dependency Injection (DI) is a design pattern where an object receives its dependencies from an external source instead of creating them itself. For example, instead of a ViewModel creating its own repository, the repository is provided by a DI framework. This makes the code more modular, testable, and easier to maintain because dependencies can be replaced or mocked without changing the main class."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Dependency Injection?",
+      "items": [
+        "Improves testability by allowing mock or fake dependencies",
+        "Reduces tight coupling between classes",
+        "Simplifies object creation and dependency management",
+        "Promotes clean architecture and separation of concerns",
+        "Allows dependency reuse across multiple classes",
+        "Helps manage object lifecycles automatically"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is Hilt?",
+      "content": "Hilt is Google's recommended dependency injection library for Android built on top of Dagger. It simplifies dependency injection by providing preconfigured components that match Android lifecycles such as Application, Activity, Fragment, and ViewModel. Hilt generates the dependency graph at compile time using annotations, eliminating the need for manual wiring and reducing boilerplate code."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic Hilt Setup",
+      "items": [
+        "Add Hilt dependencies and Gradle plugin in build.gradle",
+        "Annotate the Application class with @HiltAndroidApp",
+        "Annotate Activities or Fragments with @AndroidEntryPoint",
+        "Use @HiltViewModel for ViewModels",
+        "Use @Inject constructor to define how dependencies are created",
+        "Create Hilt Modules for third-party dependencies using @Module and @Provides"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Important Hilt Annotations",
+      "rows": [
+        {
+          "annotation": "@HiltAndroidApp",
+          "purpose": "Initializes Hilt and creates the application-level dependency container"
+        },
+        {
+          "annotation": "@AndroidEntryPoint",
+          "purpose": "Allows dependency injection into Android classes like Activity or Fragment"
+        },
+        {
+          "annotation": "@HiltViewModel",
+          "purpose": "Enables dependency injection inside a ViewModel"
+        },
+        {
+          "annotation": "@Inject",
+          "purpose": "Marks constructor or field for dependency injection"
+        },
+        {
+          "annotation": "@Module",
+          "purpose": "Defines a class that provides dependencies"
+        },
+        {
+          "annotation": "@Provides",
+          "purpose": "Specifies how to create dependencies that cannot use @Inject"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Constructor Injection",
+      "content": "The easiest way to provide dependencies in Hilt is constructor injection. By annotating a class constructor with @Inject, Hilt automatically knows how to create the object and provide it wherever required. This approach is commonly used for repositories, use cases, and other plain Kotlin classes."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Hilt simplifies dependency injection in Android by automating object creation and dependency management. With annotations like @HiltAndroidApp, @AndroidEntryPoint, and @Inject, developers can easily provide dependencies across the app. This results in cleaner, more maintainable, and testable code aligned with modern Android architecture."
+    }
+  ]
+}

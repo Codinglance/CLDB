@@ -1,0 +1,354 @@
+{
+  "courseId": "Android",
+  "courseTitle": "Android Development",
+  "phases": [
+    {
+      "phaseId": 1,
+      "phaseTitle": "Android Fundamentals",
+      "topics": [
+        {
+          "topicId": 1,
+          "title": "Introduction to Android Development",
+          "markdownFile": "android_topic_01_introduction.json",
+          "order": 1
+        },
+        {
+          "topicId": 2,
+          "title": "Android Studio & Project Structure",
+          "markdownFile": "android_topic_02_android_studio.json",
+          "order": 2
+        },
+        {
+          "topicId": 3,
+          "title": "Android Manifest & App Components",
+          "markdownFile": "android_topic_03_manifest.json",
+          "order": 3
+        },
+        {
+          "topicId": 4,
+          "title": "Activities & Activity Lifecycle",
+          "markdownFile": "android_topic_04_activity_lifecycle.json",
+          "order": 4
+        },
+        {
+          "topicId": 5,
+          "title": "Intents & Navigation Between Activities",
+          "markdownFile": "android_topic_05_intents.json",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "phaseId": 2,
+      "phaseTitle": "UI Development",
+      "topics": [
+        {
+          "topicId": 6,
+          "title": "XML Layouts & Views",
+          "markdownFile": "android_topic_06_xml_layouts.json",
+          "order": 1
+        },
+        {
+          "topicId": 7,
+          "title": "ConstraintLayout & LinearLayout",
+          "markdownFile": "android_topic_07_layouts.json",
+          "order": 2
+        },
+        {
+          "topicId": 8,
+          "title": "RecyclerView & Adapters",
+          "markdownFile": "android_topic_08_recyclerview.json",
+          "order": 3
+        },
+        {
+          "topicId": 9,
+          "title": "Fragments & Fragment Lifecycle",
+          "markdownFile": "android_topic_09_fragments.json",
+          "order": 4
+        },
+        {
+          "topicId": 10,
+          "title": "Material Design Components",
+          "markdownFile": "android_topic_10_material_design.json",
+          "order": 5
+        },
+        {
+          "topicId": 11,
+          "title": "View Binding & Data Binding",
+          "markdownFile": "android_topic_11_view_binding.json",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "phaseId": 3,
+      "phaseTitle": "App Architecture",
+      "topics": [
+        {
+          "topicId": 12,
+          "title": "MVVM Architecture Pattern",
+          "markdownFile": "android_topic_12_mvvm.json",
+          "order": 1
+        },
+        {
+          "topicId": 13,
+          "title": "ViewModel & LiveData",
+          "markdownFile": "android_topic_13_viewmodel_livedata.json",
+          "order": 2
+        },
+        {
+          "topicId": 14,
+          "title": "Android Jetpack Navigation Component",
+          "markdownFile": "android_topic_14_navigation_component.json",
+          "order": 3
+        },
+        {
+          "topicId": 15,
+          "title": "Dependency Injection with Hilt",
+          "markdownFile": "android_topic_15_hilt.json",
+          "order": 4
+        },
+        {
+          "topicId": 16,
+          "title": "Repository Pattern",
+          "markdownFile": "android_topic_16_repository_pattern.json",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "phaseId": 4,
+      "phaseTitle": "Data & Storage",
+      "topics": [
+        {
+          "topicId": 17,
+          "title": "SharedPreferences & DataStore",
+          "markdownFile": "android_topic_17_datastore.json",
+          "order": 1
+        },
+        {
+          "topicId": 18,
+          "title": "Room Database",
+          "markdownFile": "android_topic_18_room.json",
+          "order": 2
+        },
+        {
+          "topicId": 19,
+          "title": "Room with ViewModel & Flow",
+          "markdownFile": "android_topic_19_room_viewmodel.json",
+          "order": 3
+        },
+        {
+          "topicId": 20,
+          "title": "File Storage & Media",
+          "markdownFile": "android_topic_20_file_storage.json",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 5,
+      "phaseTitle": "Networking",
+      "topics": [
+        {
+          "topicId": 21,
+          "title": "REST APIs & HTTP Basics",
+          "markdownFile": "android_topic_21_rest_apis.json",
+          "order": 1
+        },
+        {
+          "topicId": 22,
+          "title": "Retrofit & OkHttp",
+          "markdownFile": "android_topic_22_retrofit.json",
+          "order": 2
+        },
+        {
+          "topicId": 23,
+          "title": "Gson & JSON Parsing",
+          "markdownFile": "android_topic_23_gson.json",
+          "order": 3
+        },
+        {
+          "topicId": 24,
+          "title": "Networking with Coroutines",
+          "markdownFile": "android_topic_24_networking_coroutines.json",
+          "order": 4
+        },
+        {
+          "topicId": 25,
+          "title": "Image Loading with Glide & Coil",
+          "markdownFile": "android_topic_25_image_loading.json",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "phaseId": 6,
+      "phaseTitle": "Jetpack Compose",
+      "topics": [
+        {
+          "topicId": 26,
+          "title": "Introduction to Jetpack Compose",
+          "markdownFile": "android_topic_26_compose_intro.json",
+          "order": 1
+        },
+        {
+          "topicId": 27,
+          "title": "Composables, State & Recomposition",
+          "markdownFile": "android_topic_27_compose_state.json",
+          "order": 2
+        },
+        {
+          "topicId": 28,
+          "title": "Compose Layouts & Modifiers",
+          "markdownFile": "android_topic_28_compose_layouts.json",
+          "order": 3
+        },
+        {
+          "topicId": 29,
+          "title": "Compose Navigation",
+          "markdownFile": "android_topic_29_compose_navigation.json",
+          "order": 4
+        },
+        {
+          "topicId": 30,
+          "title": "Compose with ViewModel & Flow",
+          "markdownFile": "android_topic_30_compose_viewmodel.json",
+          "order": 5
+        },
+        {
+          "topicId": 31,
+          "title": "Compose Theming & Material3",
+          "markdownFile": "android_topic_31_compose_theming.json",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "phaseId": 7,
+      "phaseTitle": "Background Work & Services",
+      "topics": [
+        {
+          "topicId": 32,
+          "title": "Services & Foreground Services",
+          "markdownFile": "android_topic_32_services.json",
+          "order": 1
+        },
+        {
+          "topicId": 33,
+          "title": "WorkManager",
+          "markdownFile": "android_topic_33_workmanager.json",
+          "order": 2
+        },
+        {
+          "topicId": 34,
+          "title": "Broadcast Receivers",
+          "markdownFile": "android_topic_34_broadcast_receivers.json",
+          "order": 3
+        },
+        {
+          "topicId": 35,
+          "title": "Push Notifications with FCM",
+          "markdownFile": "android_topic_35_fcm_notifications.json",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 8,
+      "phaseTitle": "Advanced Android",
+      "topics": [
+        {
+          "topicId": 36,
+          "title": "Permissions (Runtime & Special)",
+          "markdownFile": "android_topic_36_permissions.json",
+          "order": 1
+        },
+        {
+          "topicId": 37,
+          "title": "App Performance & Profiling",
+          "markdownFile": "android_topic_37_performance.json",
+          "order": 2
+        },
+        {
+          "topicId": 38,
+          "title": "Security Best Practices",
+          "markdownFile": "android_topic_38_security.json",
+          "order": 3
+        },
+        {
+          "topicId": 39,
+          "title": "Deep Links & App Links",
+          "markdownFile": "android_topic_39_deep_links.json",
+          "order": 4
+        },
+        {
+          "topicId": 40,
+          "title": "Localization & Accessibility",
+          "markdownFile": "android_topic_40_localization.json",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "phaseId": 9,
+      "phaseTitle": "Testing",
+      "topics": [
+        {
+          "topicId": 41,
+          "title": "Unit Testing with JUnit & Mockito",
+          "markdownFile": "android_topic_41_unit_testing.json",
+          "order": 1
+        },
+        {
+          "topicId": 42,
+          "title": "UI Testing with Espresso",
+          "markdownFile": "android_topic_42_espresso.json",
+          "order": 2
+        },
+        {
+          "topicId": 43,
+          "title": "Testing Compose UI",
+          "markdownFile": "android_topic_43_compose_testing.json",
+          "order": 3
+        },
+        {
+          "topicId": 44,
+          "title": "Testing ViewModel & Repository",
+          "markdownFile": "android_topic_44_testing_architecture.json",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 10,
+      "phaseTitle": "Publishing & Best Practices",
+      "topics": [
+        {
+          "topicId": 45,
+          "title": "App Signing & Build Variants",
+          "markdownFile": "android_topic_45_build_variants.json",
+          "order": 1
+        },
+        {
+          "topicId": 46,
+          "title": "ProGuard & R8 (Code Shrinking)",
+          "markdownFile": "android_topic_46_proguard.json",
+          "order": 2
+        },
+        {
+          "topicId": 47,
+          "title": "Publishing to Google Play Store",
+          "markdownFile": "android_topic_47_play_store.json",
+          "order": 3
+        },
+        {
+          "topicId": 48,
+          "title": "Android Best Practices & Code Quality",
+          "markdownFile": "android_topic_48_best_practices.json",
+          "order": 4
+        }
+      ]
+    }
+  ]
+}

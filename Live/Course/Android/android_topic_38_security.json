@@ -1,0 +1,57 @@
+{
+  "title": "Security Best Practices",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Security Matters",
+      "content": "Android apps handle sensitive user data — passwords, payment info, messages — making security critical. A weak app risks data theft, account takeover, and unauthorized access. Android enforces a layered model: Linux kernel sandboxing, app sandbox, permissions, secure storage, and encrypted communication. Following best practices protects users, maintains trust, and meets Play Store security requirements."
+    },
+    {
+      "type": "table",
+      "heading": "Security Layers & Developer Actions",
+      "rows": [
+        {"layer": "Linux Kernel", "protection": "Process isolation per app", "developer_action": "No action needed"},
+        {"layer": "App Sandbox", "protection": "Apps isolated from each other", "developer_action": "Use FileProvider for sharing"},
+        {"layer": "Permissions", "protection": "User grants sensitive access", "developer_action": "Request only necessary permissions"},
+        {"layer": "Network Security", "protection": "HTTPS by default", "developer_action": "Use TLS & pin certificates"},
+        {"layer": "Data Encryption", "protection": "File-based encryption", "developer_action": "Use EncryptedSharedPreferences/EncryptedFile"},
+        {"layer": "Keystore", "protection": "Hardware-backed keys", "developer_action": "Store cryptographic keys securely"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Practices",
+      "items": [
+        "Use EncryptedSharedPreferences & EncryptedFile for sensitive data",
+        "Never store passwords or API keys in plain text or source code",
+        "Use Android Keystore for cryptographic keys and biometric gating",
+        "HTTPS & certificate pinning for all network traffic",
+        "Validate Intents, deep links, and WebView input",
+        "Lock down components: set android:exported=false where possible",
+        "Enable R8/ProGuard to obfuscate code and shrink resources",
+        "Harden WebViews: disable JavaScript and file access unless needed",
+        "Audit logs: never expose sensitive data",
+        "Use FLAG_IMMUTABLE for all PendingIntents (API 31+)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Security Checklist Before Release",
+      "rows": [
+        {"check": "HTTPS enforced", "description": "All API calls use HTTPS; cleartext blocked"},
+        {"check": "No hardcoded secrets", "description": "No API keys or passwords in code"},
+        {"check": "Sensitive data encrypted", "description": "Use EncryptedSharedPreferences/EncryptedFile"},
+        {"check": "R8/ProGuard enabled", "description": "Code obfuscation and resource shrinking active"},
+        {"check": "Exported components locked", "description": "android:exported set explicitly"},
+        {"check": "Logs cleaned", "description": "No tokens, passwords, or PII in Logcat"},
+        {"check": "PendingIntent flags", "description": "Use FLAG_IMMUTABLE"},
+        {"check": "WebView hardened", "description": "JS & file access disabled unless needed"}
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Security is multi-layered: store sensitive data encrypted, use Keystore for keys, enforce HTTPS with pinning, lock down components, validate all external input, harden WebViews, obfuscate code, and audit logs. Follow the checklist to meet Play Store and user security expectations."
+    }
+  ]
+}

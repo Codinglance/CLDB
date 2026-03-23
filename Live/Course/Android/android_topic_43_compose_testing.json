@@ -1,0 +1,57 @@
+{
+  "title": "Testing Compose UI",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Compose UI Testing?",
+      "content": "Compose UI testing is Jetpack Compose's framework for writing UI tests on composables. It uses a semantics tree, unlike Espresso's View hierarchy. ComposeTestRule hosts composables, finds nodes using semantic matchers, performs actions, and asserts state. It integrates with JUnit4, supports isolated composable or full Activity testing, and automatically waits for recompositions and animations."
+    },
+    {
+      "type": "table",
+      "heading": "Compose Testing vs Espresso",
+      "rows": [
+        { "aspect": "UI Framework", "compose_testing": "Semantics tree", "espresso": "View hierarchy" },
+        { "aspect": "Node finding", "compose_testing": "onNodeWithText(), onNodeWithTag()", "espresso": "withId(), withText()" },
+        { "aspect": "Synchronization", "compose_testing": "Automatic recomposition wait", "espresso": "Manual IdlingResources for async" },
+        { "aspect": "Component testing", "compose_testing": "Yes, setContent{}", "espresso": "Partial, needs Activity" },
+        { "aspect": "Test rule", "compose_testing": "createComposeRule()", "espresso": "ActivityScenarioRule" }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Node Actions & Assertions",
+      "items": [
+        "Actions: performClick(), performTextInput(), performScrollToIndex()",
+        "Assertions: assertIsDisplayed(), assertTextEquals(), assertDoesNotExist(), assertCountEquals()",
+        "Use Modifier.testTag() for reliable node identification",
+        "Combine semantic matchers: hasText(), hasClickAction(), hasTestTag()",
+        "Scroll LazyColumn/LazyRow nodes into view before asserting"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing State & Animation",
+      "items": [
+        "Drive state via mutableStateOf() and assert UI updates",
+        "Use composeTestRule.mainClock for animation control",
+        "waitUntil() for async changes, avoid Thread.sleep()",
+        "Test loading, success, error states by changing state and asserting nodes"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing Navigation & ViewModel",
+      "items": [
+        "Use createAndroidComposeRule<Activity>() for Activity-scoped ViewModels",
+        "Inject fakes/mocks for isolated composable tests",
+        "Trigger navigation and assert destination composables",
+        "Use TestNavHostController for controlled navigation tests"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Compose UI testing leverages the semantics tree for precise, reliable testing. Use createComposeRule() for isolated composables and createAndroidComposeRule<Activity>() for full Activity context. Find nodes via testTag, text, or content description, perform actions, assert state, and control animations with mainClock. Compose's built-in synchronization removes the need for manual waits in most scenarios, making tests simpler, faster, and more robust."
+    }
+  ]
+}

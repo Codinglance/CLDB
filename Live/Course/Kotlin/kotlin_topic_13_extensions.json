@@ -1,0 +1,49 @@
+{
+    "title": "Extension Functions",
+    "sections": [
+        {
+            "type": "text_code",
+            "heading": "1. What is an Extension Function?",
+            "content": "An extension function is a function defined outside a class but called as if it were a member of that class. It allows you to extend a class with new abilities without modifying its source code.\n\nSyntax:\nfun ReceiverType.functionName(arguments): ReturnType { ... }",
+            "language": "kotlin",
+            "code": "// Extending the String class\nfun String.removeSpaces(): String {\n    return this.replace(\" \", \"\")\n}\n\nval text = \"Hello Kotlin World\"\nprintln(text.removeSpaces())"
+        },
+        {
+            "type": "text_code",
+            "heading": "2. Why Use Extensions in Android?",
+            "content": "In Android (XML-based), we often interact with the View class. Extensions help reduce repetitive code and improve readability.\n\nExample: Simplifying View visibility handling.",
+            "language": "kotlin",
+            "code": "// Define the extensions\nfun View.hide() {\n    this.visibility = View.GONE\n}\n\nfun View.show() {\n    this.visibility = View.VISIBLE\n}\n\n// Usage in Activity\nbinding.progressBar.show()\nbinding.errorText.hide()"
+        },
+        {
+            "type": "text_code",
+            "heading": "3. Extension Properties",
+            "content": "Extensions can also define properties. However, they cannot store state because they do not have backing fields. Only custom getters (or setters) are allowed.",
+            "language": "kotlin",
+            "code": "val String.isEmail: Boolean\n    get() = contains(\"@\") && contains(\".\")\n\nif (\"user@mail.com\".isEmail) {\n    // Proceed\n}"
+        },
+        {
+            "type": "text",
+            "heading": "4. Resolving Conflicts",
+            "content": "Extension functions are resolved statically, meaning the function called is determined by the reference type at compile-time. If a class already has a member function with the same name and signature as an extension, the member function always takes priority."
+        },
+        {
+            "type": "text_code",
+            "heading": "5. Useful Android Extensions (Real-world Examples)",
+            "content": "Common Android extensions that reduce boilerplate and improve readability.",
+            "language": "kotlin",
+            "code": "// 1. Toast Extension\nfun Context.toast(message: String) {\n    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()\n}\n\n// 2. Fragment Navigation Extension\nfun Fragment.navigateTo(fragment: Fragment) {\n    parentFragmentManager.beginTransaction()\n        .replace(R.id.container, fragment)\n        .commit()\n}\n\n// 3. String to Date\nfun String.toDate(format: String): Date? {\n    return SimpleDateFormat(format, Locale.getDefault()).parse(this)\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Extensions allow adding logic to classes without modifying their source code.",
+                "Inside an extension, 'this' refers to the receiver object.",
+                "Extensions reduce boilerplate in Android (Toasts, View visibility, navigation).",
+                "They are resolved statically at compile-time.",
+                "Member functions always take priority over extensions with the same signature."
+            ]
+        }
+    ]
+}

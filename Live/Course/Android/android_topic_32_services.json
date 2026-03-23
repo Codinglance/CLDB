@@ -1,0 +1,73 @@
+{
+  "title": "Services & Foreground Services",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is a Service?",
+      "content": "A Service runs background tasks without a UI. Types: started (runs until stopped), bound (runs while clients are connected), foreground (persistent notification, higher priority). Services run on the main thread by default — offload work to background threads."
+    },
+    {
+      "type": "table",
+      "heading": "Service Types",
+      "rows": [
+        {"type": "Started Service", "started_by": "startService()", "lifecycle": "Runs until stopped", "use_case": "One-off tasks"},
+        {"type": "Bound Service", "started_by": "bindService()", "lifecycle": "Runs while bound", "use_case": "IPC between components"},
+        {"type": "Foreground Service", "started_by": "startForegroundService()", "lifecycle": "Runs until stopped; persistent notification", "use_case": "User-visible tasks"},
+        {"type": "IntentService (deprecated)", "started_by": "startService()", "lifecycle": "Stops automatically", "use_case": "Legacy sequential tasks"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use",
+      "items": [
+        "Foreground service: user-aware tasks (music, navigation)",
+        "WorkManager: deferrable tasks (sync, uploads)",
+        "Coroutines in ViewModel: short-lived background work",
+        "Avoid plain started Service for network/db tasks",
+        "Android 14+: declare foreground type in manifest"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Service Lifecycle",
+      "content": "onCreate() → onStartCommand()/onBind() → work → onDestroy(). Clean up threads, receivers, and resources in onDestroy()."
+    },
+    {
+      "type": "bullet",
+      "heading": "Foreground Service Steps",
+      "items": [
+        "Declare in manifest with android:foregroundServiceType",
+        "Create NotificationChannel (API 26+)",
+        "Call startForeground() immediately in onStartCommand()",
+        "Stop with stopForeground() + stopSelf()",
+        "Use WorkManager or coroutines if user visibility not required"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Service vs WorkManager vs Coroutine",
+      "rows": [
+        {"factor": "Survives process death", "service": "Foreground: yes", "workmanager": "Yes", "coroutine": "No"},
+        {"factor": "User visibility", "service": "Foreground requires notification", "workmanager": "None", "coroutine": "None"},
+        {"factor": "Best for", "service": "Ongoing tasks", "workmanager": "Deferrable guaranteed tasks", "coroutine": "Short-lived UI tasks"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Blocking main thread in onStartCommand()",
+        "Missing startForeground() → ANR",
+        "Forgetting stopSelf() → battery drain",
+        "Not unbinding → leaks",
+        "Implicit intents blocked API 21+",
+        "Not cancelling coroutines in onDestroy()"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Use foreground services for persistent, user-visible tasks. Always startForeground(), declare types in manifest, run work on background threads via coroutines, and stopSelf() when done. Prefer WorkManager for deferrable tasks, and coroutines in ViewModel for short-lived background work without a Service."
+    }
+  ]
+}

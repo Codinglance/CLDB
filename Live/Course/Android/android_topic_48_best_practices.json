@@ -1,0 +1,116 @@
+{
+  "title": "Android Best Practices & Code Quality",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Code Quality Matters",
+      "content": "High-quality code ensures maintainability, testability, readability, and resilience. Android apps evolve over time, and poor practices lead to bugs, regressions, and developer frustration. Following consistent best practices—clean architecture, clear naming, small focused classes, testing, and code reviews—makes codebases sustainable, productive, and enjoyable for years."
+    },
+    {
+      "type": "table",
+      "heading": "Architecture Best Practices",
+      "rows": [
+        {
+          "practice": "MVVM & Single Responsibility",
+          "description": "UI logic in ViewModel, business logic in UseCases, data in Repositories",
+          "anti_pattern": "Network calls or business logic inside Activity/Fragment"
+        },
+        {
+          "practice": "Unidirectional Data Flow",
+          "description": "UI observes state; actions flow up to ViewModel, state flows down",
+          "anti_pattern": "UI modifies state directly or holds ViewModel references"
+        },
+        {
+          "practice": "Dependency Injection",
+          "description": "Inject dependencies via constructor; enhances testability",
+          "anti_pattern": "Instantiating Retrofit, Room, or Repositories inside classes"
+        },
+        {
+          "practice": "Single Source of Truth",
+          "description": "Repository is the authoritative source for app data",
+          "anti_pattern": "Duplicating data in ViewModel and Fragment"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Kotlin Best Practices",
+      "items": [
+        "Prefer val over var for immutability",
+        "Use data classes and sealed classes for state modeling",
+        "Favor extension functions over utility classes",
+        "Use scope functions appropriately: let, apply, run, also, with",
+        "Avoid !!; prefer safe calls, Elvis operator, or require/checkNotNull",
+        "Use named arguments to avoid parameter confusion",
+        "Prefer when expressions over long if-else chains"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Naming Conventions",
+      "rows": [
+        {"element": "Classes & Interfaces", "convention": "PascalCase", "examples": "HomeViewModel, UserRepository"},
+        {"element": "Functions & Variables", "convention": "camelCase", "examples": "getUserById(), isLoading"},
+        {"element": "Constants", "convention": "SCREAMING_SNAKE_CASE", "examples": "MAX_RETRY_COUNT"},
+        {"element": "Layouts & Resources", "convention": "snake_case with type prefix", "examples": "activity_main.xml, btnSubmit / btn_submit"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "ViewModel & Coroutine Practices",
+      "items": [
+        "Expose immutable StateFlow; handle one-shot events via SharedFlow",
+        "Avoid Context references to prevent memory leaks",
+        "Use viewModelScope for coroutines; structured concurrency and correct Dispatchers",
+        "Use suspend functions over callbacks; Flow for streams",
+        "Handle cancellations and exceptions correctly"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "UI & Compose Practices",
+      "items": [
+        "Keep composables stateless; lift state to ViewModel",
+        "Use state hoisting and remember/rememberSaveable appropriately",
+        "LazyColumn/LazyRow for lists; pass Modifier first",
+        "Avoid business logic inside composables"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Error Handling & Testing",
+      "rows": [
+        {"practice": "Use Result<T>/sealed classes", "description": "Explicit error handling; type-safe"},
+        {"practice": "Map exceptions to domain errors", "description": "Repository converts low-level errors to meaningful types"},
+        {"practice": "Follow testing pyramid", "description": "70% unit, 20% integration, 10% UI tests"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Code Review & CI/CD",
+      "items": [
+        "Small, focused PRs with meaningful descriptions",
+        "Automate lint, ktlint, detekt in CI",
+        "Feature flags for incomplete features",
+        "Use GitFlow or trunk-based development; meaningful commit messages",
+        "Automate release builds via CI/CD; keep main branch releasable"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Memory & Resource Management",
+      "items": [
+        "Clear View bindings in onDestroyView(); avoid static Context references",
+        "Unregister listeners and observers properly",
+        "Use Glide/Coil for image loading with lifecycle awareness",
+        "Use LeakCanary for memory leak detection",
+        "Close resources explicitly"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Consistent application of Android best practices across architecture, Kotlin usage, ViewModel design, Compose, error handling, testing, CI/CD, and memory management ensures robust, maintainable, and scalable apps. Quality code results from disciplined small decisions made daily, not one-time efforts."
+    }
+  ]
+}

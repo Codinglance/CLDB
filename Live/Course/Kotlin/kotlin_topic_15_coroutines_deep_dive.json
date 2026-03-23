@@ -1,0 +1,110 @@
+{
+    "title": "CoroutineContext & Internal Engine",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Introduction",
+            "content": "To build stable Android applications, it is important to understand what powers a coroutine internally. Beyond launch { }, coroutines are controlled by CoroutineContext, Job, and Dispatchers which define their lifecycle and execution behavior."
+        },
+        {
+            "type": "text",
+            "heading": "1. CoroutineContext",
+            "content": "CoroutineContext is a set of elements that define how a coroutine behaves. It acts like a configuration container."
+        },
+        {
+            "type": "bullet",
+            "heading": "Main Elements of CoroutineContext",
+            "items": [
+                "Job: Controls the lifecycle of the coroutine.",
+                "CoroutineDispatcher: Determines which thread the coroutine runs on.",
+                "CoroutineName: Custom name for debugging.",
+                "CoroutineExceptionHandler: Handles uncaught exceptions."
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "Combining Context Elements",
+            "content": "You can combine multiple context elements using the + operator.",
+            "language": "kotlin",
+            "code": "val myContext = Dispatchers.IO + Job() + CoroutineName(\"NetworkFetch\")\nscope.launch(myContext) {\n    // Coroutine body\n}"
+        },
+        {
+            "type": "text",
+            "heading": "2. The Job (Lifecycle Management)",
+            "content": "A Job represents a coroutine and allows you to monitor or cancel it. It moves through specific lifecycle states."
+        },
+        {
+            "type": "bullet",
+            "heading": "Job States",
+            "items": [
+                "New: Created but not started.",
+                "Active: Currently running.",
+                "Completing: Waiting for child coroutines to finish.",
+                "Completed or Cancelled: Final state."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "Parent-Child Relationship",
+            "content": "When launching a coroutine inside another coroutine, the parent Job automatically manages the child. Cancelling the parent cancels all children."
+        },
+        {
+            "type": "text_code",
+            "heading": "Parent Cancels Child Example",
+            "content": "If the parent Job is cancelled, all its child coroutines are cancelled automatically.",
+            "language": "kotlin",
+            "code": "val parentJob = scope.launch {\n    val childJob = launch {\n        // If parentJob.cancel() is called, this stops too\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "3. Dispatchers (Thread Managers)",
+            "content": "Dispatchers determine which thread pool the coroutine uses. Choosing the correct dispatcher is essential for performance."
+        },
+        {
+            "type": "bullet",
+            "heading": "Common Dispatchers",
+            "items": [
+                "Dispatchers.Main: Runs on the main UI thread.",
+                "Dispatchers.IO: Optimized for network, database, and file I/O.",
+                "Dispatchers.Default: Optimized for CPU-intensive tasks.",
+                "Dispatchers.Unconfined: Advanced usage; starts in current thread but resumes elsewhere."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "4. withContext (Safe Thread Switching)",
+            "content": "withContext is a suspending function used to switch threads safely and return a result. It automatically switches back to the original context after execution."
+        },
+        {
+            "type": "text_code",
+            "heading": "Switching Context Example",
+            "content": "Start on Main, switch to IO for heavy work, and return automatically to Main.",
+            "language": "kotlin",
+            "code": "suspend fun loadAndDisplay() {\n    val data = withContext(Dispatchers.IO) {\n        repository.getDataFromApi()\n    }\n    binding.textView.text = data\n}"
+        },
+        {
+            "type": "text",
+            "heading": "5. CoroutineScope vs CoroutineContext",
+            "content": "CoroutineScope and CoroutineContext are related but different concepts."
+        },
+        {
+            "type": "bullet",
+            "heading": "Key Differences",
+            "items": [
+                "CoroutineScope: Holds a CoroutineContext and provides the ability to launch coroutines.",
+                "CoroutineContext: The actual configuration (Job, Dispatcher, etc.) that defines coroutine behavior."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "CoroutineContext is the configuration container for a coroutine.",
+                "Job manages lifecycle and cancellation.",
+                "Dispatchers decide which thread pool executes the coroutine.",
+                "withContext safely switches threads and returns results.",
+                "CoroutineScope is a launcher that contains a CoroutineContext."
+            ]
+        }
+    ]
+}

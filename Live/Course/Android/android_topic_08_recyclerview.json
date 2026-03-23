@@ -1,0 +1,75 @@
+{
+  "title": "RecyclerView & Adapters",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is RecyclerView?",
+      "content": "RecyclerView is a modern Android widget used to display large scrollable lists or grids. It improves performance by recycling item views instead of creating new ones while scrolling."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use RecyclerView?",
+      "items": [
+        "Efficient view recycling",
+        "Supports list, grid, and staggered layouts",
+        "Built-in animations for item changes",
+        "Supports multiple view types",
+        "Works with DiffUtil for efficient updates"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Components",
+      "rows": [
+        { "component": "RecyclerView", "role": "Container for displaying items" },
+        { "component": "Adapter", "role": "Connects data to item views" },
+        { "component": "ViewHolder", "role": "Stores item view references" },
+        { "component": "LayoutManager", "role": "Controls item layout (list/grid)" }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setup Steps",
+      "items": [
+        "Add RecyclerView dependency",
+        "Add RecyclerView in XML layout",
+        "Create item layout",
+        "Create Adapter and ViewHolder",
+        "Set LayoutManager and Adapter"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "LayoutManagers",
+      "rows": [
+        { "type": "LinearLayoutManager", "use": "Vertical or horizontal list" },
+        { "type": "GridLayoutManager", "use": "Grid layout with columns" },
+        { "type": "StaggeredGridLayoutManager", "use": "Grid with variable item sizes" }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Adapter Key Methods",
+      "items": [
+        "onCreateViewHolder – create item view",
+        "onBindViewHolder – bind data to view",
+        "getItemCount – total items in list"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use ListAdapter with DiffUtil",
+        "Avoid notifyDataSetChanged()",
+        "Keep onBindViewHolder lightweight",
+        "Use View Binding in ViewHolder"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "RecyclerView efficiently displays large datasets using view recycling and flexible layouts. Combined with ListAdapter and DiffUtil, it provides smooth scrolling and efficient UI updates."
+    }
+  ]
+}

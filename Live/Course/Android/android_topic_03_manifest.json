@@ -1,0 +1,133 @@
+{
+  "title": "Android Manifest & App Components",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is AndroidManifest.xml?",
+      "content": "AndroidManifest.xml is a required configuration file in every Android app. It tells the Android system about the app’s components, permissions, hardware requirements, and entry point before the app runs."
+    },
+    {
+      "type": "bullet",
+      "heading": "What the Manifest Declares",
+      "items": [
+        "App package name (unique identifier)",
+        "All app components (Activities, Services, Receivers, Providers)",
+        "Permissions required by the app",
+        "Minimum and target Android versions",
+        "Hardware/software features required",
+        "App icon, label, and theme"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Main Manifest Elements",
+      "rows": [
+        {
+          "element": "<manifest>",
+          "description": "Root element containing package name"
+        },
+        {
+          "element": "<application>",
+          "description": "Contains all app components and app-level settings"
+        },
+        {
+          "element": "<activity>",
+          "description": "Declares a screen (UI component)"
+        },
+        {
+          "element": "<service>",
+          "description": "Runs background tasks without UI"
+        },
+        {
+          "element": "<receiver>",
+          "description": "Handles system or app broadcast events"
+        },
+        {
+          "element": "<provider>",
+          "description": "Shares data between apps"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Important <application> Attributes",
+      "items": [
+        "android:label – App name shown to users",
+        "android:icon – Launcher icon",
+        "android:theme – Default theme for the app",
+        "android:allowBackup – Allows backup to Google Drive",
+        "android:supportsRtl – Supports right-to-left layouts"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Intent Filters",
+      "content": "Intent filters define what type of intents a component can respond to. The launcher Activity must include MAIN action and LAUNCHER category so Android knows which screen to open when the user launches the app."
+    },
+    {
+      "type": "table",
+      "heading": "Common Intent Filter Actions",
+      "rows": [
+        {
+          "action": "MAIN",
+          "purpose": "Entry point of the application"
+        },
+        {
+          "action": "VIEW",
+          "purpose": "Display data like URLs or files"
+        },
+        {
+          "action": "SEND",
+          "purpose": "Share data with other apps"
+        },
+        {
+          "action": "PICK",
+          "purpose": "Select data such as contacts or images"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "App Permissions",
+      "items": [
+        "Declared using <uses-permission> in the manifest",
+        "Normal permissions are granted automatically",
+        "Dangerous permissions require runtime user approval",
+        "Examples: INTERNET, CAMERA, LOCATION, MICROPHONE"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Permission Types",
+      "rows": [
+        {
+          "type": "Normal",
+          "description": "Granted automatically at install time"
+        },
+        {
+          "type": "Dangerous",
+          "description": "Requires runtime permission request"
+        },
+        {
+          "type": "Signature",
+          "description": "Granted only to apps with same signing key"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Manifest Mistakes",
+      "items": [
+        "Forgetting to declare a new Activity",
+        "Missing android:exported on API 31+",
+        "Not declaring INTERNET permission for network calls",
+        "Requesting dangerous permissions without runtime handling"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "AndroidManifest.xml is the central configuration file of an Android app. It defines app components, permissions, and how the system interacts with your app. Proper configuration prevents crashes and ensures smooth app behavior."
+    }
+  ]
+}

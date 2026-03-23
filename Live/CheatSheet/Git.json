@@ -1,0 +1,396 @@
+{
+  "id": "git",
+  "title": "Git Cheat Sheet",
+  "categories": [
+    {
+      "heading": "Setup & Config",
+      "topics": [
+        {
+          "topic": "git config --global user.name",
+          "desc": "Set your name globally for all commits",
+          "code": "git config --global user.name \"Your Name\""
+        },
+        {
+          "topic": "git config --global user.email",
+          "desc": "Set your email globally for all commits",
+          "code": "git config --global user.email \"you@example.com\""
+        },
+        {
+          "topic": "git config --list",
+          "desc": "View all current Git configuration settings",
+          "code": "git config --list"
+        },
+        {
+          "topic": "git init",
+          "desc": "Initialize a new Git repository in the current directory",
+          "code": "git init"
+        },
+        {
+          "topic": "git clone",
+          "desc": "Clone a remote repository to your local machine",
+          "code": "git clone https://github.com/user/repo.git"
+        }
+      ]
+    },
+    {
+      "heading": "Staging & Committing",
+      "topics": [
+        {
+          "topic": "git status",
+          "desc": "Show the working tree status — staged, unstaged and untracked files",
+          "code": "git status"
+        },
+        {
+          "topic": "git add",
+          "desc": "Stage a specific file or all changes for the next commit",
+          "code": "git add file.txt\ngit add .          // stage everything"
+        },
+        {
+          "topic": "git commit -m",
+          "desc": "Commit staged changes with a message",
+          "code": "git commit -m \"feat: add login screen\""
+        },
+        {
+          "topic": "git commit --amend",
+          "desc": "Modify the most recent commit message or add forgotten changes",
+          "code": "git commit --amend -m \"fixed commit message\""
+        },
+        {
+          "topic": "git diff",
+          "desc": "Show unstaged changes. Use --staged to see staged changes",
+          "code": "git diff\ngit diff --staged"
+        },
+        {
+          "topic": "git stash",
+          "desc": "Temporarily save uncommitted changes without committing",
+          "code": "git stash\ngit stash pop      // restore latest stash\ngit stash list     // view all stashes"
+        }
+      ]
+    },
+    {
+      "heading": "Branching",
+      "topics": [
+        {
+          "topic": "git branch",
+          "desc": "List all local branches. Add -a to include remote branches",
+          "code": "git branch\ngit branch -a      // all branches"
+        },
+        {
+          "topic": "git branch <name>",
+          "desc": "Create a new branch without switching to it",
+          "code": "git branch feature/login"
+        },
+        {
+          "topic": "git checkout -b",
+          "desc": "Create and immediately switch to a new branch",
+          "code": "git checkout -b feature/login"
+        },
+        {
+          "topic": "git switch",
+          "desc": "Modern way to switch branches (Git 2.23+)",
+          "code": "git switch main\ngit switch -c feature/login   // create + switch"
+        },
+        {
+          "topic": "git branch -d",
+          "desc": "Delete a branch. Use -D to force delete unmerged branches",
+          "code": "git branch -d feature/login\ngit branch -D feature/login   // force"
+        },
+        {
+          "topic": "git branch -m",
+          "desc": "Rename the current branch",
+          "code": "git branch -m old-name new-name"
+        }
+      ]
+    },
+    {
+      "heading": "Merging & Rebasing",
+      "topics": [
+        {
+          "topic": "git merge",
+          "desc": "Merge another branch into the current branch",
+          "code": "git merge feature/login"
+        },
+        {
+          "topic": "git merge --no-ff",
+          "desc": "Merge with a merge commit even if fast-forward is possible",
+          "code": "git merge --no-ff feature/login"
+        },
+        {
+          "topic": "git rebase",
+          "desc": "Reapply commits on top of another branch for a linear history",
+          "code": "git rebase main"
+        },
+        {
+          "topic": "git rebase -i",
+          "desc": "Interactive rebase — squash, reorder, edit or drop commits",
+          "code": "git rebase -i HEAD~3   // edit last 3 commits"
+        },
+        {
+          "topic": "git cherry-pick",
+          "desc": "Apply a specific commit from another branch to the current branch",
+          "code": "git cherry-pick abc1234"
+        },
+        {
+          "topic": "Resolve merge conflict",
+          "desc": "After fixing conflicts manually, stage the files and complete the merge",
+          "code": "// 1. Fix conflicts in files\ngit add .\ngit commit -m \"resolve merge conflict\""
+        }
+      ]
+    },
+    {
+      "heading": "Remote Repositories",
+      "topics": [
+        {
+          "topic": "git remote -v",
+          "desc": "View all configured remote connections",
+          "code": "git remote -v"
+        },
+        {
+          "topic": "git remote add",
+          "desc": "Add a new remote connection with a name",
+          "code": "git remote add origin https://github.com/user/repo.git"
+        },
+        {
+          "topic": "git fetch",
+          "desc": "Download changes from remote but don't merge into local branch",
+          "code": "git fetch origin"
+        },
+        {
+          "topic": "git pull",
+          "desc": "Fetch and merge remote changes into the current branch",
+          "code": "git pull origin main\ngit pull --rebase origin main   // rebase instead of merge"
+        },
+        {
+          "topic": "git push",
+          "desc": "Push local commits to the remote repository",
+          "code": "git push origin main\ngit push -u origin feature/login  // set upstream"
+        },
+        {
+          "topic": "git push --force-with-lease",
+          "desc": "Safer force push — fails if someone else has pushed since your last fetch",
+          "code": "git push --force-with-lease origin feature/login"
+        }
+      ]
+    },
+    {
+      "heading": "Undoing Changes",
+      "topics": [
+        {
+          "topic": "git restore",
+          "desc": "Discard unstaged changes in a file (replaces old git checkout -- file)",
+          "code": "git restore file.txt\ngit restore .         // discard all unstaged"
+        },
+        {
+          "topic": "git restore --staged",
+          "desc": "Unstage a file without discarding changes",
+          "code": "git restore --staged file.txt"
+        },
+        {
+          "topic": "git revert",
+          "desc": "Create a new commit that undoes a specific commit — safe for shared branches",
+          "code": "git revert abc1234"
+        },
+        {
+          "topic": "git reset --soft",
+          "desc": "Undo commits but keep changes staged",
+          "code": "git reset --soft HEAD~1   // undo last commit, keep staged"
+        },
+        {
+          "topic": "git reset --mixed",
+          "desc": "Undo commits and unstage changes but keep files (default reset)",
+          "code": "git reset HEAD~1          // undo + unstage, keep files"
+        },
+        {
+          "topic": "git reset --hard",
+          "desc": "Undo commits and permanently discard all changes — destructive!",
+          "code": "git reset --hard HEAD~1   // ⚠️ changes are lost"
+        },
+        {
+          "topic": "git clean",
+          "desc": "Remove untracked files. Use -fd to also remove untracked directories",
+          "code": "git clean -fd             // remove untracked files + dirs"
+        }
+      ]
+    },
+    {
+      "heading": "Viewing History",
+      "topics": [
+        {
+          "topic": "git log",
+          "desc": "Show commit history with full details",
+          "code": "git log"
+        },
+        {
+          "topic": "git log --oneline",
+          "desc": "Compact one-line-per-commit history view",
+          "code": "git log --oneline\ngit log --oneline --graph --all   // visual branch tree"
+        },
+        {
+          "topic": "git log --author",
+          "desc": "Filter commit history by author name",
+          "code": "git log --author=\"Ali\""
+        },
+        {
+          "topic": "git log -p",
+          "desc": "Show full diff for each commit in the log",
+          "code": "git log -p -2   // last 2 commits with diff"
+        },
+        {
+          "topic": "git show",
+          "desc": "Show details and diff of a specific commit",
+          "code": "git show abc1234"
+        },
+        {
+          "topic": "git blame",
+          "desc": "Show who last modified each line of a file",
+          "code": "git blame file.kt"
+        },
+        {
+          "topic": "git reflog",
+          "desc": "Show all HEAD movements — useful for recovering lost commits",
+          "code": "git reflog"
+        }
+      ]
+    },
+    {
+      "heading": "Tags",
+      "topics": [
+        {
+          "topic": "git tag",
+          "desc": "List all existing tags",
+          "code": "git tag"
+        },
+        {
+          "topic": "git tag <name>",
+          "desc": "Create a lightweight tag at the current commit",
+          "code": "git tag v1.0.0"
+        },
+        {
+          "topic": "git tag -a",
+          "desc": "Create an annotated tag with a message — preferred for releases",
+          "code": "git tag -a v1.0.0 -m \"Release version 1.0.0\""
+        },
+        {
+          "topic": "git push --tags",
+          "desc": "Push all local tags to the remote repository",
+          "code": "git push origin --tags"
+        },
+        {
+          "topic": "git tag -d",
+          "desc": "Delete a local tag",
+          "code": "git tag -d v1.0.0\ngit push origin --delete v1.0.0   // delete remote tag"
+        }
+      ]
+    },
+    {
+      "heading": "Stash",
+      "topics": [
+        {
+          "topic": "git stash push -m",
+          "desc": "Save uncommitted changes with a descriptive name",
+          "code": "git stash push -m \"WIP: login UI\""
+        },
+        {
+          "topic": "git stash list",
+          "desc": "List all saved stashes",
+          "code": "git stash list"
+        },
+        {
+          "topic": "git stash pop",
+          "desc": "Apply the most recent stash and remove it from the stash list",
+          "code": "git stash pop"
+        },
+        {
+          "topic": "git stash apply",
+          "desc": "Apply a specific stash without removing it from the stash list",
+          "code": "git stash apply stash@{2}"
+        },
+        {
+          "topic": "git stash drop",
+          "desc": "Delete a specific stash entry",
+          "code": "git stash drop stash@{0}"
+        },
+        {
+          "topic": "git stash clear",
+          "desc": "Remove all stash entries permanently",
+          "code": "git stash clear"
+        }
+      ]
+    },
+    {
+      "heading": "Advanced",
+      "topics": [
+        {
+          "topic": "git bisect",
+          "desc": "Binary search through commits to find which one introduced a bug",
+          "code": "git bisect start\ngit bisect bad          // current commit is broken\ngit bisect good v1.0    // this tag was working\n// Git checks out commits for you to test\ngit bisect reset        // done"
+        },
+        {
+          "topic": "git worktree",
+          "desc": "Check out multiple branches simultaneously in separate directories",
+          "code": "git worktree add ../hotfix hotfix/crash-fix"
+        },
+        {
+          "topic": "git submodule",
+          "desc": "Include another Git repository as a subdirectory of your project",
+          "code": "git submodule add https://github.com/user/lib.git libs/lib\ngit submodule update --init --recursive"
+        },
+        {
+          "topic": "git shortlog",
+          "desc": "Summarize commit history grouped by author",
+          "code": "git shortlog -sn   // sorted by number of commits"
+        }
+      ]
+    },
+    {
+      "heading": "Gitignore",
+      "topics": [
+        {
+          "topic": ".gitignore file",
+          "desc": "List files and patterns Git should not track",
+          "code": "# .gitignore\n*.class\nbuild/\n.env\n.DS_Store\n*.log"
+        },
+        {
+          "topic": "git rm --cached",
+          "desc": "Stop tracking a file that is already committed without deleting it",
+          "code": "git rm --cached file.txt\ngit rm -r --cached build/"
+        },
+        {
+          "topic": "Global gitignore",
+          "desc": "Set a global gitignore file for all repos on your machine",
+          "code": "git config --global core.excludesfile ~/.gitignore_global"
+        }
+      ]
+    },
+    {
+      "heading": "Best Practices",
+      "topics": [
+        {
+          "topic": "Commit often, push regularly",
+          "desc": "Small focused commits are easier to review, revert and understand than large ones",
+          "code": null
+        },
+        {
+          "topic": "Use conventional commits",
+          "desc": "Prefix commits with a type for readable history and changelog generation",
+          "code": "feat: add dark mode toggle\nfix: crash on empty list\nchore: update dependencies\nrefactor: extract LoginViewModel\ndocs: update README"
+        },
+        {
+          "topic": "Never force push to main",
+          "desc": "Force pushing to shared branches rewrites history for everyone. Use --force-with-lease on feature branches only",
+          "code": null
+        },
+        {
+          "topic": "Always pull before push",
+          "desc": "Fetch the latest changes before pushing to avoid conflicts",
+          "code": "git pull --rebase origin main\ngit push origin main"
+        },
+        {
+          "topic": "Use branches for every feature",
+          "desc": "Keep main/master clean. Do all work on feature branches and merge via PRs",
+          "code": "git switch -c feature/JIRA-123-login\n// ... work ...\ngit push origin feature/JIRA-123-login"
+        }
+      ]
+    }
+  ]
+}

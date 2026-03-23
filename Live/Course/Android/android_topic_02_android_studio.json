@@ -1,0 +1,97 @@
+{
+  "title": "Android Studio & Project Structure",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Android Studio?",
+      "content": "Android Studio is the official IDE for Android development created by Google and based on IntelliJ IDEA. It provides tools for coding, designing layouts, debugging, testing, and building Android apps in one place."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Android Studio?",
+      "items": [
+        "Official IDE recommended by Google",
+        "Smart code editor with Kotlin and Java support",
+        "Built-in Android Emulator",
+        "Visual Layout Editor for UI design",
+        "Gradle-based build system",
+        "Logcat and profiling tools for debugging"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Basic System Requirements",
+      "rows": [
+        {
+          "requirement": "OS",
+          "details": "Windows, macOS, or Linux (64-bit)"
+        },
+        {
+          "requirement": "RAM",
+          "details": "8 GB minimum (16 GB recommended)"
+        },
+        {
+          "requirement": "Disk Space",
+          "details": "At least 8 GB free space"
+        },
+        {
+          "requirement": "JDK",
+          "details": "Bundled with Android Studio"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Important Android Studio Panels",
+      "items": [
+        "Project Panel – View project files and folders",
+        "Editor – Write and edit Kotlin/Java/XML code",
+        "Layout Editor – Design UI visually",
+        "Logcat – View runtime logs and errors",
+        "Device Manager – Create and manage emulators"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Key Project Structure",
+      "rows": [
+        {
+          "folder": "app/",
+          "purpose": "Main module containing app code and resources"
+        },
+        {
+          "folder": "java/ or kotlin/",
+          "purpose": "Source code for Activities, ViewModels, etc."
+        },
+        {
+          "folder": "res/",
+          "purpose": "Layouts, images, strings, colors, themes"
+        },
+        {
+          "folder": "AndroidManifest.xml",
+          "purpose": "App configuration and permissions"
+        },
+        {
+          "folder": "Gradle Scripts",
+          "purpose": "Build configuration and dependencies"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common res/ Folders",
+      "items": [
+        "res/layout – XML UI layouts",
+        "res/drawable – Images and vector drawables",
+        "res/mipmap – App launcher icons",
+        "res/values – Strings, colors, themes",
+        "res/menu – Menu definitions"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Android Studio is the primary tool used to build Android apps. Understanding its interface, project structure, and resource system helps developers efficiently create, test, and manage Android applications."
+    }
+  ]
+}

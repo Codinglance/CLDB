@@ -1,0 +1,79 @@
+{
+    "title": "Introduction to Kotlin",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Welcome",
+            "content": "Welcome to the first step of your journey into Android development! Before we write any code, it’s important to understand why Kotlin has become the gold standard for modern application development."
+        },
+        {
+            "type": "text",
+            "heading": "What is Kotlin?",
+            "content": "Kotlin is a cross-platform, statically typed, general-purpose programming language developed by JetBrains. It was officially announced by Google as a first-class language for Android development in 2017."
+        },
+        {
+            "type": "bullet",
+            "heading": "Key Characteristics",
+            "items": [
+                "Interoperable: You can use Java and Kotlin in the same project side-by-side.",
+                "Concise: Kotlin reduces boilerplate code compared to Java.",
+                "Safe: Designed to eliminate NullPointerException.",
+                "Tool-friendly: Excellent IDE support."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "Why Kotlin for Android?",
+            "items": [
+                "Modern Syntax with properties, lambdas, and extension functions.",
+                "Strong null-safety system.",
+                "Coroutines for simplified asynchronous programming."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "The Kotlin Ecosystem",
+            "items": [
+                "Android Development (XML & Jetpack Compose)",
+                "Server-side (Spring Boot, Ktor)",
+                "Kotlin Multiplatform (KMP)",
+                "Data Science with Jupyter notebooks"
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "Your First Program: Hello World",
+            "content": "In Kotlin, the entry point of any program is the main function.",
+            "language": "kotlin",
+            "code": "fun main() {\n    println(\"Hello, Kotlin!\")\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Hello World Breakdown",
+            "items": [
+                "fun: Keyword used to declare a function.",
+                "main: Entry point of the program.",
+                "println(): Prints output to the console.",
+                "Semicolons are optional in Kotlin."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "Environment Setup",
+            "items": [
+                "JDK 17 or higher.",
+                "IDE: IntelliJ IDEA or Android Studio.",
+                "Optional: Use Kotlin Playground (https://play.kotlinlang.org/)."
+            ]
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Kotlin is preferred for Android development.",
+                "It is concise, safe, and interoperable with Java.",
+                "The main function is the starting point of every Kotlin program."
+            ]
+        }
+    ]
+}

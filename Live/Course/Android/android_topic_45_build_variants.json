@@ -1,0 +1,47 @@
+{
+  "title": "App Signing & Build Variants",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Build Variants",
+      "content": "Combine a build type (debug/release) with a product flavor (free/paid, dev/prod) to create multiple app versions from one codebase. Build types control compilation settings (minification, debugging, signing), while flavors control features, branding, or environment."
+    },
+    {
+      "type": "table",
+      "heading": "Key Concepts",
+      "rows": [
+        {
+          "concept": "Build Type",
+          "description": "Controls compilation and packaging. Examples: debug, release, staging. Configured in buildTypes { }."
+        },
+        {
+          "concept": "Product Flavor",
+          "description": "Controls features, branding, or environment. Examples: free, paid, dev, prod. Define in productFlavors { } with flavorDimensions."
+        },
+        {
+          "concept": "Build Variant",
+          "description": "Final combination of build type + flavor. Examples: freeDebug, paidRelease."
+        },
+        {
+          "concept": "BuildConfig Fields",
+          "description": "Constants per flavor or build type (API URLs, feature flags). Access via BuildConfig.FIELD_NAME."
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "App Signing",
+      "content": "All APKs/AABs must be signed. Use a secure release keystore. Never commit passwords; store locally in local.properties or use CI environment variables. Back up keystore securely."
+    },
+    {
+      "type": "text",
+      "heading": "Google Play App Signing",
+      "content": "Upload apps as AAB signed with your upload key. Google re-signs with the app signing key. Losing the keystore prevents updates."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Build variants plus secure signing and flavor-specific configs allow safe, flexible, multi-version app releases from a single codebase."
+    }
+  ]
+}

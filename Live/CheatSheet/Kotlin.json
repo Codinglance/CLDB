@@ -1,0 +1,651 @@
+{
+  "id": "kotlin",
+  "title": "Kotlin Cheat Sheet",
+  "categories": [
+    {
+      "heading": "Variables",
+      "topics": [
+        {
+          "topic": "val",
+          "desc": "Immutable (read-only) variable",
+          "code": "val name: String = \"Kotlin\""
+        },
+        {
+          "topic": "var",
+          "desc": "Mutable variable",
+          "code": "var count = 0"
+        },
+        {
+          "topic": "const val",
+          "desc": "Compile-time constant",
+          "code": "const val PI = 3.14"
+        },
+        {
+          "topic": "lateinit var",
+          "desc": "Late-initialized non-null variable",
+          "code": "lateinit var db: Database"
+        },
+        {
+          "topic": "by lazy { }",
+          "desc": "Value computed only on first access",
+          "code": "val heavy by lazy { load() }"
+        }
+      ]
+    },
+    {
+      "heading": "Null Safety",
+      "topics": [
+        {
+          "topic": "String?",
+          "desc": "Nullable type declaration",
+          "code": "val s: String? = null"
+        },
+        {
+          "topic": "?.",
+          "desc": "Safe call — returns null if receiver is null",
+          "code": "val len = s?.length"
+        },
+        {
+          "topic": "?:",
+          "desc": "Elvis operator — use right side if left is null",
+          "code": "val safe = s ?: \"default\""
+        },
+        {
+          "topic": "!!",
+          "desc": "Force unwrap — throws NullPointerException if null",
+          "code": "val forced = s!!.length"
+        },
+        {
+          "topic": "as?",
+          "desc": "Safe cast — returns null instead of throwing",
+          "code": "val str = obj as? String"
+        }
+      ]
+    },
+    {
+      "heading": "String Templates",
+      "topics": [
+        {
+          "topic": "$variable",
+          "desc": "Embed a variable directly in a string",
+          "code": "val x = 5\n\"Value: $x\""
+        },
+        {
+          "topic": "${expression}",
+          "desc": "Embed any expression in a string",
+          "code": "\"Double: ${x * 2}\""
+        },
+        {
+          "topic": "\"\"\" \"\"\"",
+          "desc": "Raw multi-line string, no escape needed",
+          "code": "\"\"\"Hello\n   World\"\"\""
+        }
+      ]
+    },
+    {
+      "heading": "Functions",
+      "topics": [
+        {
+          "topic": "fun",
+          "desc": "Declare a function",
+          "code": "fun greet(name: String = \"World\") {\n  println(\"Hello $name\")\n}"
+        },
+        {
+          "topic": "Single-expression fun",
+          "desc": "Return value using = instead of a block body",
+          "code": "fun double(x: Int) = x * 2"
+        },
+        {
+          "topic": "vararg",
+          "desc": "Accept variable number of arguments",
+          "code": "fun sum(vararg nums: Int) = nums.sum()"
+        },
+        {
+          "topic": "infix",
+          "desc": "Call function like an operator without dot/parens",
+          "code": "infix fun Int.add(y: Int) = this + y\n3 add 4"
+        },
+        {
+          "topic": "inline",
+          "desc": "Inline the function body at call site",
+          "code": "inline fun run(block: () -> Unit) = block()"
+        },
+        {
+          "topic": "tailrec",
+          "desc": "Optimize tail-recursive function into a loop",
+          "code": "tailrec fun factorial(n: Int, acc: Int = 1): Int =\n  if (n == 1) acc else factorial(n - 1, n * acc)"
+        }
+      ]
+    },
+    {
+      "heading": "Lambdas & Higher-Order Functions",
+      "topics": [
+        {
+          "topic": "Lambda expression",
+          "desc": "Anonymous function stored in a variable",
+          "code": "val square: (Int) -> Int = { it * it }"
+        },
+        {
+          "topic": "it",
+          "desc": "Implicit name for single lambda parameter",
+          "code": "listOf(1, 2, 3).filter { it > 1 }"
+        },
+        {
+          "topic": "->",
+          "desc": "Separate parameters from lambda body",
+          "code": "val add = { a: Int, b: Int -> a + b }"
+        },
+        {
+          "topic": "Function reference (::)",
+          "desc": "Pass an existing function as a lambda",
+          "code": "listOf(1, 2, 3).map(::square)"
+        }
+      ]
+    },
+    {
+      "heading": "Control Flow",
+      "topics": [
+        {
+          "topic": "if / else",
+          "desc": "Can be used as an expression that returns a value",
+          "code": "val res = if (x > 0) \"pos\" else \"neg\""
+        },
+        {
+          "topic": "when",
+          "desc": "Pattern matching — Kotlin's replacement for switch",
+          "code": "when (x) {\n  1 -> println(\"one\")\n  in 2..5 -> println(\"2-5\")\n  else -> println(\"other\")\n}"
+        },
+        {
+          "topic": "for loop",
+          "desc": "Iterate over any range or collection",
+          "code": "for (i in 1..5) println(i)"
+        },
+        {
+          "topic": "while / do-while",
+          "desc": "Standard loop constructs",
+          "code": "while (x > 0) { x-- }"
+        }
+      ]
+    },
+    {
+      "heading": "Classes",
+      "topics": [
+        {
+          "topic": "class",
+          "desc": "Regular class definition",
+          "code": "class Person(val name: String)"
+        },
+        {
+          "topic": "data class",
+          "desc": "Auto-generates equals, hashCode, toString, copy",
+          "code": "data class User(val id: Int, val name: String)"
+        },
+        {
+          "topic": "object",
+          "desc": "Singleton — only one instance ever exists",
+          "code": "object Config { val debug = true }"
+        },
+        {
+          "topic": "companion object",
+          "desc": "Static-like members tied to the class",
+          "code": "class User {\n  companion object {\n    fun create() = User()\n  }\n}"
+        },
+        {
+          "topic": "sealed class",
+          "desc": "Restricted class hierarchy — all subclasses must be in same file",
+          "code": "sealed class Result<T> {\n  data class Success<T>(val data: T) : Result<T>()\n  data class Error<T>(val msg: String) : Result<T>()\n}"
+        },
+        {
+          "topic": "enum class",
+          "desc": "Fixed set of named constants",
+          "code": "enum class Direction { NORTH, SOUTH, EAST, WEST }"
+        },
+        {
+          "topic": "open class",
+          "desc": "Allow class to be subclassed (classes are final by default)",
+          "code": "open class Animal(val name: String)\nclass Dog(name: String) : Animal(name)"
+        },
+        {
+          "topic": "abstract class",
+          "desc": "Cannot be instantiated, must be subclassed",
+          "code": "abstract class Shape {\n  abstract fun area(): Double\n}"
+        }
+      ]
+    },
+    {
+      "heading": "Interfaces & Inheritance",
+      "topics": [
+        {
+          "topic": "interface",
+          "desc": "Contract with optional default implementations",
+          "code": "interface Clickable {\n  fun onClick()\n  fun onLongClick() = onClick()\n}"
+        },
+        {
+          "topic": "override",
+          "desc": "Override a function or property from parent/interface",
+          "code": "class Button : Clickable {\n  override fun onClick() { println(\"clicked\") }\n}"
+        },
+        {
+          "topic": "Delegation (by)",
+          "desc": "Delegate interface implementation to another object",
+          "code": "class LoggingList<T>(val inner: MutableList<T>) : MutableList<T> by inner"
+        }
+      ]
+    },
+    {
+      "heading": "Visibility Modifiers",
+      "topics": [
+        {
+          "topic": "public",
+          "desc": "Visible everywhere — default modifier",
+          "code": "public val name = \"Kotlin\""
+        },
+        {
+          "topic": "private",
+          "desc": "Visible only in the same class or file",
+          "code": "private val secret = \"hidden\""
+        },
+        {
+          "topic": "protected",
+          "desc": "Visible in the class and its subclasses",
+          "code": "protected fun init() { }"
+        },
+        {
+          "topic": "internal",
+          "desc": "Visible within the same module only",
+          "code": "internal val helper = Helper()"
+        }
+      ]
+    },
+    {
+      "heading": "Collections — Create",
+      "topics": [
+        {
+          "topic": "listOf()",
+          "desc": "Create an immutable list",
+          "code": "val list = listOf(1, 2, 3)"
+        },
+        {
+          "topic": "mutableListOf()",
+          "desc": "Create a mutable list you can add/remove from",
+          "code": "val mut = mutableListOf(\"a\", \"b\")"
+        },
+        {
+          "topic": "setOf()",
+          "desc": "Immutable set — no duplicate values",
+          "code": "val set = setOf(1, 2, 2) // {1, 2}"
+        },
+        {
+          "topic": "mapOf()",
+          "desc": "Immutable key-value map",
+          "code": "val map = mapOf(\"a\" to 1, \"b\" to 2)"
+        },
+        {
+          "topic": "emptyList() / emptyMap()",
+          "desc": "Create an empty typed collection",
+          "code": "val empty = emptyList<String>()"
+        }
+      ]
+    },
+    {
+      "heading": "Collections — Transform",
+      "topics": [
+        {
+          "topic": ".map { }",
+          "desc": "Transform every element, returns new list",
+          "code": "listOf(1, 2, 3).map { it * 2 } // [2, 4, 6]"
+        },
+        {
+          "topic": ".filter { }",
+          "desc": "Keep only elements matching the condition",
+          "code": "listOf(1, 2, 3).filter { it > 1 } // [2, 3]"
+        },
+        {
+          "topic": ".flatMap { }",
+          "desc": "Map each element to a list, then flatten the result",
+          "code": "listOf(1, 2).flatMap { listOf(it, it * 10) }"
+        },
+        {
+          "topic": ".groupBy { }",
+          "desc": "Group elements into a Map by a key",
+          "code": "listOf(\"a\", \"bb\", \"cc\").groupBy { it.length }"
+        },
+        {
+          "topic": ".sortedBy { }",
+          "desc": "Return a new list sorted by a selector",
+          "code": "users.sortedBy { it.name }"
+        },
+        {
+          "topic": ".distinct()",
+          "desc": "Remove duplicate elements",
+          "code": "listOf(1, 1, 2, 3).distinct() // [1, 2, 3]"
+        },
+        {
+          "topic": ".zip(other)",
+          "desc": "Pair elements of two lists by index",
+          "code": "listOf(1, 2).zip(listOf(\"a\", \"b\"))"
+        },
+        {
+          "topic": ".chunked(n)",
+          "desc": "Split list into sub-lists of size n",
+          "code": "listOf(1,2,3,4).chunked(2) // [[1,2],[3,4]]"
+        }
+      ]
+    },
+    {
+      "heading": "Collections — Aggregate",
+      "topics": [
+        {
+          "topic": ".sum() / .sumOf { }",
+          "desc": "Sum all numeric elements",
+          "code": "listOf(1, 2, 3).sum() // 6"
+        },
+        {
+          "topic": ".count { }",
+          "desc": "Count elements matching a condition",
+          "code": "listOf(1, 2, 3).count { it > 1 } // 2"
+        },
+        {
+          "topic": ".any { }",
+          "desc": "Returns true if at least one element matches",
+          "code": "listOf(1, 2, 3).any { it > 2 } // true"
+        },
+        {
+          "topic": ".all { }",
+          "desc": "Returns true only if every element matches",
+          "code": "listOf(2, 4, 6).all { it % 2 == 0 } // true"
+        },
+        {
+          "topic": ".none { }",
+          "desc": "Returns true if no elements match",
+          "code": "listOf(1, 2, 3).none { it > 5 } // true"
+        },
+        {
+          "topic": ".fold(init) { }",
+          "desc": "Accumulate a result starting from an initial value",
+          "code": "listOf(1,2,3).fold(0) { acc, x -> acc + x } // 6"
+        },
+        {
+          "topic": ".first { } / .find { }",
+          "desc": "first throws if not found; find returns null",
+          "code": "listOf(1, 2, 3).find { it > 1 } // 2"
+        }
+      ]
+    },
+    {
+      "heading": "Extension Functions",
+      "topics": [
+        {
+          "topic": "Extension function",
+          "desc": "Add a new function to any existing class without modifying it",
+          "code": "fun String.shout() = uppercase() + \"!\"\n\"hello\".shout() // \"HELLO!\""
+        },
+        {
+          "topic": "Extension property",
+          "desc": "Add a computed property to any existing class",
+          "code": "val String.lastChar: Char\n  get() = this[length - 1]\n\"Kotlin\".lastChar // 'n'"
+        }
+      ]
+    },
+    {
+      "heading": "Scope Functions",
+      "topics": [
+        {
+          "topic": ".let { it }",
+          "desc": "Run a block, refer to object as 'it'. Good for null-safe calls and transforms",
+          "code": "name?.let { println(it.uppercase()) }"
+        },
+        {
+          "topic": ".apply { this }",
+          "desc": "Configure an object and return the same object. Great for builders",
+          "code": "TextView(ctx).apply {\n  text = \"Hello\"\n  textSize = 16f\n}"
+        },
+        {
+          "topic": ".also { it }",
+          "desc": "Perform a side effect and return the original object unchanged",
+          "code": "createUser().also { log(it) }"
+        },
+        {
+          "topic": ".run { this }",
+          "desc": "Execute a block and return the block's result. Object is 'this'",
+          "code": "val len = \"Hello\".run { length }"
+        },
+        {
+          "topic": "with(obj) { }",
+          "desc": "Operate on an object and return a result. Not an extension function",
+          "code": "val result = with(user) { \"$name is $age\" }"
+        }
+      ]
+    },
+    {
+      "heading": "Ranges",
+      "topics": [
+        {
+          "topic": "1..10",
+          "desc": "Inclusive range from 1 to 10",
+          "code": "for (i in 1..10) println(i)"
+        },
+        {
+          "topic": "1 until 10",
+          "desc": "Exclusive range — does not include 10",
+          "code": "for (i in 1 until 10) println(i)"
+        },
+        {
+          "topic": "10 downTo 1",
+          "desc": "Descending range from 10 to 1",
+          "code": "for (i in 10 downTo 1) println(i)"
+        },
+        {
+          "topic": "step n",
+          "desc": "Jump by n each iteration",
+          "code": "for (i in 1..10 step 2) println(i) // 1,3,5,7,9"
+        }
+      ]
+    },
+    {
+      "heading": "Coroutines",
+      "topics": [
+        {
+          "topic": "suspend fun",
+          "desc": "Function that can pause execution without blocking the thread",
+          "code": "suspend fun fetchData(): String {\n  delay(1000)\n  return \"data\"\n}"
+        },
+        {
+          "topic": "launch { }",
+          "desc": "Start a coroutine that runs fire-and-forget (no return value)",
+          "code": "viewModelScope.launch {\n  val data = fetchData()\n}"
+        },
+        {
+          "topic": "async { } / await()",
+          "desc": "Start a coroutine that returns a value; await() to get the result",
+          "code": "val deferred = async { fetchData() }\nval result = deferred.await()"
+        },
+        {
+          "topic": "withContext",
+          "desc": "Switch the coroutine dispatcher for a block of code",
+          "code": "val result = withContext(Dispatchers.IO) {\n  readFromDisk()\n}"
+        },
+        {
+          "topic": "delay(ms)",
+          "desc": "Suspend coroutine for a given time without blocking",
+          "code": "delay(1000) // waits 1 second"
+        }
+      ]
+    },
+    {
+      "heading": "Dispatchers",
+      "topics": [
+        {
+          "topic": "Dispatchers.Main",
+          "desc": "Runs on the UI (main) thread — for UI updates on Android",
+          "code": "launch(Dispatchers.Main) { textView.text = \"Done\" }"
+        },
+        {
+          "topic": "Dispatchers.IO",
+          "desc": "Optimized for network calls and disk reads/writes",
+          "code": "withContext(Dispatchers.IO) { api.fetch() }"
+        },
+        {
+          "topic": "Dispatchers.Default",
+          "desc": "For CPU-heavy work like sorting or parsing large data",
+          "code": "withContext(Dispatchers.Default) { heavyCompute() }"
+        }
+      ]
+    },
+    {
+      "heading": "Flow",
+      "topics": [
+        {
+          "topic": "flow { emit() }",
+          "desc": "Cold stream — only runs when collected",
+          "code": "val numbers = flow {\n  emit(1)\n  emit(2)\n  emit(3)\n}"
+        },
+        {
+          "topic": ".collect { }",
+          "desc": "Terminal operator that starts collecting emitted values",
+          "code": "numbers.collect { println(it) }"
+        },
+        {
+          "topic": "StateFlow",
+          "desc": "Hot stream that always holds the latest value — great for UI state",
+          "code": "val _state = MutableStateFlow(0)\nval state: StateFlow<Int> = _state"
+        },
+        {
+          "topic": "SharedFlow",
+          "desc": "Hot broadcast stream — multiple collectors receive the same events",
+          "code": "val events = MutableSharedFlow<String>()"
+        },
+        {
+          "topic": ".map / .filter / .stateIn",
+          "desc": "Transform, filter flow emissions or convert a Flow into a StateFlow",
+          "code": "flow.map { it * 2 }.filter { it > 2 }"
+        }
+      ]
+    },
+    {
+      "heading": "Generics",
+      "topics": [
+        {
+          "topic": "<T>",
+          "desc": "Generic type parameter",
+          "code": "fun <T> identity(value: T): T = value"
+        },
+        {
+          "topic": "<T : Type>",
+          "desc": "Upper bound — T must be a subtype of Type",
+          "code": "fun <T : Comparable<T>> max(a: T, b: T) =\n  if (a > b) a else b"
+        },
+        {
+          "topic": "out T (covariant)",
+          "desc": "Type can only produce T — safe to read, not write",
+          "code": "class Box<out T>(val value: T)"
+        },
+        {
+          "topic": "in T (contravariant)",
+          "desc": "Type can only consume T — safe to write, not read",
+          "code": "class Printer<in T> { fun print(value: T) { } }"
+        },
+        {
+          "topic": "reified T",
+          "desc": "Access the generic type at runtime inside an inline function",
+          "code": "inline fun <reified T> isType(obj: Any) = obj is T"
+        }
+      ]
+    },
+    {
+      "heading": "Type Checks & Casts",
+      "topics": [
+        {
+          "topic": "is (smart cast)",
+          "desc": "Check type — compiler automatically casts inside the block",
+          "code": "if (obj is String) {\n  println(obj.length) // auto-cast to String\n}"
+        },
+        {
+          "topic": "as",
+          "desc": "Unsafe cast — throws ClassCastException if wrong type",
+          "code": "val str = obj as String"
+        },
+        {
+          "topic": "as?",
+          "desc": "Safe cast — returns null instead of throwing",
+          "code": "val str = obj as? String // null if not a String"
+        },
+        {
+          "topic": "when with is",
+          "desc": "Pattern match on type — each branch is smart-cast",
+          "code": "when (obj) {\n  is Int -> obj + 1\n  is String -> obj.length\n}"
+        }
+      ]
+    },
+    {
+      "heading": "Exception Handling",
+      "topics": [
+        {
+          "topic": "try / catch / finally",
+          "desc": "Catch exceptions; finally always runs regardless of result",
+          "code": "try {\n  riskyOp()\n} catch (e: IOException) {\n  log(e)\n} finally {\n  cleanup()\n}"
+        },
+        {
+          "topic": "try as expression",
+          "desc": "try-catch can return a value directly",
+          "code": "val x = try { parse() } catch (e: Exception) { 0 }"
+        },
+        {
+          "topic": "runCatching { }",
+          "desc": "Wraps a block in a Result<T> — no need to write try/catch",
+          "code": "val result = runCatching { riskyOp() }\n  .getOrDefault(\"fallback\")"
+        }
+      ]
+    },
+    {
+      "heading": "Delegation",
+      "topics": [
+        {
+          "topic": "by lazy { }",
+          "desc": "Compute the value only on first access, then cache it",
+          "code": "val config by lazy { loadConfig() }"
+        },
+        {
+          "topic": "by observable",
+          "desc": "Run a callback whenever the property value changes",
+          "code": "var name by observable(\"init\") {\n  _, old, new -> log(\"$old -> $new\")\n}"
+        },
+        {
+          "topic": "by vetoable",
+          "desc": "Conditionally allow or reject property value changes",
+          "code": "var age by vetoable(0) { _, _, new -> new >= 0 }"
+        }
+      ]
+    },
+    {
+      "heading": "Best Practices",
+      "topics": [
+        {
+          "topic": "Prefer val over var",
+          "desc": "Always start with val; only change to var if mutation is needed",
+          "code": "val name = \"Kotlin\" // preferred\nvar count = 0       // only if needed"
+        },
+        {
+          "topic": "Use data class for models",
+          "desc": "Gets equals, hashCode, toString, copy for free",
+          "code": "data class User(val id: Int, val name: String)"
+        },
+        {
+          "topic": "Prefer sealed class over enum for state",
+          "desc": "Each subclass can carry different data",
+          "code": "sealed class UiState {\n  object Loading : UiState()\n  data class Success(val data: List<String>) : UiState()\n  data class Error(val msg: String) : UiState()\n}"
+        },
+        {
+          "topic": "Avoid !!",
+          "desc": "Use safe calls or Elvis operator to handle nulls gracefully",
+          "code": "// Bad\nval len = name!!.length\n// Good\nval len = name?.length ?: 0"
+        },
+        {
+          "topic": "Use when as an expression",
+          "desc": "Assign the result of when directly to a variable",
+          "code": "val label = when (status) {\n  Status.OK -> \"Success\"\n  Status.ERROR -> \"Failed\"\n}"
+        }
+      ]
+    }
+  ]
+}

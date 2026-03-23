@@ -1,0 +1,140 @@
+{
+  "title": "Intents & Navigation Between Activities",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is an Intent?",
+      "content": "An Intent is a messaging object used to request an action from another Android component. It is mainly used to navigate between Activities, start Services, send Broadcasts, or open features from other apps."
+    },
+    {
+      "type": "bullet",
+      "heading": "What Intents Can Do",
+      "items": [
+        "Navigate between Activities",
+        "Start background Services",
+        "Send Broadcast messages",
+        "Pass data between screens",
+        "Open other apps like browser, camera, dialer"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Explicit vs Implicit Intent",
+      "rows": [
+        {
+          "aspect": "Target",
+          "explicit": "Specific Activity class",
+          "implicit": "Action handled by any compatible app"
+        },
+        {
+          "aspect": "Use Case",
+          "explicit": "Navigation within your app",
+          "implicit": "Open browser, share data, dial number"
+        },
+        {
+          "aspect": "Example",
+          "explicit": "Intent(this, DetailActivity::class.java)",
+          "implicit": "Intent(Intent.ACTION_VIEW, Uri.parse(\"https://example.com\"))"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Explicit Intent",
+      "content": "Explicit Intents specify the exact component to start. They are commonly used to navigate between screens in the same app."
+    },
+    {
+      "type": "bullet",
+      "heading": "Using Explicit Intent",
+      "items": [
+        "Create intent with target Activity class",
+        "Use putExtra() to pass data",
+        "Call startActivity(intent) to navigate",
+        "Retrieve data using intent.getStringExtra()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Passing Data with putExtra()",
+      "rows": [
+        {
+          "type": "String",
+          "put": "putExtra(\"key\", \"value\")",
+          "get": "getStringExtra(\"key\")"
+        },
+        {
+          "type": "Int",
+          "put": "putExtra(\"key\", 10)",
+          "get": "getIntExtra(\"key\", 0)"
+        },
+        {
+          "type": "Boolean",
+          "put": "putExtra(\"key\", true)",
+          "get": "getBooleanExtra(\"key\", false)"
+        },
+        {
+          "type": "Parcelable",
+          "put": "putExtra(\"key\", object)",
+          "get": "getParcelableExtra(\"key\")"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Implicit Intent",
+      "content": "Implicit Intents do not specify a target component. Instead, they declare an action and Android chooses an app capable of handling it."
+    },
+    {
+      "type": "table",
+      "heading": "Common Implicit Intent Actions",
+      "rows": [
+        {
+          "action": "ACTION_VIEW",
+          "example": "Open a webpage or map location"
+        },
+        {
+          "action": "ACTION_DIAL",
+          "example": "Open dialer with phone number"
+        },
+        {
+          "action": "ACTION_SEND",
+          "example": "Share text or images"
+        },
+        {
+          "action": "ACTION_IMAGE_CAPTURE",
+          "example": "Open camera app"
+        },
+        {
+          "action": "ACTION_PICK",
+          "example": "Select image from gallery"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Intent Flags",
+      "items": [
+        "FLAG_ACTIVITY_NEW_TASK – start Activity in a new task",
+        "FLAG_ACTIVITY_CLEAR_TOP – clear Activities above target",
+        "FLAG_ACTIVITY_SINGLE_TOP – reuse Activity if already on top",
+        "FLAG_ACTIVITY_NO_HISTORY – Activity not saved in back stack"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use explicit intents for internal navigation",
+        "Check resolveActivity() before starting implicit intents",
+        "Use Activity Result API instead of startActivityForResult",
+        "Prefer passing IDs instead of large objects",
+        "Use Parcelable for complex data"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Intents enable communication between Android components. Explicit Intents handle in-app navigation, while Implicit Intents allow interaction with other apps and system features."
+    }
+  ]
+}

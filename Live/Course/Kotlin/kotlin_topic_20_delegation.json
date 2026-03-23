@@ -1,0 +1,96 @@
+{
+    "id": "kt_delegation_advanced_v1",
+    "title": "Kotlin Delegation (Property & Class)",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "1. Property Delegation",
+            "content": "Property delegation allows you to outsource the get() and set() logic of a property to another object using the 'by' keyword."
+        },
+        {
+            "type": "text",
+            "heading": "Standard Delegate: by lazy",
+            "content": "The value is initialized only when first accessed. This improves performance and reduces unnecessary object creation."
+        },
+        {
+            "type": "text_code",
+            "heading": "Lazy Initialization Example",
+            "content": "The database instance is created only when first used.",
+            "language": "kotlin",
+            "code": "val database: AppDatabase by lazy {\n    Room.databaseBuilder(context, AppDatabase::class.java, \"db\").build()\n}"
+        },
+        {
+            "type": "text",
+            "heading": "Standard Delegate: Delegates.observable",
+            "content": "Triggers a callback every time the property value changes."
+        },
+        {
+            "type": "text_code",
+            "heading": "Observable Example",
+            "content": "Logs old and new values whenever count changes.",
+            "language": "kotlin",
+            "code": "var count: Int by Delegates.observable(0) { property, oldValue, newValue ->\n    println(\"Value changed from $oldValue to $newValue\")\n}"
+        },
+        {
+            "type": "text",
+            "heading": "2. Custom Property Delegates",
+            "content": "You can create your own delegates to handle repetitive logic like SharedPreferences access. A delegate must implement operator fun getValue (and setValue for var)."
+        },
+        {
+            "type": "text_code",
+            "heading": "Custom Preference Delegate",
+            "content": "Reusable delegate for storing and retrieving String values from SharedPreferences.",
+            "language": "kotlin",
+            "code": "class PreferenceDelegate(val key: String, val defaultValue: String) {\n    operator fun getValue(thisRef: Any?, property: KProperty<*>): String {\n        return prefs.getString(key, defaultValue) ?: defaultValue\n    }\n\n    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {\n        prefs.edit().putString(key, value).apply()\n    }\n}\n\nvar userName: String by PreferenceDelegate(\"user_name\", \"Guest\")"
+        },
+        {
+            "type": "text",
+            "heading": "3. Class Delegation (Has-A Pattern)",
+            "content": "Class delegation allows a class to implement an interface by delegating its behavior to another object using the 'by' keyword. This promotes composition over inheritance."
+        },
+        {
+            "type": "text_code",
+            "heading": "Class Delegation Example",
+            "content": "HomeScreen delegates Analytics behavior to analyticsProvider.",
+            "language": "kotlin",
+            "code": "interface Analytics {\n    fun logEvent(event: String)\n}\n\nclass FirebaseAnalytics : Analytics {\n    override fun logEvent(event: String) = println(\"Logging to Firebase: $event\")\n}\n\nclass HomeScreen(analyticsProvider: Analytics) : Analytics by analyticsProvider"
+        },
+        {
+            "type": "text",
+            "heading": "4. Why Use Delegation in Android?",
+            "content": "Delegation improves performance, reduces boilerplate, and promotes composition over inheritance."
+        },
+        {
+            "type": "bullet",
+            "heading": "Android Use Cases",
+            "items": [
+                "Use by lazy to defer heavy initialization.",
+                "Use by viewModels() to handle ViewModel lifecycle.",
+                "Use class delegation to add features like logging or navigation without deep inheritance hierarchies."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "5. ViewBinding Delegate (Pro Tip)",
+            "content": "Custom delegates can simplify Fragment ViewBinding lifecycle management."
+        },
+        {
+            "type": "text_code",
+            "heading": "ViewBinding Delegate Usage",
+            "content": "Cleaner Fragment binding without manual null handling.",
+            "language": "kotlin",
+            "code": "class HomeFragment : Fragment(R.layout.fragment_home) {\n    private val binding by viewBinding(FragmentHomeBinding::bind)\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n        super.onViewCreated(view, savedInstanceState)\n        binding.titleText.text = \"Hello Delegation!\"\n    }\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Property delegation intercepts getter and setter logic.",
+                "by lazy improves performance by delaying initialization.",
+                "Custom delegates reduce repetitive boilerplate.",
+                "Class delegation promotes composition over inheritance.",
+                "Delegation keeps Android classes smaller and more maintainable."
+            ]
+        }
+    ]
+}

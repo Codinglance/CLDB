@@ -1,0 +1,49 @@
+{
+  "title": "Introduction to Jetpack Compose",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Jetpack Compose?",
+      "content": "Jetpack Compose is Android’s modern UI toolkit introduced by Google to build native interfaces using Kotlin instead of XML. It follows a declarative approach where developers describe what the UI should look like for a given state. When the state changes, Compose automatically updates the UI. This removes the need for findViewById, XML layouts, and manual UI updates."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Compose?",
+      "items": [
+        "Declarative UI development",
+        "Kotlin-only (no XML layouts)",
+        "Less boilerplate code",
+        "Automatic UI updates with state changes",
+        "Better support for animations and custom UI",
+        "Recommended by Google for modern Android apps"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Composable Functions",
+      "content": "Compose UI is built using composable functions. A composable is a Kotlin function annotated with @Composable that describes a piece of UI. Composables can call other composables and combine them to create complex layouts."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Compose Components",
+      "items": [
+        "Text – displays text",
+        "Button – clickable button",
+        "Image – displays images",
+        "Column – vertical layout",
+        "Row – horizontal layout",
+        "LazyColumn – efficient scrolling list"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "State in Compose",
+      "content": "State drives UI updates in Compose. When a state value changes, Compose automatically recomposes the affected UI. Local state is usually stored using remember { mutableStateOf() }."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Jetpack Compose simplifies Android UI development by replacing XML with Kotlin-based declarative code. Using composables, modifiers, and state-driven updates, developers can build modern, reactive, and maintainable Android interfaces."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Composables, State & Recomposition",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Recomposition?",
+      "content": "Recomposition is the process where Jetpack Compose re-executes composable functions when the state they depend on changes. Instead of manually updating views like in the traditional View system, Compose automatically updates only the parts of the UI that read the changed state. This makes UI updates efficient and reactive.  [oai_citation:0‡Android Developers](https://developer.android.com/develop/ui/compose/state?utm_source=chatgpt.com)"
+    },
+    {
+      "type": "bullet",
+      "heading": "When Recomposition Happens",
+      "items": [
+        "A value created with mutableStateOf changes",
+        "A parent composable passes new parameters",
+        "A StateFlow or Flow emits a new value",
+        "Observable collections like mutableStateListOf change"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "remember and mutableStateOf",
+      "content": "Local UI state in Compose is commonly created with remember { mutableStateOf(value) }. The mutableStateOf function creates observable state, and Compose recomposes any UI that reads it when the value changes. The remember function keeps that state across recompositions so it doesn’t reset each time the composable runs.  [oai_citation:1‡Android Developers](https://developer.android.com/develop/ui/compose/state?utm_source=chatgpt.com)"
+    },
+    {
+      "type": "text",
+      "heading": "State Hoisting",
+      "content": "State hoisting is a pattern where state is moved to a parent composable and passed down as parameters. The child composable becomes stateless and sends events back through callbacks. This improves reusability, testability, and follows unidirectional data flow."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Compose Concepts",
+      "items": [
+        "State drives UI updates",
+        "Recomposition updates only affected composables",
+        "remember keeps values across recompositions",
+        "Hoist state for reusable composables"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "In Jetpack Compose, UI automatically updates when state changes through recomposition. Using remember, mutableStateOf, and state hoisting helps manage UI state efficiently while keeping composables reusable and easy to maintain."
+    }
+  ]
+}

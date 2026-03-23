@@ -1,0 +1,46 @@
+{
+  "title": "Permissions (Runtime & Special)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Android Permissions?",
+      "content": "Android permissions protect sensitive data and device features. Normal permissions are granted at install, dangerous permissions require runtime approval, and special permissions need system settings access. Since Android 6.0 (API 23), dangerous permissions must be requested at runtime and can be revoked anytime."
+    },
+    {
+      "type": "table",
+      "heading": "Permission Categories",
+      "rows": [
+        {"category": "Normal", "granted_at": "Install", "examples": "INTERNET, RECEIVE_BOOT_COMPLETED"},
+        {"category": "Dangerous", "granted_at": "Runtime", "examples": "CAMERA, ACCESS_FINE_LOCATION, READ_CONTACTS"},
+        {"category": "Special", "granted_at": "Settings", "examples": "MANAGE_OVERLAY_PERMISSION, WRITE_SETTINGS"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Requesting Permissions",
+      "items": [
+        "Check if granted: ContextCompat.checkSelfPermission()",
+        "Use ActivityResultContracts.RequestPermission() or RequestMultiplePermissions()",
+        "Show rationale if needed before requesting",
+        "Handle result: granted, denied, permanently denied",
+        "For special permissions, redirect to system Settings"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Request permissions when needed, not at launch",
+        "Explain why permissions are required",
+        "Degrade functionality gracefully if denied",
+        "Use least privilege and privacy-preserving APIs",
+        "Re-check in onResume() in case permissions are revoked"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Declare all permissions in the manifest, request dangerous ones at runtime, handle all outcomes, and guide users for special permissions. Follow least privilege, provide rationale, and use privacy-friendly APIs like Photo Picker. Dangerous permissions should be requested contextually and handled gracefully to ensure a good UX."
+    }
+  ]
+}

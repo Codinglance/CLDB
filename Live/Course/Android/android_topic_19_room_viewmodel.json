@@ -1,0 +1,105 @@
+{
+  "title": "Room with ViewModel & Flow",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Reactive Data with Room",
+      "content": "Room, ViewModel, and Kotlin Flow together form a reactive data pipeline in modern Android apps. Room stores data locally and can emit database changes as a Flow. The ViewModel collects this Flow and exposes it to the UI as StateFlow or LiveData. Whenever the database changes, the new data automatically flows through the ViewModel to the UI without manual refresh logic."
+    },
+    {
+      "type": "bullet",
+      "heading": "How the Data Pipeline Works",
+      "items": [
+        "Room DAO exposes database queries as Flow<List<Entity>>",
+        "Repository receives the Flow and maps database entities to domain models",
+        "ViewModel converts the Flow into StateFlow using stateIn()",
+        "Fragment or Activity collects the StateFlow safely with lifecycle awareness",
+        "Whenever data changes in Room, the UI updates automatically",
+        "User actions trigger ViewModel functions that write to the database"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Data Flow Through Architecture Layers",
+      "rows": [
+        {
+          "layer": "Room DAO",
+          "data_type": "Flow<List<UserEntity>>",
+          "description": "Observes database tables and emits new values when data changes"
+        },
+        {
+          "layer": "Repository",
+          "data_type": "Flow<List<User>>",
+          "description": "Maps database entities into clean domain models"
+        },
+        {
+          "layer": "ViewModel",
+          "data_type": "StateFlow<UiState>",
+          "description": "Transforms repository data into UI-friendly state"
+        },
+        {
+          "layer": "UI (Fragment/Activity)",
+          "data_type": "UiState",
+          "description": "Collects StateFlow and updates the UI"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Room DAO with Flow",
+      "content": "When a DAO query returns a Flow, Room automatically observes the database table and emits new values whenever the data changes. Unlike suspend functions, Flow provides continuous updates instead of a single result."
+    },
+    {
+      "type": "bullet",
+      "heading": "DAO Flow Example",
+      "items": [
+        "@Query(\"SELECT * FROM users\") fun getAllUsers(): Flow<List<UserEntity>>",
+        "@Query(\"SELECT * FROM users WHERE id = :id\") fun getUserById(id: Int): Flow<UserEntity?>",
+        "Flow queries automatically emit updates when rows are inserted, updated, or deleted"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "ViewModel and StateFlow",
+      "content": "The ViewModel collects the repository Flow and converts it into a StateFlow using stateIn(). StateFlow holds the latest value and survives configuration changes such as screen rotation. The UI simply collects this StateFlow and renders the latest state."
+    },
+    {
+      "type": "table",
+      "heading": "Common ViewModel Pattern",
+      "rows": [
+        {
+          "step": "Repository Flow",
+          "description": "repo.getUsers() returns Flow<List<User>>"
+        },
+        {
+          "step": "Transform Data",
+          "description": "map the data into UiState objects"
+        },
+        {
+          "step": "Convert to StateFlow",
+          "description": "stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), initialState)"
+        },
+        {
+          "step": "Expose to UI",
+          "description": "UI collects the StateFlow and updates automatically"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Write Operations",
+      "items": [
+        "Insert, update, and delete operations use suspend functions",
+        "ViewModel calls repository methods inside viewModelScope.launch",
+        "Room updates the database",
+        "Active Flow queries automatically emit updated data",
+        "The UI refreshes automatically without manual reload logic"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Using Room with ViewModel and Flow creates a fully reactive data architecture. Room emits database updates as Flow, the Repository maps and exposes them, the ViewModel converts them to StateFlow, and the UI collects the latest state safely. This approach removes manual refresh logic and ensures that the UI always reflects the latest data stored in the database."
+    }
+  ]
+}

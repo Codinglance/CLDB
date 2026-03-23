@@ -1,0 +1,80 @@
+{
+  "title": "Fragments & Fragment Lifecycle",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is a Fragment?",
+      "content": "A Fragment is a reusable UI component that lives inside an Activity. It has its own layout and lifecycle but depends on a host Activity."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Fragments?",
+      "items": [
+        "Break large screens into modular UI parts",
+        "Support multiple layouts for phones and tablets",
+        "Used with Navigation Component for screen navigation",
+        "Allow shared ViewModel between fragments"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Activity vs Fragment",
+      "rows": [
+        { "aspect": "Definition", "activity": "Full screen managed by system", "fragment": "UI component inside Activity" },
+        { "aspect": "Lifecycle", "activity": "System controlled", "fragment": "Tied to Activity lifecycle" },
+        { "aspect": "Manifest", "activity": "Declared in Manifest", "fragment": "No declaration needed" }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Fragment Lifecycle Methods",
+      "rows": [
+        { "method": "onAttach()", "use": "Fragment attached to Activity" },
+        { "method": "onCreate()", "use": "Initialize data" },
+        { "method": "onCreateView()", "use": "Inflate layout" },
+        { "method": "onViewCreated()", "use": "Setup UI" },
+        { "method": "onStart()", "use": "Fragment visible" },
+        { "method": "onResume()", "use": "Fragment interactive" },
+        { "method": "onPause()", "use": "Fragment losing focus" },
+        { "method": "onStop()", "use": "Fragment hidden" },
+        { "method": "onDestroyView()", "use": "Destroy view resources" },
+        { "method": "onDestroy()", "use": "Fragment destroyed" }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Fragment Transactions",
+      "items": [
+        "Use FragmentManager to manage fragments",
+        "add() – add fragment to container",
+        "replace() – replace existing fragment",
+        "remove() – remove fragment",
+        "addToBackStack() – allow back navigation"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Passing Data to Fragments",
+      "items": [
+        "Use Bundle arguments",
+        "Avoid passing data via constructor",
+        "Read arguments using arguments?.get()"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Use viewLifecycleOwner for LiveData",
+        "Clear ViewBinding in onDestroyView()",
+        "Use shared ViewModel for communication",
+        "Prefer replace() for navigation"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Fragments help build modular and flexible Android UIs. They have their own lifecycle and are commonly used with the Navigation Component to manage app screens."
+    }
+  ]
+}

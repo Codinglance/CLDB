@@ -1,0 +1,33 @@
+{
+  "title": "Publishing to Google Play Store",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Overview",
+      "content": "Publishing an Android app involves creating a developer account, preparing a release build, configuring store listings, declaring app content, and rolling out through structured release tracks. Google Play requires Android App Bundles (AAB), which it converts into device-optimized APKs. The Play Console manages releases, analytics, policies, and user feedback. A well-prepared release ensures smooth review and positive user experience."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Steps",
+      "items": [
+        "Account Setup – Register a developer account ($25 one-time), verify identity, set profile, enable 2FA.",
+        "App & Store Listing – Set app name, description, screenshots, icon, feature graphics; declare category and contact info.",
+        "App Content – Complete content rating, privacy policy, data safety, target audience, ads, and app access.",
+        "Release Build – Increment versionCode, sign with upload key, build AAB, test locally with bundletool.",
+        "Release Tracks – Use Internal, Closed, Open Testing, then Production; staged rollouts monitor stability.",
+        "Monitoring – Track crash/ANR rates via Android Vitals; respond to reviews; maintain policy compliance."
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Tips",
+      "items": [
+        "Use semantic versioning (MAJOR.MINOR.PATCH).",
+        "Localize store listings for multiple markets.",
+        "Ensure Data Safety section and privacy policy are accurate and up to date.",
+        "Test releases thoroughly before promoting to wider tracks.",
+        "Use the In-App Review API to collect user ratings without disrupting the experience."
+      ]
+    }
+  ]
+}

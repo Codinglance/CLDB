@@ -1,0 +1,77 @@
+{
+    "title": "Structured Concurrency & Cancellation",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Introduction",
+            "content": "In modern Android development, starting background work is not enough; you must also stop it when necessary. If a user leaves a screen while work is running, that task should be cancelled immediately. This is where Structured Concurrency and Cooperative Cancellation become essential."
+        },
+        {
+            "type": "text",
+            "heading": "1. Structured Concurrency",
+            "content": "Structured Concurrency ensures that when a parent coroutine is cancelled, all of its children are cancelled automatically. You manage the Scope instead of manually tracking every task."
+        },
+        {
+            "type": "bullet",
+            "heading": "Key Concepts",
+            "items": [
+                "Parent-Child Bond: If a child coroutine fails, it usually cancels its parent and siblings (unless using SupervisorJob).",
+                "Leak Prevention: Using viewModelScope or lifecycleScope ensures coroutines cancel when the UI is destroyed."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "2. Cancellation is Cooperative",
+            "content": "Coroutines do not stop instantly when cancelled. They must cooperate by checking their cancellation status periodically."
+        },
+        {
+            "type": "bullet",
+            "heading": "How to Check for Cancellation",
+            "items": [
+                "Suspending Functions: delay(), withContext(), and most networking/database calls are cancellable.",
+                "isActive: Manually check inside long-running loops.",
+                "ensureActive(): Throws CancellationException if the coroutine is cancelled.",
+                "yield(): Suspends briefly and checks for cancellation."
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "Checking Cancellation in a Loop",
+            "content": "Use ensureActive() inside heavy loops to immediately stop execution if the coroutine is cancelled.",
+            "language": "kotlin",
+            "code": "val job = scope.launch(Dispatchers.Default) {\n    var i = 0\n    while (i < 1000) {\n        ensureActive()\n        // Heavy work...\n        i++\n    }\n}"
+        },
+        {
+            "type": "text_code",
+            "heading": "3. Handling Cancellation (Cleanup)",
+            "content": "When a coroutine is cancelled, it throws CancellationException. Use try-finally to clean up resources. If you must call a suspending function during cleanup, wrap it with NonCancellable.",
+            "language": "kotlin",
+            "code": "launch {\n    try {\n        doLongWork()\n    } finally {\n        withContext(NonCancellable) {\n            closeResource()\n        }\n    }\n}"
+        },
+        {
+            "type": "text_code",
+            "heading": "4. Exception Handling with SupervisorJob",
+            "content": "By default, if one child coroutine fails, the entire hierarchy is cancelled. SupervisorJob prevents this behavior, allowing sibling coroutines to continue running.",
+            "language": "kotlin",
+            "code": "val supervisor = CoroutineScope(Dispatchers.Main + SupervisorJob())\n\nsupervisor.launch {\n    throw Exception(\"Failed!\")\n}\n\nsupervisor.launch {\n    println(\"Still active!\")\n}"
+        },
+        {
+            "type": "text_code",
+            "heading": "5. CoroutineExceptionHandler",
+            "content": "CoroutineExceptionHandler catches uncaught exceptions in a coroutine. It acts as a global catch for that specific coroutine.",
+            "language": "kotlin",
+            "code": "val handler = CoroutineExceptionHandler { _, exception ->\n    Log.e(\"CoroutineError\", \"Caught $exception\")\n}\n\nscope.launch(handler) {\n    throw RuntimeException(\"Boom!\")\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Cancellation is cooperative and must be checked in your code.",
+                "Structured Concurrency ensures parent scopes control child lifetimes.",
+                "NonCancellable allows cleanup even after cancellation.",
+                "SupervisorJob prevents one failing coroutine from cancelling its siblings.",
+                "CoroutineExceptionHandler catches uncaught coroutine exceptions."
+            ]
+        }
+    ]
+}

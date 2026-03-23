@@ -1,0 +1,101 @@
+{
+  "title": "Image Loading with Glide & Coil",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Use an Image Loading Library?",
+      "content": "Loading images from the internet or disk in Android is more complex than it appears. Images must be downloaded, decoded into Bitmaps, resized for the target view, and cached to avoid repeated downloads. Large images can consume significant memory and cause crashes if handled incorrectly. Image loading libraries such as Glide and Coil solve these problems automatically by managing background threading, memory caching, disk caching, image resizing, and lifecycle-aware request cancellation."
+    },
+    {
+      "type": "bullet",
+      "heading": "What Image Libraries Handle",
+      "items": [
+        "Download images from network URLs on background threads",
+        "Cache images in memory for fast reuse",
+        "Store images on disk to avoid repeated network calls",
+        "Resize images to match the target ImageView size",
+        "Display placeholder images while loading",
+        "Show error images when loading fails",
+        "Cancel requests automatically when the Activity or Fragment is destroyed"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Glide vs Coil",
+      "rows": [
+        {
+          "aspect": "Language",
+          "glide": "Java-based library with Kotlin extensions",
+          "coil": "100% Kotlin and coroutine-based"
+        },
+        {
+          "aspect": "Library Size",
+          "glide": "Larger and feature-rich",
+          "coil": "Smaller and lightweight"
+        },
+        {
+          "aspect": "Compose Support",
+          "glide": "Available via extension library",
+          "coil": "Built-in support with AsyncImage"
+        },
+        {
+          "aspect": "Recommendation",
+          "glide": "Widely used and very stable",
+          "coil": "Preferred for modern Kotlin and Compose apps"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Using Glide",
+      "content": "Glide is one of the most popular Android image loading libraries. It provides a fluent API that allows developers to load images from different sources such as URLs, files, and resources. Glide automatically handles caching, resizing, and lifecycle management."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic Glide Usage",
+      "items": [
+        "Add dependency: implementation(\"com.github.bumptech.glide:glide:4.x.x\")",
+        "Load image: Glide.with(context).load(imageUrl).into(imageView)",
+        "Add placeholder: .placeholder(R.drawable.placeholder)",
+        "Add error image: .error(R.drawable.error)",
+        "Crop image: .centerCrop() or .circleCrop()"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Using Coil",
+      "content": "Coil (Coroutine Image Loader) is a modern image loading library written entirely in Kotlin. It uses coroutines and OkHttp internally and provides a clean Kotlin-friendly API. Coil is lightweight and integrates naturally with Jetpack Compose."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic Coil Usage",
+      "items": [
+        "Add dependency: implementation(\"io.coil-kt:coil:2.x.x\")",
+        "Load image: imageView.load(imageUrl)",
+        "Add placeholder: placeholder(R.drawable.placeholder)",
+        "Add error image: error(R.drawable.error)",
+        "Enable animation: crossfade(true)"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Common Image Transformations",
+      "content": "Both Glide and Coil allow developers to apply transformations to images before displaying them. These transformations modify the image appearance without needing manual bitmap processing."
+    },
+    {
+      "type": "bullet",
+      "heading": "Popular Transformations",
+      "items": [
+        "Circle crop for profile pictures",
+        "Rounded corners for card-style layouts",
+        "Center crop to fill the ImageView",
+        "Fit center to maintain full image inside the view"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Image loading libraries simplify one of the most complex tasks in Android development. Glide is a mature and widely used library that works well in large production apps, while Coil is a modern Kotlin-first solution designed for coroutine and Compose-based projects. Both libraries handle caching, background loading, transformations, and lifecycle management automatically, making them essential tools for efficient image handling in Android applications."
+    }
+  ]
+}

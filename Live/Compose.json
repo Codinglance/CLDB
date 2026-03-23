@@ -1,0 +1,1054 @@
+{
+  "category": "Android",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is Jetpack Compose, and how does it differ from the traditional Android View system?",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What is Jetpack Compose, and how does it differ from the traditional Android View system?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Jetpack Compose",
+          "content": "Jetpack Compose is Android's modern declarative UI toolkit. Differences from traditional Views:"
+        },
+        {
+          "type": "bullet",
+          "heading": " ",
+          "items": [
+            "Declarative vs Imperative: Compose describes what UI should look like.",
+            "Less boilerplate: No XML layouts.",
+            "Reactive: UI updates automatically when state changes.",
+            "Composables: UI elements are Kotlin functions.",
+            "Works seamlessly with existing Android components."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Jetpack Compose",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun Greeting(name: String) {\n    Text(\"Hello, $name\")\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 2,
+      "question": "Explain the concept of declarative UI in Jetpack Compose.",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Explain the concept of declarative UI in Jetpack Compose.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Declarative UI",
+          "content": "In declarative UI, you describe the UI for a given state instead of specifying steps to update it."
+        },
+        {
+          "type": "bullet",
+          "heading": "Note",
+          "items": [
+            "Compose automatically updates UI on state changes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun Greeting(name: String) {\n    Text(text = \"Hello, $name!\")\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 3,
+      "question": "Declarative UI vs Imperative UI",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Declarative UI vs Imperative UI",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Imperative UI:",
+          "items": [
+            "Describes how to update UI step-by-step",
+            "Used in XML + View system",
+            "Requires manual UI updates"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Declarative UI:",
+          "items": [
+            "Describes what UI should display based on state",
+            "Used in Jetpack Compose",
+            "UI updates automatically"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short:",
+          "items": [
+            "Imperative = Manual updates",
+            "Declarative = State-driven UI"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 4,
+      "question": "What are Composable functions?",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What are Composable functions?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Composable functions are the basic building blocks of UI in Jetpack Compose. They are functions marked with the @Composable annotation that define how the UI should look."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Features",
+          "items": [
+            "Used to create UI components",
+            "Can be combined (composed) to build complex layouts",
+            "Automatically update UI when state changes",
+            "Written using Kotlin functions instead of XML"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun Greeting(name: String) {\n    Text(text = \"Hello $name\")\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 5,
+      "question": "What are the benefits of Jetpack Compose?",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What are the benefits of Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose is Android's modern UI toolkit that lets developers build UI using Kotlin instead of XML, making development faster and simpler."
+        },
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Less Code – Removes XML layouts and reduces boilerplate.",
+            "Faster Development – Declarative UI with live previews speeds up development.",
+            "Easy Theming – Built-in Material Design and dark mode support.",
+            "Reusable UI – Composable functions improve modularity and maintainability.",
+            "Better State Management – UI updates automatically when data changes.",
+            "Improved Performance – Smart recomposition updates only necessary UI parts.",
+            "Interoperability – Works with existing XML Views for gradual migration."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Conclusion: Compose simplifies Android UI development with cleaner code, better performance, and faster UI creation."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 6,
+      "question": "Jetpack Compose vs Android View System",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Jetpack Compose vs Android View System",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Introduction",
+          "items": [
+            "Feature: UI Approach | Compose: Declarative | View System: Imperative",
+            "Feature: Layout | Compose: Composables | View System: XML + Views",
+            "Feature: State Handling | Compose: Automatic recomposition | View System: Manual updates",
+            "Feature: Boilerplate | Compose: Less | View System: More",
+            "Feature: Interoperability | Compose: Works with Views | View System: Views can host Compose via AndroidView"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 7,
+      "question": "Explain the role of @Composable in Jetpack Compose.",
+      "section": "@Composable & Lifecycle",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Explain the role of @Composable in Jetpack Compose.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "@Composable turns a Kotlin function into a UI function that builds and updates UI in Jetpack Compose."
+        },
+        {
+          "type": "text",
+          "heading": "Defines UI Components",
+          "content": "Used to create UI elements like text, buttons, layouts, or screens."
+        },
+        {
+          "type": "text",
+          "heading": "Enables Declarative UI",
+          "content": "Describes what UI should look like. UI updates automatically when data changes."
+        },
+        {
+          "type": "text",
+          "heading": "Supports Recomposition",
+          "content": "Only affected composables are redrawn when state changes, improving performance."
+        },
+        {
+          "type": "text",
+          "heading": "Allows UI Composition",
+          "content": "Composable functions can call other composables to build reusable and complex UI."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 8,
+      "question": "Explain the lifecycle of a Composable.",
+      "section": "@Composable & Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Explain the lifecycle of a Composable.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The lifecycle of a composable defines how it is created, updated, and removed from the UI in Jetpack Compose."
+        },
+        {
+          "type": "text",
+          "heading": "🆕 Composition",
+          "content": "When a composable is first called, Compose creates the UI and adds it to the screen."
+        },
+        {
+          "type": "text",
+          "heading": "Recomposition",
+          "content": "When the state used inside a composable changes, Compose re-executes the function and updates only the required UI parts."
+        },
+        {
+          "type": "text",
+          "heading": "Disposal",
+          "content": "When a composable is no longer needed, it is removed from the UI and its resources are cleared."
+        },
+        {
+          "type": "text",
+          "heading": "State Awareness",
+          "content": "Compose tracks state changes automatically, ensuring the UI stays updated and efficient."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 9,
+      "question": "How do you handle lifecycle events in Compose functions?",
+      "section": "@Composable & Lifecycle",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "How do you handle lifecycle events in Compose functions?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Lifecycle Handling",
+          "items": [
+            "LaunchedEffect → Run suspend code when key changes",
+            "DisposableEffect → Cleanup resources",
+            "SideEffect → Run after successful composition",
+            "Observe LifecycleOwner using LocalLifecycleOwner.current"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val lifecycleOwner = LocalLifecycleOwner.current\nDisposableEffect(lifecycleOwner) {\n    val observer = LifecycleEventObserver { _, event -> /* handle */ }\n    lifecycleOwner.lifecycle.addObserver(observer)\n    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 10,
+      "question": "What is State in Compose?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What is State in Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "State in Jetpack Compose represents data that can change and affect the UI. When state changes, Compose automatically updates the UI."
+        },
+        {
+          "type": "text",
+          "heading": "Holds UI Data",
+          "content": "Stores values like text input, selection, or visibility."
+        },
+        {
+          "type": "text",
+          "heading": "Triggers UI Updates",
+          "content": "State changes automatically recompose and update the UI."
+        },
+        {
+          "type": "text",
+          "heading": "Managed with State APIs",
+          "content": "Handled using tools like remember and mutableStateOf."
+        },
+        {
+          "type": "text",
+          "heading": "Enables Reactive UI",
+          "content": "Helps create dynamic UI that responds to user actions and data changes."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 11,
+      "question": "How does state management work in Jetpack Compose, and what are the common state types?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "How does state management work in Jetpack Compose, and what are the common state types?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "State management in Jetpack Compose controls how UI data is stored, updated, and observed. When state changes, Compose automatically recomposes and updates the UI."
+        },
+        {
+          "type": "text",
+          "heading": "How State Management Works",
+          "content": "Compose observes state values used inside composable functions. When the state changes, only the affected UI is recomposed."
+        },
+        {
+          "type": "text",
+          "heading": "remember",
+          "content": "Stores state inside a composable and survives recomposition."
+        },
+        {
+          "type": "text",
+          "heading": "mutableStateOf",
+          "content": "Creates observable state that triggers UI updates when changed."
+        },
+        {
+          "type": "text",
+          "heading": "rememberSaveable",
+          "content": "Saves state across configuration changes like screen rotation."
+        },
+        {
+          "type": "text",
+          "heading": "State / MutableState",
+          "content": "Wrapper classes that hold and observe state values."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 12,
+      "question": "What is MutableState and how does recomposition happen?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What is MutableState and how does recomposition happen?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "MutableState is a state holder in Jetpack Compose that stores a value and notifies Compose when the value changes."
+        },
+        {
+          "type": "text",
+          "heading": "What is MutableState?",
+          "content": "A wrapper around a value that can be observed and updated, usually created using mutableStateOf."
+        },
+        {
+          "type": "text",
+          "heading": "How Recomposition Happens",
+          "content": "When the state value changes, Compose re-executes composables using that state and updates only the affected UI."
+        },
+        {
+          "type": "text",
+          "heading": "Benefit",
+          "content": "Helps create reactive UI with automatic and efficient updates."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 13,
+      "question": "Stateful composable vs Stateless composable",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Stateful composable vs Stateless composable",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Jetpack Compose, composables can be stateful or stateless depending on whether they hold or rely on state."
+        },
+        {
+          "type": "bullet",
+          "heading": "Stateful Composable",
+          "items": [
+            "Holds its own state using remember or mutableStateOf.",
+            "Responsible for updating itself when the state changes.",
+            "Example: A text field that manages its input internally."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Stateless Composable",
+          "items": [
+            "Does not hold state internally.",
+            "Receives state and events via parameters.",
+            "Relies on parent composables to manage state.",
+            "Example: A button that displays a value passed from its parent."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 14,
+      "question": "Difference between Stateless and Stateful composables",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Difference between Stateless and Stateful composables",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Stateful Composable",
+          "items": [
+            "Holds and manages its own state.",
+            "Updates itself when the state changes.",
+            "Less reusable due to internal state.",
+            "Example: A TextField managing its input internally."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Stateless Composable",
+          "items": [
+            "Does not hold state; receives state from parent.",
+            "UI updates rely on external state changes.",
+            "Highly reusable and easier to test.",
+            "Example: A Button displaying text passed from parent."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 15,
+      "question": "What is State Hoisting?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What is State Hoisting?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "State Hoisting in Jetpack Compose is moving state up to a parent composable, making the child stateless and reusable."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Parent holds the state and passes it to the child.",
+            "Child emits events to update the parent's state."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Makes UI components reusable and testable.",
+            "Separates state management from UI.",
+            "Enables unidirectional data flow."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun Parent() {\n    var text by remember { mutableStateOf(\"\") }\n    Child(text = text, onTextChange = { text = it })\n}\n\n@Composable\nfun Child(text: String, onTextChange: (String) -> Unit) {\n    TextField(value = text, onValueChange = onTextChange)\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 16,
+      "question": "How to retain state across recomposition and configuration changes?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "How to retain state across recomposition and configuration changes?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Across Recomposition",
+          "items": [
+            "Use remember to keep state during recomposition."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Across Recomposition",
+          "content": "",
+          "language": "kotlin",
+          "code": "var count by remember { mutableStateOf(0) }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Across Configuration Changes",
+          "items": [
+            "Use rememberSaveable to retain state during recomposition and rotations."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Across Configuration Changes",
+          "content": "",
+          "language": "kotlin",
+          "code": "var count by rememberSaveable { mutableStateOf(0) }"
+        },
+        {
+          "type": "text",
+          "heading": "Across Configuration Changes",
+          "content": "Key: remember → recomposition only, rememberSaveable → recomposition + config changes."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 17,
+      "question": "What is Recomposition?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Easy",
+      "tags": [
+        "Recomposition"
+      ],
+      "title": "What is Recomposition?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Recomposition in Jetpack Compose is the process where a composable function is re-executed to update the UI when the state it depends on changes."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Compose tracks state used in composables.",
+            "When the state changes, only the affected composables are recomposed.",
+            "Unaffected parts of the UI are not redrawn, improving performance."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Ensures UI is always in sync with data.",
+            "Provides efficient and reactive updates without manual UI refresh."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 18,
+      "question": "How to avoid recomposition of a composable if the state is not changed? (Smart Recomposition)",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Recomposition"
+      ],
+      "title": "How to avoid recomposition of a composable if the state is not changed? (Smart Recomposition)",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "To prevent recomposition when state hasn't changed:"
+        },
+        {
+          "type": "bullet",
+          "heading": "remember",
+          "items": [
+            "remember – Keeps state across recompositions."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": " ",
+          "content": "",
+          "language": "kotlin",
+          "code": "val value = remember { computeValue() }"
+        },
+        {
+          "type": "bullet",
+          "heading": "key",
+          "items": [
+            "key – Recompose only when the key changes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": " ",
+          "content": "",
+          "language": "kotlin",
+          "code": "key(user.id) { UserProfile(user) }"
+        },
+        {
+          "type": "bullet",
+          "heading": "derivedStateOf",
+          "items": [
+            "derivedStateOf – Recompose only if the derived value changes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": " ",
+          "content": "",
+          "language": "kotlin",
+          "code": "val derivedValue by remember { derivedStateOf { state1 + state2 } }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Note",
+          "items": [
+            "Immutable/Stable Data – Helps Compose skip recomposition if the value is unchanged."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 19,
+      "question": "Does re-composition of ComposeItem1 affect ComposeItem2? If yes, how?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Recomposition"
+      ],
+      "title": "Does re-composition of ComposeItem1 affect ComposeItem2? If yes, how?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "No, recomposition in Jetpack Compose is localized."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Compose tracks which state each composable uses.",
+            "If ComposeItem1's state changes, only ComposeItem1 is recomposed.",
+            "ComposeItem2 remains unaffected if it doesn't depend on the same state."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Only composables that observe changed state are recomposed.",
+            "This makes Compose efficient by avoiding unnecessary UI redraws."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 20,
+      "question": "What are stable types that can skip recomposition?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Recomposition"
+      ],
+      "title": "What are stable types that can skip recomposition?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Stable types are objects or values that don't change unexpectedly, allowing Compose to skip recomposition when they remain the same."
+        },
+        {
+          "type": "bullet",
+          "heading": "Primitive types**: **Int**, **Float**, **Boolean**, **String",
+          "items": [
+            "Immutable collections: List, Map, Set from Kotlin's immutable types"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Objects marked with **@Stable**",
+          "items": [
+            "Functions / Lambdas that don't capture changing state"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "If a composable uses only stable types, Compose can avoid recomposing it when unrelated state changes, improving performance."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 21,
+      "question": "What are side effects in Compose?",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "What are side effects in Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Side effects in Compose are operations that interact with the outside world or cause changes outside the composable scope, such as updating state, launching coroutines, or performing I/O."
+        },
+        {
+          "type": "bullet",
+          "heading": "Examples of Side Effects",
+          "items": [
+            "Showing a Toast or Snackbar",
+            "Navigating to another screen",
+            "Writing to a database or shared preferences",
+            "Launching coroutines for API calls"
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Handling Side Effects",
+          "content": "Compose provides special APIs to safely handle side effects:"
+        },
+        {
+          "type": "bullet",
+          "heading": "Handling Side Effects",
+          "items": [
+            "LaunchedEffect – Runs a coroutine tied to the composable lifecycle",
+            "SideEffect – Runs after every successful recomposition",
+            "DisposableEffect – Cleans up resources when the composable leaves composition"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 22,
+      "question": "Difference between LaunchedEffect and DisposableEffect",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "Difference between LaunchedEffect and DisposableEffect",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "LaunchedEffect",
+          "items": [
+            "Runs a coroutine tied to composable lifecycle.",
+            "Used for async tasks (API calls, animations).",
+            "Cancels automatically when key changes or composable leaves."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": " ",
+          "content": "",
+          "language": "kotlin",
+          "code": "LaunchedEffect(userId) { fetchUserData(userId) }"
+        },
+        {
+          "type": "bullet",
+          "heading": "DisposableEffect",
+          "items": [
+            "Runs side effects with cleanup when entering/leaving composition.",
+            "Used for resources or listeners."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": " ",
+          "content": "",
+          "language": "kotlin",
+          "code": "DisposableEffect(lifecycleOwner) {\n    val observer = LifecycleEventObserver { _, _ -> }\n    lifecycleOwner.lifecycle.addObserver(observer)\n    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 23,
+      "question": "What is rememberCoroutineScope and its use cases?",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "What is rememberCoroutineScope and its use cases?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "rememberCoroutineScope is a Compose API that provides a lifecycle-aware CoroutineScope tied to a composable. It allows launching coroutines from UI events like clicks or gestures."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Returns a CoroutineScope that cancels automatically when the composable leaves the composition.",
+            "Unlike LaunchedEffect, it can be used inside event handlers (e.g., button clicks)."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Use Cases",
+          "items": [
+            "Performing asynchronous tasks on user interaction"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": " ",
+          "content": "",
+          "language": "kotlin",
+          "code": "  val scope = rememberCoroutineScope()\n  Button(onClick = { \n      scope.launch { fetchData() } \n  })"
+        },
+        {
+          "type": "bullet",
+          "heading": "Note",
+          "items": [
+            "Animations triggered by events",
+            "Temporary background work tied to a composable"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 24,
+      "question": "How to launch a coroutine from a composable function (LaunchedEffect)?",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How to launch a coroutine from a composable function (LaunchedEffect)?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Introduction",
+          "content": "LaunchedEffect lets you launch a coroutine tied to a composable's lifecycle. It cancels automatically when the key changes or the composable leaves.",
+          "language": "kotlin",
+          "code": "@Composable\nfun UserScreen(userId: String) {\n    LaunchedEffect(userId) {\n        val userData = fetchUserData(userId) // suspend function\n        // Update UI\n    }\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Note",
+          "content": "Use Case: Initial data loading, animations, or side effects in composables."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 25,
+      "question": "How to launch a coroutine from a non-composable function but tied to composition (rememberCoroutineScope)?",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How to launch a coroutine from a non-composable function but tied to composition (rememberCoroutineScope)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "rememberCoroutineScope provides a lifecycle-aware CoroutineScope that can be used in event handlers or non-composable functions inside a composable."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "The scope is tied to the composable's lifecycle.",
+            "Cancels automatically when the composable leaves composition.",
+            "Useful for launching coroutines imperatively (e.g., on button click)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun FetchButton() {\n    val scope = rememberCoroutineScope()\n    Button(onClick = {\n        scope.launch {\n            fetchData() // suspend function\n        }\n    }) {\n        Text(\"Fetch Data\")\n    }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "title": "Room Database",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Room?",
+      "content": "Room is the official Android Jetpack library used for local database storage. It acts as an abstraction layer on top of SQLite, making database operations easier and safer. Instead of writing complex SQLite code manually, developers define data models using Kotlin classes and Room automatically generates the database implementation. Room also validates SQL queries at compile time, reducing runtime errors and improving code reliability."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Room?",
+      "items": [
+        "Compile-time SQL validation to catch query errors early",
+        "Simplifies database operations compared to raw SQLite",
+        "Supports Kotlin coroutines and suspend functions",
+        "Provides reactive queries using Kotlin Flow",
+        "Reduces boilerplate code by generating database logic",
+        "Supports migrations for updating database schemas",
+        "Integrates well with modern Android architecture (MVVM)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Components of Room",
+      "rows": [
+        {
+          "component": "@Entity",
+          "description": "Represents a database table using a Kotlin data class"
+        },
+        {
+          "component": "@Dao",
+          "description": "Defines database operations such as insert, update, delete, and queries"
+        },
+        {
+          "component": "@Database",
+          "description": "The main database class that connects entities and DAOs"
+        },
+        {
+          "component": "RoomDatabase",
+          "description": "Base class that manages the database connection and provides DAO instances"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Entities (Tables)",
+      "content": "Entities represent tables in the Room database. Each entity is a Kotlin data class annotated with @Entity. The properties of the class become columns in the database table, and one field is usually marked as the primary key using @PrimaryKey."
+    },
+    {
+      "type": "text",
+      "heading": "Data Access Objects (DAO)",
+      "content": "DAO interfaces define how the app interacts with the database. They contain functions annotated with Room annotations such as @Insert, @Update, @Delete, and @Query. Room generates the implementation automatically during compilation."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common DAO Operations",
+      "items": [
+        "@Insert — add new data to the database",
+        "@Query — read data using SQL queries",
+        "@Update — modify existing rows",
+        "@Delete — remove data from the table",
+        "Queries can return Flow for reactive updates when the database changes"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Room Database Class",
+      "content": "The database class is annotated with @Database and extends RoomDatabase. It lists all entity classes and provides abstract methods to access DAO interfaces. Usually, the database is created as a singleton instance so that only one database connection exists during the app's lifecycle."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Room simplifies SQLite database management in Android by providing a type-safe and structured API. Using entities, DAOs, and a database class, developers can easily store and retrieve structured data locally. With coroutine and Flow support, Room integrates smoothly with modern Android architectures like MVVM, making it the recommended solution for local database persistence."
+    }
+  ]
+}

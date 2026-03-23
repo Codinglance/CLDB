@@ -1,0 +1,32 @@
+{
+  "title": "Material Design Components",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Material Design?",
+      "content": "Material Design is Google’s design system used to build consistent, modern, and accessible user interfaces across Android, iOS, and the web. It provides design guidelines, UI components, and theming tools that help developers create visually appealing apps. In Android, the official implementation is the Material Components for Android (MDC-Android) library, which replaces older AppCompat widgets and provides enhanced UI elements."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Material Components?",
+      "items": [
+        "Consistent UI following Google's design guidelines",
+        "Built-in accessibility support",
+        "Easy theming for colors, typography, and shapes",
+        "Rich UI components like BottomNavigationView, Chips, and MaterialCardView",
+        "Material 3 supports dynamic colors on Android 12+",
+        "Regular updates aligned with Android platform improvements"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Material Design 2 vs Material Design 3",
+      "content": "Material Design 2 was introduced in 2018 and is widely used in existing Android apps. Material Design 3 (Material You), introduced in 2021, brings dynamic color support, improved shapes, and a more expressive design system that adapts to the user's wallpaper on Android 12 and above."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Material Components provide a powerful foundation for building modern Android apps. By using components like MaterialButton, TextInputLayout, and MaterialCardView along with proper theming, developers can create clean, accessible, and visually consistent applications."
+    }
+  ]
+}

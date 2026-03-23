@@ -1,0 +1,74 @@
+{
+  "title": "Repository Pattern",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Repository Pattern?",
+      "content": "The Repository pattern is a design pattern that acts as an abstraction layer between the app's data sources (local database, remote API, cache) and the rest of the application. Instead of the ViewModel directly calling Room DAO or Retrofit APIs, it communicates with a Repository class. The Repository decides where the data should come from and provides a single source of truth for that data."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use the Repository Pattern?",
+      "items": [
+        "Provides a single source of truth for data",
+        "Separates business logic from data access logic",
+        "ViewModel does not need to know if data is local or remote",
+        "Improves testability by allowing fake repositories in tests",
+        "Supports caching and offline-first strategies",
+        "Reduces code duplication across ViewModels"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Repository in App Architecture",
+      "rows": [
+        {
+          "layer": "View (UI)",
+          "description": "Activity or Fragment that displays UI and interacts with ViewModel"
+        },
+        {
+          "layer": "ViewModel",
+          "description": "Holds UI state and communicates with Repository"
+        },
+        {
+          "layer": "Repository",
+          "description": "Handles data operations and decides between local or remote sources"
+        },
+        {
+          "layer": "Local Data Source",
+          "description": "Room database, DAO, or DataStore for local storage"
+        },
+        {
+          "layer": "Remote Data Source",
+          "description": "Retrofit API service used to fetch data from network"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Repository Class Structure",
+      "content": "A Repository is usually a plain Kotlin class that receives its dependencies such as DAO or API service through constructor injection (often using Hilt). It exposes data using suspend functions or Flow streams. The ViewModel calls repository methods to fetch or update data while the repository handles network calls, database operations, and caching logic."
+    },
+    {
+      "type": "bullet",
+      "heading": "Typical Repository Responsibilities",
+      "items": [
+        "Fetch data from network APIs",
+        "Read and write data to the local database",
+        "Implement caching strategies (cache-first or network-first)",
+        "Handle errors and return results to ViewModel",
+        "Map API DTOs or database entities into clean domain models"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Repository with Flow",
+      "content": "Repositories often expose data using Kotlin Flow. When the local database changes, Flow automatically emits updated data to the ViewModel. The ViewModel then updates the UI state. This reactive approach ensures that the UI always displays the latest data without manual refresh logic."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "The Repository pattern simplifies data management by providing a single interface for accessing data from different sources. It improves separation of concerns, supports caching and offline features, and makes applications easier to test and maintain. In modern Android architecture, the Repository sits between the ViewModel and the data sources, acting as the central data manager for the app."
+    }
+  ]
+}

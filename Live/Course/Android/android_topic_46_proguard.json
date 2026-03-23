@@ -1,0 +1,50 @@
+{
+  "title": "ProGuard & R8 (Code Shrinking)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Overview",
+      "content": "R8 is Android's default code shrinker, obfuscator, and optimizer, replacing ProGuard. It reduces APK size, improves performance, and makes reverse engineering harder. R8 is fully compatible with existing ProGuard rules."
+    },
+    {
+      "type": "table",
+      "heading": "R8 Stages",
+      "rows": [
+        {"stage": "Shrinking", "description": "Removes unused code and resources (isMinifyEnabled=true)"},
+        {"stage": "Obfuscation", "description": "Renames classes, methods, and fields to short names to protect IP"},
+        {"stage": "Optimization", "description": "Inlines methods, removes dead code, improves runtime performance"},
+        {"stage": "Resource Shrinking", "description": "Removes unused layouts, drawables, strings (isShrinkResources=true)"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Keep Rules",
+      "items": [
+        "-keep: preserves classes and members",
+        "-keepnames: preserves names, allows shrinking",
+        "-keepclassmembers: preserves specified members",
+        "-dontwarn: suppress warnings",
+        "-dontobfuscate/-dontoptimize/-dontshrink: disable respective R8 passes"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Libraries",
+      "rows": [
+        {"library": "Retrofit", "rules": "Keep interface types and signatures"},
+        {"library": "Gson", "rules": "Keep model classes for JSON parsing"},
+        {"library": "Room", "rules": "Keep @Entity, @Dao, RoomDatabase subclasses"}
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Mapping File",
+      "content": "R8 generates mapping.txt for deobfuscating stack traces. Always archive and upload to Play Console & Crashlytics after each release."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Enable isMinifyEnabled and isShrinkResources for release builds. Write precise keep rules to preserve reflection-accessed code. Verify with seeds.txt/usage.txt, test minified builds, and maintain mapping files for crash debugging."
+    }
+  ]
+}

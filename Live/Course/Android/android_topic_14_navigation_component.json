@@ -1,0 +1,81 @@
+{
+  "title": "Android Jetpack Navigation Component",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Navigation Component?",
+      "content": "The Jetpack Navigation Component is a library that simplifies navigation between screens in an Android app. It manages Fragment transactions, back stack handling, argument passing, and deep linking using a centralized navigation graph. This approach supports the modern Single Activity Architecture where one Activity hosts multiple Fragments through a NavHostFragment."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use the Navigation Component?",
+      "items": [
+        "Centralized navigation graph that defines all screens and navigation paths",
+        "Automatic back stack management without manual FragmentManager transactions",
+        "Type-safe argument passing using the Safe Args plugin",
+        "Support for deep links to open specific screens directly",
+        "Built-in integration with Toolbar, BottomNavigationView, and Navigation Drawer",
+        "Animation support for screen transitions",
+        "ViewModel scoping for sharing data across multiple fragments"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Concepts",
+      "rows": [
+        {
+          "concept": "Navigation Graph",
+          "description": "XML file that defines destinations and navigation paths"
+        },
+        {
+          "concept": "Destination",
+          "description": "A screen in the app such as a Fragment, Activity, or dialog"
+        },
+        {
+          "concept": "Action",
+          "description": "A navigation path connecting one destination to another"
+        },
+        {
+          "concept": "NavHostFragment",
+          "description": "Container fragment that swaps destinations in the Activity layout"
+        },
+        {
+          "concept": "NavController",
+          "description": "Object that controls navigation actions and back stack"
+        },
+        {
+          "concept": "Safe Args",
+          "description": "Gradle plugin for type-safe argument passing between destinations"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Basic Setup",
+      "content": "To use the Navigation Component, add the navigation-fragment and navigation-ui dependencies in Gradle. Create a navigation graph inside the res/navigation folder. Then place a NavHostFragment inside your Activity layout and connect it to the navigation graph using the app:navGraph attribute. Use NavController to navigate between destinations."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic Navigation Steps",
+      "items": [
+        "Add navigation dependencies in Gradle",
+        "Create a navigation graph XML file",
+        "Add NavHostFragment in the Activity layout",
+        "Get NavController using findNavController()",
+        "Navigate using navController.navigate(actionId)",
+        "Use Safe Args for type-safe argument passing",
+        "Use popBackStack() to return to the previous screen"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "NavigationUI Integration",
+      "content": "NavigationUI helps connect the Navigation Component with common UI elements such as the Toolbar, BottomNavigationView, and Navigation Drawer. It automatically updates the toolbar title, handles the Up button, and highlights the correct navigation tab based on the current destination."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "The Navigation Component simplifies screen navigation in Android by using a centralized navigation graph, automatic back stack management, and type-safe argument passing. Combined with NavigationUI and Safe Args, it provides a clean, maintainable, and scalable navigation architecture for modern Android applications."
+    }
+  ]
+}

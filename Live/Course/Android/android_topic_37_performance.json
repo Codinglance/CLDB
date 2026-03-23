@@ -1,0 +1,52 @@
+{
+  "title": "App Performance & Profiling",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Performance Matters",
+      "content": "App performance affects user retention, ratings, and revenue. Android targets 60fps (16ms per frame); delays cause jank. Performance includes startup time, memory usage, battery, network efficiency. Measure first using Android Studio Profilers (CPU, Memory, Network, Energy) before optimizing."
+    },
+    {
+      "type": "table",
+      "heading": "Common Performance Issues",
+      "rows": [
+        {"category": "Jank/UI Stutter", "cause": "Main thread work", "tool": "CPU Profiler, Systrace"},
+        {"category": "Slow Startup", "cause": "Heavy Application/Activity init", "tool": "App Startup profiler"},
+        {"category": "Memory Leaks", "cause": "Long-lived Activity/View refs", "tool": "Memory Profiler, LeakCanary"},
+        {"category": "Battery Drain", "cause": "Wakelocks, polling, GPS", "tool": "Energy Profiler, Battery Historian"},
+        {"category": "Network Inefficiency", "cause": "Redundant/large requests", "tool": "Network Profiler"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Keep main thread free — use coroutines: Dispatchers.IO for I/O, Dispatchers.Default for CPU work",
+        "Use StrictMode in debug to catch violations early",
+        "Clear View references in onDestroyView(), cancel coroutines appropriately",
+        "Use LeakCanary for automatic memory leak detection",
+        "Optimize layouts: flatten hierarchies, use ConstraintLayout, ViewStub, merge",
+        "RecyclerView: DiffUtil, stable IDs, prefetch, avoid object allocation in onBindViewHolder",
+        "Battery: WorkManager, batch requests, release wakelocks, avoid frequent alarms",
+        "Use Baseline Profiles and Macrobenchmark to reduce startup and JIT overhead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Key Tools",
+      "rows": [
+        {"tool": "CPU Profiler", "use": "Find slow methods, jank"},
+        {"tool": "Memory Profiler", "use": "Heap analysis, leaks"},
+        {"tool": "LeakCanary", "use": "Automatic leak detection"},
+        {"tool": "StrictMode", "use": "Detect main-thread violations"},
+        {"tool": "Layout Inspector", "use": "View hierarchy, overdraw"},
+        {"tool": "Battery Historian", "use": "Analyze battery usage"}
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Profile first, then optimize. Keep main thread responsive, prevent memory leaks, defer non-critical initialization, flatten layouts, and adopt Baseline Profiles. Use appropriate threading, LeakCanary, WorkManager, and Macrobenchmark to maintain smooth, efficient, and battery-friendly apps."
+    }
+  ]
+}

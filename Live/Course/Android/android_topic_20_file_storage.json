@@ -1,0 +1,96 @@
+{
+  "title": "File Storage & Media",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "File Storage in Android",
+      "content": "Android apps often need to store files such as images, videos, documents, logs, or downloaded content. Unlike structured storage systems like Room or DataStore, file storage handles raw binary or text data. Android provides several storage options depending on whether files should be private to the app, temporary, or shared with other apps. The main storage locations are internal storage, app-specific external storage, and shared media storage through MediaStore."
+    },
+    {
+      "type": "bullet",
+      "heading": "Main Storage Options",
+      "items": [
+        "Internal storage — private files stored inside the app sandbox",
+        "Cache directories — temporary files the system may delete when storage is low",
+        "External app-specific storage — large files accessible through file managers",
+        "MediaStore — shared photos, videos, and audio visible to other apps",
+        "Storage Access Framework (SAF) — lets users choose files from the system picker",
+        "Assets and raw resources — read-only files bundled with the app"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Storage Location Comparison",
+      "rows": [
+        {
+          "location": "Internal Storage",
+          "permissions": "None required",
+          "visibility": "Private to the app",
+          "best_for": "Sensitive app data and configuration files"
+        },
+        {
+          "location": "Cache Directory",
+          "permissions": "None required",
+          "visibility": "Private",
+          "best_for": "Temporary files and downloaded thumbnails"
+        },
+        {
+          "location": "External App-Specific",
+          "permissions": "None on Android 10+",
+          "visibility": "Accessible via file manager",
+          "best_for": "Large files such as exports or recordings"
+        },
+        {
+          "location": "MediaStore",
+          "permissions": "Media permissions (API 33+)",
+          "visibility": "Shared across apps",
+          "best_for": "Photos and videos that appear in the gallery"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Internal Storage",
+      "content": "Internal storage is the safest location for storing private app data. Each Android app has its own internal directory that cannot be accessed by other apps. Files are stored using context.filesDir for permanent files and context.cacheDir for temporary data. Files remain until the user clears app data or uninstalls the app."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic File Operations",
+      "items": [
+        "Create file: File(context.filesDir, \"file.txt\")",
+        "Write text: file.writeText(\"Hello\")",
+        "Append content: file.appendText(\"More data\")",
+        "Read file: file.readText()",
+        "Check existence: file.exists()",
+        "Delete file: file.delete()"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "External App-Specific Storage",
+      "content": "External app-specific directories allow apps to store larger files outside the internal sandbox. These directories are still scoped to the app but can be accessed by file manager apps. The path is obtained using getExternalFilesDir(). No storage permission is required on Android 10 and above."
+    },
+    {
+      "type": "text",
+      "heading": "MediaStore and Shared Media",
+      "content": "MediaStore is used for storing media files such as images, videos, and audio that should be visible to the user and other apps. When an app inserts media using MediaStore APIs, the file appears automatically in the device gallery. Android 10 introduced Scoped Storage, which requires apps to use MediaStore instead of direct file paths for shared media."
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Perform file operations on background threads using Dispatchers.IO",
+        "Use internal storage for private or sensitive data",
+        "Use cache directories for temporary files",
+        "Use MediaStore for photos and videos that should appear in the gallery",
+        "Use FileProvider when sharing files with other apps",
+        "Avoid hardcoding file paths like /sdcard/"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Android provides several storage mechanisms depending on file visibility and size. Internal storage is best for private app data, cache directories for temporary files, external app-specific directories for larger files, and MediaStore for shared media. Modern Android versions enforce scoped storage, encouraging developers to use MediaStore and the Storage Access Framework instead of direct file system access."
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "title": "Variables & Data Types",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Introduction",
+      "content": "In Kotlin, how we handle data is centered around two main concepts: immutability (consistency) and type inference (conciseness)."
+    },
+    {
+      "type": "text",
+      "heading": "Defining Variables: val vs var",
+      "content": "Kotlin uses two keywords to declare variables. Choosing the right one is the first step toward writing safe code."
+    },
+    {
+      "type": "bullet",
+      "heading": "val (Value)",
+      "items": [
+        "Immutable: Once assigned, the value cannot be changed.",
+        "Equivalent to final in Java.",
+        "Rule of thumb: Always use val by default."
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "var (Variable)",
+      "items": [
+        "Mutable: The value can be reassigned later.",
+        "Use when the data is expected to change (e.g., counter or user input)."
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "val vs var Example",
+      "content": "This example shows the difference between immutable (val) and mutable (var) variables.",
+      "language": "kotlin",
+      "code": "val birthYear = 1995 // Fixed\nvar currentWeight = 70 // Can change\n\n// birthYear = 1996  <-- Compiler Error\ncurrentWeight = 68   // Perfectly fine"
+    },
+    {
+      "type": "text_code",
+      "heading": "Type Inference",
+      "content": "Kotlin is statically typed, but you don't always have to write the type explicitly. The compiler infers the type based on the assigned value.",
+      "language": "kotlin",
+      "code": "val message = \"Hello\" // String\nval age = 25          // Int"
+    },
+    {
+      "type": "text",
+      "heading": "Explicit Type Declaration",
+      "content": "If you want to be explicit or don't assign a value immediately, use the syntax: val variableName: DataType = value"
+    },
+    {
+      "type": "table",
+      "heading": "Basic Data Types",
+      "rows": [
+        {
+          "category": "Numbers",
+          "types": "Byte, Short, Int, Long, Float, Double",
+          "examples": "3.14f, 100L"
+        },
+        {
+          "category": "Booleans",
+          "types": "Boolean",
+          "examples": "true, false"
+        },
+        {
+          "category": "Characters",
+          "types": "Char",
+          "examples": "'A', '1'"
+        },
+        {
+          "category": "Strings",
+          "types": "String",
+          "examples": "\"Kotlin is fun\""
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Numerical Literals",
+      "items": [
+        "Long: Suffixed with L (e.g., 1000L)",
+        "Float: Suffixed with f or F (e.g., 2.5f)",
+        "Underscores can improve readability (e.g., 1234_5678_9012_3456L)"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "String Templates",
+      "content": "Kotlin simplifies string concatenation using the $ symbol. No need to use + to join strings and variables.",
+      "language": "kotlin",
+      "code": "val name = \"Android\"\nval version = 14\n\nprintln(\"Welcome to $name version $version\")\nprintln(\"The name has ${name.length} characters\")"
+    },
+    {
+      "type": "text_code",
+      "heading": "Type Conversion",
+      "content": "In Kotlin, smaller types like Int are not implicitly converted to larger types like Long. Explicit conversion is required.",
+      "language": "kotlin",
+      "code": "val smallInt: Int = 10\n// val bigLong: Long = smallInt // Error\n\nval bigLong: Long = smallInt.toLong()"
+    },
+    {
+      "type": "bullet",
+      "heading": "Summary",
+      "items": [
+        "Use val for constants and var for variables.",
+        "Kotlin usually infers the data type automatically.",
+        "String templates ($) are preferred over string concatenation.",
+        "Explicit conversion is required between different number types."
+      ]
+    }
+  ]
+}

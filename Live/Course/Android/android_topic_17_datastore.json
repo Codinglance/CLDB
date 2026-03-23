@@ -1,0 +1,90 @@
+{
+  "title": "SharedPreferences & DataStore",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Key-Value Storage in Android",
+      "content": "Android provides lightweight key-value storage for saving small pieces of data such as user preferences, login sessions, app settings, and UI state flags. Two main solutions exist: the older SharedPreferences API and the modern Jetpack DataStore library. Both store data as key-value pairs, but DataStore is built with Kotlin coroutines and Flow, making it asynchronous, safer, and better suited for modern Android architecture."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Use Cases",
+      "items": [
+        "User preferences like dark mode or notification settings",
+        "Session information such as auth tokens or user IDs",
+        "App state flags like onboarding completion",
+        "UI state like last selected tab or search query",
+        "Simple configuration or feature flags",
+        "Avoid using key-value storage for large or relational data — use Room database instead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "SharedPreferences vs DataStore",
+      "rows": [
+        {
+          "aspect": "API Style",
+          "shared_preferences": "Synchronous key-value API",
+          "datastore": "Asynchronous API using coroutines and Flow"
+        },
+        {
+          "aspect": "Thread Safety",
+          "shared_preferences": "May block main thread and cause ANR",
+          "datastore": "Fully non-blocking and thread-safe"
+        },
+        {
+          "aspect": "Type Safety",
+          "shared_preferences": "Weak — keys are simple strings",
+          "datastore": "Stronger with typed preference keys"
+        },
+        {
+          "aspect": "Data Consistency",
+          "shared_preferences": "Possible corruption during concurrent writes",
+          "datastore": "Atomic and transactional writes"
+        },
+        {
+          "aspect": "Recommendation",
+          "shared_preferences": "Legacy API used in older apps",
+          "datastore": "Recommended by Google for new apps"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "SharedPreferences Overview",
+      "content": "SharedPreferences stores data in an XML file inside the app's internal storage. Developers read and write values using simple get and put methods. While easy to use, it performs synchronous disk operations which can block the main thread. Because of this limitation and lack of proper error handling, it is considered a legacy solution."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic SharedPreferences Usage",
+      "items": [
+        "Get instance: context.getSharedPreferences(\"settings\", MODE_PRIVATE)",
+        "Read value: prefs.getBoolean(\"dark_mode\", false)",
+        "Write value: prefs.edit().putBoolean(\"dark_mode\", true).apply()",
+        "Remove key: prefs.edit().remove(\"token\").apply()",
+        "Clear all preferences: prefs.edit().clear().apply()"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Jetpack DataStore",
+      "content": "Jetpack DataStore is the modern replacement for SharedPreferences. It uses Kotlin coroutines and Flow to provide asynchronous, safe, and consistent data access. DataStore emits updates whenever preferences change, allowing UI layers to react automatically. There are two variants: Preferences DataStore for simple key-value data and Proto DataStore for strongly typed schema-based storage."
+    },
+    {
+      "type": "bullet",
+      "heading": "DataStore Key Features",
+      "items": [
+        "Asynchronous and non-blocking storage",
+        "Built on Kotlin Flow for reactive updates",
+        "Transactional and atomic writes",
+        "Better error handling compared to SharedPreferences",
+        "Works well with MVVM and repository architecture"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "SharedPreferences was the original Android key-value storage solution, but its synchronous API and thread safety issues make it less suitable for modern apps. Jetpack DataStore provides a safer, coroutine-based alternative that integrates naturally with Flow and MVVM architecture. For new Android applications, DataStore is the recommended way to persist simple user preferences and app settings."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "title": "Compose Navigation",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Navigation in Jetpack Compose",
+      "content": "Jetpack Compose uses the Navigation Compose library to manage screen-to-screen navigation. Instead of XML navigation graphs and fragments, navigation is defined directly in Kotlin using composable functions. The system follows the Single Activity Architecture where each screen is represented as a composable destination."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Navigation Compose?",
+      "items": [
+        "Navigation graph defined completely in Kotlin",
+        "Automatic back stack management",
+        "Easy argument passing between screens",
+        "Lifecycle-aware destinations",
+        "Works well with ViewModel and Hilt"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Core Navigation Components",
+      "rows": [
+        {
+          "component": "NavController",
+          "description": "Controls navigation actions and manages the back stack",
+          "example": "val navController = rememberNavController()"
+        },
+        {
+          "component": "NavHost",
+          "description": "Container that displays the current destination",
+          "example": "NavHost(navController, startDestination = \"home\")"
+        },
+        {
+          "component": "composable(route)",
+          "description": "Defines a screen destination inside the navigation graph",
+          "example": "composable(\"home\") { HomeScreen() }"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Basic Navigation Setup",
+      "content": "To use Navigation Compose, add the navigation-compose dependency, create a NavController using rememberNavController(), and define a NavHost with a start destination. Each screen is registered using the composable() function inside the NavHost."
+    },
+    {
+      "type": "bullet",
+      "heading": "Navigation Actions",
+      "items": [
+        "Navigate to screen: navController.navigate(\"profile\")",
+        "Go back: navController.popBackStack()",
+        "Navigate up: navController.navigateUp()",
+        "Prevent duplicate screens using launchSingleTop"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Passing Arguments",
+      "content": "Data can be passed between screens using route parameters. For example: composable(\"profile/{userId}\") defines a route that expects a userId argument. When navigating, call navController.navigate(\"profile/42\"). The destination composable reads the value from the NavBackStackEntry arguments."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Navigation Compose simplifies navigation in modern Android apps by replacing XML navigation graphs with a Kotlin-based DSL. Using NavController, NavHost, and composable destinations, developers can easily manage navigation, pass arguments, and maintain a clean architecture."
+    }
+  ]
+}

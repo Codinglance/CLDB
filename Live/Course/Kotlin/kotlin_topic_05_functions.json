@@ -1,0 +1,86 @@
+{
+  "title": "Functions",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Introduction",
+      "content": "Functions in Kotlin are declared using the fun keyword. They are designed to be concise and expressive, often allowing you to skip curly braces and explicit return types."
+    },
+    {
+      "type": "text_code",
+      "heading": "Basic Function Anatomy",
+      "content": "A standard function includes a name, parameters with explicit types, and a return type.",
+      "language": "kotlin",
+      "code": "fun add(a: Int, b: Int): Int {\n    return a + b\n}"
+    },
+    {
+      "type": "bullet",
+      "heading": "Function Components",
+      "items": [
+        "Parameters must always have explicit types (e.g., a: Int).",
+        "Return type is placed after the parameter list using a colon.",
+        "If a function returns nothing, the return type is Unit (similar to void in Java) and is usually omitted."
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Single-Expression Functions",
+      "content": "If a function returns a single expression, you can omit curly braces and the return keyword. The compiler automatically infers the return type.",
+      "language": "kotlin",
+      "code": "fun multiply(a: Int, b: Int) = a * b"
+    },
+    {
+      "type": "text_code",
+      "heading": "Default Arguments",
+      "content": "Kotlin allows you to provide default values for parameters. This reduces the need for multiple overloaded functions.",
+      "language": "kotlin",
+      "code": "fun displayMessage(message: String, prefix: String = \"INFO\") {\n    println(\"[$prefix] $message\")\n}\n\n// Calls:\ndisplayMessage(\"System started\")\ndisplayMessage(\"Battery low\", \"WARNING\")"
+    },
+    {
+      "type": "text_code",
+      "heading": "Named Arguments",
+      "content": "When calling a function, you can specify parameter names to improve readability or skip parameters with default values.",
+      "language": "kotlin",
+      "code": "displayMessage(prefix = \"LOG\", message = \"User logged in\")"
+    },
+    {
+      "type": "text",
+      "heading": "Function Scope",
+      "content": "Functions in Kotlin can exist in different scopes, not just inside classes."
+    },
+    {
+      "type": "bullet",
+      "heading": "Types of Functions",
+      "items": [
+        "Top-level functions: Declared outside any class and globally accessible.",
+        "Member functions: Declared inside a class or object.",
+        "Local functions: Declared inside another function."
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Local Function Example",
+      "content": "A local function is declared inside another function and is only accessible within that function.",
+      "language": "kotlin",
+      "code": "fun outer() {\n    fun inner() {\n        println(\"I am a local function\")\n    }\n    inner()\n}"
+    },
+    {
+      "type": "text_code",
+      "heading": "Varargs (Variable Number of Arguments)",
+      "content": "If you don't know how many arguments will be passed to a function, use the vararg modifier.",
+      "language": "kotlin",
+      "code": "fun printAll(vararg messages: String) {\n    for (m in messages) println(m)\n}\n\n// Usage:\nprintAll(\"Hello\", \"World\", \"Kotlin\", \"Android\")"
+    },
+    {
+      "type": "bullet",
+      "heading": "Summary",
+      "items": [
+        "Use fun to declare functions.",
+        "Single-expression functions improve readability.",
+        "Default arguments reduce method overloading.",
+        "Named arguments enhance clarity.",
+        "vararg allows passing a variable number of arguments."
+      ]
+    }
+  ]
+}

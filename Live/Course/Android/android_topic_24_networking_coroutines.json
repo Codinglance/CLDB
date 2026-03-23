@@ -1,0 +1,109 @@
+{
+  "title": "Networking with Coroutines",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Use Coroutines for Networking?",
+      "content": "Android does not allow network operations on the main thread because they block the UI and cause poor user experience. Attempting this results in a NetworkOnMainThreadException. Kotlin coroutines solve this problem by allowing asynchronous code to run in the background while still being written in a simple sequential style. When used with Retrofit's suspend functions, coroutines make networking code easier to read, maintain, and manage compared to older approaches like callbacks or AsyncTask."
+    },
+    {
+      "type": "bullet",
+      "heading": "Advantages of Coroutines",
+      "items": [
+        "Write asynchronous code in a sequential style",
+        "Avoid callback-based code complexity",
+        "Automatic cancellation through structured concurrency",
+        "Easy error handling using try-catch",
+        "Built-in support in modern Android libraries",
+        "Works seamlessly with Retrofit suspend functions"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Coroutine Dispatchers",
+      "content": "Dispatchers determine which thread a coroutine runs on. The most commonly used dispatchers in Android networking are Dispatchers.Main, Dispatchers.IO, and Dispatchers.Default. Retrofit suspend functions already run on a background thread internally, so you usually do not need to manually switch to Dispatchers.IO when making Retrofit API calls."
+    },
+    {
+      "type": "table",
+      "heading": "Common Coroutine Dispatchers",
+      "rows": [
+        {
+          "dispatcher": "Dispatchers.Main",
+          "usage": "Used for UI updates on the main thread"
+        },
+        {
+          "dispatcher": "Dispatchers.IO",
+          "usage": "Used for network requests, database queries, and file operations"
+        },
+        {
+          "dispatcher": "Dispatchers.Default",
+          "usage": "Used for CPU-intensive tasks such as data processing"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Using viewModelScope for Networking",
+      "content": "viewModelScope is the recommended coroutine scope for performing network calls in Android apps. It is tied to the lifecycle of the ViewModel, meaning all running coroutines are automatically cancelled when the ViewModel is cleared. This prevents memory leaks and unnecessary work when the user navigates away from a screen."
+    },
+    {
+      "type": "bullet",
+      "heading": "viewModelScope Benefits",
+      "items": [
+        "Lifecycle-aware coroutine scope",
+        "Automatically cancels running tasks when ViewModel is destroyed",
+        "Prevents memory leaks",
+        "Recommended place to launch networking coroutines"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Sequential Network Calls",
+      "content": "With coroutines, network requests can be written as sequential code. Each suspend function pauses the coroutine until the result is returned, without blocking the thread."
+    },
+    {
+      "type": "bullet",
+      "heading": "Sequential Call Example",
+      "items": [
+        "Launch coroutine in viewModelScope",
+        "Call API suspend function",
+        "Process result",
+        "Update UI state"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Parallel Network Calls",
+      "content": "When multiple independent network requests are needed, coroutines allow them to run in parallel using async and await. This reduces total waiting time because requests run simultaneously."
+    },
+    {
+      "type": "bullet",
+      "heading": "Parallel Call Pattern",
+      "items": [
+        "Use async to start multiple network calls",
+        "Use await to get results",
+        "Requests run concurrently instead of sequentially"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Error Handling",
+      "content": "Coroutine networking uses normal Kotlin exception handling. Errors such as connectivity problems or server failures can be handled using try-catch blocks. Common exceptions include IOException for network failures and HttpException for server errors."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Error Handling Steps",
+      "items": [
+        "Wrap API calls inside try-catch",
+        "Handle IOException for network issues",
+        "Handle HttpException for server errors",
+        "Expose errors to the UI through a state object"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Kotlin coroutines provide a modern and efficient way to perform networking in Android apps. By using Retrofit suspend functions, launching coroutines in viewModelScope, and handling errors with try-catch, developers can build clean and lifecycle-aware networking code. Coroutines support both sequential and parallel network calls, making them suitable for a wide range of real-world application scenarios."
+    }
+  ]
+}

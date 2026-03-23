@@ -1,0 +1,100 @@
+{
+  "title": "ConstraintLayout & LinearLayout",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are ViewGroups?",
+      "content": "ViewGroups are containers that hold and arrange other Views. They control how child Views are measured and positioned on screen. Choosing the right layout helps keep the UI efficient and easy to maintain."
+    },
+    {
+      "type": "table",
+      "heading": "Common Android Layouts",
+      "rows": [
+        { "layout": "ConstraintLayout", "use": "Complex responsive screens" },
+        { "layout": "LinearLayout", "use": "Simple vertical or horizontal layouts" },
+        { "layout": "FrameLayout", "use": "Fragment container or overlapping views" }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "LinearLayout",
+      "content": "LinearLayout arranges its child Views in a single direction: vertical (top to bottom) or horizontal (side by side). It is simple and ideal for basic forms or rows of items."
+    },
+    {
+      "type": "bullet",
+      "heading": "Important LinearLayout Attributes",
+      "items": [
+        "android:orientation – vertical or horizontal",
+        "android:gravity – aligns all children inside layout",
+        "android:layout_gravity – aligns a child view",
+        "android:layout_weight – distributes available space among views"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "ConstraintLayout",
+      "content": "ConstraintLayout is the recommended layout for modern Android apps. It positions views using constraints between other views or the parent, allowing complex UIs with a flat hierarchy."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Features of ConstraintLayout",
+      "items": [
+        "Flat layout hierarchy for better performance",
+        "Views positioned using constraints",
+        "Supports chains, guidelines, and bias for flexible layouts",
+        "Works well for complex screens"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Constraint Attributes",
+      "rows": [
+        { "attribute": "layout_constraintTop_toTopOf", "purpose": "Align top to parent or another view" },
+        { "attribute": "layout_constraintBottom_toBottomOf", "purpose": "Align bottom edges" },
+        { "attribute": "layout_constraintStart_toStartOf", "purpose": "Align start edges" },
+        { "attribute": "layout_constraintEnd_toEndOf", "purpose": "Align end edges" }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "ConstraintLayout Size Options",
+      "rows": [
+        { "value": "wrap_content", "behavior": "View fits its content" },
+        { "value": "0dp (match_constraint)", "behavior": "View expands based on constraints" },
+        { "value": "Fixed size", "behavior": "Exact dp value like 100dp" }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Margin vs Padding",
+      "rows": [
+        { "property": "padding", "description": "Space inside the view around its content" },
+        { "property": "margin", "description": "Space outside the view between other views" }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use Each Layout",
+      "items": [
+        "Use ConstraintLayout for complex screens",
+        "Use LinearLayout for simple stacked layouts",
+        "Use FrameLayout for fragments or overlapping views"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Prefer ConstraintLayout to reduce nested layouts",
+        "Keep view hierarchy shallow",
+        "Use start/end instead of left/right for RTL support",
+        "Use resource files for strings, colors, and dimensions"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "ConstraintLayout and LinearLayout are the most common Android layouts. LinearLayout is simple and ideal for basic rows or columns, while ConstraintLayout is powerful and efficient for complex responsive screens."
+    }
+  ]
+}

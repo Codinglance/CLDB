@@ -1,0 +1,101 @@
+{
+  "title": "Retrofit & OkHttp",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Retrofit?",
+      "content": "Retrofit is a type-safe HTTP client for Android developed by Square. It allows developers to convert REST API endpoints into Kotlin interface functions using annotations. Instead of manually building HTTP requests and parsing responses, you simply define an API interface and Retrofit handles the network request, JSON parsing, and threading automatically. Retrofit works together with OkHttp for network communication and uses converters such as Gson or Moshi to transform JSON responses into Kotlin data classes."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Retrofit?",
+      "items": [
+        "Type-safe API calls using Kotlin interfaces",
+        "Simple annotation-based endpoint definition",
+        "Automatic JSON parsing using converters like Gson or Moshi",
+        "Built-in coroutine support using suspend functions",
+        "Uses OkHttp internally for efficient networking",
+        "Reduces networking boilerplate code significantly"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Basic Retrofit Setup",
+      "content": "To start using Retrofit, you must add the Retrofit dependency and a JSON converter to your project. Retrofit requires a base URL and an API interface that defines the endpoints. Each endpoint is represented by a function annotated with HTTP methods such as GET or POST."
+    },
+    {
+      "type": "bullet",
+      "heading": "Basic Setup Steps",
+      "items": [
+        "Add Retrofit dependency to your project",
+        "Add a JSON converter such as Gson",
+        "Add INTERNET permission in AndroidManifest",
+        "Create Kotlin data classes matching the API response",
+        "Define an API interface with Retrofit annotations",
+        "Create a Retrofit instance using Retrofit.Builder()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Retrofit Annotations",
+      "rows": [
+        {
+          "annotation": "@GET",
+          "description": "Retrieves data from the server",
+          "example": "@GET(\"users\") suspend fun getUsers(): List<User>"
+        },
+        {
+          "annotation": "@POST",
+          "description": "Creates a new resource on the server",
+          "example": "@POST(\"users\") suspend fun createUser(@Body user: User): User"
+        },
+        {
+          "annotation": "@PUT",
+          "description": "Replaces an existing resource",
+          "example": "@PUT(\"users/{id}\") suspend fun updateUser(@Path(\"id\") id: Int, @Body user: User)"
+        },
+        {
+          "annotation": "@DELETE",
+          "description": "Deletes a resource",
+          "example": "@DELETE(\"users/{id}\") suspend fun deleteUser(@Path(\"id\") id: Int)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "What is OkHttp?",
+      "content": "OkHttp is the HTTP client used internally by Retrofit to perform network requests. It manages connections, handles caching, retries failed requests, and provides powerful interceptors that allow developers to inspect or modify requests and responses."
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Features of OkHttp",
+      "items": [
+        "Connection pooling for efficient network usage",
+        "Built-in caching support",
+        "Automatic retries and redirects",
+        "Request and response interceptors",
+        "Configurable timeouts for network operations"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "OkHttp Interceptors",
+      "content": "Interceptors allow developers to intercept and modify network requests and responses. They are commonly used to add authentication headers, log requests, or handle errors globally."
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Interceptor Uses",
+      "items": [
+        "Adding Authorization headers for authenticated APIs",
+        "Logging request and response data during development",
+        "Handling token refresh logic",
+        "Monitoring or modifying network traffic"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Retrofit simplifies Android networking by converting REST API endpoints into Kotlin interface functions using annotations. It automatically handles HTTP requests, JSON parsing, and threading while relying on OkHttp as the underlying network client. OkHttp provides powerful features such as interceptors, caching, and connection management. Together, Retrofit and OkHttp form the standard networking stack used in modern Android applications."
+    }
+  ]
+}

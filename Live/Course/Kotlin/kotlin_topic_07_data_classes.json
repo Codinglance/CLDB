@@ -1,0 +1,80 @@
+{
+    "title": "Data Classes & Enums",
+    "sections": [
+        {
+            "type": "text_code",
+            "heading": "Data Classes",
+            "content": "A data class is a class whose primary purpose is to hold data. When you mark a class with the data keyword, the compiler automatically generates several useful functions.",
+            "language": "kotlin",
+            "code": "data class User(val id: Int, val name: String, val email: String)"
+        },
+        {
+            "type": "bullet",
+            "heading": "Requirements for Data Classes",
+            "items": [
+                "The primary constructor must have at least one parameter.",
+                "All primary constructor parameters must be marked as val or var.",
+                "Data classes cannot be abstract, open, sealed, or inner."
+            ]
+        },
+        {
+            "type": "text",
+            "heading": "Automatically Generated Functions",
+            "content": "When using a data class, Kotlin automatically generates useful methods for you."
+        },
+        {
+            "type": "bullet",
+            "heading": "What You Get Automatically",
+            "items": [
+                "toString(): Returns a readable representation of the object.",
+                "equals() and hashCode(): Compare objects based on their data.",
+                "copy(): Creates a new object with modified properties."
+            ]
+        },
+        {
+            "type": "text_code",
+            "heading": "copy() Example",
+            "content": "The copy() function allows you to create a modified version of an existing object while keeping immutability.",
+            "language": "kotlin",
+            "code": "val user1 = User(1, \"Samy\", \"samy@mail.com\")\n\nval user2 = user1.copy(email = \"new_samy@mail.com\")"
+        },
+        {
+            "type": "text_code",
+            "heading": "Destructuring Declarations",
+            "content": "Data classes allow you to unpack an object into multiple variables. This is commonly used when handling state or results.",
+            "language": "kotlin",
+            "code": "val (id, name, email) = user1\nprintln(name)"
+        },
+        {
+            "type": "text_code",
+            "heading": "Enum Classes",
+            "content": "Enum classes represent a fixed set of constants, such as directions, states, or difficulty levels.",
+            "language": "kotlin",
+            "code": "enum class Difficulty {\n    EASY, MEDIUM, HARD\n}"
+        },
+        {
+            "type": "text_code",
+            "heading": "Enums with Properties",
+            "content": "Enums in Kotlin can define properties and functions, making them more powerful than simple constants.",
+            "language": "kotlin",
+            "code": "enum class Priority(val color: String) {\n    LOW(\"Green\"),\n    MEDIUM(\"Yellow\"),\n    HIGH(\"Red\");\n\n    fun displayInfo() = \"Priority level is $name and color is $color\"\n}"
+        },
+        {
+            "type": "text_code",
+            "heading": "Using Enums with when",
+            "content": "The when expression works very well with enums. If all enum cases are handled, no else branch is required.",
+            "language": "kotlin",
+            "code": "val currentPriority = Priority.HIGH\n\nval message = when(currentPriority) {\n    Priority.LOW -> \"Take your time.\"\n    Priority.MEDIUM -> \"Keep a steady pace.\"\n    Priority.HIGH -> \"Address this immediately!\"\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "data class removes boilerplate for data-holding classes.",
+                "copy() allows safe updates of immutable objects.",
+                "enum class represents a fixed set of constants.",
+                "Enums can contain properties and functions."
+            ]
+        }
+    ]
+}

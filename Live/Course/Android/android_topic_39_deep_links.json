@@ -1,0 +1,63 @@
+{
+  "title": "Deep Links & App Links",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Overview",
+      "content": "Deep links navigate users directly to specific app content. Android supports custom scheme links (myapp://), web deep links (HTTP/HTTPS), and Android App Links (verified HTTPS URLs opening directly in the app). App Links require domain verification via a Digital Asset Links JSON file and provide the highest security. Deep links are essential for notifications, marketing, QR codes, and web-to-app navigation."
+    },
+    {
+      "type": "table",
+      "heading": "Deep Link Types",
+      "rows": [
+        {"type": "Custom Scheme", "security": "Low", "verification_required": "No", "use_case": "Internal or cross-app navigation"},
+        {"type": "Web Deep Link", "security": "Medium", "verification_required": "No", "use_case": "Browser fallback links"},
+        {"type": "Android App Link", "security": "High", "verification_required": "Yes", "use_case": "Public web-to-app, push notifications, QR codes"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Manifest & Intent Filters",
+      "items": [
+        "Declare intent filters on target Activity with VIEW action, DEFAULT and BROWSABLE categories",
+        "Use <data> elements with scheme, host, pathPrefix, path, pathPattern, autoVerify=\"true\"",
+        "Combine multiple <data> elements for multiple URL patterns",
+        "Set android:autoVerify=\"true\" for App Links (API 23+)"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Handling Deep Links",
+      "items": [
+        "Retrieve Intent data in onCreate() and onNewIntent()",
+        "Parse path segments and query parameters safely",
+        "Validate and sanitize all URI input",
+        "Navigate using NavController or Navigation Component"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Navigation Component",
+      "rows": [
+        {"type": "Implicit", "trigger": "Browser or external link", "handling": "NavController.handleDeepLink()", "use_case": "Web-to-app, QR codes"},
+        {"type": "Explicit", "trigger": "PendingIntent via notification", "handling": "NavDeepLinkBuilder", "use_case": "Notification or shortcut actions"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices & Testing",
+      "items": [
+        "Use App Links for public URLs with assetlinks.json verification",
+        "Include both debug and release keystore fingerprints",
+        "Test via adb: start Intents, check app link status, verify back stack",
+        "Avoid custom URI schemes for public links",
+        "Set launchMode or handle onNewIntent() to prevent duplicate Activities"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Use verified Android App Links for public-facing deep links, declare them in your navigation graph, handle both onCreate() and onNewIntent(), validate all parameters, and test thoroughly. Use NavDeepLinkBuilder for notifications and explicit deep links to build a correct back stack automatically. App Links ensure secure, seamless navigation from web, email, QR codes, and other apps."
+    }
+  ]
+}

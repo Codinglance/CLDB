@@ -1,106 +1,294 @@
-{
-"category": "DSA",
-"format": "Markdown inside JSON",
-"questions": [
-{
-"id": 1,
-"section": "Arrays",
-"question": "Reverse an Array",
-"difficulty": "Easy",
-"tags": ["array", "reverse"],
-"askedIn": ["Google", "Amazon"],
-"expectedReadTime": "45 sec",
-"markdown": "### Reverse an Array\n\n**Problem:** Reverse the elements of an array.\n\n```java\nint[] arr = {1, 2, 3, 4, 5};\nfor (int i = arr.length - 1; i >= 0; i--) {\n    System.out.print(arr[i] + \" \");\n}\n```\n\n**Output:**\n```\n5 4 3 2 1\n```"
-},
-{
-"id": 2,
-"section": "Arrays",
-"question": "Find Maximum and Minimum in an Array",
-"difficulty": "Easy",
-"tags": ["array", "min", "max"],
-"askedIn": ["Google", "Amazon"],
-"expectedReadTime": "45 sec",
-"markdown": "### Find Max and Min\n\n```java\nint max = arr[0], min = arr[0];\nfor (int num : arr) {\n    if (num > max) max = num;\n    if (num < min) min = num;\n}\n```\n\n**Output:**\n```\nMax: 9\nMin: 1\n```"
-},
-{
-"id": 3,
-"section": "Linked List",
-"question": "Reverse a Singly Linked List",
-"difficulty": "Medium",
-"tags": ["linkedlist", "reverse"],
-"askedIn": ["Google", "Amazon"],
-"expectedReadTime": "1 min",
-"markdown": "### Reverse Linked List\n\n```java\nNode prev = null, curr = head;\nwhile (curr != null) {\n    Node next = curr.next;\n    curr.next = prev;\n    prev = curr;\n    curr = next;\n}\nreturn prev;\n```\n\n**Output:**\n```\n3 2 1\n```"
-},
-{
-"id": 4,
-"section": "Strings",
-"question": "Check if a String is Palindrome",
-"difficulty": "Easy",
-"tags": ["string", "palindrome"],
-"askedIn": ["Amazon"],
-"expectedReadTime": "45 sec",
-"markdown": "### Palindrome String\n\n```java\nString reversed = new StringBuilder(str).reverse().toString();\nif (str.equals(reversed)) {\n    System.out.println(\"Palindrome\");\n}\n```\n\n**Output:**\n```\nlevel is a palindrome\n```"
-},
-{
-"id": 5,
-"section": "Recursion",
-"question": "Find Factorial using Recursion",
-"difficulty": "Easy",
-"tags": ["recursion", "math"],
-"askedIn": ["Google"],
-"expectedReadTime": "45 sec",
-"markdown": "### Factorial using Recursion\n\n```java\nif (n == 0 || n == 1) return 1;\nreturn n * factorial(n - 1);\n```\n\n**Output:**\n```\nFactorial of 5 is 120\n```"
-},
-{
-"id": 6,
-"section": "Recursion / Iteration",
-"question": "Fibonacci Series using Iteration",
-"difficulty": "Easy",
-"tags": ["fibonacci", "loop"],
-"askedIn": ["Amazon"],
-"expectedReadTime": "45 sec",
-"markdown": "### Fibonacci Series\n\n```java\nint a = 0, b = 1;\nfor (int i = 2; i < n; i++) {\n    int c = a + b;\n    a = b;\n    b = c;\n}\n```\n\n**Output:**\n```\n0 1 1 2 3 5 8 13 21 34\n```"
-},
-{
-"id": 7,
-"section": "Stack",
-"question": "Implement Stack using Array",
-"difficulty": "Medium",
-"tags": ["stack", "array"],
-"askedIn": ["Google", "Amazon"],
-"expectedReadTime": "1 min",
-"markdown": "### Stack using Array\n\n```java\nvoid push(int x) {\n    if (top == capacity - 1) return;\n    arr[++top] = x;\n}\n\nint pop() {\n    if (top == -1) return -1;\n    return arr[top--];\n}\n```"
-},
-{
-"id": 8,
-"section": "Queue",
-"question": "Implement Queue using Array",
-"difficulty": "Medium",
-"tags": ["queue", "array"],
-"askedIn": ["Amazon"],
-"expectedReadTime": "1 min",
-"markdown": "### Queue using Array\n\n```java\nvoid enqueue(int x) {\n    if (rear == capacity) return;\n    arr[rear++] = x;\n}\n\nint dequeue() {\n    if (front == rear) return -1;\n    return arr[front++];\n}\n```"
-},
-{
-"id": 9,
-"section": "Searching",
-"question": "Binary Search in a Sorted Array",
-"difficulty": "Medium",
-"tags": ["binary-search", "array"],
-"askedIn": ["Google", "Amazon"],
-"expectedReadTime": "1 min",
-"markdown": "### Binary Search\n\n```java\nwhile (left <= right) {\n    int mid = left + (right - left) / 2;\n    if (arr[mid] == target) return mid;\n    else if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n}\nreturn -1;\n```\n\n**Output:**\n```\nIndex: 2\n```"
-},
-{
-"id": 10,
-"section": "Linked List",
-"question": "Detect Cycle in a Linked List (Floyd’s Algorithm)",
-"difficulty": "Medium",
-"tags": ["linkedlist", "cycle"],
-"askedIn": ["Google", "Amazon"],
-"expectedReadTime": "1 min",
-"markdown": "### Cycle Detection (Floyd’s Algorithm)\n\n```java\nNode slow = head, fast = head;\nwhile (fast != null && fast.next != null) {\n    slow = slow.next;\n    fast = fast.next.next;\n    if (slow == fast) return true;\n}\nreturn false;\n```\n\n**Output:**\n```\ntrue\n```"
+
+## **1. Reverse an Array**
+
+**Problem:** Reverse the elements of an array.
+
+```java
+public class ReverseArray {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        for (int i = arr.length - 1; i >= 0; i--) {
+            System.out.print(arr[i] + " ");
+        }
+    }
 }
-]
+```
+
+**Output:**
+
+```
+5 4 3 2 1
+```
+
+---
+
+## **2. Find Maximum and Minimum in an Array**
+
+```java
+public class MaxMinArray {
+    public static void main(String[] args) {
+        int[] arr = {5, 2, 9, 1, 7};
+        int max = arr[0], min = arr[0];
+        for (int num : arr) {
+            if (num > max) max = num;
+            if (num < min) min = num;
+        }
+        System.out.println("Max: " + max);
+        System.out.println("Min: " + min);
+    }
 }
+```
+
+**Output:**
+
+```
+Max: 9
+Min: 1
+```
+
+---
+
+## **3. Reverse a Linked List (Singly)**
+
+```java
+class Node {
+    int data;
+    Node next;
+    Node(int data) { this.data = data; }
+}
+
+public class ReverseLinkedList {
+    public static Node reverse(Node head) {
+        Node prev = null, curr = head;
+        while (curr != null) {
+            Node next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+
+    public static void printList(Node head) {
+        while (head != null) {
+            System.out.print(head.data + " ");
+            head = head.next;
+        }
+    }
+
+    public static void main(String[] args) {
+        Node head = new Node(1);
+        head.next = new Node(2);
+        head.next.next = new Node(3);
+        head = reverse(head);
+        printList(head);
+    }
+}
+```
+
+**Output:**
+
+```
+3 2 1
+```
+
+---
+
+## **4. Check if a String is Palindrome**
+
+```java
+public class PalindromeString {
+    public static void main(String[] args) {
+        String str = "level";
+        String reversed = new StringBuilder(str).reverse().toString();
+        if (str.equals(reversed)) {
+            System.out.println(str + " is a palindrome");
+        } else {
+            System.out.println(str + " is not a palindrome");
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+level is a palindrome
+```
+
+---
+
+## **5. Find Factorial using Recursion**
+
+```java
+public class Factorial {
+    public static int factorial(int n) {
+        if (n == 0 || n == 1) return 1;
+        return n * factorial(n - 1);
+    }
+
+    public static void main(String[] args) {
+        int num = 5;
+        System.out.println("Factorial of " + num + " is " + factorial(num));
+    }
+}
+```
+
+**Output:**
+
+```
+Factorial of 5 is 120
+```
+
+---
+
+## **6. Fibonacci Series using Iteration**
+
+```java
+public class Fibonacci {
+    public static void main(String[] args) {
+        int n = 10, a = 0, b = 1;
+        System.out.print(a + " " + b + " ");
+        for (int i = 2; i < n; i++) {
+            int c = a + b;
+            System.out.print(c + " ");
+            a = b;
+            b = c;
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+0 1 1 2 3 5 8 13 21 34
+```
+
+---
+
+## **7. Implement Stack using Array**
+
+```java
+class Stack {
+    int[] arr;
+    int top = -1;
+    int capacity;
+
+    Stack(int size) {
+        arr = new int[size];
+        capacity = size;
+    }
+
+    void push(int x) {
+        if (top == capacity - 1) {
+            System.out.println("Stack Overflow");
+            return;
+        }
+        arr[++top] = x;
+    }
+
+    int pop() {
+        if (top == -1) {
+            System.out.println("Stack Underflow");
+            return -1;
+        }
+        return arr[top--];
+    }
+
+    public static void main(String[] args) {
+        Stack stack = new Stack(5);
+        stack.push(10);
+        stack.push(20);
+        System.out.println(stack.pop()); // 20
+        System.out.println(stack.pop()); // 10
+    }
+}
+```
+
+---
+
+## **8. Implement Queue using Array**
+
+```java
+class Queue {
+    int[] arr;
+    int front = 0, rear = 0, capacity;
+
+    Queue(int size) { arr = new int[size]; capacity = size; }
+
+    void enqueue(int x) {
+        if (rear == capacity) { System.out.println("Queue Full"); return; }
+        arr[rear++] = x;
+    }
+
+    int dequeue() {
+        if (front == rear) { System.out.println("Queue Empty"); return -1; }
+        return arr[front++];
+    }
+
+    public static void main(String[] args) {
+        Queue q = new Queue(5);
+        q.enqueue(10); q.enqueue(20);
+        System.out.println(q.dequeue()); // 10
+        System.out.println(q.dequeue()); // 20
+    }
+}
+```
+
+---
+
+## **9. Binary Search in a Sorted Array**
+
+```java
+public class BinarySearch {
+    public static int binarySearch(int[] arr, int target) {
+        int left = 0, right = arr.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (arr[mid] == target) return mid;
+            else if (arr[mid] < target) left = mid + 1;
+            else right = mid - 1;
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 3, 5, 7, 9};
+        System.out.println(binarySearch(arr, 5)); // 2
+        System.out.println(binarySearch(arr, 8)); // -1
+    }
+}
+```
+
+---
+
+## **10. Detect Cycle in a Linked List (Floyd’s Algorithm)**
+
+```java
+class Node {
+    int data; Node next;
+    Node(int data) { this.data = data; }
+}
+
+public class CycleDetection {
+    public static boolean hasCycle(Node head) {
+        Node slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Node head = new Node(1);
+        head.next = new Node(2);
+        head.next.next = new Node(3);
+        head.next.next.next = head; // cycle
+        System.out.println(hasCycle(head)); // true
+    }
+}
+```
+

@@ -1,0 +1,117 @@
+{
+  "title": "Compose Theming & Material3",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Theming in Jetpack Compose",
+      "content": "Jetpack Compose uses MaterialTheme to provide colors, typography, and shapes consistently across the composable tree. Material3 (Material Design 3) introduces dynamic color on Android 12+, updated components, and type-safe Kotlin-based theming, eliminating XML styles and attribute lookups."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Material3 Theming?",
+      "items": [
+        "Consistent design with automatic theme token usage",
+        "Dark mode support via light/dark ColorSchemes",
+        "Dynamic color on Android 12+ from wallpaper",
+        "Type safety prevents typos in color/typography tokens",
+        "Single source of truth: change theme once to update all components",
+        "Customizable via CompositionLocal for subsections",
+        "Override individual tokens without full theme replacement",
+        "Material You support with updated components"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Material2 vs Material3",
+      "rows": [
+        {"aspect": "Package", "material2": "androidx.compose.material", "material3": "androidx.compose.material3"},
+        {"aspect": "Color system", "material2": "primary, primaryVariant, secondary, background, surface, error", "material3": "Expanded palette including tertiary, tonal surfaces"},
+        {"aspect": "Dynamic color", "material2": "Not supported", "material3": "Supported on Android 12+"},
+        {"aspect": "Typography", "material2": "h1-h6, subtitle1-2, body1-2, button, caption", "material3": "displayLarge-Small, headlineLarge-Small, titleLarge-Small, bodyLarge-Small, labelLarge-Small"},
+        {"aspect": "Shapes", "material2": "small, medium, large", "material3": "extraSmall to full"},
+        {"aspect": "Components", "material2": "TopAppBar, BottomNavigation", "material3": "Updated variants: TopAppBar, NavigationBar, BottomSheet"},
+        {"aspect": "Recommendation", "material2": "Legacy", "material3": "Recommended for new projects"}
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Setting Up a Custom Material3 Theme",
+      "content": "Create a composable AppTheme that wraps MaterialTheme with light/dark ColorSchemes, Typography, and Shapes. Use dynamic color on Android 12+, and wrap all app content inside AppTheme for consistent theming."
+    },
+    {
+      "type": "bullet",
+      "heading": "Theme.kt Structure",
+      "items": [
+        "Define LightColorScheme and DarkColorScheme with brand colors",
+        "Create AppTheme(darkTheme = isSystemInDarkTheme(), dynamicColor = true) { MaterialTheme(...) { content() } }",
+        "Apply in MainActivity: setContent { AppTheme { NavHost(...) } }",
+        "Use Material Theme Builder to generate full color schemes"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Material3 ColorScheme Roles",
+      "rows": [
+        {"role": "primary", "description": "Main brand color for actions, FAB", "on_color": "onPrimary"},
+        {"role": "secondary", "description": "Accent color for highlights", "on_color": "onSecondary"},
+        {"role": "tertiary", "description": "Contrasting elements", "on_color": "onTertiary"},
+        {"role": "error", "description": "Error states", "on_color": "onError"},
+        {"role": "background", "description": "Screen background", "on_color": "onBackground"},
+        {"role": "surface", "description": "Cards, sheets, dialogs", "on_color": "onSurface"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Using Theme Colors in Composables",
+      "items": [
+        "Text: color = MaterialTheme.colorScheme.onSurface",
+        "Background: Modifier.background(MaterialTheme.colorScheme.surface)",
+        "Icon tint: tint = MaterialTheme.colorScheme.primary",
+        "Card: CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)",
+        "Button: ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)",
+        "Never hardcode colors; always reference MaterialTheme tokens"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Material3 Typography Scale",
+      "rows": [
+        {"token": "displayLarge", "default_size": "57sp", "use_for": "Hero text"},
+        {"token": "headlineMedium", "default_size": "28sp", "use_for": "Card titles"},
+        {"token": "titleLarge", "default_size": "22sp", "use_for": "App bar title"},
+        {"token": "bodyLarge", "default_size": "16sp", "use_for": "Primary body text"},
+        {"token": "labelSmall", "default_size": "11sp", "use_for": "Overlines/fine print"}
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Custom Typography & Fonts",
+      "content": "Define a Typography object with custom TextStyle roles. Add font files in res/font, create a FontFamily, assign it to TextStyle, and pass Typography to MaterialTheme. Use Google Fonts Compose library if needed."
+    },
+    {
+      "type": "bullet",
+      "heading": "Custom Shapes",
+      "items": [
+        "Define Shapes object with extraSmall, small, medium, large, full",
+        "Pass to MaterialTheme: MaterialTheme(shapes = AppShapes)",
+        "Access in composables: Surface(shape = MaterialTheme.shapes.medium)",
+        "Override per component if needed with shape parameter"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Dynamic Color & Dark Mode",
+      "items": [
+        "Use dynamicLightColorScheme() / dynamicDarkColorScheme() on Android 12+",
+        "Detect dark mode: isSystemInDarkTheme()",
+        "Wrap content: AppTheme(darkTheme = isSystemInDarkTheme()) { ... }",
+        "Compose Material3 components adapt automatically to color scheme"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Material3 in Compose provides a type-safe, dynamic, and consistent UI system. Define light/dark ColorSchemes, Typography, and Shapes, wrap your app in AppTheme, use dynamic color on Android 12+, extend with CompositionLocal for custom tokens, and always reference MaterialTheme tokens to ensure dark-mode-ready, consistent UI."
+    }
+  ]
+}

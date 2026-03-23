@@ -1,0 +1,89 @@
+{
+    "title": "Lifecycle-Aware Coroutines & Best Practices",
+    "sections": [
+        {
+            "type": "text",
+            "heading": "Introduction",
+            "content": "In Android development, coroutines must respect the lifecycle of UI components. Instead of using GlobalScope, we use lifecycle-aware scopes provided by Jetpack libraries to automatically manage cancellation."
+        },
+        {
+            "type": "text",
+            "heading": "1. Lifecycle-Aware Scopes",
+            "content": "Lifecycle-aware scopes automatically cancel coroutines when their associated lifecycle ends, preventing memory leaks and crashes."
+        },
+        {
+            "type": "text_code",
+            "heading": "A. lifecycleScope (Activity/Fragment)",
+            "content": "lifecycleScope is tied to an Activity or Fragment. When the UI component is destroyed, all coroutines inside this scope are cancelled automatically.",
+            "language": "kotlin",
+            "code": "class HomeActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        \n        lifecycleScope.launch {\n            val data = fetchData()\n            binding.textView.text = data\n        }\n    }\n}"
+        },
+        {
+            "type": "text_code",
+            "heading": "B. viewModelScope (Recommended)",
+            "content": "viewModelScope is tied to a ViewModel. Coroutines survive configuration changes and are cancelled only when the ViewModel is cleared.",
+            "language": "kotlin",
+            "code": "class UserViewModel : ViewModel() {\n    fun loadUser() {\n        viewModelScope.launch {\n            val user = repository.getUser()\n            // Update UI state here\n        }\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "2. Switching Context with withContext",
+            "content": "Start coroutines on the Main thread and switch to background threads only when needed using withContext."
+        },
+        {
+            "type": "text_code",
+            "heading": "Switching to IO Thread",
+            "content": "Use withContext(Dispatchers.IO) to perform heavy work without blocking the UI thread.",
+            "language": "kotlin",
+            "code": "lifecycleScope.launch(Dispatchers.Main) {\n    binding.progressBar.show()\n\n    val result = withContext(Dispatchers.IO) {\n        performComplexCalculation()\n    }\n\n    binding.progressBar.hide()\n    binding.resultView.text = result\n}"
+        },
+        {
+            "type": "text",
+            "heading": "3. Handling Exceptions",
+            "content": "Always handle exceptions inside coroutines to prevent app crashes."
+        },
+        {
+            "type": "text_code",
+            "heading": "Using try-catch",
+            "content": "Wrap risky operations such as network or database calls inside a try-catch block.",
+            "language": "kotlin",
+            "code": "viewModelScope.launch {\n    try {\n        val data = apiService.getData()\n        _uiState.value = Success(data)\n    } catch (e: Exception) {\n        _uiState.value = Error(\"Failed to load data\")\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "4. repeatOnLifecycle (Modern Collection)",
+            "content": "repeatOnLifecycle starts collecting data when the lifecycle is at least in a certain state and cancels it when the lifecycle falls below that state."
+        },
+        {
+            "type": "text_code",
+            "heading": "Collecting Flow Safely",
+            "content": "Use repeatOnLifecycle when collecting Flow or LiveData to avoid unnecessary background work when the UI is not visible.",
+            "language": "kotlin",
+            "code": "lifecycleScope.launch {\n    repeatOnLifecycle(Lifecycle.State.STARTED) {\n        viewModel.dataFlow.collect { data ->\n            binding.textView.text = data\n        }\n    }\n}"
+        },
+        {
+            "type": "text",
+            "heading": "5. Main-Safety",
+            "content": "A well-written suspend function should be safe to call from the Main thread. It should switch to the appropriate dispatcher internally."
+        },
+        {
+            "type": "text_code",
+            "heading": "Main-Safe Suspend Function",
+            "content": "This function safely switches to the IO dispatcher internally, making it safe to call from the Main thread.",
+            "language": "kotlin",
+            "code": "suspend fun safeDatabaseCall(): List<User> = withContext(Dispatchers.IO) {\n    database.userDao().getAll()\n}"
+        },
+        {
+            "type": "bullet",
+            "heading": "Summary",
+            "items": [
+                "Use viewModelScope for business logic and data fetching.",
+                "Use lifecycleScope for UI-specific tasks.",
+                "Switch to background threads using withContext(Dispatchers.IO).",
+                "Handle exceptions with try-catch inside coroutines.",
+                "Use repeatOnLifecycle to safely collect Flow when UI is visible.",
+                "Write Main-safe suspend functions to prevent blocking the UI thread."
+            ]
+        }
+    ]
+}

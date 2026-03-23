@@ -1,0 +1,56 @@
+{
+  "title": "Localization & Accessibility",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Overview",
+      "content": "Localization (l10n) adapts your app for different languages and regions; accessibility (a11y) ensures usability for users with disabilities. Android supports string translation, RTL layouts, plurals, date/number formatting, and TalkBack. Localizing expands reach globally; accessibility is ethically and legally important, improving Google Play discoverability."
+    },
+    {
+      "type": "table",
+      "heading": "Key Concepts",
+      "rows": [
+        {"concept": "Internationalization (i18n)", "definition": "Design app to support multiple locales without code changes"},
+        {"concept": "Localization (l10n)", "definition": "Translate strings and provide locale-specific resources"},
+        {"concept": "RTL", "definition": "Right-to-left text direction for Arabic, Hebrew, etc.; layouts mirror automatically"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Best Practices",
+      "items": [
+        "Externalize all strings in res/values/strings.xml; use placeholders and <plurals>",
+        "Use start/end attributes and android:supportsRtl=\"true\" for RTL",
+        "Format dates, numbers, and currency with locale-aware APIs",
+        "Provide meaningful contentDescription for all non-text elements",
+        "Ensure touch targets ≥48x48dp and sufficient color contrast (WCAG AA)",
+        "Test with TalkBack, Accessibility Scanner, Layout Inspector, and Espresso Accessibility Checks"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Per-App Language (API 33+)",
+      "items": [
+        "Declare supported locales in res/xml/locales_config.xml",
+        "Set language programmatically via LocaleManager or AppCompatDelegate",
+        "System recreates app automatically on language change"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Compose Accessibility",
+      "items": [
+        "Use Modifier.semantics { contentDescription = ... }",
+        "MergeDescendants for grouped elements",
+        "Mark decorative elements invisible with invisibleToUser()",
+        "Set role and stateDescription for controls",
+        "Use liveRegion for dynamic content announcements"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Localization and accessibility ensure inclusive apps. Externalize strings, handle plurals, support RTL, format locale-aware content, provide content descriptions, test touch targets and contrast, and leverage Compose semantics. These practices expand your audience and improve user experience globally."
+    }
+  ]
+}

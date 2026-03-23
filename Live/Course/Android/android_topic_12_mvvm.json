@@ -1,0 +1,52 @@
+{
+  "title": "MVVM Architecture Pattern",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is MVVM?",
+      "content": "MVVM (Model-View-ViewModel) is a popular architectural pattern used in modern Android development. It separates an application into three layers: Model, View, and ViewModel. The Model handles data and business logic, the View displays the UI (Activities, Fragments, XML), and the ViewModel manages UI-related data and acts as a bridge between the Model and the View. This separation improves maintainability and scalability."
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use MVVM?",
+      "items": [
+        "Clear separation of UI, business logic, and data layers",
+        "Improves testability because ViewModel has no UI dependencies",
+        "ViewModel survives configuration changes like screen rotation",
+        "Reactive UI updates using LiveData or StateFlow",
+        "Easier maintenance and scalability for large apps"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "MVVM Layers",
+      "rows": [
+        {
+          "layer": "Model",
+          "responsibility": "Handles data and business logic",
+          "examples": "Repository, Room Database, API services"
+        },
+        {
+          "layer": "View",
+          "responsibility": "Displays UI and captures user input",
+          "examples": "Activity, Fragment, XML layouts"
+        },
+        {
+          "layer": "ViewModel",
+          "responsibility": "Holds UI state and communicates with Model",
+          "examples": "ViewModel, LiveData, StateFlow"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "MVVM Data Flow",
+      "content": "In MVVM, the View interacts with the ViewModel instead of accessing data directly. The ViewModel requests data from the Repository (Model layer) and exposes it through observable data like LiveData or StateFlow. The View observes these data streams and updates the UI automatically when the data changes."
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "MVVM helps build scalable and maintainable Android applications by separating responsibilities across layers. The View handles UI, the ViewModel manages UI state, and the Model provides data through repositories. This architecture improves code organization, lifecycle handling, and testing."
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "title": "Unit Testing with JUnit & Mockito",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Unit Testing?",
+      "content": "Unit testing verifies individual units of code—functions, classes, or modules—in isolation. On Android, unit tests run on the JVM, making them fast for testing ViewModels, repositories, utility functions, and data transformations. JUnit provides annotations, assertions, and lifecycle support, while Mockito enables mocking dependencies, stubbing return values, and verifying interactions. Reliable unit tests allow confident refactoring and catch regressions early."
+    },
+    {
+      "type": "table",
+      "heading": "Android Testing Pyramid",
+      "rows": [
+        {
+          "level": "Unit Tests",
+          "location": "JVM — src/test/",
+          "speed": "Very fast — milliseconds per test",
+          "coverage": "70% of test suite",
+          "tools": "JUnit, Mockito, Truth, Turbine",
+          "tests": "ViewModels, Repositories, UseCases, Mappers, Utilities"
+        },
+        {
+          "level": "Integration Tests",
+          "location": "Device/Emulator — src/androidTest/",
+          "speed": "Medium — seconds per test",
+          "coverage": "20% of test suite",
+          "tools": "JUnit, Robolectric, Room in-memory, Hilt",
+          "tests": "Database queries, Repositories with real Room, Navigation flows"
+        },
+        {
+          "level": "UI / End-to-End Tests",
+          "location": "Device/Emulator — src/androidTest/",
+          "speed": "Slow — tens of seconds per test",
+          "coverage": "10% of test suite",
+          "tools": "Espresso, UI Automator, Compose Testing",
+          "tests": "Full user flows, critical paths, regression scenarios"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Setting Up Dependencies",
+      "items": [
+        "JUnit 4: testImplementation(\"junit:junit:4.13.2\")",
+        "Mockito Kotlin: testImplementation(\"org.mockito.kotlin:mockito-kotlin:5.x.x\")",
+        "MockitoCore: testImplementation(\"org.mockito:mockito-core:5.x.x\")",
+        "Google Truth: testImplementation(\"com.google.truth:truth:1.x.x\")",
+        "AndroidX Test Core: testImplementation(\"androidx.test:core-ktx:1.x.x\")",
+        "Coroutines Test: testImplementation(\"org.jetbrains.kotlinx:kotlinx-coroutines-test:1.x.x\")",
+        "Turbine: testImplementation(\"app.cash.turbine:turbine:1.x.x\")",
+        "Arch Core Testing: testImplementation(\"androidx.arch.core:core-testing:2.x.x\")"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "JUnit 4 Annotations",
+      "rows": [
+        {"annotation": "@Test", "purpose": "Marks a test method", "example": "@Test fun `example test`() { }"},
+        {"annotation": "@Before", "purpose": "Runs before each test", "example": "@Before fun setUp() { }"},
+        {"annotation": "@After", "purpose": "Runs after each test", "example": "@After fun tearDown() { }"},
+        {"annotation": "@BeforeClass", "purpose": "Runs once before all tests", "example": "@BeforeClass @JvmStatic fun init() { }"},
+        {"annotation": "@AfterClass", "purpose": "Runs once after all tests", "example": "@AfterClass @JvmStatic fun cleanup() { }"},
+        {"annotation": "@Ignore", "purpose": "Skips the test", "example": "@Ignore(\"Reason\") @Test fun skippedTest() { }"},
+        {"annotation": "@Rule", "purpose": "Applies TestRule", "example": "@get:Rule val rule = InstantTaskExecutorRule()"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Writing Your First Unit Test",
+      "items": [
+        "Create test in src/test/java matching class package",
+        "Name class after class under test: HomeViewModelTest",
+        "Use backticks for descriptive method names",
+        "Follow AAA pattern: Arrange, Act, Assert",
+        "Test one behavior per method, keep tests deterministic",
+        "Run tests via Android Studio or ./gradlew test",
+        "Check results in test runner panel or reports"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Assertions — JUnit vs Truth",
+      "rows": [
+        {"scenario": "Equality check", "junit": "assertEquals(expected, actual)", "truth": "assertThat(actual).isEqualTo(expected)"},
+        {"scenario": "Null check", "junit": "assertNull(value)", "truth": "assertThat(value).isNull()"},
+        {"scenario": "Boolean check", "junit": "assertTrue(cond)", "truth": "assertThat(cond).isTrue()"},
+        {"scenario": "Collection contains", "junit": "assertTrue(list.contains(item))", "truth": "assertThat(list).contains(item)"},
+        {"scenario": "Exception thrown", "junit": "@Test(expected=...)","truth": "assertThrows<Exception> { method() }"}
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Mocking with Mockito",
+      "content": "Mockito allows mocking dependencies so classes can be tested in isolation. Stub return values with whenever(), verify method calls, and use mockito-kotlin extensions (mock<T>(), argumentCaptor<T>()) for idiomatic Kotlin tests."
+    },
+    {
+      "type": "bullet",
+      "heading": "Mockito Core Usage",
+      "items": [
+        "Create mock: val mockRepo: UserRepository = mock()",
+        "@Mock lateinit var mockRepo: UserRepository — requires MockitoJUnitRunner or openMocks()",
+        "Stub return: whenever(mockRepo.getUser(1)).thenReturn(fakeUser)",
+        "Stub suspend: whenever(mockRepo.getUserAsync(1)).thenReturn(fakeUser)",
+        "Throw exception: whenever(mockRepo.getUser(1)).thenThrow(RuntimeException(\"Error\"))",
+        "Verify call: verify(mockRepo).getUser(1)",
+        "Verify times: verify(mockRepo, times(2)).getUser(any())",
+        "Argument matchers: any(), eq(value), anyInt()",
+        "Capture args: val captor = argumentCaptor<User>(); verify(mockRepo).saveUser(captor.capture())"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Mockito Stubbing Patterns",
+      "rows": [
+        {"pattern": "thenReturn(value)", "description": "Returns value when called", "example": "whenever(repo.getUser(1)).thenReturn(User(1,\"Alice\"))"},
+        {"pattern": "thenThrow(exception)", "description": "Throws exception when called", "example": "whenever(repo.getUser(1)).thenThrow(IOException(\"Error\"))"},
+        {"pattern": "thenAnswer { }", "description": "Executes lambda for dynamic response", "example": "whenever(repo.getUser(any())).thenAnswer { invocation -> User(invocation.getArgument(0),\"User\") }"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Testing Coroutines",
+      "items": [
+        "Use runTest { } for suspend functions",
+        "Replace Dispatchers.Main with MainDispatcherRule",
+        "Use UnconfinedTestDispatcher for simple tests, StandardTestDispatcher for precise timing",
+        "Advance time with advanceUntilIdle()",
+        "Test Flow with Turbine: awaitItem(), awaitComplete(), awaitError()"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Testing ViewModels",
+      "rows": [
+        {"aspect": "MainDispatcherRule", "description": "Replaces Dispatchers.Main", "implementation": "@get:Rule val mainDispatcherRule = MainDispatcherRule()"},
+        {"aspect": "InstantTaskExecutorRule", "description": "Executes LiveData synchronously", "implementation": "@get:Rule val instantTaskRule = InstantTaskExecutorRule()"},
+        {"aspect": "Mocking dependencies", "description": "Pass mocks to ViewModel constructor", "implementation": "viewModel = HomeViewModel(mockRepo)"},
+        {"aspect": "StateFlow", "description": "Collect values in test coroutine", "implementation": "viewModel.uiState.test { assertThat(awaitItem()).isEqualTo(HomeUiState.Loading) }"},
+        {"aspect": "LiveData", "description": "Check value via .value after action", "implementation": "viewModel.loadUser(); assertThat(viewModel.user.value).isEqualTo(expectedUser)"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Fakes vs Mocks",
+      "items": [
+        "Mocks — generated by Mockito, stub methods and verify calls",
+        "Fakes — in-memory implementations for complex dependencies",
+        "Fakes are reusable, less brittle, and better for repositories",
+        "Mocks are good for simple single-method interfaces",
+        "Keep fakes simple and deterministic"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Unit Testing Mistakes",
+      "rows": [
+        {"mistake": "Testing implementation details", "fix": "Test behavior, not internal calls"},
+        {"mistake": "Not using MainDispatcherRule", "fix": "Replace Dispatchers.Main for ViewModel tests"},
+        {"mistake": "Using Thread.sleep()", "fix": "Use runTest { } with advanceUntilIdle()"},
+        {"mistake": "Mocking class under test", "fix": "Only mock dependencies"},
+        {"mistake": "Shared mutable state between tests", "fix": "Use fresh instances in @Before"},
+        {"mistake": "Ignoring error/edge cases", "fix": "Test empty, null, exception, and boundary cases"},
+        {"mistake": "Overly complex setup", "fix": "Refactor to reduce dependencies"}
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Test Naming Conventions",
+      "items": [
+        "Use backticks for descriptive names: `given user logged out, when refresh, then navigates to login`",
+        "Pattern: given [precondition], when [action], then [expected outcome]",
+        "Alternative: method_scenario_expected: getUser_whenUserExists_returnsUser()",
+        "Test class name matches class under test",
+        "Use @Nested for grouping (JUnit 5) or separate files per feature",
+        "Use @DisplayName for human-readable test reports",
+        "Avoid generic names like test1(), testSuccess()",
+        "Name test data clearly to reflect intent"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Summary",
+      "content": "Unit testing with JUnit and Mockito ensures reliable, maintainable, and fast tests. Place tests in src/test/, follow AAA, use Truth for assertions, Mockito for mocks, Turbine for Flow, and prefer fakes for complex dependencies. Test edge cases, keep tests independent, and use descriptive method names. Proper unit testing enables confident refactoring and prevents regressions."
+    }
+  ]
+}
