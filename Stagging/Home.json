@@ -102,5 +102,11 @@
       "title": "Insta",
       "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
     }
-  ]
+  ],
+"app_config": {
+  "min_version": 10,
+  "latest_version": 10,
+  "update_url": ""
+}
+
 }
