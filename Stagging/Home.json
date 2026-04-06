@@ -1,19 +1,74 @@
 {
   "quick_item": {
     "interview_item": [
-      { "category_id": "Android", "title": "Android", "totalQuestions": "50", "icon": " " },
-      { "category_id": "Kotlin", "title": "Kotlin", "totalQuestions": "25", "icon": " " },
-      { "category_id": "Compose", "title": "Compose", "totalQuestions": "20", "icon": " " },
-      { "category_id": "Collection", "title": "Collection", "totalQuestions": "25", "icon": " " }
+      {
+        "category_id": "Android",
+        "title": "Android",
+        "totalQuestions": "50",
+        "icon": " "
+      },
+      {
+        "category_id": "Kotlin",
+        "title": "Kotlin",
+        "totalQuestions": "25",
+        "icon": " "
+      },
+      {
+        "category_id": "Compose",
+        "title": "Compose",
+        "totalQuestions": "20",
+        "icon": " "
+      },
+      {
+        "category_id": "Collection",
+        "title": "Collection",
+        "totalQuestions": "25",
+        "icon": " "
+      }
     ],
     "courses": [
-      { "courseId": "Kotlin", "courseTitle": "Kotlin", "totalQuestions": "50", "icon": " " },
-      { "courseId": "Android", "courseTitle": "Android", "totalQuestions": "50", "icon": " " }
+      {
+        "courseId": "Kotlin",
+        "courseTitle": "Kotlin",
+        "totalQuestions": "50",
+        "icon": " "
+      },
+      {
+        "courseId": "Android",
+        "courseTitle": "Android",
+        "totalQuestions": "50",
+        "icon": " "
+      }
     ],
-    "dsa": { "courseId": "DSA", "courseTitle": "DSA", "totalQuestions": "454", "icon": " " },
+    "dsa": [
+      {
+        "courseId": "DSA",
+        "courseTitle": "DSA",
+        "totalQuestions": "454",
+        "icon": " "
+      }
+    ],
     "cheat_sheets": [
-      { "id": "k1", "categoryId": "Kotlin", "title": "Kotlin Basics", "subtitle": "val/var, null safety, lambdas & more", "emoji": "📝", "color": "#2EC4B6", "totalItems": 20, "tag": "Basics" },
-      { "id": "gi1", "categoryId": "Git", "title": "Git Commands", "subtitle": "commit, push, pull, rebase, stash & more", "emoji": "📟", "color": "#0EA5E9", "totalItems": 15, "tag": "Commands" }
+      {
+        "id": "k1",
+        "categoryId": "Kotlin",
+        "title": "Kotlin Basics",
+        "subtitle": "val/var, null safety, lambdas & more",
+        "emoji": "📝",
+        "color": "#2EC4B6",
+        "totalItems": 20,
+        "tag": "Basics"
+      },
+      {
+        "id": "gi1",
+        "categoryId": "Git",
+        "title": "Git Commands",
+        "subtitle": "commit, push, pull, rebase, stash & more",
+        "emoji": "📟",
+        "color": "#0EA5E9",
+        "totalItems": 15,
+        "tag": "Commands"
+      }
     ]
   },
   "newlyAdded": [
@@ -49,8 +104,18 @@
     }
   ],
   "banners": [
-    { "title": "Linkedin", "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png" },
-    { "title": "Insta", "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png" }
+    {
+      "title": "Linkedin",
+      "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
+    },
+    {
+      "title": "Insta",
+      "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
+    }
   ],
-  "app_config": { "min_version": 7, "latest_version": 7, "update_url": "" }
+  "app_config": {
+    "min_version": 7,
+    "latest_version": 7,
+    "update_url": ""
+  }
 }
