@@ -44,7 +44,7 @@
       {
         "courseId": "DSA",
         "courseTitle": "DSA",
-        "totalQuestions": "50",
+        "totalQuestions": "454",
         "icon": " "
       }
     ],
@@ -103,10 +103,9 @@
       "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
     }
   ],
-"app_config": {
-  "min_version": 7,
-  "latest_version": 7,
-  "update_url": ""
-}
-
+  "app_config": {
+    "min_version": 7,
+    "latest_version": 7,
+    "update_url": ""
+  }
 }
