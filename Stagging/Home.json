@@ -40,14 +40,14 @@
         "icon": " "
       }
     ],
-    "dsa": [
+    "dsa": 
       {
         "courseId": "DSA",
         "courseTitle": "DSA",
         "totalQuestions": "454",
         "icon": " "
       }
-    ],
+    ,
     "cheat_sheets": [
       {
         "id": "k1",
