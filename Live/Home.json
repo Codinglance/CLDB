@@ -44,7 +44,7 @@
       {
         "courseId": "DSA",
         "courseTitle": "DSA",
-        "totalQuestions": "50",
+        "totalQuestions": "454",
         "icon": " "
       }
     ],
@@ -73,6 +73,16 @@
   },
   "newlyAdded": [
     {
+      "id": "dsa_454",
+      "tag": "DSA",
+      "categoryId": "DSA",
+      "badge": "NEW",
+      "icon": "🧠",
+      "title": "DSA Mastery",
+      "subtitle": "454 Questions with Solutions",
+      "meta": "454 Q • Advanced"
+    },
+    {
       "id": "k1",
       "tag": "CHEAT_SHEET",
       "categoryId": "Kotlin",
@@ -83,7 +93,7 @@
       "meta": "1 Sheet • 30 mins"
     },
     {
-      "id": "k1",
+      "id": "k2",
       "tag": "CHEAT_SHEET",
       "categoryId": "Git",
       "badge": "NEW",
@@ -103,10 +113,9 @@
       "image": "https://dt4l9bx31tioh.cloudfront.net/eazymedia/banner/listing_header/Prime-banner-for-prime-listing.png"
     }
   ],
-"app_config": {
-  "min_version": 7,
-  "latest_version": 7,
-  "update_url": ""
-}
-
+  "app_config": {
+    "min_version": 7,
+    "latest_version": 7,
+    "update_url": ""
+  }
 }
