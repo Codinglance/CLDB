@@ -101,6 +101,26 @@
       "title": "Git Basic to Advance",
       "subtitle": "Git Cheat Sheet",
       "meta": "1 Sheet • 30 mins"
+    },
+ {
+      "id": "Kotlin",
+      "tag": "Course",
+      "categoryId": "Course",
+      "badge": "NEW",
+      "icon": "🎓",
+      "title": "Kotlin Masterclass",
+      "subtitle": "Basic to Advance",
+      "meta": "50 Chapters • 25 hrs"
+    },
+ {
+      "id": "Android",
+      "tag": "Course",
+      "categoryId": "Course",
+      "badge": "NEW",
+      "icon": "🎓",
+      "title": "Complete Android Masterclass",
+      "subtitle": "Basic to Advance",
+      "meta": "50 Sheet • 20 mins"
     }
   ],
   "banners": [
