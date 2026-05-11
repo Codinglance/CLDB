@@ -101,6 +101,18 @@
       "title": "Git Basic to Advance",
       "subtitle": "Git Cheat Sheet",
       "meta": "1 Sheet • 30 mins"
+    },
+{
+
+      "id": "Kotlin",
+      "tag": "COURSE",
+      "categoryId": "Kotlin",
+      "badge": "NEW",
+      "icon": "🎓",
+      "title": "Master Kotlin for Android Development",
+      "subtitle": "Null Safety, OOP, Functional Programming & More",
+      "meta": "50 Chapters • 25 hrs"
+
     }
   ],
   "banners": [
