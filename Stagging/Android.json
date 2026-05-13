@@ -2273,6 +2273,1377 @@
     "Amazon"
   ],
   "expectedReadTime": "1 min"
-}
+},
+
+    {
+      "id": 64,
+      "question": "Difference between thread and coroutines",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Difference between thread and coroutines",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Thread",
+          "items": [
+            "OS-level construct — each thread has its own stack (~1MB memory)",
+            "Blocking: when waiting (e.g., I/O), the thread is blocked and wastes resources",
+            "Expensive to create and context-switch",
+            "Managed by the OS scheduler"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Coroutines",
+          "items": [
+            "Lightweight — thousands can run on a few threads",
+            "Suspendable: suspend instead of blocking; the thread is freed for other work",
+            "Managed by the Kotlin runtime, not the OS",
+            "Structured concurrency with scopes (CoroutineScope, viewModelScope, lifecycleScope)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "Thread = heavy, blocking, OS-managed",
+            "Coroutine = lightweight, suspending, Kotlin-managed",
+            "Prefer coroutines for async work in modern Android"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 64,
+      "question": "Difference between concurrency vs parallelism",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Difference between concurrency vs parallelism",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Concurrency",
+          "items": [
+            "Multiple tasks make progress by interleaving on the same or fewer cores",
+            "Tasks are in progress at the same time but not necessarily running simultaneously",
+            "Example: switching between two tasks on a single CPU core"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Parallelism",
+          "items": [
+            "Multiple tasks run at the exact same instant on multiple CPU cores",
+            "Requires multi-core hardware",
+            "Example: two tasks executing simultaneously on two separate cores"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "Concurrency = dealing with multiple tasks at once (structure)",
+            "Parallelism = doing multiple tasks at once (execution)",
+            "Parallelism is a subset of concurrency"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 65,
+      "question": "What is a Thread, Handler, Looper, and Message Queue?",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "What is a Thread, Handler, Looper, and Message Queue?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Thread",
+          "items": [
+            "A unit of execution that runs code independently",
+            "Android apps start with one main thread (UI thread)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Looper",
+          "items": [
+            "Keeps a thread alive by running a message loop",
+            "Attaches to a thread and processes messages from its queue one at a time",
+            "Main thread has a Looper by default; background threads do not"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Message Queue",
+          "items": [
+            "A queue of Messages and Runnables managed by the Looper",
+            "Processes items in FIFO order"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Handler",
+          "items": [
+            "Sends and processes Messages/Runnables to a thread's MessageQueue",
+            "Used to post work to the main thread from a background thread",
+            "Linked to the Looper of the thread it is created on"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 129,
+      "question": "Explain Looper, Handler, and HandlerThread",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Explain Looper, Handler, and HandlerThread",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Together these three enable communication between threads and allow background threads to process messages in a loop."
+        },
+        {
+          "type": "bullet",
+          "heading": "Looper",
+          "items": [
+            "Runs an infinite message loop on a thread",
+            "Reads messages from the MessageQueue and dispatches them to the Handler",
+            "Looper.prepare() + Looper.loop() sets it up on any thread"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Handler",
+          "items": [
+            "Tied to a specific thread's Looper",
+            "post(Runnable) or sendMessage() schedules work on that thread",
+            "Commonly used to update UI from a background thread"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "HandlerThread",
+          "items": [
+            "A Thread subclass that has a built-in Looper",
+            "Avoids manual Looper.prepare() boilerplate",
+            "Useful for serial background task processing (e.g., camera operations)"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 66,
+      "question": "Different methods of concurrency: ExecutorService vs CachedThreadPool vs FixedThreadPool vs AsyncTask vs HandlerThread",
+      "section": "Concurrency & Threading",
+      "difficulty": "Hard",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Different methods of concurrency on Android",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "ExecutorService",
+          "items": [
+            "Interface for managing a pool of threads",
+            "Base for all thread pool implementations",
+            "submit() returns a Future for result/cancellation"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "CachedThreadPool",
+          "items": [
+            "Creates new threads as needed; reuses idle ones",
+            "No limit on thread count — risky for heavy workloads",
+            "Good for many short-lived tasks"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "FixedThreadPool",
+          "items": [
+            "Fixed number of threads; tasks queue when all threads are busy",
+            "Predictable resource usage",
+            "Good for CPU-bound tasks with known concurrency"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "AsyncTask (Deprecated)",
+          "items": [
+            "Simplified background + UI thread work",
+            "Deprecated in API 30 due to context leak and serial execution issues",
+            "Replace with coroutines or Executor"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "HandlerThread",
+          "items": [
+            "Single background thread with a Looper",
+            "Good for serialized sequential background work",
+            "Used in Camera2 API, media operations"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 67,
+      "question": "Thread.start() vs run(), submit vs execute, Callable vs Runnable",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Thread.start() vs run(), submit vs execute, Callable vs Runnable",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "start() vs run()",
+          "items": [
+            "start() – Creates a new thread and runs run() on it",
+            "run() – Executes on the current thread (no new thread is created)",
+            "Always use start() to run code concurrently"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "execute() vs submit()",
+          "items": [
+            "execute(Runnable) – Fire and forget; no return value",
+            "submit(Callable/Runnable) – Returns a Future to get result or cancel",
+            "Use submit() when you need the result or to handle exceptions"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Runnable vs Callable",
+          "items": [
+            "Runnable – run() returns void; cannot throw checked exceptions",
+            "Callable – call() returns a value; can throw checked exceptions",
+            "Use Callable when a result is needed from the background task"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 68,
+      "question": "ThreadPool advantages",
+      "section": "Concurrency & Threading",
+      "difficulty": "Easy",
+      "tags": [
+        "Threading"
+      ],
+      "title": "ThreadPool advantages",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A ThreadPool manages a collection of reusable threads, avoiding the overhead of creating and destroying threads for each task."
+        },
+        {
+          "type": "bullet",
+          "heading": "Advantages",
+          "items": [
+            "Thread reuse: Threads are reused instead of created/destroyed repeatedly — saves time and memory",
+            "Controlled concurrency: Limits the number of active threads to prevent resource exhaustion",
+            "Task queuing: Excess tasks are queued and executed when a thread becomes free",
+            "Better performance: Reduces CPU overhead of thread lifecycle management",
+            "Easier management: Provides submit(), shutdown(), and Future APIs for task control"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 69,
+      "question": "Daemon threads vs user threads",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Daemon threads vs user threads",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "User Thread",
+          "items": [
+            "Normal threads created by default",
+            "JVM waits for all user threads to finish before exiting",
+            "Used for main application logic"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Daemon Thread",
+          "items": [
+            "Background/support threads (e.g., GC thread)",
+            "JVM exits without waiting for daemon threads to finish",
+            "Set via thread.setDaemon(true) before starting",
+            "Used for background housekeeping tasks"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "User thread = keeps JVM alive",
+            "Daemon thread = dies when all user threads finish",
+            "Do not use daemon threads for critical tasks"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 70,
+      "question": "How to run parallel tasks and get a callback when all are complete?",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "How to run parallel tasks and get a callback when all are complete?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Several approaches exist to run tasks in parallel and be notified when all finish."
+        },
+        {
+          "type": "bullet",
+          "heading": "Using Kotlin Coroutines (Recommended)",
+          "items": [
+            "Use async {} for each task inside a coroutineScope",
+            "Call awaitAll() to wait for all to complete",
+            "Runs in parallel on Dispatchers.IO or Default"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "coroutineScope {\n    val a = async { fetchDataA() }\n    val b = async { fetchDataB() }\n    val results = awaitAll(a, b)\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Other Approaches",
+          "items": [
+            "CountDownLatch: latch.await() blocks until countDown() called N times",
+            "ExecutorService + invokeAll(): Submits all Callables and blocks until done",
+            "RxJava zip(): Combines multiple observables and emits when all complete"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 71,
+      "question": "How to download files in parallel?",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "How to download files in parallel?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "To download multiple files simultaneously, use parallel background execution to avoid blocking the UI thread."
+        },
+        {
+          "type": "bullet",
+          "heading": "Using Coroutines (Recommended)",
+          "items": [
+            "Launch separate async {} blocks for each file",
+            "Use Dispatchers.IO which is optimized for I/O operations",
+            "Collect results with awaitAll()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Using FixedThreadPool",
+          "items": [
+            "Create a FixedThreadPool with desired thread count",
+            "Submit each download as a Runnable or Callable",
+            "Use invokeAll() to wait for completion"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "For production: use WorkManager for download tasks — handles retries and survives app death",
+            "Libraries like OkHttp and Retrofit handle threading internally",
+            "Always show download progress via a Foreground Service for large files"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 72,
+      "question": "How does AsyncTask internally work? Cons of using AsyncTask?",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "How does AsyncTask internally work? Cons of using AsyncTask?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "How It Works Internally",
+          "items": [
+            "Uses a SerialExecutor by default (tasks execute one at a time in a queue)",
+            "Background work runs on a shared thread pool",
+            "Results are posted back to the main thread via a Handler",
+            "Callbacks: onPreExecute() → doInBackground() → onPostExecute()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Cons",
+          "items": [
+            "Memory leak: Holds an implicit reference to the outer Activity — if Activity is destroyed, leak occurs",
+            "Serial by default: Tasks don't run in parallel unless you use THREAD_POOL_EXECUTOR explicitly",
+            "Lifecycle unaware: Continues running even if Activity is destroyed, causing crashes",
+            "No error handling: Exceptions in doInBackground() are silently swallowed",
+            "Deprecated in API 30: Google recommends coroutines or Executor instead"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 73,
+      "question": "Does AsyncTask.execute() make threads in parallel or serial?",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Does AsyncTask.execute() make threads in parallel or serial?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "By default, AsyncTask.execute() runs tasks serially (one at a time) on a single background thread using SerialExecutor."
+        },
+        {
+          "type": "bullet",
+          "heading": "Details",
+          "items": [
+            "Before API 11: Tasks ran in parallel on a thread pool",
+            "API 11 and later: Changed to serial execution by default to avoid concurrency bugs",
+            "To run in parallel, use: asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Default = serial; parallel requires explicit THREAD_POOL_EXECUTOR",
+            "AsyncTask is deprecated — prefer coroutines for both serial and parallel work"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 74,
+      "question": "Cause of memory leak during AsyncTask",
+      "section": "Concurrency & Threading",
+      "difficulty": "Medium",
+      "tags": [
+        "Threading"
+      ],
+      "title": "Cause of memory leak during AsyncTask",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Root Cause",
+          "content": "AsyncTask holds an implicit reference to its enclosing class (usually an Activity or Fragment). If the task is still running when the Activity is destroyed (e.g., on rotation), the Activity cannot be garbage collected — causing a memory leak."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Happens",
+          "items": [
+            "Inner (non-static) AsyncTask classes hold a reference to the outer Activity",
+            "The background thread keeps the AsyncTask alive, which keeps the Activity alive",
+            "Even after the user rotates the screen, the old Activity stays in memory"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Prevent (Historical)",
+          "items": [
+            "Use static inner AsyncTask with a WeakReference to the Activity",
+            "Cancel the task in onDestroy()",
+            "Modern fix: Use coroutines with viewModelScope — automatically cancelled on ViewModel clear"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 75,
+      "question": "UI vs Background Thread",
+      "section": "Concurrency & Threading",
+      "difficulty": "Easy",
+      "tags": [
+        "Threading"
+      ],
+      "title": "UI vs Background Thread",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "UI Thread (Main Thread)",
+          "items": [
+            "The single thread responsible for all UI rendering and user interaction",
+            "Handles touch events, drawing, and view updates",
+            "Blocking it causes ANR (Application Not Responding)",
+            "Only the UI thread can update the UI"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Background Thread",
+          "items": [
+            "Used for heavy work: network calls, database queries, file I/O",
+            "Cannot directly update the UI — must post results to the main thread",
+            "Created via Thread, Executor, coroutines, WorkManager, etc."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "UI thread = renders UI, must stay fast (<16ms per frame)",
+            "Background thread = does heavy work off the UI thread",
+            "Use runOnUiThread() or Dispatchers.Main to post results back to UI"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 76,
+      "question": "What is ANR? How can it be prevented?",
+      "section": "Memory & Performance",
+      "difficulty": "Easy",
+      "tags": [
+        "Performance"
+      ],
+      "title": "What is ANR? How can it be prevented?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "ANR (Application Not Responding) occurs when the UI thread is blocked for too long — 5 seconds for user input events, or 10 seconds for BroadcastReceiver. Android shows a dialog letting the user force-close the app."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Causes",
+          "items": [
+            "Network or database operations on the main thread",
+            "Long-running computations blocking the UI thread",
+            "Deadlocks between threads",
+            "Heavy work in BroadcastReceiver.onReceive()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Prevent",
+          "items": [
+            "Move all heavy work off the main thread using coroutines, WorkManager, or Executor",
+            "Use StrictMode in development to detect main-thread violations",
+            "Use async APIs for network (Retrofit, OkHttp) and database (Room with suspend functions)",
+            "Keep BroadcastReceiver.onReceive() lightweight — offload work to a Service"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 77,
+      "question": "How does Garbage Collection work?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "How does Garbage Collection work?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Garbage Collection (GC) is the automatic process of reclaiming memory occupied by objects that are no longer reachable by the application."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "The GC starts from root references (stack variables, static fields) and traces reachable objects",
+            "Objects that are not reachable from any root are considered garbage",
+            "The GC reclaims the memory of unreachable objects",
+            "Android uses ART (Android Runtime) which includes a generational GC"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Generations in ART",
+          "items": [
+            "Young generation: Newly created objects; collected frequently",
+            "Old generation: Long-lived objects; collected less often",
+            "Large objects: Stored in a separate space"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "GC pauses can cause jank if triggered frequently",
+            "Avoid creating excessive short-lived objects in loops",
+            "Memory leaks prevent GC from collecting objects — leading to OOM"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 78,
+      "question": "Can you manually call the Garbage Collector?",
+      "section": "Memory & Performance",
+      "difficulty": "Easy",
+      "tags": [
+        "Memory"
+      ],
+      "title": "Can you manually call the Garbage Collector?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "Yes, you can call System.gc() to suggest that the JVM/ART run the Garbage Collector. However, it is only a hint — the runtime is not obligated to run GC immediately."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "System.gc() is a request, not a command — GC may or may not run",
+            "Manually triggering GC can cause unnecessary pauses and jank",
+            "ART's GC is well-optimized and runs automatically — manual calls are rarely helpful",
+            "Never rely on System.gc() for correctness or memory management"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Fix memory leaks instead of calling GC manually",
+            "Profile with Android Studio Memory Profiler to identify issues"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 79,
+      "question": "Memory Leak vs Out of Memory (OOM) Error",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "Memory Leak vs Out of Memory (OOM) Error",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Memory Leak",
+          "items": [
+            "Objects are still referenced but no longer needed — GC cannot collect them",
+            "Memory usage grows over time without being freed",
+            "Does not immediately crash the app but degrades performance",
+            "Common causes: static references to Context, unclosed Cursors, inner class references"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Out of Memory (OOM)",
+          "items": [
+            "App tries to allocate more memory than the system allows",
+            "Results in OutOfMemoryError crash",
+            "Often caused by accumulated memory leaks or loading very large bitmaps",
+            "Android has per-app heap limits (typically 256MB–512MB)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "Memory Leak → gradual memory growth → can eventually cause OOM",
+            "OOM → hard crash from exceeding memory limit"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 80,
+      "question": "What is a dangling pointer?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "What is a dangling pointer?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A dangling pointer is a reference that points to memory that has already been freed or deallocated. Accessing it leads to undefined behavior or crashes."
+        },
+        {
+          "type": "bullet",
+          "heading": "In Android/Java Context",
+          "items": [
+            "Java and Kotlin don't have raw pointers — the GC manages memory",
+            "The equivalent issue is holding a reference to a destroyed object (e.g., a destroyed Activity)",
+            "Example: a background thread holds a reference to an Activity that was already finished"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In NDK (C/C++) Context",
+          "items": [
+            "Dangling pointers are a real risk when using the Android NDK",
+            "Accessing freed memory causes crashes or memory corruption"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Prevention",
+          "items": [
+            "Use WeakReference for objects that may be destroyed",
+            "Cancel background tasks when the Activity/Fragment is destroyed",
+            "Use ViewModel to hold UI data that survives configuration changes"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 81,
+      "question": "Elaborate Memory Leak",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "Elaborate Memory Leak",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A memory leak occurs when an object is no longer needed by the app but is still referenced, preventing the Garbage Collector from freeing its memory. Over time this causes memory usage to grow until the app crashes with OOM."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Causes in Android",
+          "items": [
+            "Static reference to Context or Activity — keeps the entire Activity in memory",
+            "Anonymous inner classes in Activity (e.g., Runnable, Callback) — hold implicit reference to Activity",
+            "Non-cancelled listeners (EventBus, LiveData observers) after Activity destroy",
+            "Unclosed resources: Cursor, InputStream, SQLiteDatabase",
+            "AsyncTask holding a reference to Activity even after it's destroyed"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Prevent",
+          "items": [
+            "Use applicationContext instead of Activity context for long-lived objects",
+            "Use WeakReference when you must reference an Activity from a background object",
+            "Always unregister listeners in onDestroy() or onStop()",
+            "Use LeakCanary to detect leaks during development"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 82,
+      "question": "How do you find memory leaks in Android applications?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "How do you find memory leaks in Android applications?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Tools & Techniques",
+          "items": [
+            "LeakCanary: Automatically detects and reports memory leaks in debug builds — shows the reference chain causing the leak",
+            "Android Studio Memory Profiler: Shows heap usage over time; take heap dumps to inspect retained objects",
+            "Heap Dump Analysis: Capture heap dump → filter by Activity/Fragment → check for retained instances after destroy",
+            "Android Profiler (Allocation Tracker): Track object allocations and see which ones are never released"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Manual Detection Signs",
+          "items": [
+            "Memory usage grows with each Activity/Fragment open-close cycle",
+            "Multiple instances of the same Activity visible in heap dump",
+            "App slows down over time without crashing"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Add LeakCanary as a debugImplementation dependency in every project",
+            "Regularly profile memory during development, not just after issues appear"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 83,
+      "question": "How to identify and fix OutOfMemory issues?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "How to identify and fix OutOfMemory issues?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Identification",
+          "items": [
+            "Check crash logs for OutOfMemoryError and the stack trace",
+            "Use Android Studio Memory Profiler to watch heap growth over time",
+            "Take heap dumps and look for large retained objects (e.g., large Bitmaps)",
+            "Monitor with ActivityManager.getMemoryInfo() at runtime"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Fixes",
+          "items": [
+            "Bitmaps: Use inSampleSize to downsample large images; use Glide/Coil which handle this automatically",
+            "Caching: Use LruCache to cap in-memory cache size",
+            "Fix memory leaks: Use LeakCanary, avoid static Activity references",
+            "Lazy loading: Don't load all data at once — use Paging library for lists",
+            "Avoid large allocations in loops — reuse objects where possible"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 84,
+      "question": "How does the OutOfMemory happen?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "How does the OutOfMemory happen?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "An OutOfMemoryError is thrown when the JVM/ART cannot allocate enough memory for a new object even after running Garbage Collection."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Reasons",
+          "items": [
+            "Loading large uncompressed bitmaps into memory",
+            "Accumulated memory leaks filling up the heap over time",
+            "Holding too many objects in memory simultaneously (large lists, caches)",
+            "Allocating very large arrays or data structures"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Android Specifics",
+          "items": [
+            "Each app has a limited heap — dalvik.vm.heapsize (typically 256MB–512MB depending on device)",
+            "Apps can request large heap via android:largeHeap=true — but this is not a fix, just a band-aid",
+            "OOM can also happen in native memory (NDK allocations)"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 85,
+      "question": "What is the onTrimMemory() method?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "What is the onTrimMemory() method?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "onTrimMemory() is a callback from the system asking your app to release memory when the device is under memory pressure. It is available in Activity, Fragment, Service, and Application."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Levels",
+          "items": [
+            "TRIM_MEMORY_RUNNING_LOW: Device is running low on memory — release non-critical caches",
+            "TRIM_MEMORY_UI_HIDDEN: App's UI is no longer visible — release UI-related resources",
+            "TRIM_MEMORY_BACKGROUND: App is in background; system may kill it — free as much as possible",
+            "TRIM_MEMORY_COMPLETE: App is among the first to be killed — release everything possible"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Clear image caches (Glide/Coil have built-in support for this callback)",
+            "Release non-essential in-memory data when notified",
+            "Helps your app survive longer in the background"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 86,
+      "question": "Why do we use WeakReferences?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Memory"
+      ],
+      "title": "Why do we use WeakReferences?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A WeakReference holds a reference to an object without preventing it from being garbage collected. When the GC runs and the object has no strong references, it is collected even if a WeakReference points to it."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It's Used",
+          "items": [
+            "Prevents memory leaks when a long-lived object (e.g., a background thread) needs to reference a short-lived one (e.g., an Activity)",
+            "The GC can collect the Activity even if the thread still holds a WeakReference to it",
+            "Commonly used in Handlers, AsyncTask, and caches"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Always check if weakRef.get() != null before using the reference — it may have been collected",
+            "WeakReference vs SoftReference: Soft references are kept until memory is low; weak references are collected at any GC cycle",
+            "Modern alternative: Use ViewModel + coroutines to avoid needing WeakReferences altogether"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 87,
+      "question": "Improve Android App Performance",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Performance"
+      ],
+      "title": "Improve Android App Performance",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "UI Performance",
+          "items": [
+            "Flatten view hierarchies — prefer ConstraintLayout over nested layouts",
+            "Use RecyclerView with ViewHolder pattern for lists",
+            "Avoid overdraw — reduce overlapping views with transparent backgrounds",
+            "Run heavy work off the main thread to maintain 60fps"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Memory",
+          "items": [
+            "Fix memory leaks using LeakCanary",
+            "Use efficient image loading (Glide/Coil) with caching",
+            "Use object pooling and avoid unnecessary allocations in loops"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Launch Time",
+          "items": [
+            "Use Baseline Profiles to speed up app startup",
+            "Lazy-initialize heavy libraries",
+            "Avoid blocking work in Application.onCreate()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Network & Storage",
+          "items": [
+            "Cache responses; use conditional HTTP requests",
+            "Use Room for efficient local database queries",
+            "Paginate large data sets with Paging 3 library"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 88,
+      "question": "How do you inspect and solve Jank issues?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Performance"
+      ],
+      "title": "How do you inspect and solve Jank issues?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jank is visible stuttering in the UI caused by frames taking longer than 16ms to render (60fps target). Each dropped frame causes the animation or scroll to stutter."
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Inspect",
+          "items": [
+            "Android Studio Profiler → CPU section → Record trace to find slow frames",
+            "GPU Rendering profile (Developer Options → Profile GPU rendering): Color bars show frame timing",
+            "Systrace / Perfetto: Detailed frame-level tracing to pinpoint slow operations",
+            "Choreographer logs: Skipped frames are logged in Logcat"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Fixes",
+          "items": [
+            "Move heavy computation (sorting, filtering, parsing) off the main thread",
+            "Reduce overdraw and flatten view hierarchy",
+            "Avoid creating objects during onDraw() or in tight loops",
+            "Use DiffUtil in RecyclerView instead of notifyDataSetChanged()",
+            "Prefetch data with Paging library to avoid loading stalls"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 89,
+      "question": "Baseline Profiles",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Performance"
+      ],
+      "title": "Baseline Profiles",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Baseline Profiles are a set of critical classes and methods pre-compiled ahead-of-time (AOT) by the Android runtime. They speed up app startup and reduce jank on first launch by avoiding JIT compilation of hot code paths."
+        },
+        {
+          "type": "bullet",
+          "heading": "How They Work",
+          "items": [
+            "Developer generates a profile using the Macrobenchmark library",
+            "Profile is packaged with the app (in assets/dexopt/baseline.prof)",
+            "On install, Play Store and ART use it to AOT-compile critical code",
+            "Reduces startup time and janky frames on first run"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Introduced in Android 9; fully supported with Jetpack Macrobenchmark",
+            "Google reports 40% improvement in startup time for apps using Baseline Profiles",
+            "Should be regenerated whenever critical user journeys change"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 90,
+      "question": "What is overdraw?",
+      "section": "Memory & Performance",
+      "difficulty": "Easy",
+      "tags": [
+        "Performance"
+      ],
+      "title": "What is overdraw?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Overdraw occurs when the GPU renders the same pixel more than once in a single frame. Each layer of overlapping views that draws to the same pixel wastes GPU time."
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Detect",
+          "items": [
+            "Enable Debug GPU Overdraw in Developer Options",
+            "Colors indicate overdraw level: blue = 1x, green = 2x, pink = 3x, red = 4x+ (bad)",
+            "Aim for mostly blue with no large red areas"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Fix",
+          "items": [
+            "Remove unnecessary backgrounds on views or layouts hidden by other views",
+            "Use clipRect() in custom views to skip drawing outside visible bounds",
+            "Flatten view hierarchy — fewer layers = less overdraw",
+            "Avoid setting a background on the window AND the root layout"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 91,
+      "question": "Why does an Android App lag?",
+      "section": "Memory & Performance",
+      "difficulty": "Easy",
+      "tags": [
+        "Performance"
+      ],
+      "title": "Why does an Android App lag?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "App lag (jank/stuttering) occurs when the UI thread cannot complete a frame within 16ms (60fps target). Several factors can cause this."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Causes",
+          "items": [
+            "Heavy operations on the main thread (network, DB, large computations)",
+            "Excessive or deeply nested view hierarchies causing slow measure/layout passes",
+            "High overdraw — GPU renders the same pixels multiple times",
+            "Memory pressure triggering frequent GC pauses",
+            "Large image loading without caching or downsampling",
+            "RecyclerView without DiffUtil causing full redraws on data change",
+            "Slow or inefficient database queries blocking the UI thread"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Quick Fixes",
+          "items": [
+            "Move all I/O to background threads",
+            "Use RecyclerView + DiffUtil for efficient list updates",
+            "Profile with Android Studio Profiler to find the exact bottleneck"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 92,
+      "question": "How to use Android Studio Memory Profiler?",
+      "section": "Memory & Performance",
+      "difficulty": "Medium",
+      "tags": [
+        "Performance"
+      ],
+      "title": "How to use Android Studio Memory Profiler?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android Studio Memory Profiler is a tool in the Android Profiler that helps you monitor heap usage, detect memory leaks, and analyze object allocations in real time."
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Use",
+          "items": [
+            "Open: View → Tool Windows → Profiler → Select your app process → Click Memory section",
+            "Live heap graph: Watch memory grow/shrink as you navigate the app",
+            "Record allocations: Click Record → Perform actions → Stop → View allocated objects and their stack traces",
+            "Heap dump: Click Dump Java Heap → Analyze retained objects and find leak suspects",
+            "Force GC: Click the GC button to trigger collection before taking a heap dump for cleaner results"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "What to Look For",
+          "items": [
+            "Memory that grows with each screen open and never decreases — sign of a leak",
+            "Multiple instances of the same Activity in a heap dump after navigating away",
+            "Large Bitmap objects consuming most of the heap"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    }
+
   ]
 }
