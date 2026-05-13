@@ -3643,7 +3643,6 @@
       ],
       "expectedReadTime": "1 min"
     },
-
     {
       "id": 93,
       "question": "Jetpack DataStore Preferences",
@@ -4702,7 +4701,1368 @@
         "Amazon"
       ],
       "expectedReadTime": "1 min"
-    }
+    },
+
+  {
+    "id": 117,
+    "title": "Why use Dependency Injection frameworks like Dagger?",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Dependency Injection (DI) is a design pattern where objects receive their dependencies from outside rather than creating them internally. Frameworks like Dagger automate this wiring."
+      },
+      {
+        "type": "bullet",
+        "heading": "Why Use DI Frameworks",
+        "items": [
+          "Decoupling: Classes don't create their own dependencies — easier to swap implementations",
+          "Testability: Inject mock/fake dependencies in tests without changing production code",
+          "Reusability: Shared dependencies (e.g., Retrofit, Repository) are created once and reused",
+          "Scalability: Manual DI becomes unmanageable in large apps — Dagger generates efficient code at compile time",
+          "Lifecycle management: Scoped components ensure correct object lifetimes"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Without DI (Problem)",
+        "items": [
+          "Classes are tightly coupled — hard to test and change",
+          "Creating objects inside classes violates Single Responsibility Principle"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 118,
+    "title": "@Inject, @Module, @Provides, @Component in Dagger 2",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "@Inject",
+        "items": [
+          "Marks a constructor, field, or method as a dependency injection point",
+          "Dagger uses it to know what to inject and how to create objects"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "@Module",
+        "items": [
+          "A class that provides dependencies that cannot use @Inject (e.g., interfaces, third-party classes)",
+          "Groups related @Provides methods together"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "@Provides",
+        "items": [
+          "A method inside a @Module that tells Dagger how to create a specific dependency",
+          "Used when constructor injection is not possible"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "@Component",
+        "items": [
+          "An interface that connects @Modules to injection targets",
+          "Dagger generates its implementation at compile time",
+          "Acts as the bridge between the dependency graph and the consumer"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 119,
+    "title": "How does Dagger work internally?",
+    "sec": "Dependency Injection",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Dagger is a compile-time DI framework. It processes annotations at build time and generates plain Java code to wire dependencies — no reflection at runtime."
+      },
+      {
+        "type": "bullet",
+        "heading": "Internal Flow",
+        "items": [
+          "Annotation Processor scans @Component, @Module, @Inject annotations at compile time",
+          "Dagger generates Factory classes for each dependency (e.g., MyClass_Factory)",
+          "Generates a DaggerMyComponent class implementing your @Component interface",
+          "When inject() is called, Dagger calls the generated Factories to create and provide objects",
+          "Scope annotations (e.g., @Singleton) generate Provider wrappers that cache instances"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "All wiring is resolved at compile time — no reflection, no runtime overhead",
+          "Errors in the dependency graph are caught at compile time, not runtime"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "title": "Dagger 2 vs Dagger-Hilt",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Dagger 2",
+        "items": [
+          "Full control over component hierarchy and scopes",
+          "More boilerplate — manual component setup, subcomponents, and bindings",
+          "Better for complex multi-module apps needing fine-grained control",
+          "Steeper learning curve"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Dagger Hilt",
+        "items": [
+          "Built on top of Dagger 2 — uses it under the hood",
+          "Standard components provided by Google: ApplicationComponent, ActivityComponent, ViewModelComponent, etc.",
+          "Minimal boilerplate — @HiltAndroidApp, @AndroidEntryPoint, @HiltViewModel",
+          "Integrates with Jetpack (ViewModel, WorkManager, Navigation)",
+          "Recommended for new Android projects"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "When to Choose",
+        "items": [
+          "Hilt: Most Android projects — less setup, Jetpack integration, easier testing",
+          "Dagger 2: Large projects needing custom component hierarchy or migrating an existing Dagger setup"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 121,
+    "title": "What is a Component in Dagger?",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A Component in Dagger is an interface annotated with @Component that acts as the dependency graph's entry point. It connects modules (providers) to injection targets (consumers)."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Responsibilities",
+        "items": [
+          "Declares which modules contribute to the graph",
+          "Exposes inject() methods to perform field injection into classes",
+          "Can expose dependencies for use in subcomponents or other components",
+          "Dagger generates a DaggerXxxComponent implementation at compile time"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Scope",
+        "items": [
+          "A Component can be scoped (e.g., @Singleton) to control object lifetimes",
+          "Objects scoped to a component live as long as the component instance lives"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 122,
+    "title": "What is a Module in Dagger?",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A Module is a class annotated with @Module that provides dependencies to the Dagger graph. It is used when constructor injection is not possible — for example, interfaces, third-party classes, or objects requiring complex setup."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "Contains @Provides methods that tell Dagger how to create a dependency",
+          "Multiple modules can be added to a single Component",
+          "@Binds can be used instead of @Provides to bind an interface to its implementation with less overhead",
+          "Modules are included in a @Component via the modules parameter"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 123,
+    "title": "How does custom scope work in Dagger?",
+    "sec": "Dependency Injection",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Scopes in Dagger control the lifetime of objects. A scoped binding means only one instance of that object is created per component instance."
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Create a Custom Scope",
+        "items": [
+          "Define a custom annotation with @Scope and @Retention(RUNTIME)",
+          "Apply the scope annotation to both the @Component and the @Provides/@Inject method",
+          "Dagger generates a scoped provider that caches the instance for the component's lifetime"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Example",
+        "items": [
+          "@ActivityScope: One instance per Activity — applied to ActivityComponent",
+          "@UserScope: One instance per logged-in user session",
+          "@Singleton: One instance per ApplicationComponent (app lifetime)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "The scope does not define the lifetime — the component does",
+          "Destroying the component destroys all scoped objects within it"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 124,
+    "title": "Dagger Component vs SubComponents",
+    "sec": "Dependency Injection",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Component",
+        "items": [
+          "A standalone dependency graph",
+          "Access to parent component's bindings requires explicit component dependency declaration",
+          "Two components with component dependency cannot share the same scope",
+          "Used when components are loosely related"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "SubComponent",
+        "items": [
+          "A child component nested inside a parent component",
+          "Automatically inherits all bindings from the parent component",
+          "Can access all parent bindings without explicit exposure",
+          "Tighter coupling — declared inside the parent module or component",
+          "Used when parent-child relationship is clear (e.g., AppComponent → ActivitySubComponent)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "SubComponent: inherits everything from parent automatically",
+          "Component dependency: only gets what the parent explicitly exposes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 125,
+    "title": "Circular dependency in Dagger — how to resolve?",
+    "sec": "Dependency Injection",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A circular dependency occurs when class A depends on class B, and class B depends on class A — forming an infinite creation loop. Dagger will fail to compile when it detects this."
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Resolve",
+        "items": [
+          "Introduce a Provider<T>: Inject Provider<B> in class A instead of B directly — defers creation and breaks the cycle",
+          "Extract shared state: Move the common dependency into a third class C that both A and B depend on",
+          "Refactor design: Usually circular dependency indicates poor separation of concerns — rethink responsibilities",
+          "Use @Lazy<T>: Lazily initializes the dependency on first access, breaking the instantiation cycle"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 126,
+    "title": "@Provides vs @Binds in Dagger",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "@Provides",
+        "items": [
+          "A method inside a @Module that creates and returns a dependency instance",
+          "Can contain custom logic, configuration, or third-party setup",
+          "The method body is executed by Dagger",
+          "Used when you need to construct the object yourself"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "@Binds",
+        "items": [
+          "An abstract method that binds an interface to its implementation",
+          "No method body — Dagger generates the binding directly",
+          "More efficient: generates less code than @Provides",
+          "Used when the implementation already has @Inject constructor — just tells Dagger which interface maps to which class"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "@Provides = create the object yourself (with logic)",
+          "@Binds = tell Dagger to use this existing class for an interface (no logic)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 127,
+    "title": "SubComponent vs Component dependency — under the hood",
+    "sec": "Dependency Injection",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "SubComponent (under the hood)",
+        "items": [
+          "SubComponent shares the same object graph scope as parent",
+          "Generated as an inner class of the parent component implementation",
+          "Has direct access to all parent bindings — no interface exposure needed",
+          "Lifetime is explicitly controlled: created and destroyed by the parent component"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Component Dependency (under the hood)",
+        "items": [
+          "Two independent components — each has its own scope and object graph",
+          "Parent must explicitly expose bindings in its interface for the child to use",
+          "Child component holds a reference to the parent component interface",
+          "More flexible — components can be mixed from different modules or libraries"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Difference",
+        "items": [
+          "SubComponent: tight integration, shared graph, inner class generation",
+          "Component dependency: loose coupling, explicit exposure, separate graphs"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 128,
+    "title": "Constructor injection vs method injection. Scope and Singleton",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Constructor Injection",
+        "items": [
+          "Dependencies are provided via the constructor",
+          "Preferred approach — makes dependencies explicit and immutable",
+          "Works with @Inject on the constructor — Dagger knows how to build the class",
+          "Best for testability: easy to pass mocks in tests"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Method (Field) Injection",
+        "items": [
+          "Dependencies are injected into fields or methods after object creation",
+          "Used when you don't control the constructor (e.g., Activity, Fragment, Service)",
+          "Annotate fields with @Inject; call component.inject(this)",
+          "Less testable than constructor injection"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Scope and @Singleton",
+        "items": [
+          "@Singleton is a built-in Dagger scope — one instance per component",
+          "Applied to both the @Component and the @Provides/@Inject class",
+          "The instance lives as long as the component lives (app lifetime for ApplicationComponent)",
+          "Custom scopes work the same way with custom scope annotations"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 129,
+    "title": "What's interesting about Hilt?",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "What Makes Hilt Interesting",
+        "items": [
+          "Standardized components: Predefined components (ApplicationComponent, ActivityComponent, ViewModelComponent) eliminate boilerplate component setup",
+          "@HiltViewModel: Directly injects into ViewModels — no ViewModelFactory boilerplate needed",
+          "@AndroidEntryPoint: Single annotation on Activity/Fragment enables injection",
+          "Testing: Replaces components with test doubles via @UninstallModules and @BindValue",
+          "Gradle plugin: Transforms bytecode to avoid writing boilerplate injection code",
+          "Integrates with all Jetpack libraries: WorkManager, Navigation, Compose"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Hilt is opinionated — you trade flexibility for convention and speed of development",
+          "For most Android apps it is the right choice"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 130,
+    "title": "Dagger vs Koin",
+    "sec": "Dependency Injection",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Dagger (+ Hilt)",
+        "items": [
+          "Compile-time code generation — errors caught at build time",
+          "Zero runtime overhead — generated code is plain Java/Kotlin",
+          "Better performance for large apps",
+          "Steeper learning curve; more boilerplate (less with Hilt)",
+          "Industry standard in large Android teams"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Koin",
+        "items": [
+          "Pure Kotlin DSL — no annotation processing, no code generation",
+          "Runtime dependency resolution — errors appear at runtime, not compile time",
+          "Very easy to set up and learn — few lines to configure",
+          "Small overhead at runtime due to reflection-free service locator pattern",
+          "Good for small to medium apps or teams preferring simplicity"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "When to Choose",
+        "items": [
+          "Dagger/Hilt: Large apps, teams, performance-critical, compile-time safety needed",
+          "Koin: Rapid development, small teams, Kotlin-first projects, startup speed matters"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 131,
+    "title": "Koin — your thoughts?",
+    "sec": "Dependency Injection",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Overview",
+        "content": "Koin is a lightweight DI framework written in pure Kotlin using a DSL. It acts as a service locator under the hood rather than true compile-time DI."
+      },
+      {
+        "type": "bullet",
+        "heading": "Pros",
+        "items": [
+          "Very easy to set up — no kapt/KSP annotation processing required",
+          "Readable Kotlin DSL: single(), factory(), viewModel() declarations",
+          "Fast onboarding for new developers",
+          "Works well with Kotlin Multiplatform (KMP)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Cons",
+        "items": [
+          "Runtime resolution: dependency errors surface at runtime (on first inject), not at compile time",
+          "Service locator pattern: dependencies are not as explicit as constructor injection",
+          "Slower than Dagger for very large graphs due to runtime lookups"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Verdict",
+        "items": [
+          "Great for smaller projects or teams wanting simplicity; Hilt/Dagger preferred for production-grade large apps"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 132,
+    "title": "Tell me something about RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "RxJava is a Java implementation of Reactive Extensions (ReactiveX). It enables composing asynchronous and event-based programs using observable sequences and functional operators."
+      },
+      {
+        "type": "bullet",
+        "heading": "Core Concepts",
+        "items": [
+          "Observable: Emits a stream of data or events",
+          "Observer: Subscribes to the Observable and reacts to emitted items",
+          "Operators: Transform, filter, combine streams (map, flatMap, filter, zip, etc.)",
+          "Schedulers: Control which thread work runs on (IO, Computation, Main thread)",
+          "Disposable: Manages subscription lifecycle — call dispose() to stop"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Benefits",
+        "items": [
+          "Composable async code — no callback hell",
+          "Thread management via subscribeOn/observeOn",
+          "Rich set of operators for transforming data streams",
+          "Handles errors in a unified way via onError()"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 133,
+    "title": "How to handle errors in RxJava?",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Error Handling Operators",
+        "items": [
+          "onErrorReturn(fn): Emits a fallback item when an error occurs — stream completes normally",
+          "onErrorResumeNext(fn): Switches to a different Observable on error — continues the stream",
+          "retry(n): Resubscribes to the source Observable up to n times on error",
+          "retryWhen(fn): Retries based on a condition — useful for exponential backoff",
+          "doOnError(fn): Side-effect only — logs or reports the error without modifying the stream"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In subscriber",
+        "items": [
+          "The onError() callback in subscribe{} is the final handler for unhandled errors",
+          "Always provide an onError handler — unhandled errors crash the app with UndeliverableException"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Prefer onErrorReturn or onErrorResumeNext to keep the stream alive",
+          "Use retry/retryWhen for transient failures like network errors"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 134,
+    "title": "FlatMap vs Map operator",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "map()",
+        "items": [
+          "Transforms each emitted item synchronously into another item",
+          "Returns the transformed item directly (not an Observable)",
+          "Use when the transformation is simple and doesn't involve async work",
+          "Example: map { user -> user.name }"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "flatMap()",
+        "items": [
+          "Transforms each item into an Observable, then merges the results",
+          "Used when the transformation itself is asynchronous (e.g., a network call)",
+          "Results may interleave — order is not guaranteed",
+          "Example: flatMap { userId -> fetchUserFromNetwork(userId) }"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "map = synchronous 1:1 transform",
+          "flatMap = async 1:Observable transform, results merged (unordered)",
+          "Use concatMap instead of flatMap if order must be preserved"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 135,
+    "title": "Create vs fromCallable in RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Observable.create()",
+        "items": [
+          "Gives full control — you manually call emitter.onNext(), onError(), onComplete()",
+          "Used for wrapping custom async APIs or callback-based code",
+          "Must handle backpressure and disposal manually",
+          "More boilerplate; risk of misuse (e.g., forgetting to check isDisposed)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Observable.fromCallable()",
+        "items": [
+          "Wraps a single synchronous computation that returns one value or throws",
+          "Automatically handles onNext + onComplete after the call returns",
+          "Automatically propagates exceptions as onError",
+          "Simpler and safer for wrapping blocking or single-result operations"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "fromCallable = simple single-value sync operation (prefer this)",
+          "create = complex async/multi-emission scenarios needing manual control"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 136,
+    "title": "When to use defer operator in RxJava?",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Observable.defer() creates a new Observable for each subscriber. The Observable factory function is called fresh at subscription time, not at declaration time."
+      },
+      {
+        "type": "bullet",
+        "heading": "When to Use It",
+        "items": [
+          "When the Observable depends on a value that may change between subscriptions (e.g., a mutable variable or state)",
+          "Without defer, the Observable captures the variable's value at creation time — stale data",
+          "With defer, the Observable is re-created on each subscribe — always reads current value"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Example Use Case",
+        "items": [
+          "A flag that controls which API endpoint to hit — defer re-evaluates the flag on each subscription",
+          "Lazy initialization of an Observable that reads from a changing source"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 137,
+    "title": "Timer, Delay, and Interval operators in RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Observable.timer()",
+        "items": [
+          "Emits a single item (0L) after a specified delay",
+          "Use for one-shot delayed execution",
+          "Example: Observable.timer(5, TimeUnit.SECONDS) — fires once after 5 seconds"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Observable.interval()",
+        "items": [
+          "Emits incrementing Long values at a fixed interval indefinitely",
+          "Use for polling or repeating periodic tasks",
+          "Example: Observable.interval(1, TimeUnit.SECONDS) — fires every second"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "delay()",
+        "items": [
+          "Shifts the emission of all items from an existing Observable by a time delay",
+          "Does not delay subscription — delays the delivery of items",
+          "Example: observable.delay(2, TimeUnit.SECONDS) — all emissions arrive 2 seconds later"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 138,
+    "title": "Two network calls in parallel using RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Use zip() or combineLatest() to run two network calls in parallel and combine their results."
+      },
+      {
+        "type": "bullet",
+        "heading": "Using zip()",
+        "items": [
+          "zip() subscribes to both Observables simultaneously",
+          "Waits for both to emit, then combines the results with a zipper function",
+          "Emits a single combined result when both complete",
+          "Both calls are subscribed on Schedulers.io() for parallel execution"
+        ]
+      },
+      {
+        "type": "code",
+        "heading": "Example",
+        "content": "Observable.zip(\n    api.getUser().subscribeOn(Schedulers.io()),\n    api.getProfile().subscribeOn(Schedulers.io()),\n    { user, profile -> Pair(user, profile) }\n).observeOn(AndroidSchedulers.mainThread())\n .subscribe { (user, profile) -> /* update UI */ }"
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "zip() waits for both; combineLatest() re-emits whenever either source emits"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 139,
+    "title": "Concat vs Merge in RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "merge()",
+        "items": [
+          "Subscribes to all Observables simultaneously (parallel)",
+          "Emits items as they arrive — interleaved order",
+          "Does not wait for one to complete before subscribing to the next",
+          "Use when order doesn't matter and you want results as fast as possible"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "concat()",
+        "items": [
+          "Subscribes to Observables sequentially — waits for first to complete before subscribing to next",
+          "Preserves order of emissions",
+          "Use when order matters or second call depends on first completing",
+          "Example: Load from cache first, then network"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "merge = parallel, unordered",
+          "concat = sequential, ordered"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 140,
+    "title": "Explain Subject in RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A Subject in RxJava acts as both an Observable and an Observer. It can receive items (via onNext) and emit them to subscribers simultaneously — a bridge between imperative and reactive code."
+      },
+      {
+        "type": "bullet",
+        "heading": "Types of Subjects",
+        "items": [
+          "PublishSubject: Emits only items emitted after subscription — new subscribers miss past items",
+          "BehaviorSubject: Emits the most recent item to new subscribers, then continues with subsequent items",
+          "ReplaySubject: Emits all past items to any new subscriber (configurable buffer size)",
+          "AsyncSubject: Only emits the last item once the source completes"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Common Use Case",
+        "items": [
+          "Act as an event bus: call subject.onNext(event) to broadcast to all subscribers",
+          "Bridge callback APIs to reactive streams"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 141,
+    "title": "Types of Observables in RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Observable",
+        "items": [
+          "Emits 0 to N items, followed by onComplete or onError",
+          "Does not handle backpressure — use Flowable if consumer is slower than producer"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Flowable",
+        "items": [
+          "Like Observable but with backpressure support",
+          "Use when emitting large or infinite streams where consumer may be slower"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Single",
+        "items": [
+          "Emits exactly one item or an error — like a Future",
+          "Use for network calls or database queries returning one result"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Maybe",
+        "items": [
+          "Emits 0 or 1 items, or an error — optional single result",
+          "Use when result may or may not be present"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Completable",
+        "items": [
+          "Emits no items — only signals completion or error",
+          "Use for fire-and-forget operations (write to DB, send analytics)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 142,
+    "title": "Observable vs Completable vs Single",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Observable",
+        "items": [
+          "Emits 0 to N items over time",
+          "Suitable for streams (list of items, events, polling results)",
+          "onNext + onError + onComplete callbacks"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Single",
+        "items": [
+          "Emits exactly 1 item or an error",
+          "Suitable for single-value async operations: network call, DB query",
+          "onSuccess + onError callbacks"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Completable",
+        "items": [
+          "Emits no items — only signals done or error",
+          "Suitable for write operations, DELETE, POST with no response body",
+          "onComplete + onError callbacks"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Quick Guide",
+        "items": [
+          "List of items → Observable",
+          "One result → Single",
+          "No result → Completable",
+          "Optional result → Maybe"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 143,
+    "title": "Search feature using RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Use RxJava operators on a search EditText to implement efficient, debounced search that avoids triggering a network call on every keystroke."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Operators",
+        "items": [
+          "debounce(300, MILLISECONDS): Waits 300ms after the user stops typing before emitting — avoids excessive API calls",
+          "distinctUntilChanged(): Skips emission if the query is the same as the previous — no duplicate calls",
+          "filter { it.length >= 3 }: Only search when query is at least 3 characters",
+          "switchMap: Cancels the previous search Observable and subscribes to the new one — only latest result matters"
+        ]
+      },
+      {
+        "type": "code",
+        "heading": "Example",
+        "content": "RxTextView.textChanges(searchView)\n    .debounce(300, TimeUnit.MILLISECONDS)\n    .distinctUntilChanged()\n    .filter { it.length >= 3 }\n    .switchMap { query -> api.search(query).subscribeOn(Schedulers.io()) }\n    .observeOn(AndroidSchedulers.mainThread())\n    .subscribe { results -> updateUI(results) }"
+      }
+    ]
+  },
+  {
+    "id": 144,
+    "title": "Schedulers.io() vs Schedulers.computation()",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Schedulers.io()",
+        "items": [
+          "Backed by an unbounded thread pool — grows as needed",
+          "Optimized for I/O-bound work: network calls, file reads, database queries",
+          "Threads spend time waiting (blocking) — more threads are needed",
+          "Use for: Retrofit calls, Room queries, file I/O"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Schedulers.computation()",
+        "items": [
+          "Backed by a fixed thread pool — number of threads = number of CPU cores",
+          "Optimized for CPU-bound work: calculations, transformations, parsing",
+          "Threads should not block — keep them busy computing",
+          "Use for: JSON parsing, image processing, sorting large lists"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "io() = blocking I/O work (thread pool grows)",
+          "computation() = CPU-bound work (fixed pool = core count)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 145,
+    "title": "dispose() vs clear() on CompositeDisposable",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "clear()",
+        "items": [
+          "Disposes all currently added disposables",
+          "The CompositeDisposable itself remains usable — new disposables can be added after clear()",
+          "Use when you want to cancel all subscriptions but reuse the container (e.g., on ViewModel re-subscription)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "dispose()",
+        "items": [
+          "Disposes all disposables AND marks the CompositeDisposable itself as disposed",
+          "Any new disposables added after dispose() are immediately disposed",
+          "The container is effectively dead — cannot be reused",
+          "Use in onDestroy() or onCleared() when the component is permanently destroyed"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "clear() = cancel all, keep the container reusable",
+          "dispose() = cancel all, destroy the container permanently"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 146,
+    "title": "subscribeOn vs observeOn — Schedulers",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "subscribeOn()",
+        "items": [
+          "Specifies the Scheduler on which the Observable source runs (subscription and emission)",
+          "Only the first subscribeOn() in the chain has effect — subsequent ones are ignored",
+          "Use once to define where the heavy work happens (e.g., Schedulers.io())"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "observeOn()",
+        "items": [
+          "Specifies the Scheduler on which downstream operators and the final Observer run",
+          "Can be used multiple times in a chain — each changes the thread for operators below it",
+          "Use to switch to the main thread for UI updates: observeOn(AndroidSchedulers.mainThread())"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Typical Pattern",
+        "items": [
+          "subscribeOn(Schedulers.io()) — run network/DB work on IO thread",
+          "observeOn(AndroidSchedulers.mainThread()) — deliver results on UI thread"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 147,
+    "title": "subscribe(new Subscriber) vs subscribe(new Observer)",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Observer (for Observable)",
+        "items": [
+          "Used with Observable.subscribe()",
+          "Callbacks: onNext(), onError(), onComplete()",
+          "No backpressure support — use with Observable, Single, Maybe, Completable"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Subscriber (for Flowable)",
+        "items": [
+          "Used with Flowable.subscribe()",
+          "Implements Subscription — supports backpressure via request(n)",
+          "Must call subscription.request(Long.MAX_VALUE) or a specific count to pull items",
+          "Use with Flowable when the producer may be faster than the consumer"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "Observer = no backpressure, used with Observable",
+          "Subscriber = backpressure aware, used with Flowable"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 148,
+    "title": "IOScheduler vs NewThreadScheduler in RxJava",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Schedulers.io()",
+        "items": [
+          "Uses a cached thread pool — reuses idle threads before creating new ones",
+          "More efficient for many short-lived tasks",
+          "Thread pool grows as needed but recycles idle threads after 60 seconds",
+          "Use for I/O-bound tasks"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Schedulers.newThread()",
+        "items": [
+          "Creates a brand new thread for every subscription — no thread reuse",
+          "More overhead than Schedulers.io() — each call spins up a new OS thread",
+          "Rarely the right choice; prefer io() for I/O work",
+          "Use only when you explicitly need a dedicated isolated thread per task"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 149,
+    "title": "RxJava vs Coroutines — which do you prefer?",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "RxJava",
+        "items": [
+          "Rich operator library for complex stream transformations (zip, combineLatest, window, buffer, etc.)",
+          "Excellent for event streams and multi-value sequences",
+          "Mature ecosystem with wide adoption",
+          "More verbose; steeper learning curve",
+          "Heavy library; adds APK size"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Kotlin Coroutines + Flow",
+        "items": [
+          "Native Kotlin — cleaner, more readable sequential-style async code",
+          "Flow for streams; suspend functions for single values",
+          "Structured concurrency — auto-cancellation tied to lifecycles (viewModelScope, lifecycleScope)",
+          "First-class Jetpack support; preferred by Google for new Android projects",
+          "Lighter weight; no additional dependency needed"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Preference",
+        "items": [
+          "Coroutines + Flow for new projects — better Kotlin integration, structured concurrency, simpler code",
+          "RxJava when working with existing RxJava codebase or needing specific complex stream operators"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 150,
+    "title": "Observable.just vs Observable.from vs Observable.create",
+    "sec": "RxJava",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Observable.just(item)",
+        "items": [
+          "Emits the provided items (up to 10) and completes",
+          "Items are passed at creation time — not deferred",
+          "Use for emitting a fixed set of known items"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Observable.fromIterable / fromArray",
+        "items": [
+          "Converts a collection or array into an Observable",
+          "Emits each element in order and completes",
+          "Use for iterating over an existing list or array"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Observable.create()",
+        "items": [
+          "Full control — you drive emissions manually via ObservableEmitter",
+          "Used for wrapping callbacks, custom async APIs, multi-emission sources",
+          "Most flexible but most complex; handle disposal and errors manually"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "just = fixed items",
+          "from = collection/array",
+          "create = custom/manual emission logic"
+        ]
+      }
+    ]
+  }
 
   ]
 }
