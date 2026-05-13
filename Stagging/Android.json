@@ -6062,7 +6062,3518 @@
         ]
       }
     ]
+  },
+  {
+    "id": 151,
+    "title": "What is Flow in Kotlin?",
+    "sec": "Kotlin & Flow",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Kotlin Flow is a cold asynchronous stream that emits multiple values sequentially. Built on coroutines, it is the Kotlin-native replacement for RxJava Observables."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Characteristics",
+        "items": [
+          "Cold stream: Code in the flow builder runs only when collected — not on creation",
+          "Backpressure handled by design via coroutine suspension — no explicit backpressure operators needed",
+          "Built-in cancellation: Collection is cancelled when the coroutine scope is cancelled",
+          "Operators: map, filter, transform, zip, combine, flatMapLatest, debounce, and more"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Types",
+        "items": [
+          "Flow: Cold stream — emits on each collection",
+          "StateFlow: Hot stream — always holds a current value; replaces LiveData in ViewModel",
+          "SharedFlow: Hot stream — for broadcasting events to multiple collectors; configurable replay"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 152,
+    "title": "Difference between const and val",
+    "sec": "Kotlin & Flow",
+    "diff": "Easy",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "val",
+        "items": [
+          "Read-only property — cannot be reassigned after initialization",
+          "Value is determined at runtime",
+          "Can be used as instance property, local variable, or top-level property",
+          "Getter can be overridden — value can be computed dynamically"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "const val",
+        "items": [
+          "Compile-time constant — value is inlined at every usage site by the compiler",
+          "Must be a primitive type or String",
+          "Must be a top-level property or inside an object/companion object",
+          "Cannot have a custom getter — value must be known at compile time"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "val = runtime immutable reference",
+          "const val = compile-time constant, inlined by compiler"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 153,
+    "title": "launchWhenCreated, launchWhenStarted, launchWhenResumed",
+    "sec": "Kotlin & Flow",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "These are lifecycle-aware coroutine launchers from lifecycleScope that suspend execution when the lifecycle falls below a certain state. They are now deprecated in favor of repeatOnLifecycle."
+      },
+      {
+        "type": "bullet",
+        "heading": "Behavior",
+        "items": [
+          "launchWhenCreated: Starts when CREATED; suspends when below CREATED (rarely useful)",
+          "launchWhenStarted: Starts when STARTED; suspends (not cancels) when below STARTED",
+          "launchWhenResumed: Starts when RESUMED; suspends when below RESUMED"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Why They Are Deprecated",
+        "items": [
+          "They suspend the coroutine but don't cancel upstream flows — the producer keeps running even when UI is gone, wasting resources",
+          "repeatOnLifecycle(State.STARTED) is the correct replacement — it cancels and restarts the coroutine on lifecycle transitions, stopping the upstream producer when not needed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 154,
+    "title": "Describe the architecture of your last app",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A well-structured answer follows Clean Architecture layered with MVVM pattern."
+      },
+      {
+        "type": "bullet",
+        "heading": "Typical Architecture",
+        "items": [
+          "Presentation Layer: Activities/Fragments + ViewModels (MVVM). ViewModel holds UI state as StateFlow/LiveData",
+          "Domain Layer: Use cases (interactors) containing business logic. Pure Kotlin — no Android dependencies",
+          "Data Layer: Repositories coordinating between remote (Retrofit) and local (Room) data sources",
+          "DI: Hilt for dependency injection across all layers",
+          "Navigation: Jetpack Navigation Component with a single Activity"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Principles",
+        "items": [
+          "Unidirectional Data Flow: UI observes ViewModel state; user events flow up to ViewModel",
+          "Separation of Concerns: Each layer has a single responsibility",
+          "Testability: Domain and Data layers have no Android dependencies — easily unit tested"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 154,
+    "title": "Describe MVVM",
+    "sec": "Architecture",
+    "diff": "Easy",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "MVVM (Model-View-ViewModel) is an architecture pattern that separates UI logic from business logic using a ViewModel as a mediator."
+      },
+      {
+        "type": "bullet",
+        "heading": "Layers",
+        "items": [
+          "Model: Data layer — repositories, data sources, network/DB models",
+          "View: UI layer — Activities, Fragments. Observes ViewModel state; forwards user events to ViewModel",
+          "ViewModel: Holds and manages UI state. Processes user events and fetches data from the Model. Survives configuration changes"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Data Flow",
+        "items": [
+          "View observes LiveData/StateFlow from ViewModel",
+          "User interaction → View calls ViewModel function → ViewModel updates state → View reflects new state"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Benefits",
+        "items": [
+          "ViewModel survives rotation — no data loss",
+          "Separation of concerns — UI and business logic are decoupled",
+          "Easily testable ViewModel with no UI dependencies"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 155,
+    "title": "MVC vs MVP vs MVVM",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "MVC (Model-View-Controller)",
+        "items": [
+          "Controller handles user input and updates Model and View",
+          "In Android, Activity acts as both View and Controller — violates separation of concerns",
+          "Tight coupling between View and Controller; hard to test"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "MVP (Model-View-Presenter)",
+        "items": [
+          "Presenter handles all UI logic; View is passive (only renders)",
+          "View and Presenter communicate via interfaces — easier to test Presenter",
+          "Problem: Presenter holds a reference to View — risk of memory leaks if not detached"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "MVVM (Model-View-ViewModel)",
+        "items": [
+          "ViewModel exposes observable state; View binds to it",
+          "No direct reference from ViewModel to View — no memory leak risk",
+          "ViewModel survives configuration changes",
+          "Supported natively by Jetpack — the recommended pattern for Android"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 156,
+    "title": "Clean Architecture",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Clean Architecture (by Robert C. Martin) organizes code in concentric layers where dependencies only point inward — inner layers know nothing about outer layers."
+      },
+      {
+        "type": "bullet",
+        "heading": "Layers (outer to inner)",
+        "items": [
+          "Frameworks & Drivers: Android framework, Retrofit, Room, UI (outermost)",
+          "Interface Adapters: ViewModels, Presenters, Controllers, Mappers",
+          "Application/Domain: Use Cases (interactors) — business rules",
+          "Entities: Core business models — no Android or framework dependencies (innermost)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Dependency Rule",
+        "items": [
+          "Dependencies always point inward — Domain knows nothing about Retrofit or Room",
+          "Data and Presentation layers implement interfaces defined in Domain",
+          "This makes the Domain layer fully testable with plain JUnit — no mocks needed for Android"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Benefits",
+        "items": [
+          "Highly testable, maintainable, and scalable",
+          "Swappable implementations: replace Retrofit with another HTTP client without touching business logic"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 157,
+    "title": "MVI Architecture in Android",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "MVI (Model-View-Intent) is a unidirectional architecture where the View sends Intents (user actions) to the ViewModel, which processes them and emits a new immutable State back to the View."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Concepts",
+        "items": [
+          "Intent: User action or UI event (not Android Intent) — e.g., ButtonClicked, RefreshTriggered",
+          "State: Immutable data class representing the complete UI state at a given moment",
+          "Model: Processes intents and produces new state (ViewModel in Android implementation)",
+          "Single source of truth: One state object describes the entire screen — no partial updates"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Data Flow",
+        "items": [
+          "User action → Intent → ViewModel processes → emits new State → View renders state"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "vs MVVM",
+        "items": [
+          "MVI has strict unidirectional flow and immutable state — eliminates state inconsistency bugs",
+          "More boilerplate than MVVM; better for complex screens with many interaction states"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 158,
+    "title": "Software Architecture vs Software Design",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Software Architecture",
+        "items": [
+          "High-level structure of a system — how major components are organized and interact",
+          "Concerned with: layering (Clean Architecture), patterns (MVVM, MVI), module boundaries, scalability",
+          "Hard to change once established — foundational decisions",
+          "Example: Deciding to use Clean Architecture with MVVM and a multi-module setup"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Software Design",
+        "items": [
+          "Low-level implementation details within components — how individual classes and functions are structured",
+          "Concerned with: SOLID principles, design patterns (Factory, Observer, Builder), class interactions",
+          "Easier to refactor than architecture",
+          "Example: Deciding to use a Builder pattern for constructing a complex object"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "Architecture = structure of the system (macro)",
+          "Design = structure of the code within the system (micro)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 159,
+    "title": "Benefits of Multi-Module Architecture",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Benefits",
+        "items": [
+          "Faster build times: Gradle only recompiles modules that changed — incremental builds",
+          "Clear separation of concerns: Module boundaries enforce layer and feature isolation",
+          "Reusability: Shared modules (e.g., :core, :network) are reused across features",
+          "Parallel development: Teams can work on separate modules without conflicts",
+          "Dynamic delivery: Feature modules can be delivered on demand via Play Feature Delivery",
+          "Scalability: Each module is independently versioned and testable"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 160,
+    "title": "Multi-Module Project — Why and When?",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Why",
+        "items": [
+          "Build performance: Only modified modules recompile — Gradle caching is more effective",
+          "Enforced architecture: Module visibility rules prevent layer violations at compile time",
+          "Testability: Each module is independently testable",
+          "Dynamic Feature Delivery: Feature modules can be downloaded on demand"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "When to Use",
+        "items": [
+          "Large apps with multiple features developed by different teams",
+          "When build time of a monolithic module becomes unacceptable",
+          "When features need to be delivered dynamically via Play Store",
+          "When strict API boundaries between layers/features are required"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "When NOT to Use",
+        "items": [
+          "Small apps or MVPs — overhead of module setup outweighs benefits",
+          "When team is small and all working in the same feature area"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 161,
+    "title": "SOLID Principles",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "S — Single Responsibility",
+        "items": [
+          "A class should have only one reason to change — do one thing well",
+          "Example: ViewModel handles UI state; Repository handles data fetching — not both in one class"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "O — Open/Closed",
+        "items": [
+          "Open for extension, closed for modification",
+          "Add new behavior via new classes/functions, not by changing existing code"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "L — Liskov Substitution",
+        "items": [
+          "Subclasses must be substitutable for their parent class without breaking behavior"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "I — Interface Segregation",
+        "items": [
+          "Many small, specific interfaces are better than one large general interface",
+          "Clients should not be forced to depend on methods they don't use"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "D — Dependency Inversion",
+        "items": [
+          "High-level modules should not depend on low-level modules — both should depend on abstractions",
+          "Example: ViewModel depends on a Repository interface, not a concrete implementation"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 162,
+    "title": "MVP vs MVVM — issues with Presenter",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Issues with Presenter in MVP",
+        "items": [
+          "Presenter holds a direct reference to the View interface — if Activity is destroyed, the Presenter still holds it → memory leak",
+          "Must manually detach/attach View in onResume/onDestroy — boilerplate",
+          "Does not survive configuration changes — Presenter must be recreated or saved manually",
+          "Testing requires mocking the View interface"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "How MVVM Solves These",
+        "items": [
+          "ViewModel has no reference to View — observes via LiveData/StateFlow — no memory leak",
+          "ViewModel survives configuration changes (rotation) by design",
+          "No manual attach/detach needed",
+          "ViewModel is easily tested without mocking UI"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Summary",
+        "items": [
+          "MVP: More explicit contract (interfaces) but lifecycle and memory issues",
+          "MVVM: Lifecycle-safe, configuration-change-safe, less boilerplate with Jetpack"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 162,
+    "title": "MVVM vs MVI",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "MVVM",
+        "items": [
+          "State can be multiple LiveData/StateFlow fields — partial updates possible",
+          "Bidirectional data binding possible (can lead to state inconsistency)",
+          "Less boilerplate — simple screens are easy to implement",
+          "ViewModel functions can be called directly from View"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "MVI",
+        "items": [
+          "Single immutable State object — no partial update inconsistency",
+          "Strictly unidirectional: Intent → ViewModel → State → View",
+          "More boilerplate: sealed class for Intents, data class for State, side effects channel",
+          "Better for complex screens with many possible states and transitions"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Choose",
+        "items": [
+          "MVVM: Most Android apps — simpler, Jetpack-native",
+          "MVI: Complex screens with many states, teams needing strict predictability"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 163,
+    "title": "Clean Architecture in MVVM",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Clean Architecture and MVVM are complementary — MVVM defines the presentation pattern while Clean Architecture defines the overall layering."
+      },
+      {
+        "type": "bullet",
+        "heading": "Layer Mapping",
+        "items": [
+          "Presentation: ViewModel (MVVM) + UI (Activity/Fragment/Compose) — observes state, sends events",
+          "Domain: Use Cases containing business logic — pure Kotlin, no Android dependencies",
+          "Data: Repositories + Data Sources (Retrofit, Room) — implements Domain interfaces"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "How They Work Together",
+        "items": [
+          "ViewModel calls a Use Case from the Domain layer",
+          "Use Case calls a Repository interface (defined in Domain, implemented in Data)",
+          "Repository fetches from network or DB and returns domain models",
+          "ViewModel maps to UI state and updates StateFlow/LiveData"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Benefits",
+        "items": [
+          "Fully testable at each layer independently",
+          "Business logic is Android-free — tested with plain JUnit"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 164,
+    "title": "Design Patterns and practical usage",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Creational Patterns",
+        "items": [
+          "Singleton: One instance of Retrofit/OkHttp client across the app",
+          "Builder: Building OkHttpClient, Notification, AlertDialog with optional parameters",
+          "Factory: Creating different View types in RecyclerView adapter (getItemViewType)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Structural Patterns",
+        "items": [
+          "Adapter: RecyclerView.Adapter, Retrofit converter adapters",
+          "Decorator: OkHttp Interceptors add behavior to requests without changing OkHttp itself",
+          "Facade: Repository pattern hides the complexity of multiple data sources"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Behavioral Patterns",
+        "items": [
+          "Observer: LiveData, Flow, RxJava — UI observes ViewModel state",
+          "Strategy: Swapping sorting or filtering algorithms at runtime",
+          "Command: ViewModel intents in MVI architecture"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 165,
+    "title": "Builder vs Factory Pattern",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Builder Pattern",
+        "items": [
+          "Constructs a complex object step by step with optional parameters",
+          "The client controls what gets set",
+          "Example: OkHttpClient.Builder().connectTimeout(30, SECONDS).addInterceptor(logging).build()",
+          "Use when: Object has many optional parameters and you want readable construction"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Factory Pattern",
+        "items": [
+          "Creates objects without exposing creation logic — the factory decides which class to instantiate",
+          "Client only knows the product interface, not the concrete class",
+          "Example: ViewModelProvider.Factory creates specific ViewModel instances",
+          "Use when: The type of object to create depends on input or configuration"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Difference",
+        "items": [
+          "Builder = constructs one object with varying configuration (same type)",
+          "Factory = creates different types of objects based on input (polymorphism)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 166,
+    "title": "Singleton vs Static — why we use them",
+    "sec": "Architecture",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Singleton",
+        "items": [
+          "A class with only one instance per application lifetime",
+          "Instance is stored on the heap — has state, can implement interfaces, can be injected",
+          "Lazy or eager initialization — controllable",
+          "Example: A database connection, Retrofit instance",
+          "Testable: Can be replaced via DI with a mock"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Static",
+        "items": [
+          "Belongs to the class itself, not an instance — stored in the class's memory area",
+          "No instantiation needed — accessed via ClassName.method()",
+          "Cannot implement interfaces or be easily mocked in tests",
+          "Example: Math.max(), utility/helper methods with no state"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "Singleton = one managed instance on the heap — stateful, injectable, testable",
+          "Static = class-level method/field — stateless utilities, not injectable or mockable"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 167,
+    "title": "Singleton pattern — problems and double-checked locking",
+    "sec": "Architecture",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Problems with Singleton",
+        "items": [
+          "Global state: Makes code hard to test — every test shares the same instance",
+          "Thread safety: In multi-threaded environments, multiple threads may create multiple instances simultaneously if not synchronized",
+          "Hidden dependencies: Components secretly depend on the Singleton — hard to trace"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Double-Checked Locking",
+        "items": [
+          "A pattern to lazily create a thread-safe Singleton without full synchronization on every access",
+          "Check if null → synchronize → check again → create if still null",
+          "The volatile keyword prevents instruction reordering by the JVM"
+        ]
+      },
+      {
+        "type": "code",
+        "heading": "Kotlin Example",
+        "content": "@Volatile private var instance: MySingleton? = null\nfun getInstance() = instance ?: synchronized(this) {\n    instance ?: MySingleton().also { instance = it }\n}"
+      },
+      {
+        "type": "bullet",
+        "heading": "Kotlin Alternative",
+        "items": [
+          "Use object declaration — Kotlin guarantees thread-safe lazy initialization via class loading"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 168,
+    "title": "What is a Spannable?",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A Spannable is an interface in Android for text that can have markup objects (spans) attached to ranges of characters or paragraphs. It allows different styles or behaviors to be applied to parts of a string."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "Spans can change appearance (bold, color, size, underline) or behavior (clickable, URL)",
+          "Spannable is the mutable interface; Spanned is read-only",
+          "SpannableString and SpannableStringBuilder are the common implementations",
+          "Used with TextView to display richly formatted text without HTML"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Common Span Types",
+        "items": [
+          "ForegroundColorSpan: Changes text color",
+          "StyleSpan: Bold or Italic",
+          "ClickableSpan: Makes text clickable",
+          "URLSpan: Turns text into a hyperlink"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 169,
+    "title": "What is a SpannableString?",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "SpannableString is an implementation of Spannable that wraps an immutable character sequence but allows spans (markup) to be attached to character ranges."
+      },
+      {
+        "type": "bullet",
+        "heading": "How It Works",
+        "items": [
+          "Create a SpannableString from a String",
+          "Use setSpan(span, start, end, flags) to attach a span to a range",
+          "Pass it to TextView.setText()",
+          "Flags control how the span behaves when text is inserted (e.g., SPAN_EXCLUSIVE_EXCLUSIVE)"
+        ]
+      },
+      {
+        "type": "code",
+        "heading": "Example",
+        "content": "val text = SpannableString(\"Hello World\")\ntext.setSpan(ForegroundColorSpan(Color.RED), 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)\ntextView.text = text"
+      },
+      {
+        "type": "bullet",
+        "heading": "SpannableString vs SpannableStringBuilder",
+        "items": [
+          "SpannableString: Fixed character content — cannot change the text itself",
+          "SpannableStringBuilder: Mutable — can insert, delete, and add spans dynamically"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 170,
+    "title": "Best practices for using text in Android",
+    "sec": "UI & Views",
+    "diff": "Easy",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Best Practices",
+        "items": [
+          "Always store strings in res/values/strings.xml — never hardcode in code or layouts",
+          "Use string resources for localization (i18n) support",
+          "Use string formatting with getString(R.string.key, arg) for dynamic values",
+          "Use sp (scale-independent pixels) for text sizes — respects user font size settings",
+          "Avoid setting text color hardcoded in code — use color resources or theme attributes",
+          "Use Spannable for rich text instead of HTML string concatenation",
+          "Use TextView autoSizeTextType for text that should fit its container",
+          "Use TextUtils.isEmpty() to check for null or empty strings safely"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 171,
+    "title": "How to implement Dark mode?",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Steps",
+        "items": [
+          "Use Theme.MaterialComponents.DayNight as the base theme in styles.xml",
+          "Define color resources in res/values/colors.xml for light and res/values-night/colors.xml for dark",
+          "Use ?attr/colorPrimary and theme attributes in layouts instead of hardcoded colors",
+          "Use AppCompatDelegate.setDefaultNightMode() to programmatically switch modes",
+          "Persist the user's choice in DataStore/SharedPreferences and apply on app start"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Drawable/Image Support",
+        "items": [
+          "Add dark variants in res/drawable-night/ folder",
+          "Use vector drawables that adapt to tint from theme attributes"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Never hardcode colors in layouts or code — always use theme attributes so dark mode works automatically"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 172,
+    "title": "Process of creating a custom view",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Steps",
+        "items": [
+          "Extend View (or a subclass like ImageView/LinearLayout)",
+          "Override constructors — support all 3 (Context, AttributeSet, defStyleAttr)",
+          "Declare custom attributes in res/values/attrs.xml with <declare-styleable>",
+          "Parse custom attributes in init{} using context.obtainStyledAttributes()",
+          "Override onMeasure(): Measure the view's desired size and call setMeasuredDimension()",
+          "Override onLayout(): Position child views (for ViewGroup only)",
+          "Override onDraw(): Draw custom graphics using Canvas and Paint",
+          "Invalidate with invalidate() to trigger a redraw; requestLayout() to trigger remeasure"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Performance Tips",
+        "items": [
+          "Never create objects inside onDraw() — allocate Paint, Path outside",
+          "Use hardware acceleration compatible operations"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 173,
+    "title": "Custom view lifecycle — onLayout vs onMeasure",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "onMeasure(widthSpec, heightSpec)",
+        "items": [
+          "Called to determine the view's desired size",
+          "Receives MeasureSpec constraints from the parent (EXACTLY, AT_MOST, UNSPECIFIED)",
+          "Must call setMeasuredDimension(width, height) — failing to do so throws an exception",
+          "Called before onLayout"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "onLayout(changed, left, top, right, bottom)",
+        "items": [
+          "Called to position child views within a ViewGroup",
+          "Only relevant for ViewGroup subclasses — not for simple View subclasses",
+          "Called after onMeasure — sizes are already known at this point",
+          "Uses the measurements from onMeasure to place children using child.layout(l, t, r, b)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "onMeasure = how big should the view be?",
+          "onLayout = where should children be placed?"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 174,
+    "title": "How does layout inflation work?",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Layout inflation is the process of parsing an XML layout file and instantiating the corresponding View objects in memory."
+      },
+      {
+        "type": "bullet",
+        "heading": "Process",
+        "items": [
+          "LayoutInflater.inflate() is called with a layout resource ID",
+          "The XmlPullParser reads the XML file from the compiled resources (already binary)",
+          "For each XML tag, LayoutInflater looks up the class name (e.g., TextView, LinearLayout)",
+          "It instantiates the class via reflection using the 2-argument constructor (Context, AttributeSet)",
+          "Attributes from XML are passed via AttributeSet to the view's constructor",
+          "Views are assembled into a hierarchy matching the XML structure"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "Custom view tag names must match the fully qualified class name or use the app: prefix",
+          "attachToRoot parameter: true attaches immediately; false returns the root view without attaching",
+          "Inflation is expensive on the main thread for complex layouts — use async inflation if needed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 175,
+    "title": "What does setContentView() do?",
+    "sec": "UI & Views",
+    "diff": "Easy",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "setContentView() inflates the specified layout XML and sets it as the content of the Activity's root view (the DecorView)."
+      },
+      {
+        "type": "bullet",
+        "heading": "What Happens Internally",
+        "items": [
+          "The Activity's Window holds a DecorView (the root of all views)",
+          "setContentView() calls the Window's setContentView(), which calls LayoutInflater.inflate()",
+          "The inflated hierarchy is attached to a content FrameLayout inside the DecorView",
+          "The Activity's layout is now displayed on screen"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Must be called before accessing views (before findViewById or ViewBinding)",
+          "Typically called in onCreate() right after super.onCreate()"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 176,
+    "title": "ConstraintLayout — Barriers, Guidelines, Groups, Chains",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Why ConstraintLayout",
+        "items": [
+          "Flat view hierarchy — no nested LinearLayouts/RelativeLayouts needed",
+          "Better performance: Single-pass measurement in most cases",
+          "Highly flexible positioning with constraints between views and parent"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Barriers",
+        "items": [
+          "A virtual line that positions itself based on the edge of multiple referenced views",
+          "Example: A barrier at the end of two text views — adjusts to the widest one dynamically"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Guidelines",
+        "items": [
+          "Fixed virtual lines at a percentage or fixed dp from an edge",
+          "Use to align multiple views to a consistent position"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Chains",
+        "items": [
+          "A group of views linked by bidirectional constraints",
+          "Chain styles: spread (evenly distributed), spread_inside, packed (grouped together)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Groups",
+        "items": [
+          "A set of view IDs that can be shown/hidden together with a single visibility change"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 178,
+    "title": "Remote Views and how to use them",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "RemoteViews is a class that describes a View hierarchy that can be displayed in another process — used for App Widgets and Custom Notifications."
+      },
+      {
+        "type": "bullet",
+        "heading": "How It Works",
+        "items": [
+          "RemoteViews is serializable and can be passed across process boundaries via Binder",
+          "The receiving process (launcher, system UI) inflates and displays the layout",
+          "You update views using method calls like setTextViewText(), setImageViewResource() — not direct view references",
+          "The system applies these operations in the remote process"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Common Uses",
+        "items": [
+          "Home screen App Widgets (AppWidgetProvider)",
+          "Custom Notification layouts with RemoteViews for notification content view"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Limitations",
+        "items": [
+          "Only a subset of View types are supported (TextView, ImageView, Button, etc.)",
+          "Cannot use custom views in RemoteViews"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 179,
+    "title": "Inner Classes vs Static Classes",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Inner Class (non-static)",
+        "items": [
+          "Holds an implicit reference to the outer class instance",
+          "Can access outer class members directly",
+          "Risk of memory leak: if the inner class outlives the outer class (e.g., in a background thread), it prevents GC of the outer class",
+          "Example: Anonymous Runnable or Listener defined inside an Activity"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Static Nested Class",
+        "items": [
+          "No reference to the outer class — standalone",
+          "Cannot access outer class non-static members directly",
+          "No memory leak risk — does not keep the outer class alive",
+          "Example: Static ViewHolder inside RecyclerView.Adapter; static Handler subclasses"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Best Practice",
+        "items": [
+          "Prefer static nested classes; use WeakReference if you need outer class access"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 180,
+    "title": "Volatile vs Transient",
+    "sec": "UI & Views",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "volatile",
+        "items": [
+          "A Java/Kotlin keyword for thread visibility",
+          "Guarantees that reads/writes to the variable are always done from/to main memory — not cached in CPU registers",
+          "Prevents instruction reordering by the JVM around the variable",
+          "Use for flags or references shared between threads (e.g., Singleton double-checked locking)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "transient",
+        "items": [
+          "A Java keyword for serialization",
+          "Marks a field to be excluded from serialization — not written to the byte stream",
+          "Use for fields that should not be persisted: passwords, cached data, UI references"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "volatile = thread safety (visibility between threads)",
+          "transient = serialization exclusion"
+        ]
+      }
+    ]
   }
+,
+  {
+    "id": 181,
+    "title": "What is ADB in Android?",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "ADB (Android Debug Bridge) is a command-line tool for communicating with a real device or emulator for debugging, testing, and management."
+      },
+      {
+        "type": "bullet",
+        "heading": "Common Commands",
+        "items": [
+          "adb devices – List connected devices",
+          "adb install app.apk – Install an app",
+          "adb logcat – View device logs",
+          "adb shell – Access device shell",
+          "adb pull/push – Transfer files"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Features",
+        "items": [
+          "Works with real devices and emulators",
+          "Supports debugging, log viewing, and shell access",
+          "Used in CI/CD pipelines for automated testing"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 182,
+    "title": "What is AAPT?",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "AAPT (Android Asset Packaging Tool) compiles, packages, and manages app resources during the build process."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Responsibilities",
+        "items": [
+          "Compiles XML resources (layouts, strings, drawables) into binary format",
+          "Generates the R class (R.java/R.kt) for type-safe resource access in code",
+          "Packages resources into the APK or AAB",
+          "AAPT2 (current version) splits compile and link steps for incremental builds"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 183,
+    "title": "What is StrictMode?",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "StrictMode is a developer tool that detects accidental disk/network access on the main thread and potential memory leaks."
+      },
+      {
+        "type": "bullet",
+        "heading": "Policies",
+        "items": [
+          "ThreadPolicy: Detects disk reads/writes and network calls on the main thread",
+          "VmPolicy: Detects memory leaks, unclosed SQLite cursors, and unclosed Closeables"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Use only in debug builds — not in production",
+          "Actions on violation: log, toast, dialog, or crash the app"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 184,
+    "title": "What is Lint?",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Lint is a static analysis tool built into Android Studio that scans source code and resources for bugs, performance issues, and best practice violations at compile time."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Checks",
+        "items": [
+          "Missing translations in string resources",
+          "Incorrect API usage for the target SDK",
+          "Performance issues (e.g., unused resources)",
+          "Security vulnerabilities",
+          "Accessibility issues in layouts"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Runs automatically in Android Studio; can run via ./gradlew lint",
+          "Custom lint rules can be written for team-specific checks"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 185,
+    "title": "What is Gradle?",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Gradle is the build automation tool used by Android projects. It compiles code, packages resources, manages dependencies, and produces APK/AAB outputs."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Features",
+        "items": [
+          "Declarative build scripts in Groovy DSL or Kotlin DSL",
+          "Dependency management: downloads and caches libraries from Maven/Google repositories",
+          "Build variants: supports debug/release flavors with different configs",
+          "Incremental builds: only rebuilds what changed",
+          "Plugin ecosystem: Android Gradle Plugin (AGP) integrates Android-specific tasks"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 186,
+    "title": "Gradle-related files in Android project",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Files",
+        "items": [
+          "build.gradle (project-level): Classpath dependencies, Gradle plugin versions for all modules",
+          "build.gradle (module-level): Android config (compileSdk, minSdk, targetSdk), dependencies for that module",
+          "settings.gradle: Declares module names included in the project",
+          "gradle.properties: Project-wide Gradle settings (JVM args, flags, API keys)",
+          "local.properties: Machine-local properties (SDK path) — not committed to VCS",
+          "gradle-wrapper.properties: Specifies the Gradle version to use for the project"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 187,
+    "title": "How to create a custom task in Gradle?",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Custom Gradle tasks let you automate project-specific steps — like copying files, running scripts, or generating code."
+      },
+      {
+        "type": "code",
+        "heading": "Groovy DSL Example",
+        "content": "task copyApk(type: Copy) {\n    from \"build/outputs/apk/release/\"\n    into \"../distribution/\"\n    include \"*.apk\"\n}\n\n// Or a simple task:\ntask hello {\n    doLast {\n        println 'Hello from custom task!'\n    }\n}"
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "Tasks can depend on other tasks using dependsOn",
+          "Use doFirst{} and doLast{} to add actions",
+          "Custom tasks can be typed (Copy, Exec, Zip) or generic"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 188,
+    "title": "annotationProcessor, kapt, ksp in Gradle",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "annotationProcessor",
+        "items": [
+          "Java annotation processing — processes annotations at compile time to generate code",
+          "Used for Java projects or Java-based annotation processors (e.g., Dagger in Java projects)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "kapt (Kotlin Annotation Processing Tool)",
+        "items": [
+          "Kotlin's annotation processing — wraps Java annotation processors for use with Kotlin",
+          "Compiles Kotlin to stubs, then runs the Java annotation processor on them — slower",
+          "Used for Dagger, Glide, Room in Kotlin projects (older approach)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "ksp (Kotlin Symbol Processing)",
+        "items": [
+          "Modern replacement for kapt — processes Kotlin symbols natively without stub generation",
+          "Significantly faster than kapt (up to 2x)",
+          "Used for Room, Moshi, Dagger-Hilt where KSP support is available",
+          "Preferred for new projects"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 189,
+    "title": "implementation vs api in Gradle",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "implementation",
+        "items": [
+          "Dependency is available only within the module that declares it",
+          "Not exposed to consumers of the module — transitive dependency is hidden",
+          "Faster build: dependent modules don't recompile when this dependency changes internally",
+          "Use for most dependencies"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "api",
+        "items": [
+          "Dependency is exposed to consumers of the module — part of the public API",
+          "If the dependency changes, all modules depending on this module must also recompile",
+          "Use only when the dependency's types appear in the module's public API (e.g., method signatures)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "implementation = internal use only (prefer this)",
+          "api = leak dependency to consumers (use sparingly)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 190,
+    "title": "Build Variants in Android",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Build variants are combinations of Build Types and Product Flavors that let you produce multiple versions of your app from one codebase."
+      },
+      {
+        "type": "bullet",
+        "heading": "Build Types",
+        "items": [
+          "debug: Debug symbols, logging enabled, debuggable=true",
+          "release: Minification, obfuscation (ProGuard/R8), signing config applied"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Product Flavors",
+        "items": [
+          "Define different app versions: free vs paid, dev vs staging vs prod",
+          "Can have different applicationId, API base URLs, feature flags",
+          "Grouped in flavorDimensions for multi-dimensional variants"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Result",
+        "items": [
+          "Build Types × Product Flavors = Build Variants",
+          "Example: freeDebug, freRelease, paidDebug, paidRelease"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 191,
+    "title": "Desugaring in Android",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Desugaring is the process by which D8/R8 transforms Java 8+ language features (lambdas, streams, method references) into bytecode compatible with older Android versions."
+      },
+      {
+        "type": "bullet",
+        "heading": "How It Works",
+        "items": [
+          "D8 replaces javac-generated bytecode for Java 8+ features with equivalent Java 7-compatible code",
+          "Core library desugaring extends this to Java 8+ APIs (java.time, java.util.stream) on older API levels",
+          "Enabled by adding coreLibraryDesugaringEnabled = true in build.gradle"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Without desugaring, using lambdas or java.time on API <26 would crash at runtime",
+          "Desugaring adds a small overhead to build time but enables modern APIs on older devices"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 192,
+    "title": "APK Size Reduction",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Techniques",
+        "items": [
+          "Enable R8/ProGuard minification: removes unused code and resources",
+          "Resource shrinking: shrinkResources = true removes unused drawables, layouts, strings",
+          "Use Android App Bundle (AAB): Play Store delivers only the code and resources for the device's configuration",
+          "Use WebP for images instead of PNG — smaller file size with same quality",
+          "Split APKs by ABI: Separate APKs for arm64, x86 instead of one fat APK",
+          "Remove unused language resources with resConfigs in build.gradle",
+          "Analyze with APK Analyzer in Android Studio to find what's taking space"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 193,
+    "title": "How to speed up Gradle builds?",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Techniques",
+        "items": [
+          "Enable Gradle build caching: org.gradle.caching=true in gradle.properties",
+          "Enable parallel builds: org.gradle.parallel=true",
+          "Increase JVM heap: org.gradle.jvmargs=-Xmx4g",
+          "Use configuration on demand: org.gradle.configureondemand=true",
+          "Switch from kapt to ksp — significantly faster annotation processing",
+          "Use modular architecture — only recompile changed modules",
+          "Avoid using api{} — prefer implementation{} to reduce recompilation scope",
+          "Keep compileSdk and AGP up to date — newer versions have build performance improvements"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 194,
+    "title": "Multiple APKs for Android apps",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Multiple APKs allow you to publish different APKs targeting different device configurations (ABI, screen density, API level) to reduce APK size per device."
+      },
+      {
+        "type": "bullet",
+        "heading": "ABI Splits",
+        "items": [
+          "Generate separate APKs for arm64-v8a, armeabi-v7a, x86 — each contains only native .so files for that ABI",
+          "Reduces APK size significantly for apps using NDK"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Density Splits",
+        "items": [
+          "Separate APKs for hdpi, xhdpi, xxhdpi — each contains only relevant drawable resources"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Better Alternative",
+        "items": [
+          "Use Android App Bundle (AAB) — Play Store generates optimized APKs automatically for each device configuration",
+          "AAB supersedes manual multi-APK for most cases"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 195,
+    "title": "Kotlin DSL for Gradle",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Kotlin DSL is an alternative to Groovy DSL for writing Gradle build scripts using Kotlin syntax."
+      },
+      {
+        "type": "bullet",
+        "heading": "Advantages",
+        "items": [
+          "Type-safe: IDE provides auto-complete, navigation, and compile-time error checking",
+          "Better refactoring support in Android Studio",
+          "Consistent language: use Kotlin for both app code and build scripts",
+          "build.gradle.kts files replace build.gradle"
+        ],
+        
+      },
+      {
+        "type": "bullet",
+        "heading": "Disadvantages",
+        "items": [
+          "Slightly slower build script compilation on first run",
+          "Migration from Groovy DSL requires syntax changes",
+          "Some Groovy-dynamic tricks are not directly available"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Google recommends Kotlin DSL for new projects — the default in new Android Studio projects"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 196,
+    "title": "What is ProGuard used for?",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "ProGuard is a tool that shrinks, optimizes, and obfuscates Java/Kotlin bytecode to reduce APK size and protect code from reverse engineering."
+      },
+      {
+        "type": "bullet",
+        "heading": "What It Does",
+        "items": [
+          "Shrinking: Removes unused classes, methods, and fields",
+          "Optimization: Inlines methods, removes dead code",
+          "Obfuscation: Renames classes and methods to meaningless short names (a, b, c) — harder to reverse engineer",
+          "Pre-verification: Verifies bytecode for the JVM"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "ProGuard is replaced by R8 in modern Android builds — R8 does all of the above in a single pass and is faster"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 197,
+    "title": "What is proguard-rules.pro used for?",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "proguard-rules.pro is a configuration file where you define custom rules that tell ProGuard/R8 what to keep (not shrink or obfuscate) when building a release APK."
+      },
+      {
+        "type": "bullet",
+        "heading": "Common Rules",
+        "items": [
+          "Keep rules for classes used via reflection (e.g., GSON models, Retrofit interfaces)",
+          "Keep rules for third-party libraries that require specific class names",
+          "Keep data classes used for JSON deserialization — obfuscation breaks field name matching",
+          "Keep names of classes used in AndroidManifest.xml (Activities, Services)"
+        ]
+      },
+      {
+        "type": "code",
+        "heading": "Example",
+        "content": "-keep class com.example.models.** { *; }\n-keepclassmembers class * {\n    @com.google.gson.annotations.SerializedName <fields>;\n}"
+      }
+    ]
+  },
+  {
+    "id": 198,
+    "title": "ProGuard vs R8",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "ProGuard",
+        "items": [
+          "Older Java bytecode optimizer/shrinker/obfuscator",
+          "Works on .class files after compilation — a separate step",
+          "Multi-pass: separate shrink, optimize, obfuscate, pre-verify steps",
+          "Slower overall build pipeline"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "R8",
+        "items": [
+          "Google's replacement for ProGuard in Android builds — enabled by default since AGP 3.4",
+          "Works directly on DEX — integrated with D8 compiler in a single pass",
+          "Faster builds — combines desugaring, shrinking, and optimization in one step",
+          "Compatible with ProGuard rules (reads proguard-rules.pro)",
+          "Better dead code elimination and optimization than ProGuard"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "R8 is the modern default — faster, single-pass, better optimization",
+          "ProGuard rules files are still used to configure R8"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 199,
+    "title": "Obfuscation and Minification",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Minification",
+        "items": [
+          "Removes unused code and resources from the APK — reduces size",
+          "Enabled by minifyEnabled = true in build.gradle",
+          "R8 removes classes, methods, and fields not reachable from entry points (Activities, etc.)",
+          "shrinkResources = true removes unused drawable/layout/string resources"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Obfuscation",
+        "items": [
+          "Renames classes, methods, and fields to short meaningless names (a, b, c, aa, etc.)",
+          "Makes decompiled code hard to understand — protection against reverse engineering",
+          "Mapping file (mapping.txt) generated by R8 lets you de-obfuscate crash stack traces",
+          "Upload mapping.txt to Play Console or Crashlytics for readable crash reports"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 200,
+    "title": "Things to take care of while using ProGuard",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Common Pitfalls",
+        "items": [
+          "JSON models: Data classes used for GSON/Moshi must be kept — obfuscation breaks field name mapping",
+          "Reflection: Classes accessed via reflection must have -keep rules",
+          "Third-party libraries: Most popular libs (Retrofit, OkHttp, Glide) include their own consumer ProGuard rules automatically",
+          "AndroidManifest entries: Activity, Service, BroadcastReceiver class names must not be obfuscated",
+          "Enums: Keep enum classes if accessed by name",
+          "Stack traces: Always save the mapping.txt for each release build to decode obfuscated crash reports"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Best Practice",
+        "items": [
+          "Test the release build before publishing — ProGuard issues only appear in release mode",
+          "Use @Keep annotation to protect specific classes/members from obfuscation in Kotlin"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 202,
+    "title": "CI/CD Pipeline for Android",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A CI/CD pipeline automates the build, test, and deployment process for Android apps."
+      },
+      {
+        "type": "bullet",
+        "heading": "Typical Pipeline Steps",
+        "items": [
+          "Trigger: PR or push to main branch triggers the pipeline (GitHub Actions, Bitrise, CircleCI, Jenkins)",
+          "Checkout: Clone the repository",
+          "Cache dependencies: Cache Gradle files and dependencies to speed up subsequent runs",
+          "Build: ./gradlew assembleRelease or bundleRelease",
+          "Unit Tests: ./gradlew test",
+          "Lint: ./gradlew lint",
+          "Instrumented Tests: Run on Firebase Test Lab or emulators",
+          "Sign APK/AAB: Apply keystore signing",
+          "Deploy: Upload to Play Store internal track via Fastlane or Play Developer API"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Common Tools",
+        "items": [
+          "GitHub Actions, Bitrise, CircleCI — CI platforms",
+          "Fastlane — automates signing and Play Store deployment"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 203,
+    "title": "Android App Release Checklist",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Before Release",
+        "items": [
+          "minifyEnabled = true and shrinkResources = true in release build config",
+          "All debug logging removed or guarded by BuildConfig.DEBUG",
+          "App is signed with release keystore (never lose the keystore)",
+          "versionCode incremented; versionName updated",
+          "All API keys are for production (not sandbox/dev keys)",
+          "Crashlytics or error tracking configured",
+          "Firebase Remote Config set to production values",
+          "ProGuard/R8 mapping.txt backed up for crash deobfuscation",
+          "GDPR/privacy policy URL accessible",
+          "Accessibility review completed — content descriptions, contrast ratios"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 204,
+    "title": "16 KB page size for Android apps",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Starting with Android 15, some devices use a 16 KB memory page size instead of the traditional 4 KB. Apps using native code (NDK) must be aligned to 16 KB page boundaries to function correctly on these devices."
+      },
+      {
+        "type": "bullet",
+        "heading": "Impact",
+        "items": [
+          "Apps with only Java/Kotlin code are not affected",
+          "Apps using .so native libraries must be rebuilt and aligned with 16 KB page size",
+          "Misaligned .so files will crash on 16 KB page size devices"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Fix",
+        "items": [
+          "Recompile native code with updated NDK (r28+) and appropriate linker flags",
+          "Use the ELF alignment checker to verify .so files",
+          "Test on a 16 KB page size emulator or device"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 205,
+    "title": "How to measure method execution time?",
+    "sec": "Android Tools & Build",
+    "diff": "Easy",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Methods",
+        "items": [
+          "System.nanoTime() or SystemClock.elapsedRealtimeNanos(): Most accurate for measuring elapsed time",
+          "Kotlin measureTimeMillis{} / measureNanoTime{}: Inline functions that time a block",
+          "Android Tracing API: Trace.beginSection(\"name\") / endSection() — visible in Android Studio CPU Profiler and Systrace",
+          "Macrobenchmark library: For measuring app startup and UI performance in a realistic environment",
+          "Android Studio CPU Profiler: Record traces to see method execution time with flamecharts"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 206,
+    "title": "What is Support Library? Why was it introduced?",
+    "sec": "Android Tools & Build",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "The Android Support Library was a set of libraries providing backward-compatible versions of newer Android APIs, allowing modern features on older Android versions."
+      },
+      {
+        "type": "bullet",
+        "heading": "Why Introduced",
+        "items": [
+          "Android fragmentation: Many devices ran older OS versions",
+          "Backward compatibility: RecyclerView, CardView, ViewPager on older APIs",
+          "Consistent behavior: Same UI components across Android versions"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Current Status",
+        "items": [
+          "Support Library is superseded by AndroidX (Jetpack)",
+          "AndroidX uses consistent package naming (androidx.*) and is versioned independently from the OS",
+          "All new development should use AndroidX — Support Library is no longer updated"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 207,
+    "title": "Android Push Notification Flow using FCM",
+    "sec": "Push Notifications",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Flow",
+        "content": "1. App registers with Firebase Cloud Messaging (FCM) on first launch. 2. FCM returns a unique device registration token. 3. App sends this token to your backend server. 4. Server stores the token and associates it with the user. 5. When a push is needed, server sends a message to FCM API with the target token. 6. FCM delivers the message to the device. 7. FCM SDK on the device calls FirebaseMessagingService.onMessageReceived(). 8. App displays a notification or processes the data payload."
+      },
+      {
+        "type": "bullet",
+        "heading": "Token Refresh",
+        "items": [
+          "FCM tokens can change — implement onNewToken() callback in FirebaseMessagingService to update the server when the token changes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 208,
+    "title": "How does Android Push Notification system work?",
+    "sec": "Push Notifications",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Android push notifications are delivered via FCM (Firebase Cloud Messaging) which uses a persistent connection to Google's servers."
+      },
+      {
+        "type": "bullet",
+        "heading": "How It Works",
+        "items": [
+          "A persistent TCP connection is maintained between the device and Google's FCM servers (even when the app is not running)",
+          "This connection is managed by Google Play Services — not the app itself",
+          "When FCM receives a message for the device, it pushes it through this connection",
+          "The FCM SDK wakes up the app (or its background service) via an Intent",
+          "The app processes the message in FirebaseMessagingService.onMessageReceived()"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Notification vs Data Messages",
+        "items": [
+          "Notification message: FCM displays it automatically when app is in background",
+          "Data message: Always delivered to onMessageReceived() — app handles display"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 209,
+    "title": "Handle opening Activity using notifications",
+    "sec": "Push Notifications",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Steps",
+        "items": [
+          "Create an Intent targeting the Activity you want to open",
+          "Wrap it in a PendingIntent with FLAG_UPDATE_CURRENT and FLAG_IMMUTABLE",
+          "Set the PendingIntent on the NotificationCompat.Builder via .setContentIntent()",
+          "Add .setAutoCancel(true) so the notification dismisses on tap",
+          "Handle the Intent in the target Activity's onCreate() / onNewIntent() to act on notification data"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Back Stack",
+        "items": [
+          "Use TaskStackBuilder to construct an artificial back stack so the user can press back naturally after opening from a notification",
+          "Add the parent Activity chain with addParentStack()"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 210,
+    "title": "Push notifications — foreground vs background behavior",
+    "sec": "Push Notifications",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "App in Foreground",
+        "items": [
+          "FCM delivers the message to FirebaseMessagingService.onMessageReceived() regardless of message type",
+          "The system does NOT automatically show a notification — your code must build and display it manually",
+          "Data-only messages: always delivered to onMessageReceived()",
+          "Notification messages: also go to onMessageReceived() when app is foreground"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "App in Background / Killed",
+        "items": [
+          "Notification messages: FCM SDK automatically displays the notification in the system tray — no app code runs",
+          "Data messages: Delivered to onMessageReceived() when the app is eventually started",
+          "When user taps the notification, the launcher Activity is started with the notification payload in the Intent extras"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Best Practice",
+        "items": [
+          "Use data-only messages and handle display manually for full control in both states"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 211,
+    "title": "Doze Mode and App Standby",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Doze Mode",
+        "items": [
+          "Activates when device is stationary, screen off, and not charging",
+          "Defers background CPU, network, and sync work",
+          "Allows maintenance windows periodically where deferred work runs",
+          "Apps can request exemption (not recommended for most apps)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "App Standby",
+        "items": [
+          "Applies to apps not recently used by the user",
+          "Restricts background network and jobs for idle apps",
+          "Active usage resets the standby bucket"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "App Standby Buckets (Android 9+)",
+        "items": [
+          "Active → Working Set → Frequent → Rare — progressively more restricted background work",
+          "System uses ML (Adaptive Battery) to classify apps into buckets based on usage patterns"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 212,
+    "title": "How Android implements adaptive battery using ML?",
+    "sec": "Battery & System",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Adaptive Battery uses on-device machine learning (powered by DeepMind) to predict which apps the user is unlikely to use in the next few hours and restricts their background activity."
+      },
+      {
+        "type": "bullet",
+        "heading": "How It Works",
+        "items": [
+          "The system learns the user's app usage patterns over time",
+          "Apps are classified into standby buckets: Active, Working Set, Frequent, Rare, Restricted",
+          "Apps in lower buckets (Rare, Restricted) have their background jobs, alarms, and network access increasingly limited",
+          "The ML model runs entirely on-device — no data sent to Google"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Impact on Developers",
+        "items": [
+          "Background jobs may be deferred or rate-limited for less-used apps",
+          "Use high-priority FCM for time-sensitive notifications — they bypass Doze",
+          "Use WorkManager with Constraints — it works within the system's scheduling policies"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 213,
+    "title": "How to reduce battery usage in an Android app?",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Key Strategies",
+        "items": [
+          "Minimize wake locks: Only hold WakeLocks for as long as needed; release immediately after use",
+          "Batch network requests: Make multiple calls in one network session instead of many small ones",
+          "Use WorkManager with constraints: Run work only when charging or on Wi-Fi",
+          "Avoid polling: Use push notifications (FCM) or server-sent events instead of regular polling",
+          "Use JobScheduler/WorkManager for deferred work — system batches jobs from multiple apps for efficiency",
+          "Reduce GPS usage: Use fused location provider; request low-power modes when precision isn't critical",
+          "Avoid running services indefinitely: Use Foreground Service only when truly needed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 214,
+    "title": "Support different screen sizes and densities",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Screen Sizes",
+        "items": [
+          "Use ConstraintLayout for flexible, responsive layouts",
+          "Provide alternative layouts in res/layout-sw600dp/ for tablets",
+          "Use WindowSizeClass (Jetpack) to adapt layouts to compact/medium/expanded windows"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Densities",
+        "items": [
+          "Use dp (density-independent pixels) for dimensions — never px",
+          "Provide drawables in res/drawable-mdpi/, -hdpi, -xhdpi, -xxhdpi, -xxxhdpi",
+          "Or use vector drawables (SVG) which scale perfectly to any density"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Other",
+        "items": [
+          "Use sp for text sizes — respects user font size preferences",
+          "Test on multiple screen sizes using the Layout Inspector and emulators",
+          "Use adaptive icons for launcher icons"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 215,
+    "title": "Different protection levels in permissions",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Normal",
+        "items": [
+          "Low-risk permissions granted automatically at install",
+          "No user prompt required",
+          "Example: INTERNET, ACCESS_NETWORK_STATE, VIBRATE"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Dangerous",
+        "items": [
+          "Access to sensitive user data — requires explicit user approval at runtime",
+          "Must call requestPermissions() and handle the result",
+          "Example: READ_CONTACTS, ACCESS_FINE_LOCATION, CAMERA, READ_CALL_LOG"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Signature",
+        "items": [
+          "Granted only to apps signed with the same certificate as the app that declared the permission",
+          "Used for IPC between apps from the same developer",
+          "Not user-facing"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "SignatureOrSystem",
+        "items": [
+          "Granted to apps signed with the same certificate OR apps installed in the system image",
+          "Restricted to system-level use"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 216,
+    "title": "What is the NDK and why is it useful?",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "The NDK (Native Development Kit) allows you to implement parts of your Android app in C or C++."
+      },
+      {
+        "type": "bullet",
+        "heading": "Why It Is Useful",
+        "items": [
+          "Performance: C/C++ can be faster for CPU-intensive tasks (signal processing, physics, compression)",
+          "Reuse existing libraries: Port existing C/C++ codebases (game engines, codec libraries) to Android",
+          "Low-level hardware access: Direct memory management, SIMD instructions",
+          "Cross-platform: Share C/C++ code between Android and iOS"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "NDK code runs in a separate .so native library loaded by the JVM via System.loadLibrary()",
+          "JNI (Java Native Interface) bridges Java/Kotlin and native code",
+          "Use NDK only when truly needed — most apps don't need it"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 217,
+    "title": "What is RenderScript?",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "RenderScript was a framework for running computationally intensive tasks in parallel on the CPU or GPU, primarily for image processing and data-parallel computations."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "Provided a C99-based scripting language for parallel computation",
+          "Used for blurring images, applying filters, matrix operations",
+          "Automatically utilized multiple CPU cores and the GPU",
+          "Deprecated in Android 12 — removed in subsequent releases"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Replacement",
+        "items": [
+          "Use Vulkan for GPU compute workloads",
+          "Use RenderEffect API (Android 12+) for image effects",
+          "Use GPGPU via OpenCL or NNAPI for ML inference"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 218,
+    "title": "How the OS handles process flow — when is app killed?",
+    "sec": "Battery & System",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Android manages app processes using a priority hierarchy. When memory is low, the system kills processes starting from the lowest priority."
+      },
+      {
+        "type": "bullet",
+        "heading": "Process Priority (High to Low)",
+        "items": [
+          "Foreground: App is active and visible — never killed unless critical",
+          "Visible: Partially visible (e.g., behind a dialog)",
+          "Service: Background service running — killed under memory pressure",
+          "Background: App is invisible and stopped — can be killed anytime",
+          "Empty: No active components — first to be killed to reclaim memory"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "When App Is Killed",
+        "items": [
+          "System never kills the foreground process unless absolutely necessary",
+          "Android may also kill processes to enforce battery optimization (Doze, App Standby)",
+          "When the user removes the app from Recents, onDestroy() is called if possible, then the process is killed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 219,
+    "title": "What is Espresso?",
+    "sec": "Testing",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Espresso is Google's official UI testing framework for Android. It enables writing concise, reliable instrumented tests that interact with UI components on a device or emulator."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Features",
+        "items": [
+          "Automatically synchronizes with the UI thread — no Thread.sleep() needed",
+          "Fluent API: onView(matcher).perform(action).check(assertion)",
+          "Built-in matchers (withId, withText) and actions (click, typeText, scrollTo)",
+          "Integrates with Android Test Runner for CI"
+        ],
+        
+      },
+      {
+        "type": "bullet",
+        "heading": "Example",
+        "items": [
+          "onView(withId(R.id.button)).perform(click())",
+          "onView(withId(R.id.textView)).check(matches(withText(\"Hello\")))"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 220,
+    "title": "What is Robolectric? Disadvantages?",
+    "sec": "Testing",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Robolectric is a testing framework that lets you run Android tests on the JVM without a device or emulator by providing shadow implementations of Android classes."
+      },
+      {
+        "type": "bullet",
+        "heading": "Advantages",
+        "items": [
+          "Fast: Tests run on JVM — no emulator boot time",
+          "Can test Android-dependent code (Context, Activity, etc.) in unit tests",
+          "Integrated with JUnit 4/5"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Disadvantages",
+        "items": [
+          "Shadow implementations may not perfectly match real Android behavior — tests may pass but fail on a real device",
+          "Not suitable for testing real GPU rendering or complex hardware interactions",
+          "Can be slow to configure for complex tests",
+          "Incomplete support for newer Android APIs — shadows may lag behind OS releases"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 221,
+    "title": "What is UI Automator?",
+    "sec": "Testing",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "UI Automator is a testing framework for writing instrumented tests that interact with the system UI and other apps — not just your own app."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Features",
+        "items": [
+          "Can test interactions that cross app boundaries (e.g., share sheet, notifications, Settings app)",
+          "Works with any app — uses accessibility services to find and interact with UI elements",
+          "Complements Espresso: Espresso for within-app testing, UI Automator for cross-app or system UI"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Example Use Cases",
+        "items": [
+          "Test notification behavior after your app sends one",
+          "Test file picker or permission dialogs",
+          "Integration tests involving system settings"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 222,
+    "title": "Explain unit test",
+    "sec": "Testing",
+    "diff": "Easy",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "A unit test verifies the behavior of a single, isolated unit of code (a function, class, or module) without external dependencies."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Characteristics",
+        "items": [
+          "Fast: Runs on the JVM — no device or emulator needed",
+          "Isolated: Dependencies are replaced with mocks or fakes",
+          "Deterministic: Same input always produces same output",
+          "Scope: Tests one function or class in isolation"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Tools in Android",
+        "items": [
+          "JUnit 4/5 — test framework",
+          "Mockito / MockK — mocking frameworks",
+          "Turbine — testing Kotlin Flow",
+          "Truth / AssertJ — readable assertions"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 223,
+    "title": "Explain instrumented test",
+    "sec": "Testing",
+    "diff": "Easy",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "An instrumented test runs on a real Android device or emulator and has access to the full Android framework, including UI, Context, and system services."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Characteristics",
+        "items": [
+          "Slower than unit tests — requires device/emulator boot",
+          "Can test UI interactions, database operations, and system services",
+          "Runs against the actual Android runtime"
+        ],
+        
+      },
+      {
+        "type": "bullet",
+        "heading": "Tools",
+        "items": [
+          "Espresso: UI interaction testing",
+          "AndroidJUnit4: Test runner for instrumented tests",
+          "Room in-memory database for testing Room DAOs",
+          "Hilt testing support for dependency injection in tests"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 224,
+    "title": "Why Mockito is used?",
+    "sec": "Testing",
+    "diff": "Easy",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Mockito is a Java/Kotlin mocking framework used to create mock objects in unit tests — simulating dependencies without requiring real implementations."
+      },
+      {
+        "type": "bullet",
+        "heading": "Why It Is Used",
+        "items": [
+          "Isolate the unit under test: Replace real dependencies (Repository, API, DB) with controlled mocks",
+          "Verify behavior: Assert that certain methods were called with specific arguments",
+          "Stub responses: Define what the mock should return when a method is called",
+          "Avoid side effects: No network calls or DB writes in unit tests"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "MockK (Kotlin)",
+        "items": [
+          "MockK is the Kotlin-native alternative to Mockito — better coroutine support, cleaner DSL",
+          "Preferred for Kotlin projects"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 225,
+    "title": "Describe code coverage",
+    "sec": "Testing",
+    "diff": "Easy",
+    "time": "30 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Code coverage measures what percentage of your source code is executed during testing."
+      },
+      {
+        "type": "bullet",
+        "heading": "Types of Coverage",
+        "items": [
+          "Line coverage: Percentage of code lines executed by tests",
+          "Branch coverage: Percentage of code branches (if/else paths) executed",
+          "Method coverage: Percentage of methods called"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Points",
+        "items": [
+          "High coverage doesn't guarantee correct tests — tests must also assert correctly",
+          "Target ~80% coverage for business logic; 100% is impractical",
+          "Use JaCoCo in Gradle to generate coverage reports",
+          "Coverage report: ./gradlew testDebugUnitTestCoverage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 226,
+    "title": "Stub vs Mock",
+    "sec": "Testing",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Stub",
+        "items": [
+          "A minimal implementation that returns predefined responses to method calls",
+          "Does not verify that methods were called — only provides canned answers",
+          "Used when you just need the dependency to return something so the test can proceed",
+          "Example: Stub repository always returns an empty list"
+        ],
+        
+      },
+      {
+        "type": "bullet",
+        "heading": "Mock",
+        "items": [
+          "A test double that records how it was called and verifies interactions",
+          "Used to assert that specific methods were called with specific arguments",
+          "Created with Mockito.mock() or mockk{}",
+          "Combines stubbing (what to return) with verification (was it called?)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "Stub = fake data provider (state-based testing)",
+          "Mock = interaction verifier (behavior-based testing)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 227,
+    "title": "TDD and frameworks — challenges faced",
+    "sec": "Testing",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "TDD (Test-Driven Development) is a practice where tests are written before the implementation: Red (failing test) → Green (make it pass) → Refactor."
+      },
+      {
+        "type": "bullet",
+        "heading": "Challenges in Android",
+        "items": [
+          "Android dependency: Activities, Context, Views are hard to unit test — requires Robolectric or instrumented tests",
+          "Slow feedback loop: Instrumented tests on device/emulator are slow — breaks TDD rhythm",
+          "Legacy code: Existing tightly coupled code is hard to retrofit with tests",
+          "Learning curve: Teams unfamiliar with mocking and testing patterns",
+          "UI testing fragility: Espresso tests can be flaky depending on timing and device state"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Overcome",
+        "items": [
+          "Use MVVM/Clean Architecture — keeps business logic in pure Kotlin classes, easy to unit test",
+          "Use MockK/Mockito to mock Android dependencies",
+          "Use Hilt testing support for DI in tests"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 228,
+    "title": "How can two distinct Android apps interact?",
+    "sec": "IPC & Communication",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Methods",
+        "items": [
+          "Intents: Start an Activity or Service in another app using explicit or implicit Intents",
+          "Content Providers: Share structured data between apps via URI-based access with permissions",
+          "Broadcast Receivers: Send broadcasts that other apps can listen to",
+          "AIDL (Android Interface Definition Language): Define a cross-process interface for direct method calls via Binder",
+          "Messenger: Simplified IPC via Handler-based message passing over Binder",
+          "Shared Files: Both apps read/write to the same file via FileProvider with proper permissions"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 229,
+    "title": "Background processing options in Android",
+    "sec": "IPC & Communication",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Options",
+        "items": [
+          "Coroutines + Dispatchers.IO: Best for lightweight async work tied to a lifecycle (ViewModel, Activity)",
+          "WorkManager: Persistent, guaranteed background work — survives app death and device reboots",
+          "Foreground Service: Long-running user-visible work (music, GPS, file upload)",
+          "JobScheduler: System-scheduled work with battery-efficient constraints (superseded by WorkManager)",
+          "AlarmManager: Exact-time alarms (use sparingly; use WorkManager for deferrable work)",
+          "Service (plain): Background work without UI — runs on main thread by default; needs manual thread management"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 230,
+    "title": "Inter-process communication in Android",
+    "sec": "IPC & Communication",
+    "diff": "Hard",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "IPC in Android is primarily handled by the Binder mechanism — a kernel-level driver enabling fast, lightweight message passing between processes."
+      },
+      {
+        "type": "bullet",
+        "heading": "IPC Mechanisms",
+        "items": [
+          "Binder: Android's primary IPC — used internally by Services, ContentProviders, AIDL",
+          "AIDL: Define an interface for cross-process method calls — Binder handles marshalling/unmarshalling",
+          "Messenger: Simplified Binder-based IPC using Message objects and Handlers",
+          "ContentProvider: Share data between processes via query/insert/update/delete URI contracts",
+          "Broadcast Intents: One-to-many messaging across processes"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "All Android IPC ultimately goes through Binder — even high-level APIs like startActivity() use Binder to communicate with ActivityManagerService"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 231,
+    "title": "Activity-to-Activity, Activity-to-Fragment, Fragment-to-Fragment communication",
+    "sec": "IPC & Communication",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Activity to Activity",
+        "items": [
+          "Pass data via Intent extras when starting the Activity",
+          "Use startActivityForResult() / ActivityResultLauncher for returning results"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Activity to Fragment",
+        "items": [
+          "Use Fragment.newInstance() with a Bundle for initial data",
+          "Share a ViewModel scoped to the Activity — both Activity and Fragment observe it",
+          "Call fragment.arguments for one-time setup data"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Fragment to Fragment",
+        "items": [
+          "Shared ViewModel (scoped to Activity or NavGraph): Both Fragments observe the same ViewModel — preferred approach",
+          "Fragment Result API: setFragmentResult() / setFragmentResultListener() — for one-time results",
+          "Avoid direct Fragment-to-Fragment references — tight coupling, memory leak risk"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 232,
+    "title": "Deep vs Dynamic Linking",
+    "sec": "IPC & Communication",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Deep Link",
+        "items": [
+          "A URL that navigates the user to a specific screen inside the app",
+          "If the app is not installed, the link opens the Play Store or a fallback web URL",
+          "Implemented via intent-filter in AndroidManifest.xml with action VIEW and a scheme/host pattern",
+          "Example: myapp://product/123 or https://myapp.com/product/123 (App Link)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Dynamic Link (Firebase)",
+        "items": [
+          "A smart URL that works whether the app is installed or not",
+          "If installed: Opens the app to the correct screen",
+          "If not installed: Sends to Play Store; after install and first open, navigates to the intended screen (deferred deep link)",
+          "Platform-independent: Same link works on Android, iOS, and web"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 233,
+    "title": "Deeplink understanding and architecture",
+    "sec": "IPC & Communication",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "How Deeplinking Works",
+        "items": [
+          "Declare an intent-filter in AndroidManifest.xml with the scheme and host",
+          "The OS matches the URL to the app and starts the Activity with the URL in the Intent",
+          "In onCreate()/onNewIntent(), parse the Intent data (Uri) to extract path parameters",
+          "Navigate to the correct screen using the extracted parameters"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Jetpack Navigation Deep Links",
+        "items": [
+          "Define deep links in the navigation graph XML — NavController handles routing automatically",
+          "Supports both explicit deeplinking (PendingIntent) and implicit (intent-filter)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Handling Edge Cases",
+        "items": [
+          "App already running: Override onNewIntent() to handle deeplinks when app is in background",
+          "Authenticated routes: Check if user is logged in before navigating to protected screens",
+          "Fallback: If deeplink path doesn't match, navigate to home screen"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 234,
+    "title": "How Parcelable internally works",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Parcelable is Android's high-performance serialization mechanism for passing objects between components (Activities, Fragments, Services) via Bundles and Intents."
+      },
+      {
+        "type": "bullet",
+        "heading": "How It Works Internally",
+        "items": [
+          "A Parcel is a container for a flattened (marshalled) message — writes to a shared memory block",
+          "writeToParcel() serializes the object's fields into the Parcel in order",
+          "CREATOR.createFromParcel() reads fields in the same order to reconstruct the object",
+          "No reflection — reads/writes are direct field-by-field operations — very fast",
+          "Data is passed via Binder (kernel memory copy) for IPC, or via the Bundle in the same process"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "@Parcelize",
+        "items": [
+          "Kotlin annotation that auto-generates writeToParcel() and CREATOR at compile time — no boilerplate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 235,
+    "title": "Serializable vs Parcelable — disadvantages of Serializable",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Serializable (Java)",
+        "items": [
+          "Interface with no methods — Java handles serialization automatically via reflection",
+          "Simple to implement: just add implements Serializable",
+          "Uses reflection: slow, creates many temporary objects → GC pressure",
+          "Not Android-optimized — designed for Java object persistence to disk/network"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Parcelable (Android)",
+        "items": [
+          "Android-specific, optimized for IPC and in-process data passing",
+          "Manual serialization: developer writes writeToParcel() and createFromParcel() — no reflection",
+          "Significantly faster than Serializable — fewer allocations",
+          "Preferred for passing data between Android components"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "In Short",
+        "items": [
+          "Serializable = simple but slow (reflection)",
+          "Parcelable = fast but more code (use @Parcelize to eliminate boilerplate)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 236,
+    "title": "What happens if Serializable class has a non-serializable member?",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Answer",
+        "content": "If a Serializable class contains a field of a non-Serializable type, serialization will throw a NotSerializableException at runtime when the object is serialized."
+      },
+      {
+        "type": "bullet",
+        "heading": "Solutions",
+        "items": [
+          "Mark the field as transient: Excludes it from serialization — field will be null after deserialization",
+          "Make the referenced class implement Serializable",
+          "Use a custom readObject()/writeObject() to handle the field manually"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Point",
+        "items": [
+          "Static fields are never serialized — they belong to the class, not the instance",
+          "transient fields are skipped during serialization and restored to their default value on deserialization"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 237,
+    "title": "HashCode and Equals implementation",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Contract",
+        "content": "In Java/Kotlin, equals() and hashCode() must be implemented consistently: if two objects are equal (equals() returns true), they must have the same hashCode()."
+      },
+      {
+        "type": "bullet",
+        "heading": "Why It Matters",
+        "items": [
+          "HashMap, HashSet use hashCode() to find the bucket, then equals() to find the exact object",
+          "Breaking the contract causes objects to be lost in hash-based collections",
+          "If you override equals() you MUST also override hashCode()"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Kotlin data class",
+        "items": [
+          "Kotlin data class auto-generates equals() and hashCode() based on all constructor properties — use data class whenever possible"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Manual Implementation",
+        "items": [
+          "hashCode(): Use Objects.hash(field1, field2) or combine fields with prime multiplication",
+          "equals(): Check reference equality first → null check → type check → field-by-field comparison"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 238,
+    "title": "Android Bundle and Dynamic Feature usage",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Android App Bundle (AAB)",
+        "items": [
+          "Publishing format (not installable directly) that lets Google Play generate optimized APKs per device configuration",
+          "Play delivers only the native libraries, resources, and language packs needed for that device",
+          "Reduces download and install size significantly",
+          "Required for new apps on Play Store (since August 2021)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Dynamic Feature Modules",
+        "items": [
+          "Optional parts of your app that are downloaded on demand — not bundled in the base install",
+          "User downloads the feature only when they need it (e.g., a scanner, an AR feature)",
+          "Implemented using the Play Feature Delivery library",
+          "Reduces initial install size; features load seamlessly after download"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 239,
+    "title": "What is Instant Apps?",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "45 sec",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Instant Apps allow users to run a lightweight version of your Android app without installing it — accessed via a URL link."
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Achieve It",
+        "items": [
+          "Modularize your app into a base module and feature modules",
+          "Mark feature modules as instant-enabled in the manifest",
+          "Keep the instant module small (under 4MB base, 15MB feature modules)",
+          "Define URL deep links for each instant-enabled activity",
+          "Test with the Instant Apps testing tool in Android Studio"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Use Cases",
+        "items": [
+          "Letting users try a feature before installing",
+          "Onboarding flows via a shared link",
+          "E-commerce checkout without full app install"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 240,
+    "title": "Retain data on orientation change — lifecycle during rotation",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Lifecycle on Rotation",
+        "content": "On rotation: onPause → onStop → onDestroy → onCreate → onStart → onResume (new instance created)."
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Retain Data",
+        "items": [
+          "ViewModel: Survives rotation — best for UI-related data (list items, user input state)",
+          "onSaveInstanceState(Bundle): Save small UI state (scroll position, selected tab) — restored in onCreate() or onRestoreInstanceState()",
+          "DataStore/SharedPreferences/Database: Persisted to disk — survives everything including process death"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Anti-patterns",
+        "items": [
+          "android:configChanges: Handles rotation manually — discourages proper lifecycle handling",
+          "Keeping large data in Bundle: Bundle has size limits; large objects may cause TransactionTooLargeException"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 241,
+    "title": "Handle different screen sizes, density, languages, and orientation",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "bullet",
+        "heading": "Screen Sizes",
+        "items": [
+          "Use ConstraintLayout for adaptive layouts",
+          "Alternative layouts in res/layout-sw600dp/ (tablets), layout-w720dp/ (landscape)"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Densities",
+        "items": [
+          "Use dp for all dimensions; sp for text",
+          "Vector drawables scale perfectly to any density",
+          "Provide bitmap drawables in mdpi/hdpi/xhdpi/xxhdpi/xxxhdpi if needed"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Languages",
+        "items": [
+          "All strings in res/values/strings.xml",
+          "Translations in res/values-fr/, values-ar/, etc.",
+          "Use getString() for all user-visible text — never hardcode"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Orientation",
+        "items": [
+          "Use ViewModel to survive rotation",
+          "Use android:screenOrientation only if strictly needed — lock orientation prevents flexible use"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 242,
+    "title": "What is process death?",
+    "sec": "Miscellaneous",
+    "diff": "Medium",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Process death occurs when the Android OS kills the app's process to reclaim memory — even when the app is in the background with activities in the back stack."
+      },
+      {
+        "type": "bullet",
+        "heading": "What Happens",
+        "items": [
+          "The app process is killed — all in-memory state is lost",
+          "ViewModel data is lost (it is tied to the process)",
+          "Next time the user returns to the app, it is re-launched from scratch",
+          "The OS preserves the back stack entry but creates a new Activity instance",
+          "The Activity receives a restored Bundle via savedInstanceState in onCreate()"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "How to Handle",
+        "items": [
+          "Use onSaveInstanceState() to save critical UI state",
+          "Use SavedStateHandle in ViewModel — persists across process death",
+          "Use Room/DataStore for data that must survive — disk-backed"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Testing",
+        "items": [
+          "Use 'Don't keep activities' in Developer Options to simulate process death"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 243,
+    "title": "Firebase",
+    "sec": "Miscellaneous",
+    "diff": "Easy",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Firebase is Google's mobile and web application development platform offering a suite of backend and analytics services."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Services",
+        "items": [
+          "Firebase Cloud Messaging (FCM): Push notifications to Android/iOS",
+          "Firestore / Realtime Database: Cloud-hosted NoSQL databases with real-time sync",
+          "Firebase Auth: Authentication (email, Google, Facebook, phone)",
+          "Firebase Crashlytics: Real-time crash reporting with stack traces",
+          "Firebase Analytics: User behavior and event tracking",
+          "Firebase Remote Config: Update app behavior without app update",
+          "Firebase Performance Monitoring: Track startup time, HTTP requests, screen rendering",
+          "Firebase A/B Testing: Run experiments on user groups"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 244,
+    "title": "Git",
+    "sec": "Miscellaneous",
+    "diff": "Easy",
+    "time": "1 min",
+    "ai": [
+      "Google",
+      "Amazon"
+    ],
+    "sections": [
+      {
+        "type": "text",
+        "heading": "Introduction",
+        "content": "Git is a distributed version control system for tracking code changes, collaborating with teams, and managing release history."
+      },
+      {
+        "type": "bullet",
+        "heading": "Key Commands",
+        "items": [
+          "git clone / init: Start a repository",
+          "git add / commit: Stage and save changes",
+          "git push / pull: Sync with remote",
+          "git branch / checkout / merge: Branching and merging",
+          "git rebase: Rewrite commit history for a clean linear log",
+          "git stash: Temporarily shelf uncommitted changes",
+          "git log / diff / blame: Inspect history and changes"
+        ]
+      },
+      {
+        "type": "bullet",
+        "heading": "Android Team Workflow",
+        "items": [
+          "Feature branches from main/develop",
+          "PRs with code review before merging",
+          "Tags for release versions",
+          ".gitignore: Exclude build/, .idea/, local.properties, keystore files"
+        ]
+      }
+    ]
+  }
+
 
   ]
 }
