@@ -1721,560 +1721,559 @@
       ],
       "expectedReadTime": "1 min"
     },
-{
-  "id": 51,
-  "question": "Explain Android Service lifecycle",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "Explain Android Service lifecycle",
-  "sections": [
     {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "A Service in Android has a lifecycle that is managed by the system. The lifecycle differs depending on how the Service is started."
+      "id": 51,
+      "question": "Explain Android Service lifecycle",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "Explain Android Service lifecycle",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Service in Android has a lifecycle that is managed by the system. The lifecycle differs depending on how the Service is started."
+        },
+        {
+          "type": "bullet",
+          "heading": "Started Service (via startService())",
+          "items": [
+            "onCreate() – Called once when the Service is created",
+            "onStartCommand() – Called every time startService() is called; returns how the service behaves if killed",
+            "onDestroy() – Called when the Service is stopped via stopSelf() or stopService()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Bound Service (via bindService())",
+          "items": [
+            "onCreate() – Service is created",
+            "onBind() – Client binds to the Service; returns an IBinder",
+            "onUnbind() – All clients have unbound",
+            "onDestroy() – Service is destroyed"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "onCreate() is called only once; onStartCommand() can be called multiple times",
+            "A started service runs independently; a bound service lives as long as a client is bound",
+            "Always call stopSelf() or stopService() for started services to avoid memory leaks"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
     {
-      "type": "bullet",
-      "heading": "Started Service (via startService())",
-      "items": [
-        "onCreate() – Called once when the Service is created",
-        "onStartCommand() – Called every time startService() is called; returns how the service behaves if killed",
-        "onDestroy() – Called when the Service is stopped via stopSelf() or stopService()"
-      ]
+      "id": 52,
+      "question": "What is Service?",
+      "section": "Android Services",
+      "difficulty": "Easy",
+      "tags": [
+        "Service"
+      ],
+      "title": "What is Service?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Service is an Android application component that performs long-running operations in the background without a user interface. It continues running even if the user switches to another app."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of Services",
+          "items": [
+            "Started Service – Runs indefinitely until it stops itself (e.g., downloading a file)",
+            "Bound Service – Allows components to bind and interact with it via IBinder",
+            "Foreground Service – Runs with a visible notification (e.g., music playback)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Use Cases",
+          "items": [
+            "Playing music in the background",
+            "Syncing data with a server",
+            "Handling network requests"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
     },
     {
-      "type": "bullet",
-      "heading": "Bound Service (via bindService())",
-      "items": [
-        "onCreate() – Service is created",
-        "onBind() – Client binds to the Service; returns an IBinder",
-        "onUnbind() – All clients have unbound",
-        "onDestroy() – Service is destroyed"
-      ]
+      "id": 53,
+      "question": "On which thread does a Service run in Android?",
+      "section": "Android Services",
+      "difficulty": "Easy",
+      "tags": [
+        "Service"
+      ],
+      "title": "On which thread does a Service run in Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "By default, a Service runs on the main (UI) thread of its hosting process. It does NOT create its own thread automatically."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Default Service runs on the main thread — blocking operations will cause ANR",
+            "You must manually create a background thread (e.g., using coroutines, Thread, or Executor) for heavy work",
+            "IntentService (deprecated) used to run on a worker thread by default",
+            "Use WorkManager or coroutines for background work in modern Android"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
     },
     {
-      "type": "bullet",
-      "heading": "Key Points",
-      "items": [
-        "onCreate() is called only once; onStartCommand() can be called multiple times",
-        "A started service runs independently; a bound service lives as long as a client is bound",
-        "Always call stopSelf() or stopService() for started services to avoid memory leaks"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-{
-  "id": 52,
-  "question": "What is Service?",
-  "section": "Android Services",
-  "difficulty": "Easy",
-  "tags": [
-    "Service"
-  ],
-  "title": "What is Service?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "A Service is an Android application component that performs long-running operations in the background without a user interface. It continues running even if the user switches to another app."
+      "id": 54,
+      "question": "Service vs IntentService. When to prefer which?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "Service vs IntentService. When to prefer which?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Service",
+          "items": [
+            "Runs on the main thread by default",
+            "Must manage threading manually",
+            "Suitable for long-running tasks needing manual control (e.g., music playback)",
+            "Stopped manually using stopSelf() or stopService()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "IntentService (Deprecated)",
+          "items": [
+            "Runs on a worker thread automatically",
+            "Handles one request at a time in a queue",
+            "Stops itself after all work is done",
+            "Deprecated in API 30 — use WorkManager instead"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Prefer",
+          "items": [
+            "Service: When you need continuous background work like streaming or ongoing connections",
+            "IntentService: Was preferred for one-off tasks; now replaced by WorkManager or coroutines"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
     {
-      "type": "bullet",
-      "heading": "Types of Services",
-      "items": [
-        "Started Service – Runs indefinitely until it stops itself (e.g., downloading a file)",
-        "Bound Service – Allows components to bind and interact with it via IBinder",
-        "Foreground Service – Runs with a visible notification (e.g., music playback)"
-      ]
+      "id": 55,
+      "question": "What is a Foreground Service?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "What is a Foreground Service?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Foreground Service is a Service that performs an operation noticeable to the user. It must display a persistent notification and has higher priority than background services, making it less likely to be killed by the system."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Use Cases",
+          "items": [
+            "Music or podcast playback",
+            "Location tracking (navigation apps)",
+            "File download/upload with progress"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Must call startForeground() with a Notification",
+            "Notification cannot be dismissed by the user while Service runs",
+            "Required for background location in Android 10+",
+            "Must declare FOREGROUND_SERVICE permission in manifest"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
     },
     {
-      "type": "bullet",
-      "heading": "Common Use Cases",
-      "items": [
-        "Playing music in the background",
-        "Syncing data with a server",
-        "Handling network requests"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "45 sec"
-},
-{
-  "id": 53,
-  "question": "On which thread does a Service run in Android?",
-  "section": "Android Services",
-  "difficulty": "Easy",
-  "tags": [
-    "Service"
-  ],
-  "title": "On which thread does a Service run in Android?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "By default, a Service runs on the main (UI) thread of its hosting process. It does NOT create its own thread automatically."
+      "id": 56,
+      "question": "What is a JobScheduler?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "What is a JobScheduler?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "JobScheduler is an Android API (API 21+) that schedules background tasks to run under specific conditions, helping optimize battery and system performance."
+        },
+        {
+          "type": "bullet",
+          "heading": "When It Runs Jobs",
+          "items": [
+            "When network is available (Wi-Fi or any)",
+            "When device is charging",
+            "When device is idle",
+            "At a specified time interval"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "System batches jobs together for efficiency",
+            "More battery-efficient than manual background services",
+            "WorkManager is the modern recommended alternative",
+            "Jobs are not guaranteed to run at exact times"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
     },
     {
-      "type": "bullet",
-      "heading": "Key Points",
-      "items": [
-        "Default Service runs on the main thread — blocking operations will cause ANR",
-        "You must manually create a background thread (e.g., using coroutines, Thread, or Executor) for heavy work",
-        "IntentService (deprecated) used to run on a worker thread by default",
-        "Use WorkManager or coroutines for background work in modern Android"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "30 sec"
-},
-{
-  "id": 54,
-  "question": "Service vs IntentService. When to prefer which?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "Service vs IntentService. When to prefer which?",
-  "sections": [
-    {
-      "type": "bullet",
-      "heading": "Service",
-      "items": [
-        "Runs on the main thread by default",
-        "Must manage threading manually",
-        "Suitable for long-running tasks needing manual control (e.g., music playback)",
-        "Stopped manually using stopSelf() or stopService()"
-      ]
+      "id": 57,
+      "question": "How does WorkManager guarantee task execution?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "How does WorkManager guarantee task execution?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "WorkManager guarantees task execution by persisting work to a local database. Even if the app is killed or the device restarts, the work will be rescheduled and executed when conditions are met."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Work is stored in a Room database — survives app death and device reboot",
+            "WorkManager picks the best underlying implementation (JobScheduler, AlarmManager, etc.) based on API level",
+            "Constraints (network, charging) are respected before execution",
+            "Retries automatically on failure using backoff policies"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Suitable for deferrable, guaranteed background work",
+            "Not for real-time or exact-timing tasks",
+            "Supports chaining tasks and parallel execution"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
     },
     {
-      "type": "bullet",
-      "heading": "IntentService (Deprecated)",
-      "items": [
-        "Runs on a worker thread automatically",
-        "Handles one request at a time in a queue",
-        "Stops itself after all work is done",
-        "Deprecated in API 30 — use WorkManager instead"
-      ]
+      "id": 58,
+      "question": "WorkManager vs JobScheduler",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "WorkManager vs JobScheduler",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "WorkManager",
+          "items": [
+            "Recommended by Google for all background work",
+            "Works on API 14+ (uses JobScheduler internally on API 23+)",
+            "Persists work across reboots and app death",
+            "Supports chaining, parallel work, and input/output data",
+            "Simpler API with Kotlin coroutines support"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "JobScheduler",
+          "items": [
+            "Available from API 21+",
+            "Does not persist across device reboots by default",
+            "Lower-level API; more boilerplate",
+            "No support for chaining or complex task graphs",
+            "Battery-efficient but less feature-rich"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Prefer",
+          "items": [
+            "WorkManager for almost all use cases — it wraps JobScheduler internally",
+            "JobScheduler only when targeting specific low-level scheduling behavior"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
     {
-      "type": "bullet",
-      "heading": "When to Prefer",
-      "items": [
-        "Service: When you need continuous background work like streaming or ongoing connections",
-        "IntentService: Was preferred for one-off tasks; now replaced by WorkManager or coroutines"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-{
-  "id": 55,
-  "question": "What is a Foreground Service?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "What is a Foreground Service?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "A Foreground Service is a Service that performs an operation noticeable to the user. It must display a persistent notification and has higher priority than background services, making it less likely to be killed by the system."
+      "id": 59,
+      "question": "WorkManager types of requests, methods, minimum repeat interval",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "WorkManager types of requests, methods, minimum repeat interval",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Types of Work Requests",
+          "items": [
+            "OneTimeWorkRequest – Executes the task once",
+            "PeriodicWorkRequest – Executes the task repeatedly at a set interval"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Methods",
+          "items": [
+            "WorkManager.enqueue() – Schedule a one-time task",
+            "WorkManager.enqueueUniquePeriodicWork() – Schedule periodic unique work",
+            "WorkManager.cancelWorkById() – Cancel a specific task",
+            "setConstraints() – Define conditions (network, charging, etc.)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Minimum Repeat Interval",
+          "items": [
+            "PeriodicWorkRequest has a minimum interval of 15 minutes",
+            "This is an Android OS restriction to prevent battery drain",
+            "Cannot be configured to run more frequently than 15 minutes"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
     {
-      "type": "bullet",
-      "heading": "Common Use Cases",
-      "items": [
-        "Music or podcast playback",
-        "Location tracking (navigation apps)",
-        "File download/upload with progress"
-      ]
+      "id": 60,
+      "question": "How to make a service persist even after application is killed?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "How to make a service persist even after application is killed?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "To keep a service running after the app is killed, you need to use specific strategies depending on your use case."
+        },
+        {
+          "type": "bullet",
+          "heading": "Approaches",
+          "items": [
+            "Foreground Service: Use startForeground() — system is much less likely to kill it",
+            "Return START_STICKY from onStartCommand() — system restarts the service after killing it",
+            "WorkManager: For deferrable tasks, it reschedules automatically after app death",
+            "BroadcastReceiver with BOOT_COMPLETED: Restart the service after device reboot"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "No service is 100% guaranteed to persist — system can kill any process under memory pressure",
+            "Foreground Service + START_STICKY is the most reliable combination",
+            "Avoid keeping services alive unnecessarily — it drains battery"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
     {
-      "type": "bullet",
-      "heading": "Key Points",
-      "items": [
-        "Must call startForeground() with a Notification",
-        "Notification cannot be dismissed by the user while Service runs",
-        "Required for background location in Android 10+",
-        "Must declare FOREGROUND_SERVICE permission in manifest"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "45 sec"
-},
-{
-  "id": 56,
-  "question": "What is a JobScheduler?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "What is a JobScheduler?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "JobScheduler is an Android API (API 21+) that schedules background tasks to run under specific conditions, helping optimize battery and system performance."
+      "id": 61,
+      "question": "Why is there a need for JobIntentService?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "Why is there a need for JobIntentService?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "JobIntentService was introduced to handle background work that is compatible with both older Android versions and Android 8.0 (Oreo) background execution limits."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Was Needed",
+          "items": [
+            "Android 8.0 introduced strict background service limits — apps could no longer start background services freely",
+            "IntentService was not compatible with these new restrictions",
+            "JobIntentService uses JobScheduler on API 26+ and falls back to a regular service on older versions",
+            "Provides a unified API that works across API levels"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Current Status",
+          "items": [
+            "JobIntentService is now deprecated",
+            "WorkManager is the recommended replacement for all deferred background work"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
     },
     {
-      "type": "bullet",
-      "heading": "When It Runs Jobs",
-      "items": [
-        "When network is available (Wi-Fi or any)",
-        "When device is charging",
-        "When device is idle",
-        "At a specified time interval"
-      ]
+      "id": 62,
+      "question": "Notification-related changes in Oreo",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "Notification-related changes in Oreo",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android 8.0 (Oreo) introduced major notification changes to give users more control and improve organization."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Changes",
+          "items": [
+            "Notification Channels (mandatory): All notifications must be assigned to a channel (e.g., Messages, Alerts). Without a channel, notifications are not shown on API 26+",
+            "Channel-level settings: Users can control sound, vibration, and importance per channel",
+            "Notification dots: Apps show a dot on the launcher icon when there are unread notifications",
+            "Snooze notifications: Users can snooze individual notifications",
+            "Background service restrictions: Apps cannot start background services; must use JobIntentService or WorkManager"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Developer Action Required",
+          "items": [
+            "Create NotificationChannel before posting any notification",
+            "Channel creation is ignored on older versions — safe to call on all API levels"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
     {
-      "type": "bullet",
-      "heading": "Key Points",
-      "items": [
-        "System batches jobs together for efficiency",
-        "More battery-efficient than manual background services",
-        "WorkManager is the modern recommended alternative",
-        "Jobs are not guaranteed to run at exact times"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "45 sec"
-},
-{
-  "id": 57,
-  "question": "How does WorkManager guarantee task execution?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "How does WorkManager guarantee task execution?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "WorkManager guarantees task execution by persisting work to a local database. Even if the app is killed or the device restarts, the work will be rescheduled and executed when conditions are met."
+      "id": 63,
+      "question": "How to handle background service and execution limits with Oreo updates?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": [
+        "Service"
+      ],
+      "title": "How to handle background service and execution limits with Oreo updates?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android 8.0 (Oreo) imposed strict background execution limits to improve battery life. Apps can no longer freely run background services when the app is not in the foreground."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Restrictions",
+          "items": [
+            "Background services are stopped a few minutes after the app goes to background",
+            "Implicit broadcast receivers are restricted (cannot register most in manifest)",
+            "startService() throws an IllegalStateException if called from background"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Handle Them",
+          "items": [
+            "Foreground Service: Use startForegroundService() + call startForeground() within 5 seconds",
+            "WorkManager: For deferrable background tasks — schedules with system constraints",
+            "JobScheduler / JobIntentService: For scheduled background work (now replaced by WorkManager)",
+            "FCM High Priority Push: Wake up app for time-sensitive tasks via push notification"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Use WorkManager for almost all background work — it handles API-level differences automatically",
+            "Only use Foreground Service when the task is user-noticeable and ongoing"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     },
-    {
-      "type": "bullet",
-      "heading": "How It Works",
-      "items": [
-        "Work is stored in a Room database — survives app death and device reboot",
-        "WorkManager picks the best underlying implementation (JobScheduler, AlarmManager, etc.) based on API level",
-        "Constraints (network, charging) are respected before execution",
-        "Retries automatically on failure using backoff policies"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Key Points",
-      "items": [
-        "Suitable for deferrable, guaranteed background work",
-        "Not for real-time or exact-timing tasks",
-        "Supports chaining tasks and parallel execution"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "45 sec"
-},
-{
-  "id": 58,
-  "question": "WorkManager vs JobScheduler",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "WorkManager vs JobScheduler",
-  "sections": [
-    {
-      "type": "bullet",
-      "heading": "WorkManager",
-      "items": [
-        "Recommended by Google for all background work",
-        "Works on API 14+ (uses JobScheduler internally on API 23+)",
-        "Persists work across reboots and app death",
-        "Supports chaining, parallel work, and input/output data",
-        "Simpler API with Kotlin coroutines support"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "JobScheduler",
-      "items": [
-        "Available from API 21+",
-        "Does not persist across device reboots by default",
-        "Lower-level API; more boilerplate",
-        "No support for chaining or complex task graphs",
-        "Battery-efficient but less feature-rich"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Prefer",
-      "items": [
-        "WorkManager for almost all use cases — it wraps JobScheduler internally",
-        "JobScheduler only when targeting specific low-level scheduling behavior"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-{
-  "id": 59,
-  "question": "WorkManager types of requests, methods, minimum repeat interval",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "WorkManager types of requests, methods, minimum repeat interval",
-  "sections": [
-    {
-      "type": "bullet",
-      "heading": "Types of Work Requests",
-      "items": [
-        "OneTimeWorkRequest – Executes the task once",
-        "PeriodicWorkRequest – Executes the task repeatedly at a set interval"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Key Methods",
-      "items": [
-        "WorkManager.enqueue() – Schedule a one-time task",
-        "WorkManager.enqueueUniquePeriodicWork() – Schedule periodic unique work",
-        "WorkManager.cancelWorkById() – Cancel a specific task",
-        "setConstraints() – Define conditions (network, charging, etc.)"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Minimum Repeat Interval",
-      "items": [
-        "PeriodicWorkRequest has a minimum interval of 15 minutes",
-        "This is an Android OS restriction to prevent battery drain",
-        "Cannot be configured to run more frequently than 15 minutes"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-{
-  "id": 60,
-  "question": "How to make a service persist even after application is killed?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "How to make a service persist even after application is killed?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "To keep a service running after the app is killed, you need to use specific strategies depending on your use case."
-    },
-    {
-      "type": "bullet",
-      "heading": "Approaches",
-      "items": [
-        "Foreground Service: Use startForeground() — system is much less likely to kill it",
-        "Return START_STICKY from onStartCommand() — system restarts the service after killing it",
-        "WorkManager: For deferrable tasks, it reschedules automatically after app death",
-        "BroadcastReceiver with BOOT_COMPLETED: Restart the service after device reboot"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Key Points",
-      "items": [
-        "No service is 100% guaranteed to persist — system can kill any process under memory pressure",
-        "Foreground Service + START_STICKY is the most reliable combination",
-        "Avoid keeping services alive unnecessarily — it drains battery"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-{
-  "id": 61,
-  "question": "Why is there a need for JobIntentService?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "Why is there a need for JobIntentService?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "JobIntentService was introduced to handle background work that is compatible with both older Android versions and Android 8.0 (Oreo) background execution limits."
-    },
-    {
-      "type": "bullet",
-      "heading": "Why It Was Needed",
-      "items": [
-        "Android 8.0 introduced strict background service limits — apps could no longer start background services freely",
-        "IntentService was not compatible with these new restrictions",
-        "JobIntentService uses JobScheduler on API 26+ and falls back to a regular service on older versions",
-        "Provides a unified API that works across API levels"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Current Status",
-      "items": [
-        "JobIntentService is now deprecated",
-        "WorkManager is the recommended replacement for all deferred background work"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "45 sec"
-},
-{
-  "id": 62,
-  "question": "Notification-related changes in Oreo",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "Notification-related changes in Oreo",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "Android 8.0 (Oreo) introduced major notification changes to give users more control and improve organization."
-    },
-    {
-      "type": "bullet",
-      "heading": "Key Changes",
-      "items": [
-        "Notification Channels (mandatory): All notifications must be assigned to a channel (e.g., Messages, Alerts). Without a channel, notifications are not shown on API 26+",
-        "Channel-level settings: Users can control sound, vibration, and importance per channel",
-        "Notification dots: Apps show a dot on the launcher icon when there are unread notifications",
-        "Snooze notifications: Users can snooze individual notifications",
-        "Background service restrictions: Apps cannot start background services; must use JobIntentService or WorkManager"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Developer Action Required",
-      "items": [
-        "Create NotificationChannel before posting any notification",
-        "Channel creation is ignored on older versions — safe to call on all API levels"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-{
-  "id": 63,
-  "question": "How to handle background service and execution limits with Oreo updates?",
-  "section": "Android Services",
-  "difficulty": "Medium",
-  "tags": [
-    "Service"
-  ],
-  "title": "How to handle background service and execution limits with Oreo updates?",
-  "sections": [
-    {
-      "type": "text",
-      "heading": "Introduction",
-      "content": "Android 8.0 (Oreo) imposed strict background execution limits to improve battery life. Apps can no longer freely run background services when the app is not in the foreground."
-    },
-    {
-      "type": "bullet",
-      "heading": "Key Restrictions",
-      "items": [
-        "Background services are stopped a few minutes after the app goes to background",
-        "Implicit broadcast receivers are restricted (cannot register most in manifest)",
-        "startService() throws an IllegalStateException if called from background"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "How to Handle Them",
-      "items": [
-        "Foreground Service: Use startForegroundService() + call startForeground() within 5 seconds",
-        "WorkManager: For deferrable background tasks — schedules with system constraints",
-        "JobScheduler / JobIntentService: For scheduled background work (now replaced by WorkManager)",
-        "FCM High Priority Push: Wake up app for time-sensitive tasks via push notification"
-      ]
-    },
-    {
-      "type": "bullet",
-      "heading": "Best Practice",
-      "items": [
-        "Use WorkManager for almost all background work — it handles API-level differences automatically",
-        "Only use Foreground Service when the task is user-noticeable and ongoing"
-      ]
-    }
-  ],
-  "askedIn": [
-    "Google",
-    "Amazon"
-  ],
-  "expectedReadTime": "1 min"
-},
-
     {
       "id": 64,
       "question": "Difference between thread and coroutines",
@@ -3635,6 +3634,1066 @@
             "Memory that grows with each screen open and never decreases — sign of a leak",
             "Multiple instances of the same Activity in a heap dump after navigating away",
             "Large Bitmap objects consuming most of the heap"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+
+    {
+      "id": 93,
+      "question": "Jetpack DataStore Preferences",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "Jetpack DataStore Preferences",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack DataStore is a modern data storage solution that replaces SharedPreferences. It stores key-value pairs (Preferences DataStore) or typed objects (Proto DataStore) using Kotlin coroutines and Flow."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why Use DataStore Over SharedPreferences",
+          "items": [
+            "Asynchronous: Uses coroutines and Flow — no blocking the main thread",
+            "Safe: Handles errors via exceptions instead of silently failing",
+            "Consistent: No apply()/commit() confusion — writes are atomic",
+            "Supports Proto DataStore for strongly-typed storage with Protocol Buffers"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Read via dataStore.data (returns Flow) — observe changes reactively",
+            "Write via dataStore.edit {} — suspending function",
+            "Backed by a file; thread-safe and process-safe",
+            "Preference DataStore: key-value pairs like SharedPreferences but async"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 94,
+      "question": "Persisting data in an Android app",
+      "section": "Data Storage",
+      "difficulty": "Easy",
+      "tags": [
+        "Storage"
+      ],
+      "title": "Persisting data in an Android app",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Data persistence means saving data so it survives app restarts. Android offers several mechanisms depending on data size and type."
+        },
+        {
+          "type": "bullet",
+          "heading": "Options",
+          "items": [
+            "SharedPreferences / DataStore: Key-value pairs for small settings and flags",
+            "Room Database: Structured relational data using SQLite; supports LiveData and Flow",
+            "Internal/External File Storage: Raw files (text, JSON, images) on device storage",
+            "SQLite (direct): Low-level database access without an ORM",
+            "Network/Cloud: Firebase Firestore, REST APIs for server-backed persistence"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Choosing the Right Option",
+          "items": [
+            "Simple flags/settings → DataStore",
+            "Structured relational data → Room",
+            "Large files (media, documents) → File Storage",
+            "User data synced across devices → Cloud/Firebase"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 95,
+      "question": "What is ORM? How does it work?",
+      "section": "Data Storage",
+      "difficulty": "Easy",
+      "tags": [
+        "Storage"
+      ],
+      "title": "What is ORM? How does it work?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "ORM (Object-Relational Mapping) is a technique that maps database tables to objects in code, allowing developers to interact with the database using classes and methods instead of raw SQL queries."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Each database table is mapped to a class (entity)",
+            "Each table column maps to a field in the class",
+            "The ORM generates SQL queries based on method calls or annotations",
+            "CRUD operations are done via DAOs (Data Access Objects) or repository patterns"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Android ORM Examples",
+          "items": [
+            "Room: Official Jetpack ORM — compile-time SQL verification, supports LiveData/Flow",
+            "Realm: Object-based mobile database with its own storage engine",
+            "GreenDAO: Lightweight ORM for SQLite (older, less popular now)"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 96,
+      "question": "What are different ways to store data in your Android app?",
+      "section": "Data Storage",
+      "difficulty": "Easy",
+      "tags": [
+        "Storage"
+      ],
+      "title": "What are different ways to store data in your Android app?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Storage Options",
+          "items": [
+            "SharedPreferences / DataStore: Key-value pairs for small primitive data (user settings, flags)",
+            "Room Database: Local relational database backed by SQLite — best for structured, queryable data",
+            "Internal File Storage: Private files stored in the app's internal directory — not accessible by other apps",
+            "External File Storage: Files on shared storage (SD card, Downloads) — requires permissions",
+            "SQLite (raw): Direct database access without ORM abstraction",
+            "Network Storage: REST APIs, Firebase, AWS — for cloud-synced or server-side data",
+            "Cache: Temporary data stored in the cache directory — can be cleared by the system"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Quick Guide",
+          "items": [
+            "Settings / flags → DataStore",
+            "Structured data → Room",
+            "Media files → External/Internal File Storage",
+            "Cloud sync → Firebase / REST API"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 97,
+      "question": "Explain Scoped Storage in Android",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "Explain Scoped Storage in Android",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Scoped Storage was introduced in Android 10 (Q) and enforced in Android 11 to improve user privacy by restricting how apps access files on external storage."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Rules",
+          "items": [
+            "Apps can freely access their own app-specific directories (getExternalFilesDir()) without permissions",
+            "To access shared media (photos, videos, audio), use the MediaStore API",
+            "To access arbitrary files, use the Storage Access Framework (SAF) — file picker",
+            "READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permissions are no longer sufficient for broad file access"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Was Introduced",
+          "items": [
+            "Prevent apps from reading other apps' private files",
+            "Give users more control over their data",
+            "Reduce storage clutter from abandoned app files"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 98,
+      "question": "How to encrypt data in Android?",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "How to encrypt data in Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android provides several ways to encrypt sensitive data to protect it from unauthorized access."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Approaches",
+          "items": [
+            "EncryptedSharedPreferences (Jetpack Security): Encrypts keys and values transparently using AES-256",
+            "EncryptedFile (Jetpack Security): Encrypts files written to disk using AES-256-GCM",
+            "Android Keystore System: Stores cryptographic keys securely in hardware-backed storage — keys never leave the secure hardware",
+            "SQLCipher: Provides encrypted SQLite database storage"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practices",
+          "items": [
+            "Never store encryption keys in SharedPreferences or hardcode them in code",
+            "Use Android Keystore to generate and store keys",
+            "Use Jetpack Security library for simple encrypted storage needs",
+            "Enable full-disk or file-based encryption at the OS level (enabled by default on modern Android)"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 99,
+      "question": "What is commit() and apply() in SharedPreferences?",
+      "section": "Data Storage",
+      "difficulty": "Easy",
+      "tags": [
+        "Storage"
+      ],
+      "title": "What is commit() and apply() in SharedPreferences?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "commit()",
+          "items": [
+            "Writes data synchronously to disk",
+            "Blocks the calling thread until the write is complete",
+            "Returns true/false to indicate success or failure",
+            "Safe to call from a background thread; avoid on main thread"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "apply()",
+          "items": [
+            "Writes data asynchronously to disk",
+            "Returns immediately — does not block the thread",
+            "No return value — errors are silently ignored",
+            "Preferred for most use cases on the main thread"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Short",
+          "items": [
+            "commit() = synchronous + returns result",
+            "apply() = asynchronous + fire and forget",
+            "Prefer apply() on the main thread; use commit() when write confirmation is needed"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 100,
+      "question": "How SharedPreferences work internally?",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "How SharedPreferences work internally?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "SharedPreferences stores key-value pairs as an XML file in the app's private internal storage directory (/data/data/package_name/shared_prefs/)."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works Internally",
+          "items": [
+            "On first access, the XML file is fully loaded into an in-memory Map",
+            "Subsequent reads are served directly from the in-memory cache — very fast",
+            "apply() writes to memory immediately, then schedules an async disk write",
+            "commit() writes to memory and blocks until the disk write completes",
+            "All read/write operations are synchronized using locks for thread safety"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Known Limitations",
+          "items": [
+            "The entire file is loaded into memory — not suitable for large data sets",
+            "Not safe to use across multiple processes by default",
+            "No support for reactive/observable reads — use DataStore instead for that"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 101,
+      "question": "How to implement observable SharedPrefs or observable Databases?",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "How to implement observable SharedPrefs or observable Databases?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Observable SharedPreferences",
+          "items": [
+            "Use SharedPreferences.OnSharedPreferenceChangeListener — register in onStart(), unregister in onStop()",
+            "Wrap SharedPreferences in a Flow using callbackFlow{} for coroutine-based observation",
+            "Better alternative: Migrate to Jetpack DataStore which natively returns Flow"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Observable Databases (Room)",
+          "items": [
+            "Return LiveData<T> from a DAO query — Room automatically notifies observers when data changes",
+            "Return Flow<T> from a DAO query — collect in a coroutine scope",
+            "Combine with ViewModel and StateFlow for a clean reactive data layer"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Room + Flow is the recommended approach for observable local data in modern Android",
+            "DataStore for observable key-value settings",
+            "Avoid polling or manual refresh — use reactive streams"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 102,
+      "question": "Can you access your SQLite database for debugging?",
+      "section": "Data Storage",
+      "difficulty": "Easy",
+      "tags": [
+        "Storage"
+      ],
+      "title": "Can you access your SQLite database for debugging?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "Yes, you can access and inspect your app's SQLite database during development using several tools."
+        },
+        {
+          "type": "bullet",
+          "heading": "Methods",
+          "items": [
+            "Android Studio Database Inspector: Built-in tool (View → Tool Windows → App Inspection → Database Inspector). Shows tables, runs live queries, edits data in real time",
+            "ADB Shell: Use adb shell → run-as <package_name> → sqlite3 databases/<db_name>.db to query directly",
+            "Pull database file: Use adb pull to copy the .db file to your computer and open with DB Browser for SQLite",
+            "Stetho (Facebook): Network-based debugging — opens your DB in Chrome DevTools (older approach)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Database Inspector in Android Studio is the easiest and most recommended tool for debugging Room or raw SQLite databases"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 103,
+      "question": "What is Write-Ahead Logging (WAL) and why is it used?",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "What is Write-Ahead Logging (WAL) and why is it used?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Write-Ahead Logging (WAL) is a database journaling mode where changes are written to a separate WAL file first, before being applied to the main database file."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Instead of modifying the database directly, changes are appended to a WAL log file",
+            "Readers can continue reading the main database while writes happen in the WAL file",
+            "WAL is periodically checkpointed — changes are merged back into the main database",
+            "On crash recovery, the WAL log is used to ensure consistency"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Is Used",
+          "items": [
+            "Better concurrency: Reads and writes can happen simultaneously without blocking each other",
+            "Faster writes: Appending to a log is faster than modifying the database in place",
+            "Data integrity: Ensures the database is never in a corrupt state on crash",
+            "Room enables WAL mode by default for better performance"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 104,
+      "question": "Why Realm? Realm vs SQLite",
+      "section": "Data Storage",
+      "difficulty": "Medium",
+      "tags": [
+        "Storage"
+      ],
+      "title": "Why Realm? Realm vs SQLite",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Realm",
+          "items": [
+            "Object-based database — stores and retrieves native objects directly (no SQL)",
+            "Very fast reads — objects are lazily loaded from memory-mapped files",
+            "Built-in reactive support — query results update automatically when data changes",
+            "Zero-copy architecture — no serialization/deserialization overhead",
+            "Cross-platform (iOS and Android with same schema)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "SQLite (via Room)",
+          "items": [
+            "Relational database — uses SQL queries and tables",
+            "Requires mapping objects to/from rows (ORM like Room handles this)",
+            "Standard on Android — well understood, widely supported",
+            "Better for complex relational queries and joins",
+            "Room with Flow gives reactive behavior similar to Realm"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Prefer",
+          "items": [
+            "Realm: When you need fast object storage with minimal boilerplate and cross-platform support",
+            "Room/SQLite: For complex relational queries, Android-first apps, and Jetpack ecosystem integration"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 105,
+      "question": "Explain OkHttp Interceptor",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "Explain OkHttp Interceptor",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "An OkHttp Interceptor is a powerful mechanism that allows you to observe, modify, and short-circuit HTTP requests and responses. It works as middleware in the OkHttp call chain."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types",
+          "items": [
+            "Application Interceptor: Added via addInterceptor() — intercepts between your app and OkHttp. Runs once per call, even for cached responses",
+            "Network Interceptor: Added via addNetworkInterceptor() — intercepts between OkHttp and the server. Runs only for actual network requests; can see redirect and retry requests"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Uses",
+          "items": [
+            "Add authentication headers (Authorization: Bearer token) to every request",
+            "Log request and response details (use HttpLoggingInterceptor)",
+            "Retry failed requests or handle token refresh",
+            "Modify or cache responses"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 106,
+      "question": "OkHttp – HTTP Caching",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "OkHttp – HTTP Caching",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "OkHttp supports HTTP caching to store responses on disk and serve them without hitting the network, improving performance and reducing data usage."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "OkHttp respects standard HTTP cache headers: Cache-Control, ETag, Last-Modified, Expires",
+            "Responses are stored in a disk cache (configured via Cache(directory, maxSize))",
+            "On subsequent requests, OkHttp checks if a valid cached response exists before making a network call",
+            "If the server returns 304 Not Modified, OkHttp serves the cached response"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Offline Cache (Force Cache)",
+          "items": [
+            "Use a network interceptor to add Cache-Control: public, max-age=N when online",
+            "Use an application interceptor to return Cache-Control: only-if-cached when offline",
+            "Allows serving stale responses when no network is available"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 107,
+      "question": "How to enable logging in OkHttp?",
+      "section": "Networking & Libraries",
+      "difficulty": "Easy",
+      "tags": [
+        "Networking"
+      ],
+      "title": "How to enable logging in OkHttp?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "OkHttp provides HttpLoggingInterceptor to log HTTP request and response details, useful for debugging network calls."
+        },
+        {
+          "type": "bullet",
+          "heading": "Logging Levels",
+          "items": [
+            "NONE: No logging",
+            "BASIC: Logs request method, URL, response code, and size",
+            "HEADERS: Logs request and response headers",
+            "BODY: Logs headers and full request/response body (most verbose)"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Setup",
+          "content": "",
+          "language": "kotlin",
+          "code": "val logging = HttpLoggingInterceptor()\nlogging.level = HttpLoggingInterceptor.Level.BODY\n\nval client = OkHttpClient.Builder()\n    .addInterceptor(logging)\n    .build()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Only use BODY level in debug builds — it logs sensitive data",
+            "Use BuildConfig.DEBUG to conditionally enable logging"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 108,
+      "question": "What is Multipart Request in Networking?",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "What is Multipart Request in Networking?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Multipart request is an HTTP request that sends multiple parts of data in a single request, each with its own content type. It is commonly used for uploading files along with other form data."
+        },
+        {
+          "type": "bullet",
+          "heading": "When It Is Used",
+          "items": [
+            "Uploading a profile photo along with a username",
+            "Sending a file (image, PDF, video) to a server",
+            "Combining binary data (file) with text fields in one request"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Retrofit",
+          "items": [
+            "Use @Multipart annotation on the API method",
+            "Use @Part for individual parts (file as MultipartBody.Part, text as RequestBody)",
+            "Content-Type is automatically set to multipart/form-data"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Each part in the request is separated by a boundary string defined in the Content-Type header",
+            "Suitable for any combination of binary and text data"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 109,
+      "question": "How does the Android image loading library Glide and Fresco work?",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "How does Glide and Fresco work?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Glide",
+          "items": [
+            "Fetches images from network/disk/resources using a background thread",
+            "Decodes and downsamples bitmaps to match the target view size — reduces memory usage",
+            "Uses a multi-level cache: memory cache (LruCache) → disk cache → network",
+            "Lifecycle-aware: automatically pauses/resumes/clears requests based on Activity/Fragment lifecycle",
+            "Supports GIFs, video frames, and custom transformations"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Fresco (Facebook)",
+          "items": [
+            "Stores decoded bitmaps in native memory (ashmem) — outside Java heap, reducing GC pressure",
+            "Uses a Drawee system for smooth placeholder and loading transitions",
+            "Supports progressive JPEG loading — shows a low-res image while full image loads",
+            "More complex API than Glide; best suited for apps loading large numbers of images"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Prefer",
+          "items": [
+            "Glide for most Android apps — simpler, lifecycle-aware, well-supported",
+            "Fresco for image-heavy apps where native memory management is important"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 110,
+      "question": "Internal implementation of Picasso and Glide",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "Internal implementation of Picasso and Glide",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Picasso",
+          "items": [
+            "Uses a Dispatcher to manage image requests across a thread pool (ExecutorService)",
+            "Two-level cache: memory cache (LruCache) and disk cache (OkHttp disk cache)",
+            "Fetches images on background threads; posts results to the main thread via Handler",
+            "Uses a BitmapHunter that handles decoding and transformation",
+            "Does not automatically downsample to view size — may load full-size bitmaps"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Glide",
+          "items": [
+            "Three-level cache: Active resources (current views) → Memory cache (LruCache) → Disk cache → Network",
+            "Automatically downsamples bitmaps to match the target view size",
+            "Uses BitmapPool to reuse bitmap memory — reduces GC overhead",
+            "Engine class coordinates loading, caching, and decoding",
+            "Lifecycle integration via RequestManager tied to Activity/Fragment lifecycle"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Difference",
+          "items": [
+            "Glide auto-resizes bitmaps and pools them for memory efficiency",
+            "Picasso loads full-size bitmaps by default — more straightforward but less memory efficient"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 111,
+      "question": "Why do we prefer Retrofit over Volley?",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "Why do we prefer Retrofit over Volley?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Retrofit Advantages",
+          "items": [
+            "Type-safe: Defines API as interfaces with annotations — compile-time checks on request structure",
+            "Coroutines support: suspend functions out of the box for clean async code",
+            "Flexible converters: GSON, Moshi, Jackson, Protobuf — easy to swap serializers",
+            "Built on OkHttp: Leverages connection pooling, interceptors, HTTP/2, and caching",
+            "Cleaner code: Less boilerplate compared to Volley's callback-heavy approach"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Volley Limitations",
+          "items": [
+            "No built-in coroutine/RxJava support",
+            "Callback-based — leads to nested callbacks for complex flows",
+            "Less flexible for complex request/response customization",
+            "Not ideal for large file uploads/downloads",
+            "No official type-safe API contract"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "When Volley Still Fits",
+          "items": [
+            "Simple small image loading and REST calls with minimal setup",
+            "Legacy projects already using Volley"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 112,
+      "question": "GSON vs Jackson vs Moshi",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "GSON vs Jackson vs Moshi",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "GSON (Google)",
+          "items": [
+            "Simple API; minimal setup",
+            "Uses reflection for serialization/deserialization — slower and not R8/ProGuard friendly",
+            "Does not support Kotlin null safety well — can deserialize null into non-null types",
+            "No code generation; works at runtime"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Jackson",
+          "items": [
+            "Extremely feature-rich and highly configurable",
+            "Fastest of the three for large payloads",
+            "Heavier library — increases APK size",
+            "Best suited for server-side Java; overkill for most Android apps"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Moshi (Square)",
+          "items": [
+            "Designed for Android/Kotlin — supports Kotlin data classes and null safety natively",
+            "Uses code generation (KSP/kapt) for fast, reflection-free parsing",
+            "Smaller and more efficient than GSON for Android",
+            "Better ProGuard/R8 compatibility"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Recommendation",
+          "items": [
+            "Use Moshi for new Android/Kotlin projects",
+            "GSON for quick prototypes; Jackson for complex server-side needs"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 113,
+      "question": "How to handle bitmaps in Android as they take too much memory?",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "How to handle bitmaps in Android as they take too much memory?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Key Strategies",
+          "items": [
+            "Downsample with inSampleSize: Use BitmapFactory.Options.inSampleSize to load a scaled-down version of the image instead of the full resolution",
+            "Use inJustDecodeBounds: First decode only the dimensions (without allocating pixels) to calculate the required sample size",
+            "Reuse bitmaps with BitmapPool: Glide manages a BitmapPool internally to reuse bitmap memory and reduce GC pressure",
+            "Use appropriate Bitmap.Config: Use RGB_565 instead of ARGB_8888 to halve memory usage when alpha is not needed",
+            "Recycle bitmaps: Call bitmap.recycle() when no longer needed (mostly pre-Honeycomb; ART handles this better now)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Use image libraries (Glide, Coil) — they handle downsampling, caching, and bitmap recycling automatically",
+            "Load bitmaps in background threads only; post results to the UI thread",
+            "Never load full-resolution images directly into ImageViews without downsampling"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 114,
+      "question": "Tell about the Bitmap pool",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "Tell about the Bitmap pool",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Bitmap pool is a cache of reusable Bitmap objects. Instead of allocating new Bitmap memory for every image load, the pool provides a previously allocated Bitmap of the same or compatible size, reducing GC overhead."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "When a Bitmap is no longer displayed, it is returned to the pool instead of being GC'd",
+            "On the next image load, the pool provides a matching Bitmap; BitmapFactory decodes the new image into it (using inBitmap option)",
+            "Glide manages a BitmapPool (backed by LruBitmapPool) internally for all image loads"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Reduces the number of Bitmap allocations — less GC pressure and fewer GC pauses",
+            "Improves scrolling performance in RecyclerViews with many images",
+            "Memory is reused efficiently without repeated allocation/deallocation"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 115,
+      "question": "How to load large Bitmaps? Handle memory leaks and sample sizing",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "How to load large Bitmaps? Handle memory leaks and sample sizing",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Step 1: Decode Dimensions First",
+          "items": [
+            "Set inJustDecodeBounds = true and call BitmapFactory.decodeFile()",
+            "This reads only the image dimensions without allocating pixels",
+            "Use the dimensions to calculate the required inSampleSize"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Step 2: Calculate inSampleSize",
+          "items": [
+            "inSampleSize = 2 means the image is decoded at 1/2 width and 1/2 height (1/4 memory)",
+            "Calculate: keep halving until the decoded size is smaller than the target view size",
+            "Always use powers of 2 for inSampleSize"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Step 3: Decode with inSampleSize",
+          "items": [
+            "Set inJustDecodeBounds = false and decode again with the calculated inSampleSize",
+            "The resulting bitmap fits the view size with much lower memory usage"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Avoid Memory Leaks",
+          "items": [
+            "Always load bitmaps on background threads; never on the main thread",
+            "Recycle bitmaps when the view is destroyed if managing manually",
+            "Use Glide/Coil — they handle all of this automatically with lifecycle awareness"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 116,
+      "question": "App Startup Library",
+      "section": "Networking & Libraries",
+      "difficulty": "Medium",
+      "tags": [
+        "Networking"
+      ],
+      "title": "App Startup Library",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Jetpack App Startup library provides a simple, efficient way to initialize components at app startup. It consolidates multiple ContentProvider-based initializers into a single ContentProvider, reducing startup time."
+        },
+        {
+          "type": "bullet",
+          "heading": "Problem It Solves",
+          "items": [
+            "Many libraries (WorkManager, Firebase, etc.) use ContentProviders for auto-initialization",
+            "Each ContentProvider adds latency to app startup — the more libraries, the slower the launch",
+            "App Startup merges all initializers under one ContentProvider (InitializationProvider)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Implement the Initializer<T> interface for each component you want to initialize",
+            "Declare it in the manifest under InitializationProvider",
+            "Supports dependency ordering between initializers — initializer A can depend on initializer B",
+            "Can be lazy-initialized: call AppInitializer.getInstance(context).initializeComponent() manually"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Benefits",
+          "items": [
+            "Faster app startup by reducing ContentProvider count",
+            "Explicit initialization order and dependency management",
+            "Works well with Baseline Profiles for further startup optimization"
           ]
         }
       ],
