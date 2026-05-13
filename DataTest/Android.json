@@ -1,0 +1,493 @@
+{
+  "category": "Android",
+  "questions": [
+    {
+      "id": 114,
+      "question": "Explain Android Service lifecycle",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "Explain Android Service lifecycle",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Service in Android has a lifecycle that is managed by the system. The lifecycle differs depending on how the Service is started."
+        },
+        {
+          "type": "bullet",
+          "heading": "Started Service (via startService())",
+          "items": [
+            "onCreate() – Called once when the Service is created",
+            "onStartCommand() – Called every time startService() is called; returns how the service behaves if killed",
+            "onDestroy() – Called when the Service is stopped via stopSelf() or stopService()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Bound Service (via bindService())",
+          "items": [
+            "onCreate() – Service is created",
+            "onBind() – Client binds to the Service; returns an IBinder",
+            "onUnbind() – All clients have unbound",
+            "onDestroy() – Service is destroyed"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "onCreate() is called only once; onStartCommand() can be called multiple times",
+            "A started service runs independently; a bound service lives as long as a client is bound",
+            "Always call stopSelf() or stopService() for started services to avoid memory leaks"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 115,
+      "question": "What is Service?",
+      "section": "Android Services",
+      "difficulty": "Easy",
+      "tags": ["Service"],
+      "title": "What is Service?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Service is an Android application component that performs long-running operations in the background without a user interface. It continues running even if the user switches to another app."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of Services",
+          "items": [
+            "Started Service – Runs indefinitely until it stops itself (e.g., downloading a file)",
+            "Bound Service – Allows components to bind and interact with it via IBinder",
+            "Foreground Service – Runs with a visible notification (e.g., music playback)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Use Cases",
+          "items": [
+            "Playing music in the background",
+            "Syncing data with a server",
+            "Handling network requests"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 116,
+      "question": "On which thread does a Service run in Android?",
+      "section": "Android Services",
+      "difficulty": "Easy",
+      "tags": ["Service"],
+      "title": "On which thread does a Service run in Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "By default, a Service runs on the main (UI) thread of its hosting process. It does NOT create its own thread automatically."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Default Service runs on the main thread — blocking operations will cause ANR",
+            "You must manually create a background thread (e.g., using coroutines, Thread, or Executor) for heavy work",
+            "IntentService (deprecated) used to run on a worker thread by default",
+            "Use WorkManager or coroutines for background work in modern Android"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 117,
+      "question": "Service vs IntentService. When to prefer which?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "Service vs IntentService. When to prefer which?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Service",
+          "items": [
+            "Runs on the main thread by default",
+            "Must manage threading manually",
+            "Suitable for long-running tasks needing manual control (e.g., music playback)",
+            "Stopped manually using stopSelf() or stopService()"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "IntentService (Deprecated)",
+          "items": [
+            "Runs on a worker thread automatically",
+            "Handles one request at a time in a queue",
+            "Stops itself after all work is done",
+            "Deprecated in API 30 — use WorkManager instead"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Prefer",
+          "items": [
+            "Service: When you need continuous background work like streaming or ongoing connections",
+            "IntentService: Was preferred for one-off tasks; now replaced by WorkManager or coroutines"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 118,
+      "question": "What is a Foreground Service?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "What is a Foreground Service?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Foreground Service is a Service that performs an operation noticeable to the user. It must display a persistent notification and has higher priority than background services, making it less likely to be killed by the system."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Use Cases",
+          "items": [
+            "Music or podcast playback",
+            "Location tracking (navigation apps)",
+            "File download/upload with progress"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Must call startForeground() with a Notification",
+            "Notification cannot be dismissed by the user while Service runs",
+            "Required for background location in Android 10+",
+            "Must declare FOREGROUND_SERVICE permission in manifest"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 119,
+      "question": "What is a JobScheduler?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "What is a JobScheduler?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "JobScheduler is an Android API (API 21+) that schedules background tasks to run under specific conditions, helping optimize battery and system performance."
+        },
+        {
+          "type": "bullet",
+          "heading": "When It Runs Jobs",
+          "items": [
+            "When network is available (Wi-Fi or any)",
+            "When device is charging",
+            "When device is idle",
+            "At a specified time interval"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "System batches jobs together for efficiency",
+            "More battery-efficient than manual background services",
+            "WorkManager is the modern recommended alternative",
+            "Jobs are not guaranteed to run at exact times"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 120,
+      "question": "How does WorkManager guarantee task execution?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "How does WorkManager guarantee task execution?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "WorkManager guarantees task execution by persisting work to a local database. Even if the app is killed or the device restarts, the work will be rescheduled and executed when conditions are met."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Work is stored in a Room database — survives app death and device reboot",
+            "WorkManager picks the best underlying implementation (JobScheduler, AlarmManager, etc.) based on API level",
+            "Constraints (network, charging) are respected before execution",
+            "Retries automatically on failure using backoff policies"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Suitable for deferrable, guaranteed background work",
+            "Not for real-time or exact-timing tasks",
+            "Supports chaining tasks and parallel execution"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 121,
+      "question": "WorkManager vs JobScheduler",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "WorkManager vs JobScheduler",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "WorkManager",
+          "items": [
+            "Recommended by Google for all background work",
+            "Works on API 14+ (uses JobScheduler internally on API 23+)",
+            "Persists work across reboots and app death",
+            "Supports chaining, parallel work, and input/output data",
+            "Simpler API with Kotlin coroutines support"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "JobScheduler",
+          "items": [
+            "Available from API 21+",
+            "Does not persist across device reboots by default",
+            "Lower-level API; more boilerplate",
+            "No support for chaining or complex task graphs",
+            "Battery-efficient but less feature-rich"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Prefer",
+          "items": [
+            "WorkManager for almost all use cases — it wraps JobScheduler internally",
+            "JobScheduler only when targeting specific low-level scheduling behavior"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 122,
+      "question": "WorkManager types of requests, methods, minimum repeat interval",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "WorkManager types of requests, methods, minimum repeat interval",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Types of Work Requests",
+          "items": [
+            "OneTimeWorkRequest – Executes the task once",
+            "PeriodicWorkRequest – Executes the task repeatedly at a set interval"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Methods",
+          "items": [
+            "WorkManager.enqueue() – Schedule a one-time task",
+            "WorkManager.enqueueUniquePeriodicWork() – Schedule periodic unique work",
+            "WorkManager.cancelWorkById() – Cancel a specific task",
+            "setConstraints() – Define conditions (network, charging, etc.)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Minimum Repeat Interval",
+          "items": [
+            "PeriodicWorkRequest has a minimum interval of 15 minutes",
+            "This is an Android OS restriction to prevent battery drain",
+            "Cannot be configured to run more frequently than 15 minutes"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 123,
+      "question": "How to make a service persist even after application is killed?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "How to make a service persist even after application is killed?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "To keep a service running after the app is killed, you need to use specific strategies depending on your use case."
+        },
+        {
+          "type": "bullet",
+          "heading": "Approaches",
+          "items": [
+            "Foreground Service: Use startForeground() — system is much less likely to kill it",
+            "Return START_STICKY from onStartCommand() — system restarts the service after killing it",
+            "WorkManager: For deferrable tasks, it reschedules automatically after app death",
+            "BroadcastReceiver with BOOT_COMPLETED: Restart the service after device reboot"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "No service is 100% guaranteed to persist — system can kill any process under memory pressure",
+            "Foreground Service + START_STICKY is the most reliable combination",
+            "Avoid keeping services alive unnecessarily — it drains battery"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 124,
+      "question": "Why is there a need for JobIntentService?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "Why is there a need for JobIntentService?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "JobIntentService was introduced to handle background work that is compatible with both older Android versions and Android 8.0 (Oreo) background execution limits."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Was Needed",
+          "items": [
+            "Android 8.0 introduced strict background service limits — apps could no longer start background services freely",
+            "IntentService was not compatible with these new restrictions",
+            "JobIntentService uses JobScheduler on API 26+ and falls back to a regular service on older versions",
+            "Provides a unified API that works across API levels"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Current Status",
+          "items": [
+            "JobIntentService is now deprecated",
+            "WorkManager is the recommended replacement for all deferred background work"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 125,
+      "question": "Notification-related changes in Oreo",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "Notification-related changes in Oreo",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android 8.0 (Oreo) introduced major notification changes to give users more control and improve organization."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Changes",
+          "items": [
+            "Notification Channels (mandatory): All notifications must be assigned to a channel (e.g., Messages, Alerts). Without a channel, notifications are not shown on API 26+",
+            "Channel-level settings: Users can control sound, vibration, and importance per channel",
+            "Notification dots: Apps show a dot on the launcher icon when there are unread notifications",
+            "Snooze notifications: Users can snooze individual notifications",
+            "Background service restrictions: Apps cannot start background services; must use JobIntentService or WorkManager"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Developer Action Required",
+          "items": [
+            "Create NotificationChannel before posting any notification",
+            "Channel creation is ignored on older versions — safe to call on all API levels"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 126,
+      "question": "How to handle background service and execution limits with Oreo updates?",
+      "section": "Android Services",
+      "difficulty": "Medium",
+      "tags": ["Service"],
+      "title": "How to handle background service and execution limits with Oreo updates?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android 8.0 (Oreo) imposed strict background execution limits to improve battery life. Apps can no longer freely run background services when the app is not in the foreground."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Restrictions",
+          "items": [
+            "Background services are stopped a few minutes after the app goes to background",
+            "Implicit broadcast receivers are restricted (cannot register most in manifest)",
+            "startService() throws an IllegalStateException if called from background"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Handle Them",
+          "items": [
+            "Foreground Service: Use startForegroundService() + call startForeground() within 5 seconds",
+            "WorkManager: For deferrable background tasks — schedules with system constraints",
+            "JobScheduler / JobIntentService: For scheduled background work (now replaced by WorkManager)",
+            "FCM High Priority Push: Wake up app for time-sensitive tasks via push notification"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Best Practice",
+          "items": [
+            "Use WorkManager for almost all background work — it handles API-level differences automatically",
+            "Only use Foreground Service when the task is user-noticeable and ongoing"
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    }
+  ]
+}
