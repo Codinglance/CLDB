@@ -4705,11 +4705,11 @@
 
     {
       "id": 117,
-      "title": "Why use Dependency Injection frameworks like Dagger?",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "Why use Dependency Injection frameworks like Dagger?",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4742,11 +4742,11 @@
     },
     {
       "id": 118,
-      "title": "@Inject, @Module, @Provides, @Component in Dagger 2",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "@Inject, @Module, @Provides, @Component in Dagger 2",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4788,11 +4788,11 @@
     },
     {
       "id": 119,
-      "title": "How does Dagger work internally?",
-      "sec": "Dependency Injection",
-      "diff": "Hard",
+      "question": "How does Dagger work internally?",
+      "section": "Dependency Injection",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4825,11 +4825,11 @@
     },
     {
       "id": 120,
-      "title": "Dagger 2 vs Dagger-Hilt",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "Dagger 2 vs Dagger-Hilt",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4867,11 +4867,11 @@
     },
     {
       "id": 121,
-      "title": "What is a Component in Dagger?",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "What is a Component in Dagger?",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4903,11 +4903,11 @@
     },
     {
       "id": 122,
-      "title": "What is a Module in Dagger?",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "What is a Module in Dagger?",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4931,11 +4931,11 @@
     },
     {
       "id": 123,
-      "title": "How does custom scope work in Dagger?",
-      "sec": "Dependency Injection",
-      "diff": "Hard",
+      "question": "How does custom scope work in Dagger?",
+      "section": "Dependency Injection",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -4975,11 +4975,11 @@
     },
     {
       "id": 124,
-      "title": "Dagger Component vs SubComponents",
-      "sec": "Dependency Injection",
-      "diff": "Hard",
+      "question": "Dagger Component vs SubComponents",
+      "section": "Dependency Injection",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5017,11 +5017,11 @@
     },
     {
       "id": 125,
-      "title": "Circular dependency in Dagger — how to resolve?",
-      "sec": "Dependency Injection",
-      "diff": "Hard",
+      "question": "Circular dependency in Dagger — how to resolve?",
+      "section": "Dependency Injection",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5045,11 +5045,11 @@
     },
     {
       "id": 126,
-      "title": "@Provides vs @Binds in Dagger",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "@Provides vs @Binds in Dagger",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5086,11 +5086,11 @@
     },
     {
       "id": 127,
-      "title": "SubComponent vs Component dependency — under the hood",
-      "sec": "Dependency Injection",
-      "diff": "Hard",
+      "question": "SubComponent vs Component dependency — under the hood",
+      "section": "Dependency Injection",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5127,11 +5127,11 @@
     },
     {
       "id": 128,
-      "title": "Constructor injection vs method injection. Scope and Singleton",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "Constructor injection vs method injection. Scope and Singleton",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5170,11 +5170,11 @@
     },
     {
       "id": 129,
-      "title": "What's interesting about Hilt?",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "What's interesting about Hilt?",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5203,11 +5203,11 @@
     },
     {
       "id": 130,
-      "title": "Dagger vs Koin",
-      "sec": "Dependency Injection",
-      "diff": "Medium",
+      "question": "Dagger vs Koin",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5246,11 +5246,11 @@
     },
     {
       "id": 131,
-      "title": "Koin — your thoughts?",
-      "sec": "Dependency Injection",
-      "diff": "Easy",
+      "question": "Koin — your thoughts?",
+      "section": "Dependency Injection",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5290,11 +5290,11 @@
     },
     {
       "id": 132,
-      "title": "Tell me something about RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Tell me something about RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5329,11 +5329,11 @@
     },
     {
       "id": 133,
-      "title": "How to handle errors in RxJava?",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "How to handle errors in RxJava?",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5369,11 +5369,11 @@
     },
     {
       "id": 134,
-      "title": "FlatMap vs Map operator",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "FlatMap vs Map operator",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5411,11 +5411,11 @@
     },
     {
       "id": 135,
-      "title": "Create vs fromCallable in RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Create vs fromCallable in RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5452,11 +5452,11 @@
     },
     {
       "id": 136,
-      "title": "When to use defer operator in RxJava?",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "When to use defer operator in RxJava?",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5487,11 +5487,11 @@
     },
     {
       "id": 137,
-      "title": "Timer, Delay, and Interval operators in RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Timer, Delay, and Interval operators in RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5527,11 +5527,11 @@
     },
     {
       "id": 138,
-      "title": "Two network calls in parallel using RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Two network calls in parallel using RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5567,11 +5567,11 @@
     },
     {
       "id": 139,
-      "title": "Concat vs Merge in RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Concat vs Merge in RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5608,11 +5608,11 @@
     },
     {
       "id": 140,
-      "title": "Explain Subject in RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Explain Subject in RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5644,11 +5644,11 @@
     },
     {
       "id": 141,
-      "title": "Types of Observables in RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Types of Observables in RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5697,11 +5697,11 @@
     },
     {
       "id": 142,
-      "title": "Observable vs Completable vs Single",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Observable vs Completable vs Single",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5747,11 +5747,11 @@
     },
     {
       "id": 143,
-      "title": "Search feature using RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Search feature using RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5780,11 +5780,11 @@
     },
     {
       "id": 144,
-      "title": "Schedulers.io() vs Schedulers.computation()",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Schedulers.io() vs Schedulers.computation()",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5821,11 +5821,11 @@
     },
     {
       "id": 145,
-      "title": "dispose() vs clear() on CompositeDisposable",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "dispose() vs clear() on CompositeDisposable",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5861,11 +5861,11 @@
     },
     {
       "id": 146,
-      "title": "subscribeOn vs observeOn — Schedulers",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "subscribeOn vs observeOn — Schedulers",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5900,11 +5900,11 @@
     },
     {
       "id": 147,
-      "title": "subscribe(new Subscriber) vs subscribe(new Observer)",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "subscribe(new Subscriber) vs subscribe(new Observer)",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5940,11 +5940,11 @@
     },
     {
       "id": 148,
-      "title": "IOScheduler vs NewThreadScheduler in RxJava",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "IOScheduler vs NewThreadScheduler in RxJava",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -5973,11 +5973,11 @@
     },
     {
       "id": 149,
-      "title": "RxJava vs Coroutines — which do you prefer?",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "RxJava vs Coroutines — which do you prefer?",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6016,11 +6016,11 @@
     },
     {
       "id": 150,
-      "title": "Observable.just vs Observable.from vs Observable.create",
-      "sec": "RxJava",
-      "diff": "Medium",
+      "question": "Observable.just vs Observable.from vs Observable.create",
+      "section": "RxJava",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6065,11 +6065,11 @@
     },
     {
       "id": 151,
-      "title": "What is Flow in Kotlin?",
-      "sec": "Kotlin & Flow",
-      "diff": "Medium",
+      "question": "What is Flow in Kotlin?",
+      "section": "Kotlin & Flow",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6102,11 +6102,11 @@
     },
     {
       "id": 152,
-      "title": "Difference between const and val",
-      "sec": "Kotlin & Flow",
-      "diff": "Easy",
+      "question": "Difference between const and val",
+      "section": "Kotlin & Flow",
+      "difficulty": "Easy",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6143,11 +6143,11 @@
     },
     {
       "id": 153,
-      "title": "launchWhenCreated, launchWhenStarted, launchWhenResumed",
-      "sec": "Kotlin & Flow",
-      "diff": "Medium",
+      "question": "launchWhenCreated, launchWhenStarted, launchWhenResumed",
+      "section": "Kotlin & Flow",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6178,11 +6178,11 @@
     },
     {
       "id": 154,
-      "title": "Describe the architecture of your last app",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Describe the architecture of your last app",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6216,11 +6216,11 @@
     },
     {
       "id": 154,
-      "title": "Describe MVVM",
-      "sec": "Architecture",
-      "diff": "Easy",
+      "question": "Describe MVVM",
+      "section": "Architecture",
+      "difficulty": "Easy",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6260,11 +6260,11 @@
     },
     {
       "id": 155,
-      "title": "MVC vs MVP vs MVVM",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "MVC vs MVP vs MVVM",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6301,11 +6301,11 @@
     },
     {
       "id": 156,
-      "title": "Clean Architecture",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Clean Architecture",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6346,11 +6346,11 @@
     },
     {
       "id": 157,
-      "title": "MVI Architecture in Android",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "MVI Architecture in Android",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6389,11 +6389,11 @@
     },
     {
       "id": 158,
-      "title": "Software Architecture vs Software Design",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Software Architecture vs Software Design",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6430,11 +6430,11 @@
     },
     {
       "id": 159,
-      "title": "Benefits of Multi-Module Architecture",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Benefits of Multi-Module Architecture",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6455,11 +6455,11 @@
     },
     {
       "id": 160,
-      "title": "Multi-Module Project — Why and When?",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Multi-Module Project — Why and When?",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6496,11 +6496,11 @@
     },
     {
       "id": 161,
-      "title": "SOLID Principles",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "SOLID Principles",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6548,11 +6548,11 @@
     },
     {
       "id": 162,
-      "title": "MVP vs MVVM — issues with Presenter",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "MVP vs MVVM — issues with Presenter",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6588,12 +6588,12 @@
       ]
     },
     {
-      "id": 162,
-      "title": "MVVM vs MVI",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "id": 1621,
+      "question": "MVVM vs MVI",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6630,11 +6630,11 @@
     },
     {
       "id": 163,
-      "title": "Clean Architecture in MVVM",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Clean Architecture in MVVM",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6675,11 +6675,11 @@
     },
     {
       "id": 164,
-      "title": "Design Patterns and practical usage",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Design Patterns and practical usage",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6715,11 +6715,11 @@
     },
     {
       "id": 165,
-      "title": "Builder vs Factory Pattern",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Builder vs Factory Pattern",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6756,11 +6756,11 @@
     },
     {
       "id": 166,
-      "title": "Singleton vs Static — why we use them",
-      "sec": "Architecture",
-      "diff": "Medium",
+      "question": "Singleton vs Static — why we use them",
+      "section": "Architecture",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6798,11 +6798,11 @@
     },
     {
       "id": 167,
-      "title": "Singleton pattern — problems and double-checked locking",
-      "sec": "Architecture",
-      "diff": "Hard",
+      "question": "Singleton pattern — problems and double-checked locking",
+      "section": "Architecture",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6841,11 +6841,11 @@
     },
     {
       "id": 168,
-      "title": "What is a Spannable?",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "What is a Spannable?",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6879,11 +6879,11 @@
     },
     {
       "id": 169,
-      "title": "What is a SpannableString?",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "What is a SpannableString?",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6920,11 +6920,11 @@
     },
     {
       "id": 170,
-      "title": "Best practices for using text in Android",
-      "sec": "UI & Views",
-      "diff": "Easy",
+      "question": "Best practices for using text in Android",
+      "section": "UI & Views",
+      "difficulty": "Easy",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6947,11 +6947,11 @@
     },
     {
       "id": 171,
-      "title": "How to implement Dark mode?",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "How to implement Dark mode?",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -6986,11 +6986,11 @@
     },
     {
       "id": 172,
-      "title": "Process of creating a custom view",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "Process of creating a custom view",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7021,11 +7021,11 @@
     },
     {
       "id": 173,
-      "title": "Custom view lifecycle — onLayout vs onMeasure",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "Custom view lifecycle — onLayout vs onMeasure",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7062,11 +7062,11 @@
     },
     {
       "id": 174,
-      "title": "How does layout inflation work?",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "How does layout inflation work?",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7101,11 +7101,11 @@
     },
     {
       "id": 175,
-      "title": "What does setContentView() do?",
-      "sec": "UI & Views",
-      "diff": "Easy",
+      "question": "What does setContentView() do?",
+      "section": "UI & Views",
+      "difficulty": "Easy",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7137,11 +7137,11 @@
     },
     {
       "id": 176,
-      "title": "ConstraintLayout — Barriers, Guidelines, Groups, Chains",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "ConstraintLayout — Barriers, Guidelines, Groups, Chains",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7190,11 +7190,11 @@
     },
     {
       "id": 178,
-      "title": "Remote Views and how to use them",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "Remote Views and how to use them",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7234,11 +7234,11 @@
     },
     {
       "id": 179,
-      "title": "Inner Classes vs Static Classes",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "Inner Classes vs Static Classes",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7274,11 +7274,11 @@
     },
     {
       "id": 180,
-      "title": "Volatile vs Transient",
-      "sec": "UI & Views",
-      "diff": "Medium",
+      "question": "Volatile vs Transient",
+      "section": "UI & Views",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7315,11 +7315,11 @@
   ,
     {
       "id": 181,
-      "title": "What is ADB in Android?",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "What is ADB in Android?",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7353,11 +7353,11 @@
     },
     {
       "id": 182,
-      "title": "What is AAPT?",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "What is AAPT?",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7381,11 +7381,11 @@
     },
     {
       "id": 183,
-      "title": "What is StrictMode?",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "What is StrictMode?",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7415,11 +7415,11 @@
     },
     {
       "id": 184,
-      "title": "What is Lint?",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "What is Lint?",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7452,11 +7452,11 @@
     },
     {
       "id": 185,
-      "title": "What is Gradle?",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "What is Gradle?",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7481,11 +7481,11 @@
     },
     {
       "id": 186,
-      "title": "Gradle-related files in Android project",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "Gradle-related files in Android project",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7506,11 +7506,11 @@
     },
     {
       "id": 187,
-      "title": "How to create a custom task in Gradle?",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "How to create a custom task in Gradle?",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7538,11 +7538,11 @@
     },
     {
       "id": 188,
-      "title": "annotationProcessor, kapt, ksp in Gradle",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "annotationProcessor, kapt, ksp in Gradle",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7578,11 +7578,11 @@
     },
     {
       "id": 189,
-      "title": "implementation vs api in Gradle",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "implementation vs api in Gradle",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7618,11 +7618,11 @@
     },
     {
       "id": 190,
-      "title": "Build Variants in Android",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "Build Variants in Android",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7661,11 +7661,11 @@
     },
     {
       "id": 191,
-      "title": "Desugaring in Android",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "Desugaring in Android",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7696,11 +7696,11 @@
     },
     {
       "id": 192,
-      "title": "APK Size Reduction",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "APK Size Reduction",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7722,11 +7722,11 @@
     },
     {
       "id": 193,
-      "title": "How to speed up Gradle builds?",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "How to speed up Gradle builds?",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7749,11 +7749,11 @@
     },
     {
       "id": 194,
-      "title": "Multiple APKs for Android apps",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "Multiple APKs for Android apps",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7790,11 +7790,11 @@
     },
     {
       "id": 195,
-      "title": "Kotlin DSL for Gradle",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "Kotlin DSL for Gradle",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7834,11 +7834,11 @@
     },
     {
       "id": 196,
-      "title": "What is ProGuard used for?",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "What is ProGuard used for?",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7869,11 +7869,11 @@
     },
     {
       "id": 197,
-      "title": "What is proguard-rules.pro used for?",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "What is proguard-rules.pro used for?",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7902,11 +7902,11 @@
     },
     {
       "id": 198,
-      "title": "ProGuard vs R8",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "ProGuard vs R8",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7944,11 +7944,11 @@
     },
     {
       "id": 199,
-      "title": "Obfuscation and Minification",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "Obfuscation and Minification",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -7977,11 +7977,11 @@
     },
     {
       "id": 200,
-      "title": "Things to take care of while using ProGuard",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "Things to take care of while using ProGuard",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8010,11 +8010,11 @@
     },
     {
       "id": 202,
-      "title": "CI/CD Pipeline for Android",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "CI/CD Pipeline for Android",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8051,11 +8051,11 @@
     },
     {
       "id": 203,
-      "title": "Android App Release Checklist",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "Android App Release Checklist",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8080,11 +8080,11 @@
     },
     {
       "id": 204,
-      "title": "16 KB page size for Android apps",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "16 KB page size for Android apps",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8116,11 +8116,11 @@
     },
     {
       "id": 205,
-      "title": "How to measure method execution time?",
-      "sec": "Android Tools & Build",
-      "diff": "Easy",
+      "question": "How to measure method execution time?",
+      "section": "Android Tools & Build",
+      "difficulty": "Easy",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8140,11 +8140,11 @@
     },
     {
       "id": 206,
-      "title": "What is Support Library? Why was it introduced?",
-      "sec": "Android Tools & Build",
-      "diff": "Medium",
+      "question": "What is Support Library? Why was it introduced?",
+      "section": "Android Tools & Build",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8176,11 +8176,11 @@
     },
     {
       "id": 207,
-      "title": "Android Push Notification Flow using FCM",
-      "sec": "Push Notifications",
-      "diff": "Medium",
+      "question": "Android Push Notification Flow using FCM",
+      "section": "Push Notifications",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8201,11 +8201,11 @@
     },
     {
       "id": 208,
-      "title": "How does Android Push Notification system work?",
-      "sec": "Push Notifications",
-      "diff": "Medium",
+      "question": "How does Android Push Notification system work?",
+      "section": "Push Notifications",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8238,11 +8238,11 @@
     },
     {
       "id": 209,
-      "title": "Handle opening Activity using notifications",
-      "sec": "Push Notifications",
-      "diff": "Medium",
+      "question": "Handle opening Activity using notifications",
+      "section": "Push Notifications",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8270,11 +8270,11 @@
     },
     {
       "id": 210,
-      "title": "Push notifications — foreground vs background behavior",
-      "sec": "Push Notifications",
-      "diff": "Medium",
+      "question": "Push notifications — foreground vs background behavior",
+      "section": "Push Notifications",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8309,11 +8309,11 @@
     },
     {
       "id": 211,
-      "title": "Doze Mode and App Standby",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "Doze Mode and App Standby",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8349,11 +8349,11 @@
     },
     {
       "id": 212,
-      "title": "How Android implements adaptive battery using ML?",
-      "sec": "Battery & System",
-      "diff": "Hard",
+      "question": "How Android implements adaptive battery using ML?",
+      "section": "Battery & System",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8386,11 +8386,11 @@
     },
     {
       "id": 213,
-      "title": "How to reduce battery usage in an Android app?",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "How to reduce battery usage in an Android app?",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8412,11 +8412,11 @@
     },
     {
       "id": 214,
-      "title": "Support different screen sizes and densities",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "Support different screen sizes and densities",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8452,11 +8452,11 @@
     },
     {
       "id": 215,
-      "title": "Different protection levels in permissions",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "Different protection levels in permissions",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8500,11 +8500,11 @@
     },
     {
       "id": 216,
-      "title": "What is the NDK and why is it useful?",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "What is the NDK and why is it useful?",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8537,11 +8537,11 @@
     },
     {
       "id": 217,
-      "title": "What is RenderScript?",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "What is RenderScript?",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8574,11 +8574,11 @@
     },
     {
       "id": 218,
-      "title": "How the OS handles process flow — when is app killed?",
-      "sec": "Battery & System",
-      "diff": "Medium",
+      "question": "How the OS handles process flow — when is app killed?",
+      "section": "Battery & System",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8612,11 +8612,11 @@
     },
     {
       "id": 219,
-      "title": "What is Espresso?",
-      "sec": "Testing",
-      "diff": "Easy",
+      "question": "What is Espresso?",
+      "section": "Testing",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8648,11 +8648,11 @@
     },
     {
       "id": 220,
-      "title": "What is Robolectric? Disadvantages?",
-      "sec": "Testing",
-      "diff": "Medium",
+      "question": "What is Robolectric? Disadvantages?",
+      "section": "Testing",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8685,11 +8685,11 @@
     },
     {
       "id": 221,
-      "title": "What is UI Automator?",
-      "sec": "Testing",
-      "diff": "Medium",
+      "question": "What is UI Automator?",
+      "section": "Testing",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8721,11 +8721,11 @@
     },
     {
       "id": 222,
-      "title": "Explain unit test",
-      "sec": "Testing",
-      "diff": "Easy",
+      "question": "Explain unit test",
+      "section": "Testing",
+      "difficulty": "Easy",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8759,11 +8759,11 @@
     },
     {
       "id": 223,
-      "title": "Explain instrumented test",
-      "sec": "Testing",
-      "diff": "Easy",
+      "question": "Explain instrumented test",
+      "section": "Testing",
+      "difficulty": "Easy",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8797,11 +8797,11 @@
     },
     {
       "id": 224,
-      "title": "Why Mockito is used?",
-      "sec": "Testing",
-      "diff": "Easy",
+      "question": "Why Mockito is used?",
+      "section": "Testing",
+      "difficulty": "Easy",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8833,11 +8833,11 @@
     },
     {
       "id": 225,
-      "title": "Describe code coverage",
-      "sec": "Testing",
-      "diff": "Easy",
+      "question": "Describe code coverage",
+      "section": "Testing",
+      "difficulty": "Easy",
       "time": "30 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8870,11 +8870,11 @@
     },
     {
       "id": 226,
-      "title": "Stub vs Mock",
-      "sec": "Testing",
-      "diff": "Medium",
+      "question": "Stub vs Mock",
+      "section": "Testing",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8912,11 +8912,11 @@
     },
     {
       "id": 227,
-      "title": "TDD and frameworks — challenges faced",
-      "sec": "Testing",
-      "diff": "Medium",
+      "question": "TDD and frameworks — challenges faced",
+      "section": "Testing",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8950,11 +8950,11 @@
     },
     {
       "id": 228,
-      "title": "How can two distinct Android apps interact?",
-      "sec": "IPC & Communication",
-      "diff": "Medium",
+      "question": "How can two distinct Android apps interact?",
+      "section": "IPC & Communication",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -8975,11 +8975,11 @@
     },
     {
       "id": 229,
-      "title": "Background processing options in Android",
-      "sec": "IPC & Communication",
-      "diff": "Medium",
+      "question": "Background processing options in Android",
+      "section": "IPC & Communication",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9000,11 +9000,11 @@
     },
     {
       "id": 230,
-      "title": "Inter-process communication in Android",
-      "sec": "IPC & Communication",
-      "diff": "Hard",
+      "question": "Inter-process communication in Android",
+      "section": "IPC & Communication",
+      "difficulty": "Hard",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9036,11 +9036,11 @@
     },
     {
       "id": 231,
-      "title": "Activity-to-Activity, Activity-to-Fragment, Fragment-to-Fragment communication",
-      "sec": "IPC & Communication",
-      "diff": "Medium",
+      "question": "Activity-to-Activity, Activity-to-Fragment, Fragment-to-Fragment communication",
+      "section": "IPC & Communication",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9075,11 +9075,11 @@
     },
     {
       "id": 232,
-      "title": "Deep vs Dynamic Linking",
-      "sec": "IPC & Communication",
-      "diff": "Medium",
+      "question": "Deep vs Dynamic Linking",
+      "section": "IPC & Communication",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9108,11 +9108,11 @@
     },
     {
       "id": 233,
-      "title": "Deeplink understanding and architecture",
-      "sec": "IPC & Communication",
-      "diff": "Medium",
+      "question": "Deeplink understanding and architecture",
+      "section": "IPC & Communication",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9148,11 +9148,11 @@
     },
     {
       "id": 234,
-      "title": "How Parcelable internally works",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "How Parcelable internally works",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9184,11 +9184,11 @@
     },
     {
       "id": 235,
-      "title": "Serializable vs Parcelable — disadvantages of Serializable",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "Serializable vs Parcelable — disadvantages of Serializable",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9225,11 +9225,11 @@
     },
     {
       "id": 236,
-      "title": "What happens if Serializable class has a non-serializable member?",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "What happens if Serializable class has a non-serializable member?",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9260,11 +9260,11 @@
     },
     {
       "id": 237,
-      "title": "HashCode and Equals implementation",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "HashCode and Equals implementation",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9302,11 +9302,11 @@
     },
     {
       "id": 238,
-      "title": "Android Bundle and Dynamic Feature usage",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "Android Bundle and Dynamic Feature usage",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9335,11 +9335,11 @@
     },
     {
       "id": 239,
-      "title": "What is Instant Apps?",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "What is Instant Apps?",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "45 sec",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9373,11 +9373,11 @@
     },
     {
       "id": 240,
-      "title": "Retain data on orientation change — lifecycle during rotation",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "Retain data on orientation change — lifecycle during rotation",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9408,11 +9408,11 @@
     },
     {
       "id": 241,
-      "title": "Handle different screen sizes, density, languages, and orientation",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "Handle different screen sizes, density, languages, and orientation",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9455,11 +9455,11 @@
     },
     {
       "id": 242,
-      "title": "What is process death?",
-      "sec": "Miscellaneous",
-      "diff": "Medium",
+      "question": "What is process death?",
+      "section": "Miscellaneous",
+      "difficulty": "Medium",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9500,11 +9500,11 @@
     },
     {
       "id": 243,
-      "title": "Firebase",
-      "sec": "Miscellaneous",
-      "diff": "Easy",
+      "question": "Firebase",
+      "section": "Miscellaneous",
+      "difficulty": "Easy",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
@@ -9532,11 +9532,11 @@
     },
     {
       "id": 244,
-      "title": "Git",
-      "sec": "Miscellaneous",
-      "diff": "Easy",
+      "question": "Git",
+      "section": "Miscellaneous",
+      "difficulty": "Easy",
       "time": "1 min",
-      "ai": [
+      "askedIn": [
         "Google",
         "Amazon"
       ],
