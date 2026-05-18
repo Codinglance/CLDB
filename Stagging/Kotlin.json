@@ -1082,6 +1082,2894 @@
         "Amazon"
       ],
       "expectedReadTime": "45 sec"
+    },
+    {
+
+      "id": 26,
+      "question": "What is an inline function in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What is an inline function in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "An inline function in Kotlin is a function whose body is copied directly at the call site during compilation, instead of making a regular function call. This eliminates the overhead of lambda object creation and virtual calls."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Declared using the inline keyword before fun.",
+            "Eliminates lambda allocation overhead — no Function object is created.",
+            "Best used for higher-order functions that accept lambdas.",
+            "Allows non-local returns from lambdas.",
+            "Should not be used for functions that don't accept lambdas — no benefit."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "inline fun runWithLog(action: () -> Unit) {\n    println(\"Starting\")\n    action()\n    println(\"Done\")\n}\n\nrunWithLog { println(\"Working...\") }\n// Compiler copies the body here — no lambda object created"
+        },
+        {
+          "type": "bullet",
+          "heading": "When NOT to use inline",
+          "items": [
+            "Functions with no lambda parameters — no performance gain.",
+            "Very large functions — inlining increases bytecode size.",
+            "Recursive functions — inline is not allowed."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 27,
+      "question": "What is a reified keyword in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "What is a reified keyword in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "reified is a keyword used with inline functions to retain the generic type information at runtime. Normally, Kotlin generics are erased at runtime (type erasure), but reified bypasses this limitation."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Can only be used with inline functions.",
+            "Allows you to use T::class, is T, and as T inside the function.",
+            "Eliminates the need to pass Class<T> as a parameter.",
+            "Common in Android for Intent navigation, JSON parsing, etc."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Without reified (the old way)",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun <T> startActivity(context: Context, clazz: Class<T>) {\n    context.startActivity(Intent(context, clazz))\n}\nstartActivity(context, MyActivity::class.java)"
+        },
+        {
+          "type": "text_code",
+          "heading": "With reified",
+          "content": "",
+          "language": "kotlin",
+          "code": "inline fun <reified T> Context.startActivity() {\n    startActivity(Intent(this, T::class.java))\n}\n\n// Usage — clean and type-safe\nstartActivity<MyActivity>()"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 28,
+      "question": "Suspending vs blocking in Kotlin Coroutines",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "Suspending vs blocking in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Suspending",
+          "items": [
+            "Uses the suspend keyword.",
+            "Pauses coroutine execution without blocking the underlying thread.",
+            "Thread is free to do other work while waiting.",
+            "Used with delay(), await(), withContext(), etc."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Suspending Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "suspend fun fetchData() {\n    delay(1000) // Suspends coroutine, thread is free\n    println(\"Done\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Blocking",
+          "items": [
+            "Blocks the current thread entirely until the task completes.",
+            "No other work can run on that thread during the wait.",
+            "Used with Thread.sleep(), blocking I/O, or runBlocking {}."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Blocking Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun fetchData() {\n    Thread.sleep(1000) // Thread is blocked — can't do anything else\n    println(\"Done\")\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Key Difference",
+          "content": "Suspending is coroutine-friendly and efficient. Blocking wastes thread resources and can cause ANR on Android if done on the main thread."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 29,
+      "question": "Retrofit vs OkHttp — when to use each?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Networking"],
+      "title": "Retrofit vs OkHttp — when to use each?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both are networking libraries by Square, but they serve different purposes. OkHttp is the low-level HTTP client, while Retrofit is a high-level REST API client built on top of OkHttp."
+        },
+        {
+          "type": "bullet",
+          "heading": "OkHttp",
+          "items": [
+            "Low-level HTTP client for making raw network requests.",
+            "Gives full control over requests, responses, caching, and interceptors.",
+            "Best when you need custom HTTP logic or non-REST communication.",
+            "More boilerplate code required."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Retrofit",
+          "items": [
+            "High-level REST client built on OkHttp.",
+            "Converts API endpoints to Kotlin interfaces automatically.",
+            "Supports Coroutines, RxJava, Gson, Moshi out of the box.",
+            "Less boilerplate — ideal for standard REST API calls."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Retrofit Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface ApiService {\n    @GET(\"users/{id}\")\n    suspend fun getUser(@Path(\"id\") id: Int): User\n}\n\nval retrofit = Retrofit.Builder()\n    .baseUrl(\"https://api.example.com/\")\n    .addConverterFactory(GsonConverterFactory.create())\n    .build()\n    .create(ApiService::class.java)"
+        },
+        {
+          "type": "text",
+          "heading": "Summary",
+          "content": "Use Retrofit for REST APIs. Use OkHttp directly for custom networking scenarios or to add interceptors (logging, auth headers) to your Retrofit client."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 30,
+      "question": "Launch vs Async in Kotlin Coroutines",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "Launch vs Async in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both launch and async are coroutine builders, but they differ in whether they return a result."
+        },
+        {
+          "type": "bullet",
+          "heading": "launch",
+          "items": [
+            "Returns a Job — no result.",
+            "Fire-and-forget: used for tasks that don't return a value.",
+            "Exceptions propagate immediately to the parent scope."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "launch Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val job = CoroutineScope(Dispatchers.IO).launch {\n    saveData() // No result needed\n}\njob.join() // Wait for completion"
+        },
+        {
+          "type": "bullet",
+          "heading": "async",
+          "items": [
+            "Returns a Deferred<T> — holds a future result.",
+            "Use await() to retrieve the result.",
+            "Exceptions are deferred until await() is called.",
+            "Ideal for parallel tasks that each return a value."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "async Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val deferred = CoroutineScope(Dispatchers.IO).async {\n    fetchUser() // Returns a result\n}\nval user = deferred.await()"
+        },
+        {
+          "type": "text_code",
+          "heading": "Parallel calls with async",
+          "content": "",
+          "language": "kotlin",
+          "code": "val user = async { fetchUser() }\nval posts = async { fetchPosts() }\nval result = user.await() to posts.await() // Both run in parallel"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 31,
+      "question": "internal visibility modifier in Kotlin",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": ["Basics"],
+      "title": "internal visibility modifier in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The internal modifier in Kotlin restricts visibility to within the same module. A module is a set of Kotlin files compiled together — such as a Gradle module or an IntelliJ module."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Accessible from anywhere within the same module.",
+            "Not accessible from other modules, even if they depend on yours.",
+            "Useful for hiding implementation details from external consumers.",
+            "More restrictive than public, less restrictive than private."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "internal class DatabaseHelper {\n    internal fun connect() { /* ... */ }\n}\n\n// Accessible within the same module\nval db = DatabaseHelper()\ndb.connect()\n\n// Not accessible from a different module"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 32,
+      "question": "open keyword in Kotlin — what is it for?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": ["Basics"],
+      "title": "open keyword in Kotlin — what is it for?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Kotlin, all classes and functions are final by default — they cannot be inherited or overridden. The open keyword explicitly allows a class or function to be extended or overridden."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "open on a class — allows other classes to inherit from it.",
+            "open on a function — allows subclasses to override it.",
+            "Without open, attempting to inherit or override causes a compile error.",
+            "abstract classes are implicitly open."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "open class Animal {\n    open fun sound() = println(\"Some sound\")\n}\n\nclass Dog : Animal() {\n    override fun sound() = println(\"Woof\")\n}\n\nDog().sound() // Output: Woof"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 33,
+      "question": "lateinit vs lazy in Kotlin",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Basics"],
+      "title": "lateinit vs lazy in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both lateinit and lazy are used to defer initialization, but they serve different use-cases and have different constraints."
+        },
+        {
+          "type": "bullet",
+          "heading": "lateinit",
+          "items": [
+            "Used with var (mutable).",
+            "Can be initialized at any time before use.",
+            "Works only with non-nullable reference types (not Int, Boolean, etc.).",
+            "Throws UninitializedPropertyAccessException if accessed before init.",
+            "Common in Android for views, injected dependencies."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "lateinit Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "lateinit var name: String\nname = \"Aasim\" // Initialize later\nprintln(name)"
+        },
+        {
+          "type": "bullet",
+          "heading": "lazy",
+          "items": [
+            "Used with val (immutable).",
+            "Initialized only once, on first access.",
+            "Thread-safe by default.",
+            "Works with any type including primitives.",
+            "Good for expensive computations or objects not always needed."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "lazy Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val config: Config by lazy {\n    Config.load() // Called only on first access\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Quick Comparison",
+          "items": [
+            "lateinit → var, initialized externally, reference types only.",
+            "lazy → val, initialized on first use, any type, thread-safe."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 34,
+      "question": "How does Kotlin Multiplatform work?",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "How does Kotlin Multiplatform work?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin Multiplatform (KMP) allows you to share business logic across multiple platforms — Android, iOS, Web, Desktop — while keeping platform-specific code separate."
+        },
+        {
+          "type": "bullet",
+          "heading": "How it Works",
+          "items": [
+            "Common code — written in commonMain, shared across all platforms.",
+            "Platform-specific code — written in androidMain, iosMain, etc.",
+            "expect/actual mechanism — define an expected API in common, provide actual implementations per platform.",
+            "Kotlin compiles to JVM bytecode (Android/JVM), Native (iOS/macOS), and JavaScript (Web)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "expect/actual Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "// commonMain\nexpect fun getPlatformName(): String\n\n// androidMain\nactual fun getPlatformName() = \"Android\"\n\n// iosMain\nactual fun getPlatformName() = \"iOS\""
+        },
+        {
+          "type": "bullet",
+          "heading": "What can be shared",
+          "items": [
+            "Business logic, data models, repositories.",
+            "Network calls (using Ktor), database (using SQLDelight).",
+            "ViewModels (using KMP-compatible architecture)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 35,
+      "question": "What is a ViewModel and how is it useful?",
+      "section": "Android Specific",
+      "difficulty": "Medium",
+      "tags": ["Android"],
+      "title": "What is a ViewModel and how is it useful?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "ViewModel is an Android Architecture Component designed to store and manage UI-related data in a lifecycle-aware manner. It survives configuration changes like screen rotation."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why it is Useful",
+          "items": [
+            "Survives configuration changes (rotation, theme change) — data is not lost.",
+            "Separates UI logic from Activity/Fragment — cleaner architecture.",
+            "Works with LiveData and StateFlow to reactively update the UI.",
+            "Scoped to the Activity or Fragment lifecycle — auto-cleared when not needed.",
+            "Supports viewModelScope for coroutine lifecycle management."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "class UserViewModel : ViewModel() {\n    private val _user = MutableStateFlow<User?>(null)\n    val user: StateFlow<User?> = _user\n\n    fun loadUser(id: Int) {\n        viewModelScope.launch {\n            _user.value = repository.getUser(id)\n        }\n    }\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 36,
+      "question": "What is a JvmStatic annotation in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Interop"],
+      "title": "What is a JvmStatic annotation in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "@JvmStatic is an annotation that instructs the Kotlin compiler to generate an actual static method in the bytecode for a companion object or object function. Without it, Java callers must use a longer syntax."
+        },
+        {
+          "type": "text_code",
+          "heading": "Without @JvmStatic (Java call is verbose)",
+          "content": "",
+          "language": "kotlin",
+          "code": "class MyClass {\n    companion object {\n        fun greet() = println(\"Hello\")\n    }\n}\n// Java: MyClass.Companion.greet();"
+        },
+        {
+          "type": "text_code",
+          "heading": "With @JvmStatic (Java call is clean)",
+          "content": "",
+          "language": "kotlin",
+          "code": "class MyClass {\n    companion object {\n        @JvmStatic\n        fun greet() = println(\"Hello\")\n    }\n}\n// Java: MyClass.greet();"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Used inside companion object or object declarations.",
+            "Makes the function callable as a true static from Java.",
+            "No effect when called from Kotlin — Kotlin handles it automatically."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 37,
+      "question": "What is a JvmField annotation in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Interop"],
+      "title": "What is a JvmField annotation in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "@JvmField tells the Kotlin compiler to expose a Kotlin property as a plain Java field — without generating getter/setter methods. This improves Java interoperability and is useful for constants."
+        },
+        {
+          "type": "text_code",
+          "heading": "Without @JvmField",
+          "content": "",
+          "language": "kotlin",
+          "code": "class Config {\n    val timeout = 30\n}\n// Java: config.getTimeout();"
+        },
+        {
+          "type": "text_code",
+          "heading": "With @JvmField",
+          "content": "",
+          "language": "kotlin",
+          "code": "class Config {\n    @JvmField val timeout = 30\n}\n// Java: config.timeout;  — direct field access"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Removes getter/setter generation for the annotated property.",
+            "Commonly used with companion object constants for Java access.",
+            "Cannot be used with private properties or delegated properties."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 38,
+      "question": "singleTask launchMode in Android",
+      "section": "Android Specific",
+      "difficulty": "Medium",
+      "tags": ["Android"],
+      "title": "singleTask launchMode in Android",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "singleTask is an Android Activity launch mode that ensures only one instance of the Activity exists in the back stack at any time. If the Activity already exists, the system brings it to the front and calls onNewIntent()."
+        },
+        {
+          "type": "bullet",
+          "heading": "Behavior",
+          "items": [
+            "Only one instance ever exists in the task.",
+            "If already in the stack, all Activities above it are destroyed (popped).",
+            "onNewIntent() is called with the new Intent instead of onCreate().",
+            "Activity runs in its own task by default (can be controlled with taskAffinity)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "How to set in AndroidManifest.xml",
+          "content": "",
+          "language": "kotlin",
+          "code": "<activity\n    android:name=\".MainActivity\"\n    android:launchMode=\"singleTask\" />"
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Use Cases",
+          "items": [
+            "Home/Dashboard screens — you don't want multiple instances.",
+            "Deep link handling — navigate to root without duplicating it.",
+            "Login screens — prevent going back to a duplicate login after auth."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 39,
+      "question": "What is a JvmOverloads annotation in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Interop"],
+      "title": "What is a JvmOverloads annotation in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "@JvmOverloads instructs the Kotlin compiler to generate multiple overloaded versions of a function for Java — one for each parameter that has a default value. Java does not support default parameters natively."
+        },
+        {
+          "type": "text_code",
+          "heading": "Without @JvmOverloads",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun greet(name: String = \"World\", greeting: String = \"Hello\") {\n    println(\"$greeting, $name!\")\n}\n// Java must call: greet(\"World\", \"Hello\") — must pass all args"
+        },
+        {
+          "type": "text_code",
+          "heading": "With @JvmOverloads",
+          "content": "",
+          "language": "kotlin",
+          "code": "@JvmOverloads\nfun greet(name: String = \"World\", greeting: String = \"Hello\") {\n    println(\"$greeting, $name!\")\n}\n// Java can call:\n// greet()\n// greet(\"Aasim\")\n// greet(\"Aasim\", \"Hi\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Commonly used in custom Android Views with constructor overloads.",
+            "Generates N overloads for N default parameters.",
+            "No effect in Kotlin — Kotlin already handles default params."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 40,
+      "question": "What is noinline in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What is noinline in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "noinline is used to mark specific lambda parameters of an inline function so they are NOT inlined. When a function is inline, all its lambda parameters are inlined by default. noinline opts specific ones out."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why use noinline?",
+          "items": [
+            "When you need to store the lambda in a variable — inlined lambdas can't be stored as objects.",
+            "When you need to pass the lambda to a non-inline function.",
+            "When you want only some lambdas inlined for performance."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "inline fun process(\n    inlinedAction: () -> Unit,\n    noinline storedAction: () -> Unit\n) {\n    inlinedAction()              // Inlined at call site\n    val ref = storedAction       // Can store noinline lambda\n    ref()\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 41,
+      "question": "What is crossinline in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What is crossinline in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "crossinline is used to prevent non-local returns in a lambda passed to an inline function, when that lambda is called from a different execution context (e.g., inside another lambda or Runnable)."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why it exists",
+          "items": [
+            "Inline lambdas allow non-local returns (return from the outer function).",
+            "But if the lambda is passed to another scope (like a thread or callback), non-local return is unsafe.",
+            "crossinline enforces that the lambda cannot use return."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "inline fun runOnBackground(crossinline action: () -> Unit) {\n    Thread {\n        action() // Called in different context — non-local return not allowed\n    }.start()\n}\n\nrunOnBackground {\n    println(\"Running\")\n    // return  // Compile error — crossinline prevents this\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 42,
+      "question": "What are higher-order functions in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What are higher-order functions in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A higher-order function is a function that takes another function as a parameter, returns a function, or both. This enables functional programming patterns in Kotlin."
+        },
+        {
+          "type": "text_code",
+          "heading": "Function as Parameter",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun operate(a: Int, b: Int, op: (Int, Int) -> Int): Int {\n    return op(a, b)\n}\n\nval result = operate(5, 3) { x, y -> x + y } // 8"
+        },
+        {
+          "type": "text_code",
+          "heading": "Returning a Function",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun multiplier(factor: Int): (Int) -> Int {\n    return { number -> number * factor }\n}\n\nval triple = multiplier(3)\nprintln(triple(4)) // 12"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Enables reusable, flexible logic.",
+            "Foundation for scope functions, collections operators (map, filter, forEach).",
+            "Reduces boilerplate by passing behavior as data."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 43,
+      "question": "AssociateBy — convert List to Map in Kotlin",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Collections"],
+      "title": "AssociateBy — convert List to Map in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "associateBy is a Kotlin collections function that transforms a List into a Map, using a specified property of each element as the key."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class User(val id: Int, val name: String)\n\nval users = listOf(User(1, \"Aasim\"), User(2, \"Ali\"), User(3, \"Sara\"))\n\nval userMap: Map<Int, User> = users.associateBy { it.id }\n// Result: {1=User(id=1, name=Aasim), 2=User(id=2, name=Ali), ...}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Custom key and value",
+          "content": "",
+          "language": "kotlin",
+          "code": "val nameById = users.associateBy(\n    keySelector = { it.id },\n    valueTransform = { it.name }\n)\n// Result: {1=Aasim, 2=Ali, 3=Sara}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "If duplicate keys exist, the last element wins.",
+            "Alternative: associate { it.id to it.name } for custom pairs.",
+            "toMap() works if you already have a list of Pairs."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 44,
+      "question": "partition filtering function in Kotlin",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Collections"],
+      "title": "partition filtering function in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "partition is a Kotlin collections function that splits a collection into two lists based on a predicate — one list for elements that match, and one for elements that don't."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val numbers = listOf(1, 2, 3, 4, 5, 6)\n\nval (evens, odds) = numbers.partition { it % 2 == 0 }\n\nprintln(evens) // [2, 4, 6]\nprintln(odds)  // [1, 3, 5]"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Returns a Pair<List<T>, List<T>>.",
+            "Both lists always add up to the original collection size.",
+            "Cleaner than running filter twice on the same collection.",
+            "Commonly used for separating valid/invalid data, active/inactive users, etc."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 45,
+      "question": "Infix notation in Kotlin",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "Infix notation in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Infix notation allows you to call a function without dots or parentheses, making the code read more like natural language. A function must be marked with the infix keyword to support this."
+        },
+        {
+          "type": "bullet",
+          "heading": "Requirements for infix functions",
+          "items": [
+            "Must be a member function or extension function.",
+            "Must have exactly one parameter.",
+            "Parameter must not have a default value or be vararg."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "infix fun Int.add(other: Int): Int = this + other\n\nval result = 5 add 3  // Same as 5.add(3)\nprintln(result) // 8"
+        },
+        {
+          "type": "text_code",
+          "heading": "Real-world Example (Pair creation)",
+          "content": "",
+          "language": "kotlin",
+          "code": "val pair = \"name\" to \"Aasim\"  // 'to' is an infix function\n// Same as: \"name\".to(\"Aasim\")"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 46,
+      "question": "What is runBlocking in Coroutines?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "What is runBlocking in Coroutines?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "runBlocking is a coroutine builder that bridges the regular blocking world with the coroutine world. It blocks the current thread until all coroutines inside it complete."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Blocks the calling thread — unlike launch or async.",
+            "Mainly used in main functions and unit tests.",
+            "Should NOT be used in Android UI code — it will freeze the main thread.",
+            "Creates a CoroutineScope and runs suspend functions inside it."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun main() = runBlocking {\n    delay(1000)\n    println(\"Hello after 1 second\")\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "In Unit Tests",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Test\nfun testFetch() = runBlocking {\n    val result = repository.fetchData()\n    assertEquals(\"expected\", result)\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 47,
+      "question": "What is structured concurrency in Kotlin Coroutines?",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "What is structured concurrency in Kotlin Coroutines?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Structured concurrency is a principle in Kotlin Coroutines that ensures coroutines are launched in a defined scope and cannot outlive that scope. It prevents coroutine leaks and makes cancellation and error propagation predictable."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Principles",
+          "items": [
+            "Every coroutine belongs to a CoroutineScope.",
+            "A parent scope waits for all its child coroutines to finish before completing.",
+            "If a parent is cancelled, all children are cancelled automatically.",
+            "If a child fails, the failure propagates to the parent (unless using supervisorScope)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "coroutineScope {\n    launch { task1() } // Child 1\n    launch { task2() } // Child 2\n    // coroutineScope waits for both before returning\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "No coroutine leaks — all coroutines are tied to a lifecycle.",
+            "Predictable cancellation — cancel scope, cancel everything inside.",
+            "Easier error handling — exceptions bubble up naturally."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 48,
+      "question": "String vs StringBuffer vs StringBuilder",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Basics"],
+      "title": "String vs StringBuffer vs StringBuilder",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "String",
+          "items": [
+            "Immutable — any modification creates a new object.",
+            "Thread-safe by nature.",
+            "Best for fixed text that doesn't change."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "StringBuffer",
+          "items": [
+            "Mutable — modifications happen in-place.",
+            "Thread-safe — all methods are synchronized.",
+            "Slower than StringBuilder due to synchronization overhead.",
+            "Use when multiple threads modify the same string."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "StringBuilder",
+          "items": [
+            "Mutable — modifications happen in-place.",
+            "Not thread-safe.",
+            "Faster than StringBuffer — no synchronization.",
+            "Preferred in single-threaded scenarios for string building."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Kotlin Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val sb = StringBuilder()\nsb.append(\"Hello\")\nsb.append(\" World\")\nprintln(sb.toString()) // Hello World"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 49,
+      "question": "val mutableList vs var immutableList — when to use which?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Basics"],
+      "title": "val mutableList vs var immutableList — when to use which?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "val and var control whether the reference can be reassigned, while the list type (mutable/immutable) controls whether the contents can be changed. These are independent concerns."
+        },
+        {
+          "type": "bullet",
+          "heading": "val mutableList",
+          "items": [
+            "The reference cannot be reassigned, but items can be added or removed.",
+            "Use when you need a fixed reference but a growing/shrinking collection."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "val mutableList Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val items = mutableListOf(1, 2, 3)\nitems.add(4)    // Allowed\n// items = mutableListOf() // Cannot reassign val"
+        },
+        {
+          "type": "bullet",
+          "heading": "var immutableList",
+          "items": [
+            "The reference can be reassigned, but you can't modify the existing list.",
+            "Use when you want to swap the entire list at once (e.g., replace full dataset)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "var immutableList Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "var items = listOf(1, 2, 3)\nitems = listOf(4, 5, 6) // Reassign allowed\n// items.add(7)          // listOf is immutable"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 50,
+      "question": "What are collections in Kotlin?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": ["Collections"],
+      "title": "What are collections in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin provides a rich collections framework including List, Set, and Map — each available in immutable and mutable variants."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of Collections",
+          "items": [
+            "List — Ordered collection; allows duplicates. listOf() / mutableListOf().",
+            "Set — Unordered collection; no duplicates. setOf() / mutableSetOf().",
+            "Map — Key-value pairs; keys are unique. mapOf() / mutableMapOf()."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val list = listOf(1, 2, 3)\nval set = setOf(\"a\", \"b\", \"a\") // {a, b} — no duplicate\nval map = mapOf(\"name\" to \"Aasim\", \"age\" to 25)"
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Operators",
+          "items": [
+            "map { } — Transform each element.",
+            "filter { } — Keep matching elements.",
+            "forEach { } — Iterate over elements.",
+            "groupBy { } — Group elements by key.",
+            "sortedBy { } — Sort by a property."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 51,
+      "question": "What does ?: do in Kotlin (Elvis Operator)?",
+      "section": "Core Kotlin",
+      "difficulty": "Easy",
+      "tags": ["Basics"],
+      "title": "What does ?: do in Kotlin (Elvis Operator)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Elvis operator ?: provides a default value when the left-hand expression is null. It is a concise alternative to an if-else null check."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val name: String? = null\nval displayName = name ?: \"Guest\"\nprintln(displayName) // Guest"
+        },
+        {
+          "type": "text_code",
+          "heading": "Equivalent if-else",
+          "content": "",
+          "language": "kotlin",
+          "code": "val displayName = if (name != null) name else \"Guest\""
+        },
+        {
+          "type": "text_code",
+          "heading": "Used with return or throw",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun getUser(id: Int): User {\n    return userMap[id] ?: throw IllegalArgumentException(\"User not found\")\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 52,
+      "question": "Timeouts in Kotlin Coroutines",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "Timeouts in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin Coroutines provide withTimeout and withTimeoutOrNull to cancel a coroutine block if it doesn't complete within a specified duration."
+        },
+        {
+          "type": "text_code",
+          "heading": "withTimeout — throws exception on timeout",
+          "content": "",
+          "language": "kotlin",
+          "code": "try {\n    withTimeout(2000) {\n        fetchData() // Must complete within 2 seconds\n    }\n} catch (e: TimeoutCancellationException) {\n    println(\"Timed out!\")\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "withTimeoutOrNull — returns null on timeout",
+          "content": "",
+          "language": "kotlin",
+          "code": "val result = withTimeoutOrNull(2000) {\n    fetchData()\n}\nif (result == null) println(\"Timed out!\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "withTimeout throws TimeoutCancellationException.",
+            "withTimeoutOrNull is safer — returns null instead of throwing.",
+            "Duration is in milliseconds.",
+            "Prefer withTimeoutOrNull when timeout is an expected scenario."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 53,
+      "question": "What is a Job in Coroutines?",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "What is a Job in Coroutines?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A Job is a handle to a coroutine's lifecycle. It allows you to manage the coroutine — check its state, wait for it to finish, or cancel it."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key States of a Job",
+          "items": [
+            "Active — Coroutine is running.",
+            "Completing — Coroutine is finishing (children still running).",
+            "Completed — Finished successfully.",
+            "Cancelling — Being cancelled.",
+            "Cancelled — Fully cancelled."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val job = CoroutineScope(Dispatchers.IO).launch {\n    doWork()\n}\n\njob.join()   // Wait for completion\njob.cancel() // Cancel the coroutine\nprintln(job.isActive)    // false\nprintln(job.isCancelled) // true"
+        },
+        {
+          "type": "bullet",
+          "heading": "SupervisorJob",
+          "items": [
+            "A special Job where child failures don't cancel siblings or the parent.",
+            "Used in viewModelScope and supervisorScope."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 54,
+      "question": "Coroutines job.cancel() vs scope.cancel()",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "Coroutines job.cancel() vs scope.cancel()",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both cancel coroutines, but at different levels of scope — job.cancel() targets one specific coroutine, while scope.cancel() cancels everything inside the scope."
+        },
+        {
+          "type": "bullet",
+          "heading": "job.cancel()",
+          "items": [
+            "Cancels only the specific coroutine (and its children).",
+            "The parent scope remains active — can launch new coroutines.",
+            "Use to stop a single ongoing task."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "job.cancel() Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val job = scope.launch { longTask() }\njob.cancel() // Only this coroutine is cancelled\n// scope is still alive — can launch more"
+        },
+        {
+          "type": "bullet",
+          "heading": "scope.cancel()",
+          "items": [
+            "Cancels all coroutines in the scope.",
+            "The scope itself becomes inactive — cannot launch new coroutines.",
+            "Use when the entire lifecycle ends (e.g., Activity destroyed)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "scope.cancel() Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "scope.cancel() // Cancels ALL coroutines in the scope\n// scope is now dead — scope.launch {} will throw"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 55,
+      "question": "What happens if exception thrown inside async but await() is never called?",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "What happens if exception thrown inside async but await() is never called?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "If an exception is thrown inside an async block and await() is never called, the exception is silently ignored by default. This is a common pitfall when using async."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example — Exception is lost",
+          "content": "",
+          "language": "kotlin",
+          "code": "val deferred = CoroutineScope(Dispatchers.IO).async {\n    throw RuntimeException(\"Oops!\")\n}\n// await() never called — exception is silently swallowed"
+        },
+        {
+          "type": "text_code",
+          "heading": "Correct usage — catch via await()",
+          "content": "",
+          "language": "kotlin",
+          "code": "val deferred = scope.async {\n    throw RuntimeException(\"Oops!\")\n}\ntry {\n    deferred.await() // Exception is thrown here\n} catch (e: RuntimeException) {\n    println(\"Caught: ${e.message}\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Takeaway",
+          "items": [
+            "Exceptions in async are deferred until await() is called.",
+            "Always call await() inside a try-catch.",
+            "CoroutineExceptionHandler only works with launch, not async.",
+            "Use launch when you don't need a result — exceptions propagate immediately."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 56,
+      "question": "How to implement debounce using Coroutines?",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "How to implement debounce using Coroutines?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Debounce delays execution until a specified time has passed since the last trigger. In coroutines, this is typically done using Flow with the debounce operator."
+        },
+        {
+          "type": "text_code",
+          "heading": "Using Flow debounce (recommended)",
+          "content": "",
+          "language": "kotlin",
+          "code": "val searchQuery = MutableStateFlow(\"\")\n\nsearchQuery\n    .debounce(300) // Wait 300ms after last emission\n    .filter { it.isNotBlank() }\n    .onEach { query -> searchApi(query) }\n    .launchIn(viewModelScope)"
+        },
+        {
+          "type": "text_code",
+          "heading": "Manual debounce with Job",
+          "content": "",
+          "language": "kotlin",
+          "code": "var debounceJob: Job? = null\n\nfun onTextChanged(text: String) {\n    debounceJob?.cancel()\n    debounceJob = viewModelScope.launch {\n        delay(300)\n        searchApi(text)\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Flow debounce is cleaner and declarative.",
+            "Manual Job approach works without Flow.",
+            "Common use: search input, button click deduplication."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 57,
+      "question": "How to run two coroutines in series and parallel?",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "How to run two coroutines in series and parallel?",
+      "sections": [
+        {
+          "type": "text_code",
+          "heading": "Series — one after another",
+          "content": "",
+          "language": "kotlin",
+          "code": "viewModelScope.launch {\n    val user = fetchUser()    // Waits until done\n    val posts = fetchPosts()  // Runs after fetchUser completes\n    showData(user, posts)\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Parallel — both at the same time",
+          "content": "",
+          "language": "kotlin",
+          "code": "viewModelScope.launch {\n    val userDeferred = async { fetchUser() }\n    val postsDeferred = async { fetchPosts() }\n\n    val user = userDeferred.await()\n    val posts = postsDeferred.await()\n    // Both ran concurrently\n    showData(user, posts)\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Series: call suspend functions sequentially — each awaits completion before next.",
+            "Parallel: use async {} for each task, then await() all results.",
+            "Parallel is faster when tasks are independent.",
+            "If one async fails, the other is cancelled (use supervisorScope to prevent that)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 58,
+      "question": "yield in Kotlin Coroutines",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "yield in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "yield is a suspend function in Kotlin Coroutines that pauses the current coroutine and gives other coroutines a chance to run on the same thread. It is used for cooperative multitasking."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "launch {\n    repeat(5) {\n        println(\"Task A: step $it\")\n        yield() // Give other coroutines a turn\n    }\n}\n\nlaunch {\n    repeat(5) {\n        println(\"Task B: step $it\")\n        yield()\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Allows cooperative scheduling — useful with single-threaded dispatchers.",
+            "Also checks for cancellation — useful in CPU-intensive loops.",
+            "Similar to Thread.yield() but for coroutines.",
+            "Use in long-running loops to prevent starving other coroutines."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 59,
+      "question": "stateIn vs shareIn in Kotlin Flow",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Flow"],
+      "title": "stateIn vs shareIn in Kotlin Flow",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both stateIn and shareIn convert a cold Flow into a hot Flow, but they serve different purposes based on whether you need to hold state or simply share emissions."
+        },
+        {
+          "type": "bullet",
+          "heading": "stateIn",
+          "items": [
+            "Converts a cold Flow into a StateFlow.",
+            "Always holds the latest value.",
+            "New collectors receive the current value immediately.",
+            "Use for UI state that must always have a value."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "stateIn Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val uiState: StateFlow<UiState> = repository.getData()\n    .stateIn(\n        scope = viewModelScope,\n        started = SharingStarted.WhileSubscribed(5000),\n        initialValue = UiState.Loading\n    )"
+        },
+        {
+          "type": "bullet",
+          "heading": "shareIn",
+          "items": [
+            "Converts a cold Flow into a SharedFlow.",
+            "Does not hold state by default (replay = 0).",
+            "Can replay N emissions to new collectors.",
+            "Use for events, one-shot signals, or broadcast streams."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "shareIn Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val events: SharedFlow<Event> = eventFlow\n    .shareIn(\n        scope = viewModelScope,\n        started = SharingStarted.Lazily,\n        replay = 1\n    )"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 60,
+      "question": "flatMapConcat, flatMapMerge, and flatMapLatest in Kotlin Flow",
+      "section": "Core Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Flow"],
+      "title": "flatMapConcat, flatMapMerge, and flatMapLatest in Kotlin Flow",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "All three operators transform each emission into a new Flow, but differ in how they handle concurrent inner flows."
+        },
+        {
+          "type": "bullet",
+          "heading": "flatMapConcat",
+          "items": [
+            "Processes inner flows sequentially — waits for each to complete before starting the next.",
+            "Preserves order. Best when tasks must run in sequence."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "flatMapConcat Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "flow { emit(1); emit(2) }\n    .flatMapConcat { fetchDetails(it) } // 1 finishes, then 2 starts"
+        },
+        {
+          "type": "bullet",
+          "heading": "flatMapMerge",
+          "items": [
+            "Processes inner flows concurrently — all start immediately.",
+            "Does not preserve order. Best for independent parallel tasks."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "flatMapMerge Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "flow { emit(1); emit(2) }\n    .flatMapMerge { fetchDetails(it) } // Both run at the same time"
+        },
+        {
+          "type": "bullet",
+          "heading": "flatMapLatest",
+          "items": [
+            "Cancels the previous inner flow when a new emission arrives.",
+            "Only the latest inner flow runs. Best for search/autocomplete."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "flatMapLatest Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "searchQuery\n    .flatMapLatest { query -> searchApi(query) } // Previous search cancelled on new input"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 61,
+      "question": "collect vs collectLatest in Kotlin Flow",
+      "section": "Core Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Flow"],
+      "title": "collect vs collectLatest in Kotlin Flow",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "collect",
+          "items": [
+            "Collects every emission — waits for the block to finish before processing the next.",
+            "Emissions can queue up if the block is slow.",
+            "Use when every value must be processed."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "collect Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "flow.collect { value ->\n    process(value) // Waits here before next emission is handled\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "collectLatest",
+          "items": [
+            "Cancels processing of the previous emission when a new one arrives.",
+            "Only the latest emission is fully processed.",
+            "Use for UI updates where only the freshest data matters."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "collectLatest Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "flow.collectLatest { value ->\n    delay(300)       // If new value arrives, this is cancelled\n    updateUI(value)  // Only runs for the latest value\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 62,
+      "question": "What is a CoroutineScope?",
+      "section": "Coroutines & Flow",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "What is a CoroutineScope?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "CoroutineScope defines the lifecycle boundary for coroutines. Any coroutine launched within a scope is tied to that scope — when the scope is cancelled, all its coroutines are cancelled."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Every coroutine must be launched within a scope.",
+            "Scope provides a CoroutineContext (including the Job and Dispatcher).",
+            "Cancelling the scope cancels all child coroutines automatically."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Custom Scope Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val scope = CoroutineScope(Dispatchers.IO + Job())\nscope.launch { doWork() }\nscope.cancel() // Cancels all coroutines inside"
+        },
+        {
+          "type": "bullet",
+          "heading": "Android Built-in Scopes",
+          "items": [
+            "viewModelScope — Tied to ViewModel lifecycle.",
+            "lifecycleScope — Tied to Activity/Fragment lifecycle.",
+            "GlobalScope — App-wide, avoid unless absolutely necessary."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 63,
+      "question": "What is CoroutineContext in Kotlin?",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "What is CoroutineContext in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "CoroutineContext is a set of elements that define the behavior of a coroutine. It carries information like the dispatcher, job, and exception handler."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Elements of CoroutineContext",
+          "items": [
+            "Job — Manages the lifecycle and cancellation of the coroutine.",
+            "CoroutineDispatcher — Determines which thread the coroutine runs on.",
+            "CoroutineName — Optional name for debugging.",
+            "CoroutineExceptionHandler — Handles uncaught exceptions."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val context = Dispatchers.IO + Job() + CoroutineName(\"MyCoroutine\") +\n    CoroutineExceptionHandler { _, e -> println(\"Error: $e\") }\n\nCoroutineScope(context).launch {\n    doWork()\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Context vs Scope",
+          "content": "CoroutineContext describes what and how a coroutine runs. CoroutineScope is a container that holds a context and is used to launch coroutines."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 64,
+      "question": "Dispatchers in Kotlin Coroutines",
+      "section": "Coroutines & Flow",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "Dispatchers in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Dispatchers determine which thread or thread pool a coroutine runs on. Choosing the right dispatcher is critical for performance and avoiding ANR."
+        },
+        {
+          "type": "bullet",
+          "heading": "Available Dispatchers",
+          "items": [
+            "Dispatchers.Main — Runs on the main/UI thread. Use for UI updates.",
+            "Dispatchers.IO — Optimized for I/O operations (network, database, file). Large thread pool.",
+            "Dispatchers.Default — Optimized for CPU-intensive work (sorting, parsing). Thread pool = number of CPU cores.",
+            "Dispatchers.Unconfined — Starts on the current thread, resumes on whichever thread the suspension resumes on. Rarely used."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "viewModelScope.launch(Dispatchers.IO) {\n    val data = fetchFromNetwork() // IO thread\n    withContext(Dispatchers.Main) {\n        updateUI(data) // Back on main thread\n    }\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 65,
+      "question": "coroutineScope vs supervisorScope",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "coroutineScope vs supervisorScope",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both create a new scope for launching child coroutines, but they differ in how they handle failures from children."
+        },
+        {
+          "type": "bullet",
+          "heading": "coroutineScope",
+          "items": [
+            "If any child coroutine fails, all other children are cancelled.",
+            "The exception propagates to the parent.",
+            "Use when all tasks must succeed together."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "coroutineScope Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "coroutineScope {\n    launch { task1() } // If this fails...\n    launch { task2() } // ...this is cancelled too\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "supervisorScope",
+          "items": [
+            "If a child fails, siblings continue running.",
+            "Exception is isolated to the failed child.",
+            "Use when children are independent and one failure shouldn't stop others."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "supervisorScope Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "supervisorScope {\n    launch { task1() } // If this fails...\n    launch { task2() } // ...this still runs\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 66,
+      "question": "lifecycleScope, viewModelScope, and GlobalScope — differences",
+      "section": "Coroutines & Flow",
+      "difficulty": "Medium",
+      "tags": ["Coroutines", "Android"],
+      "title": "lifecycleScope, viewModelScope, and GlobalScope — differences",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "viewModelScope",
+          "items": [
+            "Tied to the ViewModel's lifecycle.",
+            "Automatically cancelled when ViewModel is cleared.",
+            "Best for coroutines that should live as long as the ViewModel."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "lifecycleScope",
+          "items": [
+            "Tied to the Activity or Fragment lifecycle.",
+            "Cancelled when the lifecycle owner is destroyed.",
+            "Best for UI-related coroutines in Activities/Fragments."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "GlobalScope",
+          "items": [
+            "Lives for the entire app lifetime — not tied to any lifecycle.",
+            "Can cause memory leaks if not carefully managed.",
+            "Avoid unless you truly need an app-wide, long-running task."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "// In ViewModel\nviewModelScope.launch { fetchData() }\n\n// In Activity/Fragment\nlifecycleScope.launch { updateUI() }\n\n// App-wide (use sparingly)\nGlobalScope.launch { longRunningTask() }"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 67,
+      "question": "suspendCoroutine and suspendCancellableCoroutine",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "suspendCoroutine and suspendCancellableCoroutine",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both are used to wrap callback-based APIs into suspend functions, converting callbacks to coroutines."
+        },
+        {
+          "type": "bullet",
+          "heading": "suspendCoroutine",
+          "items": [
+            "Suspends the coroutine until resume() or resumeWithException() is called.",
+            "Does NOT handle cancellation — coroutine stays suspended even if cancelled.",
+            "Use for simple, non-cancellable one-shot callbacks."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "suspendCoroutine Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "suspend fun awaitCallback(): String = suspendCoroutine { cont ->\n    someApi.doSomething(object : Callback {\n        override fun onSuccess(result: String) = cont.resume(result)\n        override fun onError(e: Exception) = cont.resumeWithException(e)\n    })\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "suspendCancellableCoroutine",
+          "items": [
+            "Supports cancellation — the coroutine can be cancelled while suspended.",
+            "Provides invokeOnCancellation to clean up resources when cancelled.",
+            "Preferred in most real-world cases."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "suspendCancellableCoroutine Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "suspend fun awaitCallback(): String = suspendCancellableCoroutine { cont ->\n    val call = someApi.doSomething(object : Callback {\n        override fun onSuccess(result: String) = cont.resume(result)\n        override fun onError(e: Exception) = cont.resumeWithException(e)\n    })\n    cont.invokeOnCancellation { call.cancel() } // Clean up on cancel\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 68,
+      "question": "Callback to Coroutines conversion in Kotlin",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "Callback to Coroutines conversion in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Legacy APIs use callbacks. Kotlin allows you to wrap these in suspend functions using suspendCancellableCoroutine, making them usable in coroutine code."
+        },
+        {
+          "type": "text_code",
+          "heading": "Callback-based API",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun fetchUser(id: Int, callback: (User?, Error?) -> Unit) {\n    // Legacy callback API\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Wrapped as a suspend function",
+          "content": "",
+          "language": "kotlin",
+          "code": "suspend fun fetchUser(id: Int): User = suspendCancellableCoroutine { cont ->\n    fetchUser(id) { user, error ->\n        if (user != null) cont.resume(user)\n        else cont.resumeWithException(error ?: Exception(\"Unknown error\"))\n    }\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Now usable in coroutines",
+          "content": "",
+          "language": "kotlin",
+          "code": "viewModelScope.launch {\n    val user = fetchUser(1) // Clean, no callbacks\n    updateUI(user)\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 69,
+      "question": "Exception handling in Kotlin Coroutines",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "Exception handling in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Exception handling in coroutines depends on whether you use launch or async, and whether you use a coroutineScope or supervisorScope."
+        },
+        {
+          "type": "bullet",
+          "heading": "launch — exceptions propagate immediately",
+          "items": [
+            "Use try-catch inside the launch block, or use CoroutineExceptionHandler."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "launch with CoroutineExceptionHandler",
+          "content": "",
+          "language": "kotlin",
+          "code": "val handler = CoroutineExceptionHandler { _, e ->\n    println(\"Caught: ${e.message}\")\n}\nscope.launch(handler) {\n    throw RuntimeException(\"Error!\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "async — exceptions deferred to await()",
+          "items": [
+            "Wrap await() in try-catch to handle exceptions."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "async with try-catch",
+          "content": "",
+          "language": "kotlin",
+          "code": "val deferred = scope.async { riskyOperation() }\ntry {\n    val result = deferred.await()\n} catch (e: Exception) {\n    println(\"Caught: ${e.message}\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "supervisorScope — isolate failures",
+          "items": [
+            "Children fail independently — handle each child's exception separately."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 70,
+      "question": "withContext and when to use it",
+      "section": "Coroutines & Flow",
+      "difficulty": "Medium",
+      "tags": ["Coroutines"],
+      "title": "withContext and when to use it",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "withContext is a suspend function that switches the coroutine to a different dispatcher for a block of code, then switches back automatically. Unlike async, it does not create a new coroutine — it runs inline."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "viewModelScope.launch(Dispatchers.Main) {\n    val result = withContext(Dispatchers.IO) {\n        fetchFromNetwork() // Runs on IO thread\n    }\n    updateUI(result) // Back on Main thread\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "When to use withContext",
+          "items": [
+            "Switching from Main to IO for network/database operations.",
+            "Switching back to Main to update UI after background work.",
+            "Preferred over async-await for single tasks — no new coroutine overhead.",
+            "Do NOT use withContext for parallel tasks — use async instead."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "withContext vs async",
+          "items": [
+            "withContext — sequential, no new coroutine, returns result directly.",
+            "async — parallel, creates Deferred, requires await()."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 71,
+      "question": "What is a Flow in Kotlin and how is it related to coroutines?",
+      "section": "Coroutines & Flow",
+      "difficulty": "Medium",
+      "tags": ["Flow"],
+      "title": "What is a Flow in Kotlin and how is it related to coroutines?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Flow is a cold asynchronous data stream in Kotlin Coroutines that can emit multiple values over time, unlike suspend functions which return a single value."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Characteristics",
+          "items": [
+            "Cold — the flow body runs only when collected.",
+            "Can emit multiple values sequentially.",
+            "Built on coroutines — uses suspend functions internally.",
+            "Supports operators like map, filter, zip, debounce, etc."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Basic Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun numberFlow(): Flow<Int> = flow {\n    emit(1)\n    delay(500)\n    emit(2)\n    delay(500)\n    emit(3)\n}\n\nviewModelScope.launch {\n    numberFlow().collect { value ->\n        println(value) // 1, 2, 3\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Relation to Coroutines",
+          "items": [
+            "Flows must be collected inside a coroutine.",
+            "Flow operators are all suspend-aware.",
+            "flowOn {} changes the dispatcher of the upstream flow."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 72,
+      "question": "Cold Flow vs Hot Flow",
+      "section": "Coroutines & Flow",
+      "difficulty": "Medium",
+      "tags": ["Flow"],
+      "title": "Cold Flow vs Hot Flow",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Cold Flow",
+          "items": [
+            "Does NOT emit until a collector subscribes.",
+            "Each collector gets its own independent stream.",
+            "The flow body runs fresh for each collector.",
+            "Created with flow {} builder. Example: database query flow."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Cold Flow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val coldFlow = flow {\n    emit(1); emit(2)\n} // Nothing runs until collect {}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Hot Flow",
+          "items": [
+            "Emits regardless of whether collectors are subscribed.",
+            "All collectors share the same stream.",
+            "Examples: StateFlow, SharedFlow.",
+            "Common for UI state, events, sensor data."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Hot Flow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val hotFlow = MutableStateFlow(0) // Always active\nhotFlow.value = 1 // Emits even without collector"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 73,
+      "question": "StateFlow and SharedFlow in Kotlin",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Flow"],
+      "title": "StateFlow and SharedFlow in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both are hot flows, but they are designed for different purposes."
+        },
+        {
+          "type": "bullet",
+          "heading": "StateFlow",
+          "items": [
+            "Always holds and replays the latest value.",
+            "Requires an initial value.",
+            "Only emits when the value actually changes.",
+            "Best for UI state (replaces LiveData in many cases)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "StateFlow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val uiState = MutableStateFlow<UiState>(UiState.Loading)\nuiState.value = UiState.Success(data)"
+        },
+        {
+          "type": "bullet",
+          "heading": "SharedFlow",
+          "items": [
+            "Does not hold state by default (replay = 0).",
+            "Emits every event, including repeated values.",
+            "Configurable replay and buffer.",
+            "Best for one-time events like navigation, snackbar, dialog triggers."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "SharedFlow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val events = MutableSharedFlow<UiEvent>()\nevents.emit(UiEvent.ShowToast(\"Saved!\"))"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 74,
+      "question": "callbackFlow — Callback to Flow API in Kotlin",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Flow"],
+      "title": "callbackFlow — Callback to Flow API in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "callbackFlow is a Flow builder used to convert callback-based APIs (like listeners or event streams) into a Flow. Unlike the regular flow builder, it is safe to emit from different threads and supports cancellation."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example — Location Listener as Flow",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun locationFlow(client: LocationClient): Flow<Location> = callbackFlow {\n    val listener = object : LocationListener {\n        override fun onLocation(location: Location) {\n            trySend(location) // Emit to flow\n        }\n    }\n    client.registerListener(listener)\n    awaitClose {\n        client.unregisterListener(listener) // Clean up when flow is cancelled\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "trySend() — Emits a value (non-suspend, safe for callbacks).",
+            "awaitClose {} — Called when the flow is cancelled or no longer collected. Use to unregister listeners.",
+            "Supports backpressure via buffer configuration."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 75,
+      "question": "Exception handling in Kotlin Flow",
+      "section": "Coroutines & Flow",
+      "difficulty": "Hard",
+      "tags": ["Flow"],
+      "title": "Exception handling in Kotlin Flow",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Exceptions in Flow can be handled using try-catch around collect, or using the catch operator in the flow pipeline."
+        },
+        {
+          "type": "text_code",
+          "heading": "Using catch operator (recommended)",
+          "content": "",
+          "language": "kotlin",
+          "code": "flow {\n    emit(1)\n    throw RuntimeException(\"Error!\")\n    emit(2) // Never reached\n}\n.catch { e -> emit(-1) } // Catches upstream exceptions\n.collect { println(it) } // Prints: 1, -1"
+        },
+        {
+          "type": "text_code",
+          "heading": "Using try-catch around collect",
+          "content": "",
+          "language": "kotlin",
+          "code": "try {\n    flow.collect { value -> process(value) }\n} catch (e: Exception) {\n    println(\"Caught: ${e.message}\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "catch only catches upstream exceptions — not those thrown inside collect.",
+            "catch can emit fallback values.",
+            "retry and retryWhen operators allow retrying on failure.",
+            "Exceptions in collect {} must be caught with try-catch."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 76,
+      "question": "SAM Conversion in Kotlin",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "SAM Conversion in Kotlin",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "SAM stands for Single Abstract Method. SAM conversion allows you to use a lambda expression in place of a functional interface (an interface with one abstract method). This is a feature for Java interoperability and, since Kotlin 1.4, for Kotlin functional interfaces."
+        },
+        {
+          "type": "text_code",
+          "heading": "Java SAM (Runnable example)",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Without SAM\nThread(object : Runnable {\n    override fun run() { println(\"Running\") }\n}).start()\n\n// With SAM conversion\nThread { println(\"Running\") }.start()"
+        },
+        {
+          "type": "text_code",
+          "heading": "Kotlin fun interface (SAM for Kotlin)",
+          "content": "",
+          "language": "kotlin",
+          "code": "fun interface Validator {\n    fun validate(input: String): Boolean\n}\n\nval emailValidator = Validator { it.contains(\"@\") }\nprintln(emailValidator.validate(\"test@email.com\")) // true"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Works automatically with Java functional interfaces.",
+            "For Kotlin, declare with fun interface to enable SAM conversion.",
+            "Reduces boilerplate of anonymous object declarations."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 77,
+      "question": "Difference between * and Any in Kotlin generics",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "Difference between * and Any in Kotlin generics",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both * (star projection) and Any can represent an unknown type in generics, but they have different semantics."
+        },
+        {
+          "type": "bullet",
+          "heading": "Any",
+          "items": [
+            "The root of the Kotlin class hierarchy — every class is a subtype of Any.",
+            "List<Any> means a list that can hold items of any specific type.",
+            "You can add elements to a MutableList<Any>.",
+            "Loses type safety — you accept items without knowing their actual type."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Any Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val list: MutableList<Any> = mutableListOf()\nlist.add(\"Hello\")  // Allowed\nlist.add(42)       // Allowed"
+        },
+        {
+          "type": "bullet",
+          "heading": "* (Star Projection)",
+          "items": [
+            "Means the type is unknown but fixed — you don't know what type it is.",
+            "List<*> = a list of some specific type, but you don't know which.",
+            "You can only read from it (as Any?), never write to it safely.",
+            "Safer than Any for read-only use cases."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Star Projection Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val list: List<*> = listOf(1, 2, 3)\nval item: Any? = list[0] // Read is allowed\n// list.add(4) // Cannot add — type unknown"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 78,
+      "question": "What is The Billion Dollar Mistake (null references)?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What is The Billion Dollar Mistake (null references)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Billion Dollar Mistake refers to the invention of null references by Tony Hoare in 1965, which he later called his greatest mistake. Null references have caused countless crashes, bugs, and security vulnerabilities across decades of software."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why it's a problem",
+          "items": [
+            "Any reference can be null unexpectedly — leads to NullPointerException (NPE) at runtime.",
+            "Java and many languages allow null for any reference type without compile-time checks.",
+            "NPEs are the most common cause of Android app crashes."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How Kotlin solves it",
+          "items": [
+            "Types are non-nullable by default — String cannot hold null.",
+            "Nullable types are explicitly declared with ? — String? can hold null.",
+            "Null-safety checks are enforced at compile time.",
+            "Tools: safe call ?., elvis operator ?:, not-null assertion !!."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val name: String = null    // Compile error\nval name2: String? = null  // Explicitly nullable\nval length = name2?.length ?: 0 // Safe"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 79,
+      "question": "How to implement Builder pattern in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "How to implement Builder pattern in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin reduces the need for the Builder pattern because of default parameters and named arguments. However, you can implement it using an inner class or using the apply scope function."
+        },
+        {
+          "type": "text_code",
+          "heading": "Kotlin-idiomatic Builder using apply",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class Request(\n    var url: String = \"\",\n    var method: String = \"GET\",\n    var timeout: Int = 30\n)\n\nval request = Request().apply {\n    url = \"https://api.example.com\"\n    method = \"POST\"\n    timeout = 60\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Classic Builder using inner class",
+          "content": "",
+          "language": "kotlin",
+          "code": "class AlertDialog private constructor(\n    val title: String,\n    val message: String\n) {\n    class Builder {\n        private var title = \"\"\n        private var message = \"\"\n        fun title(t: String) = apply { title = t }\n        fun message(m: String) = apply { message = m }\n        fun build() = AlertDialog(title, message)\n    }\n}\n\nval dialog = AlertDialog.Builder()\n    .title(\"Warning\")\n    .message(\"Are you sure?\")\n    .build()"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 80,
+      "question": "When to use and when NOT to use an inline function in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "When to use and when NOT to use an inline function in Kotlin?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "When to USE inline",
+          "items": [
+            "Higher-order functions with lambda parameters — avoids lambda object allocation.",
+            "When you need reified generics (type access at runtime).",
+            "Small utility functions called frequently — removes call overhead.",
+            "When you want to allow non-local returns from lambdas."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Good use of inline",
+          "content": "",
+          "language": "kotlin",
+          "code": "inline fun measureTime(block: () -> Unit): Long {\n    val start = System.currentTimeMillis()\n    block()\n    return System.currentTimeMillis() - start\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "When NOT to use inline",
+          "items": [
+            "Functions with no lambda parameters — no performance benefit.",
+            "Large function bodies — inlining copies code everywhere, increasing bytecode size.",
+            "Recursive functions — compiler does not allow inlining recursion.",
+            "When the lambda is stored or passed to another function (use noinline instead)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 81,
+      "question": "How are Kotlin coroutines better than RxKotlin/RxJava?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "How are Kotlin coroutines better than RxKotlin/RxJava?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Coroutines Advantages",
+          "items": [
+            "Simpler, more readable code — sequential style instead of operator chains.",
+            "Built into Kotlin — no third-party library needed.",
+            "Lighter weight — coroutines are not threads; thousands can run concurrently.",
+            "Structured concurrency — automatic lifecycle management.",
+            "Less boilerplate — no need to manage subscriptions manually.",
+            "Easier error handling — standard try-catch works.",
+            "Better IDE and tooling support."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Where RxJava still shines",
+          "items": [
+            "Mature ecosystem with a wide range of operators.",
+            "Better for complex reactive pipelines with many transformations.",
+            "Useful in Java-only projects."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Coroutines vs RxJava comparison",
+          "content": "",
+          "language": "kotlin",
+          "code": "// RxJava\napi.getUser(id)\n    .subscribeOn(Schedulers.io())\n    .observeOn(AndroidSchedulers.mainThread())\n    .subscribe({ updateUI(it) }, { handleError(it) })\n\n// Coroutines\nviewModelScope.launch {\n    val user = api.getUser(id) // suspend fun\n    updateUI(user)\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 82,
+      "question": "Difference between launch/join and async/await in Kotlin Coroutines",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "Difference between launch/join and async/await in Kotlin Coroutines",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "launch + join",
+          "items": [
+            "launch returns a Job — no result.",
+            "join() suspends the current coroutine until the launched coroutine finishes.",
+            "Use for fire-and-forget tasks where you only care about completion, not return value."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "launch + join Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val job = launch { doWork() }\njob.join() // Wait for doWork to finish, no result"
+        },
+        {
+          "type": "bullet",
+          "heading": "async + await",
+          "items": [
+            "async returns a Deferred<T> — a future result.",
+            "await() suspends until the result is available and returns it.",
+            "Use when you need a result from the coroutine, or for parallel computation."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "async + await Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val result: String = async { computeResult() }.await()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Summary",
+          "items": [
+            "launch/join — run task and wait; no return value.",
+            "async/await — run task and get return value; enables parallel results."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 83,
+      "question": "What is the difference between Java field and Kotlin property?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "What is the difference between Java field and Kotlin property?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Java Field",
+          "items": [
+            "A raw variable in a class — just stores a value.",
+            "No built-in getter/setter unless you write them manually.",
+            "Access is direct unless encapsulated."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Java Field",
+          "content": "",
+          "language": "kotlin",
+          "code": "public class User {\n    public String name; // Java field\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Kotlin Property",
+          "items": [
+            "A higher-level concept that combines a field, getter, and setter.",
+            "Kotlin auto-generates getter (and setter for var) behind the scenes.",
+            "You can customize getters/setters with custom logic.",
+            "Backed by a backing field accessed via the field keyword."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Kotlin Property",
+          "content": "",
+          "language": "kotlin",
+          "code": "class User {\n    var name: String = \"\"\n        get() = field.uppercase() // Custom getter\n        set(value) { field = value.trim() } // Custom setter\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 84,
+      "question": "What is an interface vs an abstract class in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What is an interface vs an abstract class in Kotlin?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Interface",
+          "items": [
+            "Cannot hold state (no backing fields, but can have properties).",
+            "A class can implement multiple interfaces.",
+            "Methods can have default implementations.",
+            "Best for defining a contract or capability."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Interface Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface Clickable {\n    fun onClick()\n    fun onLongClick() = println(\"Long clicked\") // Default implementation\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Abstract Class",
+          "items": [
+            "Can hold state and constructors.",
+            "A class can extend only one abstract class.",
+            "Can have both abstract and concrete methods.",
+            "Best for sharing common behavior across related classes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Abstract Class Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "abstract class Animal(val name: String) {\n    abstract fun sound(): String\n    fun describe() = \"$name says ${sound()}\"\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 85,
+      "question": "What are Object expressions in Kotlin and when to use them?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "What are Object expressions in Kotlin and when to use them?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Object expressions create anonymous objects on the fly — similar to Java's anonymous class instances. They are used when you need a one-off implementation of an interface or class without creating a named class."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example — Anonymous interface implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "val listener = object : View.OnClickListener {\n    override fun onClick(view: View) {\n        println(\"Clicked!\")\n    }\n}\nbutton.setOnClickListener(listener)"
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Use",
+          "items": [
+            "Implementing an interface for a one-time use.",
+            "Overriding behavior of a class temporarily.",
+            "Capturing local variables inside the object.",
+            "When SAM conversion is not applicable (multiple methods to implement)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 86,
+      "question": "How would you override the default getter for a Kotlin data class?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "How would you override the default getter for a Kotlin data class?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "You cannot directly override a getter for a primary constructor property in a data class in the standard way. The workaround is to use a private backing property and expose a computed property."
+        },
+        {
+          "type": "text_code",
+          "heading": "Problem",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class Test(val value: Int)\n// How to return 0 if value is negative?"
+        },
+        {
+          "type": "text_code",
+          "heading": "Solution — Backing property",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class Test(private val _value: Int) {\n    val value: Int\n        get() = if (_value < 0) 0 else _value\n}\n\nval t = Test(-5)\nprintln(t.value) // 0"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Primary constructor properties can't have custom getters directly.",
+            "Use a private val _value in the constructor and expose a public property with a custom getter.",
+            "copy() will use _value — be aware of this when using data class copy."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 87,
+      "question": "What is a Kotlin backing field used for?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "What is a Kotlin backing field used for?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A backing field is the actual storage field generated by Kotlin for a property. It is accessed inside custom getters and setters using the keyword field. Without it, calling the property inside its own getter/setter would cause infinite recursion."
+        },
+        {
+          "type": "text_code",
+          "heading": "Why backing field is needed",
+          "content": "",
+          "language": "kotlin",
+          "code": "var name: String = \"\"\n    get() = field.uppercase()  // 'field' refers to the stored value\n    set(value) { field = value.trim() } // Without 'field', this would recurse infinitely"
+        },
+        {
+          "type": "text_code",
+          "heading": "Without backing field (computed property)",
+          "content": "",
+          "language": "kotlin",
+          "code": "val displayName: String\n    get() = \"$firstName $lastName\" // No backing field — computed each time"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Only available inside get() and set().",
+            "Generated automatically when a property has a default getter/setter or uses field.",
+            "Not generated for computed properties (those that only use get())."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 88,
+      "question": "How to create an instance of an anonymous class of an abstract class in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "How to create an instance of an anonymous class of an abstract class in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Kotlin, you use object expressions to create an anonymous instance of an abstract class, similar to Java's anonymous class syntax."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "abstract class Animal {\n    abstract fun sound(): String\n    fun describe() = \"I say ${sound()}\"\n}\n\nval cat = object : Animal() {\n    override fun sound() = \"Meow\"\n}\n\nprintln(cat.describe()) // I say Meow"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Use the object : ClassName() {} syntax.",
+            "Implement all abstract members inside the block.",
+            "Can also extend an interface or a concrete class.",
+            "The object is anonymous — it has no reusable class name."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 89,
+      "question": "How to create an empty constructor for a data class in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "How to create an empty constructor for a data class in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Data classes require all primary constructor parameters to be provided. To allow instantiation without arguments, give all parameters default values."
+        },
+        {
+          "type": "text_code",
+          "heading": "Solution — Default Values",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class User(\n    val name: String = \"\",\n    val age: Int = 0\n)\n\nval emptyUser = User()         // No-arg constructor\nval namedUser = User(\"Aasim\") // Partial constructor"
+        },
+        {
+          "type": "bullet",
+          "heading": "Why this is needed",
+          "items": [
+            "Some libraries (Gson, Room, Firebase) require a no-argument constructor to deserialize objects.",
+            "Add @JvmOverloads if calling from Java.",
+            "For Room, the recommended approach is to use @ColumnInfo with default values."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 90,
+      "question": "How would you create a singleton with a parameter in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "How would you create a singleton with a parameter in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin's object keyword creates a parameterless singleton. For a singleton that requires initialization parameters, you need a companion object with a manually managed instance."
+        },
+        {
+          "type": "text_code",
+          "heading": "Solution",
+          "content": "",
+          "language": "kotlin",
+          "code": "class DatabaseManager private constructor(val url: String) {\n\n    companion object {\n        @Volatile\n        private var instance: DatabaseManager? = null\n\n        fun getInstance(url: String): DatabaseManager {\n            return instance ?: synchronized(this) {\n                instance ?: DatabaseManager(url).also { instance = it }\n            }\n        }\n    }\n}\n\n// Usage\nval db = DatabaseManager.getInstance(\"jdbc:mysql://localhost/mydb\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "@Volatile ensures instance visibility across threads.",
+            "Double-checked locking with synchronized ensures thread safety.",
+            "The constructor is private to prevent direct instantiation."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 91,
+      "question": "Why is there no static keyword in Kotlin?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Medium",
+      "tags": ["Advanced"],
+      "title": "Why is there no static keyword in Kotlin?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin deliberately removed the static keyword to promote better object-oriented design. Instead, it offers cleaner, more explicit alternatives."
+        },
+        {
+          "type": "bullet",
+          "heading": "Replacements for static in Kotlin",
+          "items": [
+            "companion object — class-level members scoped inside the class.",
+            "Top-level functions and properties — declared outside any class, accessible everywhere.",
+            "object declarations — named singletons that serve the same role as static utility classes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "companion object",
+          "content": "",
+          "language": "kotlin",
+          "code": "class Logger {\n    companion object {\n        fun log(msg: String) = println(msg)\n    }\n}\nLogger.log(\"Hello\")"
+        },
+        {
+          "type": "text_code",
+          "heading": "Top-level function",
+          "content": "",
+          "language": "kotlin",
+          "code": "// utils.kt\nfun log(msg: String) = println(msg)\n\n// Anywhere\nlog(\"Hello\")"
+        },
+        {
+          "type": "text",
+          "heading": "Why Kotlin did this",
+          "content": "Static members create hidden global state and make testing harder. companion objects and top-level functions are more explicit, testable, and align with Kotlin's philosophy of clarity over convention."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 92,
+      "question": "Inline classes vs type aliases — what is the difference?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Advanced"],
+      "title": "Inline classes vs type aliases — what is the difference?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Type Alias (typealias)",
+          "items": [
+            "Just gives a new name to an existing type — no new type is created.",
+            "Both the alias and the original type are fully interchangeable.",
+            "No runtime overhead. No type safety improvement.",
+            "Useful for shortening complex types like Map<String, List<Int>>."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Type Alias Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "typealias UserId = String\n\nfun greet(id: UserId) = println(id)\ngreet(\"abc\") // String and UserId are the same type"
+        },
+        {
+          "type": "bullet",
+          "heading": "Inline Class (@JvmInline value class)",
+          "items": [
+            "Creates a truly distinct new type wrapping one value.",
+            "Provides type safety — UserId and String are NOT interchangeable.",
+            "No runtime object overhead — value is inlined at compile time.",
+            "Can have methods, properties, and implement interfaces."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Inline Class Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "@JvmInline\nvalue class UserId(val id: String)\n\nfun greet(id: UserId) = println(id.id)\ngreet(UserId(\"abc\")) // Allowed\n// greet(\"abc\")       // Compile error — type mismatch"
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 93,
+      "question": "Coroutine Scope vs Coroutine Context — how are they different?",
+      "section": "Advanced Kotlin",
+      "difficulty": "Hard",
+      "tags": ["Coroutines"],
+      "title": "Coroutine Scope vs Coroutine Context — how are they different?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "These two concepts are closely related but serve different purposes in the coroutine system."
+        },
+        {
+          "type": "bullet",
+          "heading": "CoroutineContext",
+          "items": [
+            "A set of elements defining HOW and WHERE a coroutine runs.",
+            "Contains: Job, Dispatcher, CoroutineName, ExceptionHandler.",
+            "Think of it as the configuration of a coroutine."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "CoroutineContext Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val context: CoroutineContext = Dispatchers.IO + Job() + CoroutineName(\"Worker\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "CoroutineScope",
+          "items": [
+            "A container that holds a CoroutineContext.",
+            "Used to LAUNCH coroutines — defines their lifecycle boundary.",
+            "When the scope is cancelled, all coroutines launched within it are cancelled.",
+            "Think of it as the owner/manager of coroutines."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "CoroutineScope Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val scope = CoroutineScope(Dispatchers.IO + Job())\nscope.launch { doWork() } // Coroutine launched within scope\nscope.cancel()            // Cancels all coroutines in scope"
+        },
+        {
+          "type": "text",
+          "heading": "Summary",
+          "content": "Context = what configuration to use. Scope = the boundary that manages coroutine lifecycles using that context."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+
     }
   ]
 }
