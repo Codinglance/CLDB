@@ -1,0 +1,2545 @@
+{
+  "category": "Oops",
+  "questions": [
+    {
+      "id": 147,
+      "question": "What are the advantages of OOP over procedural programming?",
+      "section": "OOP Fundamentals",
+      "difficulty": "Easy",
+      "tags": [
+        "oop",
+        "java"
+      ],
+      "title": "What are the advantages of OOP over procedural programming?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "OOP organizes code around objects and their interactions, whereas procedural programming organizes code around functions and sequences of instructions."
+        },
+        {
+          "type": "bullet",
+          "heading": "Advantages of OOP over Procedural",
+          "items": [
+            "Modularity — code is organized into self-contained classes, easier to manage and understand.",
+            "Reusability — inheritance allows reusing existing code without duplication.",
+            "Maintainability — encapsulation hides internals; changes don't ripple across the codebase.",
+            "Scalability — new features added via extension without breaking existing code (Open/Closed).",
+            "Abstraction — complex systems are modeled as simple interfaces.",
+            "Polymorphism — one interface handles many object types; less conditional logic.",
+            "Real-world modeling — OOP naturally maps to real-world entities (User, Order, Car)."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "Android's entire framework (Activity, View, RecyclerView, ViewModel) is built on OOP. Procedural code for the same would require passing enormous amounts of state through functions."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 148,
+      "question": "What are instance variables?",
+      "section": "Classes & Objects",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What are instance variables?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Instance variables (also called fields) are variables declared inside a class but outside any method. Each object (instance) of the class gets its own copy of these variables."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Car {\n    String brand;  // instance variable\n    int speed;     // instance variable\n}\nCar c1 = new Car(); c1.brand = \"Toyota\";\nCar c2 = new Car(); c2.brand = \"Honda\";\n// c1 and c2 have their own brand copies"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Belong to the object, not the class.",
+            "Initialized to default values if not set (0, null, false).",
+            "Live on the heap as part of the object.",
+            "Accessible throughout the class (unlike local variables)."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 149,
+      "question": "What are local variables?",
+      "section": "Classes & Objects",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What are local variables?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Local variables are variables declared inside a method, constructor, or block. They exist only during the execution of that method/block and are destroyed when it returns."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "void calculate() {\n    int result = 10 * 5; // local variable\n    System.out.println(result);\n} // result is destroyed here"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Stored on the stack — automatically reclaimed when method returns.",
+            "Must be initialized before use — no default values.",
+            "Not accessible outside the method/block where declared.",
+            "Cannot have access modifiers (private, public, etc.)."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 150,
+      "question": "What are static methods?",
+      "section": "Classes & Objects",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What are static methods?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Static methods belong to the class rather than any instance. They can be called without creating an object of the class."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class MathUtil {\n    static int square(int n) { return n * n; }\n}\n\nint result = MathUtil.square(5); // Called without creating an object"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Cannot access instance variables or instance methods directly.",
+            "Can access other static members directly.",
+            "Cannot use this or super keywords.",
+            "Common use: utility methods (Math.abs(), Collections.sort()), factory methods.",
+            "In Android: Context.getSystemService(), TextUtils.isEmpty() are static utility methods."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 151,
+      "question": "What is object initialization?",
+      "section": "Classes & Objects",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What is object initialization?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Object initialization is the process of setting an object's fields to their initial values when the object is created. Java supports several ways to initialize objects."
+        },
+        {
+          "type": "bullet",
+          "heading": "Ways to Initialize Objects",
+          "items": [
+            "Constructor — initialize fields via constructor parameters.",
+            "Instance initializer block — code block inside class that runs before every constructor.",
+            "Field declaration — set default value at declaration time.",
+            "Setter methods — initialize after creation."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class User {\n    String name = \"Default\"; // field declaration init\n    int age;\n    { age = 18; }           // instance initializer block\n    User(String name) { this.name = name; } // constructor init\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 152,
+      "question": "What is the order of execution in Java objects?",
+      "section": "Classes & Objects",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What is the order of execution in Java objects?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "When a Java class is loaded and an object is created, initialization happens in a specific, deterministic order."
+        },
+        {
+          "type": "bullet",
+          "heading": "Order of Execution",
+          "items": [
+            "1. Class Loading — JVM loads the class and runs static initializer blocks and static fields (only once).",
+            "2. Parent Constructor — super() is called (explicit or implicit) to initialize the parent class.",
+            "3. Instance Variable Declarations — fields are set to declared default values.",
+            "4. Instance Initializer Blocks — run in the order they appear.",
+            "5. Constructor Body — the rest of the constructor executes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Demo {\n    static { System.out.println(\"1. Static block\"); }   // 1\n    int x = 10;                                           // 3\n    { System.out.println(\"2. Instance block\"); }          // 4\n    Demo() { System.out.println(\"3. Constructor\"); }      // 5\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 153,
+      "question": "What is the role of JVM in OOP?",
+      "section": "Classes & Objects",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "jvm",
+        "oop"
+      ],
+      "title": "What is the role of JVM in OOP?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The JVM (Java Virtual Machine) is the runtime engine that enables OOP concepts to work. It manages object lifecycle, memory, class loading, and method dispatch."
+        },
+        {
+          "type": "bullet",
+          "heading": "JVM's Role in OOP",
+          "items": [
+            "Class Loading — loads class definitions from .class files when first referenced.",
+            "Object Creation — allocates memory on the heap for new objects.",
+            "Method Dispatch — implements runtime polymorphism by dynamically resolving overridden methods.",
+            "Garbage Collection — automatically destroys objects no longer reachable.",
+            "Memory Management — manages heap (objects) and stack (method frames, locals).",
+            "Type Checking — verifies bytecode for type safety before execution."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 154,
+      "question": "What is object cloning?",
+      "section": "Classes & Objects",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What is object cloning?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Object cloning creates a copy of an existing object. In Java, this is done by implementing the Cloneable interface and overriding the clone() method from the Object class."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class User implements Cloneable {\n    String name;\n    @Override\n    protected Object clone() throws CloneNotSupportedException {\n        return super.clone(); // Shallow clone\n    }\n}\nUser u1 = new User();\nUser u2 = (User) u1.clone(); // u2 is a copy of u1"
+        },
+        {
+          "type": "bullet",
+          "heading": "Shallow vs Deep Clone",
+          "items": [
+            "Shallow clone — copies field values; reference fields point to the same objects.",
+            "Deep clone — recursively copies all referenced objects too.",
+            "super.clone() performs a shallow clone by default.",
+            "Alternative: use copy constructors or serialization for deep cloning."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 155,
+      "question": "What is data hiding?",
+      "section": "Encapsulation",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop",
+        "encapsulation"
+      ],
+      "title": "What is data hiding?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Data hiding is the principle of restricting direct access to an object's internal data (fields) from outside the class. It is the core of encapsulation and is achieved using access modifiers."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class BankAccount {\n    private double balance; // Hidden from outside\n\n    public double getBalance() { return balance; } // Controlled access\n    public void deposit(double amount) {\n        if (amount > 0) balance += amount; // Validation before modifying\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Prevents invalid state — data can only be changed through validated methods.",
+            "Reduces coupling — external code depends on interface, not internal implementation.",
+            "Easier refactoring — change internal representation without affecting callers.",
+            "Security — sensitive fields like passwords are not directly accessible."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 156,
+      "question": "Why are getters and setters used?",
+      "section": "Encapsulation",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop",
+        "encapsulation"
+      ],
+      "title": "Why are getters and setters used?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Getters and setters are public methods that provide controlled access to private fields. They are the standard way to implement encapsulation in Java."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why Use Them?",
+          "items": [
+            "Validation — setter can validate data before modifying the field.",
+            "Read-only access — provide a getter without a setter for immutable fields.",
+            "Write-only access — provide a setter without a getter.",
+            "Computed properties — getter can compute a value rather than just return a field.",
+            "Flexibility — change internal implementation without breaking external code.",
+            "Debugging — add logging or breakpoints inside getter/setter."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class User {\n    private int age;\n    public int getAge() { return age; }\n    public void setAge(int age) {\n        if (age >= 0 && age <= 150) this.age = age; // Validation\n    }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 157,
+      "question": "What are the benefits of immutability?",
+      "section": "Encapsulation",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "immutability"
+      ],
+      "title": "What are the benefits of immutability?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Benefits of Immutability",
+          "items": [
+            "Thread safety — immutable objects can be shared freely across threads without synchronization.",
+            "Predictability — state never changes unexpectedly; easier to reason about.",
+            "Safe sharing — no need for defensive copies when passing to other methods.",
+            "Caching — results can be cached since the object never changes (e.g., String hashCode).",
+            "HashMap keys — immutable objects make safe, stable HashMap keys.",
+            "Easier debugging — state at creation is the state forever; no mutation bugs."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Examples in Java",
+          "items": [
+            "String, Integer, LocalDate, BigDecimal — all immutable classes."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "In Compose and clean architecture, using immutable data classes for UI state ensures predictable rendering and safe sharing between composables."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 158,
+      "question": "Which inheritance types are supported in Java?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance"
+      ],
+      "title": "Which inheritance types are supported in Java?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Inheritance Types in Java",
+          "items": [
+            "Single Inheritance — one class extends one parent class. Fully supported.",
+            "Multilevel Inheritance — a chain: A extends B, B extends C. Fully supported.",
+            "Hierarchical Inheritance — multiple classes extend the same parent. Fully supported.",
+            "Multiple Inheritance (via interfaces) — a class implements multiple interfaces. Supported.",
+            "Multiple Inheritance (via classes) — NOT supported in Java to avoid the Diamond Problem."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Examples",
+          "content": "",
+          "language": "java",
+          "code": "class A {}\nclass B extends A {}              // Single\nclass C extends B {}              // Multilevel\nclass D extends A {}              // Hierarchical\nclass E implements X, Y {}       // Multiple via interfaces"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 159,
+      "question": "Why does Java not support multiple inheritance with classes?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance"
+      ],
+      "title": "Why does Java not support multiple inheritance with classes?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Reason: Diamond Problem",
+          "content": "Java does not support multiple class inheritance to avoid the Diamond Problem — an ambiguity that arises when a class inherits from two classes that both have the same method."
+        },
+        {
+          "type": "text_code",
+          "heading": "Diamond Problem Example",
+          "content": "",
+          "language": "java",
+          "code": "class A { void show() { } }\nclass B extends A { void show() { } }\nclass C extends A { void show() { } }\n// If D extends B and C — which show() does D inherit? Ambiguous!"
+        },
+        {
+          "type": "bullet",
+          "heading": "Java's Solution",
+          "items": [
+            "Classes support only single inheritance.",
+            "Interfaces support multiple inheritance — and since Java 8, if a default method conflict exists, the implementing class must override it explicitly to resolve ambiguity."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 160,
+      "question": "How does Java support multiple inheritance using interfaces?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance",
+        "interface"
+      ],
+      "title": "How does Java support multiple inheritance using interfaces?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Java allows a class to implement multiple interfaces, achieving multiple inheritance of type. Since interfaces (before Java 8) only defined method contracts without state, there was no ambiguity."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "interface Flyable { void fly(); }\ninterface Swimmable { void swim(); }\n\nclass Duck implements Flyable, Swimmable {\n    public void fly() { System.out.println(\"Duck flying\"); }\n    public void swim() { System.out.println(\"Duck swimming\"); }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Java 8+ Default Method Conflict",
+          "items": [
+            "If two interfaces provide the same default method, the implementing class must override it.",
+            "Use InterfaceName.super.method() to call a specific interface's default implementation."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 161,
+      "question": "What is multilevel inheritance?",
+      "section": "Inheritance",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "inheritance"
+      ],
+      "title": "What is multilevel inheritance?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Multilevel inheritance is a type of inheritance where a class extends another class, which in turn extends another class — forming a chain of inheritance."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Animal { void breathe() { } }\nclass Mammal extends Animal { void feedMilk() { } }\nclass Dog extends Mammal { void bark() { } }\n\n// Dog inherits from Mammal which inherits from Animal\n// Dog can access breathe(), feedMilk(), and bark()"
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "View → TextView → EditText is a classic example of multilevel inheritance in the Android View hierarchy."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 162,
+      "question": "What is hierarchical inheritance?",
+      "section": "Inheritance",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "inheritance"
+      ],
+      "title": "What is hierarchical inheritance?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Hierarchical inheritance is when multiple classes inherit from the same single parent class — forming a tree structure rooted at the parent."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Shape { double area() { return 0; } }\n\nclass Circle extends Shape { double area() { return Math.PI * r * r; } }\nclass Square extends Shape { double area() { return side * side; } }\nclass Triangle extends Shape { double area() { return 0.5 * b * h; } }"
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "View is the parent. Button, TextView, ImageView, and CheckBox all extend View — hierarchical inheritance."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 163,
+      "question": "What is hybrid inheritance?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance"
+      ],
+      "title": "What is hybrid inheritance?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Hybrid inheritance is a combination of two or more types of inheritance — for example, hierarchical + multilevel or hierarchical + multiple. Java does not support hybrid inheritance with classes alone, but achieves it via interfaces."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example via Interfaces",
+          "content": "",
+          "language": "java",
+          "code": "interface A { void methodA(); }\ninterface B extends A { void methodB(); }\ninterface C extends A { void methodC(); }\nclass D implements B, C { // Hybrid: multiple + hierarchical\n    public void methodA() { }\n    public void methodB() { }\n    public void methodC() { }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Java avoids the ambiguity issues of hybrid inheritance with classes by requiring interface method conflicts to be resolved explicitly in the implementing class."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 164,
+      "question": "What happens when a subclass object is created?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance",
+        "oop"
+      ],
+      "title": "What happens when a subclass object is created?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "When a subclass object is created, Java initializes both the parent class portion and the child class portion, in a specific order."
+        },
+        {
+          "type": "bullet",
+          "heading": "Order of Execution",
+          "items": [
+            "1. Parent class static blocks and static fields — run once when the class is loaded.",
+            "2. Child class static blocks and static fields — run once when the class is loaded.",
+            "3. Parent instance variables initialized to defaults.",
+            "4. Parent instance initializer blocks run.",
+            "5. Parent constructor body executes (via super() call).",
+            "6. Child instance variables initialized to defaults.",
+            "7. Child instance initializer blocks run.",
+            "8. Child constructor body executes."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Animal { Animal() { System.out.println(\"Animal constructor\"); } }\nclass Dog extends Animal { Dog() { System.out.println(\"Dog constructor\"); } }\nnew Dog();\n// Output: Animal constructor → Dog constructor"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 165,
+      "question": "What is constructor chaining?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance",
+        "constructor"
+      ],
+      "title": "What is constructor chaining?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Constructor chaining is when one constructor calls another constructor, either in the same class (using this()) or in the parent class (using super()). This avoids code duplication across constructors."
+        },
+        {
+          "type": "text_code",
+          "heading": "Within Same Class (this())",
+          "content": "",
+          "language": "java",
+          "code": "class User {\n    String name; int age;\n    User() { this(\"Default\", 0); }           // Chains to below\n    User(String name, int age) { this.name = name; this.age = age; }\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "To Parent Class (super())",
+          "content": "",
+          "language": "java",
+          "code": "class Animal { Animal(String name) { this.name = name; } }\nclass Dog extends Animal {\n    Dog(String name) { super(name); } // Chains to Animal constructor\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Rules",
+          "items": [
+            "this() or super() must be the first statement in the constructor.",
+            "Cannot use both this() and super() in the same constructor."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 166,
+      "question": "Can constructors be inherited?",
+      "section": "Inheritance",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "inheritance",
+        "constructor"
+      ],
+      "title": "Can constructors be inherited?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "No. Constructors are NOT inherited in Java. A subclass cannot directly call or inherit the parent's constructors as its own. However, a subclass constructor can explicitly call the parent's constructor using super()."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Animal { Animal(String name) { this.name = name; } }\nclass Dog extends Animal {\n    // Dog CANNOT use Animal(name) directly as Dog(name)\n    Dog(String name) { super(name); } // Must explicitly call\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Why?",
+          "items": [
+            "Constructors must have the same name as the class.",
+            "A Dog constructor named Animal() makes no sense.",
+            "Java automatically adds super() as the first statement if you don't write it explicitly."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 167,
+      "question": "Can private members be inherited?",
+      "section": "Inheritance",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "inheritance"
+      ],
+      "title": "Can private members be inherited?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "No. Private members (fields and methods) of a parent class are NOT inherited by subclasses. They exist in the parent class's portion of the object but are not directly accessible in the child class."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Animal {\n    private String name = \"Animal\";\n    String getName() { return name; } // public accessor\n}\nclass Dog extends Animal {\n    void show() {\n        // System.out.println(name); // COMPILE ERROR — private not accessible\n        System.out.println(getName()); // OK — via inherited public method\n    }\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Important Distinction",
+          "content": "The private field IS physically part of the Dog object in memory, but it is not accessible from Dog's code. It can only be accessed through the parent's public or protected methods."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 168,
+      "question": "Can a final class be inherited?",
+      "section": "Inheritance",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "inheritance",
+        "keywords"
+      ],
+      "title": "Can a final class be inherited?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "No. A final class cannot be subclassed (extended). Declaring a class as final prevents inheritance entirely."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "final class Utils { void helper() { } }\n\n// class MyUtils extends Utils { } // COMPILE ERROR — cannot inherit final class"
+        },
+        {
+          "type": "bullet",
+          "heading": "Why Make a Class Final?",
+          "items": [
+            "Security — prevent malicious subclasses from overriding behavior.",
+            "Immutability — String is final to ensure immutability cannot be broken by subclassing.",
+            "Design intent — signal that the class is complete and not meant to be extended.",
+            "Performance — JVM can optimize final class method calls since no overriding is possible."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 169,
+      "question": "Can a final method be overridden?",
+      "section": "Inheritance",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "inheritance",
+        "keywords"
+      ],
+      "title": "Can a final method be overridden?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "No. A final method cannot be overridden in any subclass. The method is fixed — its behavior cannot be changed by inheritance."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Vehicle {\n    final void engineStart() { System.out.println(\"Engine starting...\"); }\n}\nclass Car extends Vehicle {\n    // void engineStart() { } // COMPILE ERROR — cannot override final\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Use Cases",
+          "items": [
+            "Preventing subclasses from altering critical behavior (security, algorithm).",
+            "Template method pattern — some steps are fixed, others are abstract.",
+            "In Android: Activity.runOnUiThread() — its exact behavior must not be changed by subclasses."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 170,
+      "question": "What is compile-time polymorphism?",
+      "section": "Polymorphism",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "polymorphism"
+      ],
+      "title": "What is compile-time polymorphism?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Compile-time polymorphism (also called static polymorphism or early binding) is when the method call is resolved by the compiler at compile time. It is achieved through method overloading."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example — Method Overloading",
+          "content": "",
+          "language": "java",
+          "code": "class Printer {\n    void print(String s) { System.out.println(s); }\n    void print(int n) { System.out.println(n); }\n    void print(double d) { System.out.println(d); }\n}\n\n// Compiler selects the correct method at compile time based on argument type\nnew Printer().print(\"Hello\");  // print(String)\nnew Printer().print(42);       // print(int)"
+        },
+        {
+          "type": "text",
+          "heading": "Key Characteristic",
+          "content": "The method chosen is determined by the parameter types in the call, not the object type at runtime."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 171,
+      "question": "What is runtime polymorphism?",
+      "section": "Polymorphism",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "polymorphism"
+      ],
+      "title": "What is runtime polymorphism?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Runtime polymorphism (also called dynamic polymorphism or late binding) is when the method call is resolved at runtime, not compile time. It is achieved through method overriding."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Animal { void sound() { System.out.println(\"Some sound\"); } }\nclass Dog extends Animal { void sound() { System.out.println(\"Woof\"); } }\nclass Cat extends Animal { void sound() { System.out.println(\"Meow\"); } }\n\nAnimal a = new Dog();\na.sound(); // Output: Woof — resolved at runtime based on actual object"
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "Reference type is Animal — the compiler sees Animal's contract.",
+            "Actual object is Dog — JVM calls Dog's sound() at runtime.",
+            "Enables writing generic code that works with any subtype."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 172,
+      "question": "What is covariant return type?",
+      "section": "Polymorphism",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "polymorphism",
+        "overriding"
+      ],
+      "title": "What is covariant return type?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Covariant return type allows an overriding method in a subclass to return a more specific (narrower) type than the return type declared in the parent class method. Introduced in Java 5."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Animal {\n    Animal create() { return new Animal(); }\n}\nclass Dog extends Animal {\n    @Override\n    Dog create() { return new Dog(); } // Covariant — Dog is a subtype of Animal\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Avoids unnecessary casting for callers.",
+            "More expressive — the return type communicates the actual object returned.",
+            "Used in Builder pattern — each builder method returns the concrete builder type."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 173,
+      "question": "What is the difference between early binding and late binding?",
+      "section": "Polymorphism",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "polymorphism"
+      ],
+      "title": "What is the difference between early binding and late binding?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Early Binding (Static Binding)",
+          "items": [
+            "Method call resolved at compile time.",
+            "Applied to static methods, private methods, and final methods.",
+            "Also applies to method overloading.",
+            "Faster — no runtime lookup needed."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Late Binding (Dynamic Binding)",
+          "items": [
+            "Method call resolved at runtime based on the actual object type.",
+            "Applied to overridden instance methods.",
+            "Enables runtime polymorphism.",
+            "Slightly slower — JVM must look up the correct method via the virtual method table."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "Animal a = new Dog();\na.sound();    // Late binding — Dog.sound() called at runtime\na.breathe();  // Early binding if breathe() is final or static"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 174,
+      "question": "Can constructors be polymorphic?",
+      "section": "Polymorphism",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "polymorphism",
+        "constructor"
+      ],
+      "title": "Can constructors be polymorphic?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "No. Constructors cannot be polymorphic. Polymorphism requires inheritance and method overriding, but constructors are not inherited and cannot be overridden. However, constructor overloading is possible within the same class."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why Not Polymorphic?",
+          "items": [
+            "Constructors are not virtual methods — they cannot be overridden.",
+            "Constructor resolution is always based on the declared type, not the object type.",
+            "A subclass constructor always calls its own class constructor, never the parent's polymorphically."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "What IS Allowed",
+          "content": "Constructor overloading — defining multiple constructors with different parameters in the same class. This is compile-time resolution, not polymorphism."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 175,
+      "question": "What is an abstract method?",
+      "section": "Abstraction",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "abstraction",
+        "oop"
+      ],
+      "title": "What is an abstract method?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "An abstract method is a method declared with the abstract keyword that has no body (no implementation). It defines a contract that all non-abstract subclasses must implement."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "abstract class Shape {\n    abstract double area(); // No body — subclasses must implement\n    void display() { System.out.println(\"Area: \" + area()); } // Concrete method\n}\n\nclass Circle extends Shape {\n    double radius;\n    double area() { return Math.PI * radius * radius; } // Implementation required\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Rules",
+          "items": [
+            "Can only exist inside an abstract class or interface.",
+            "Cannot be private, static, or final.",
+            "Subclasses must implement all abstract methods or be declared abstract themselves."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 176,
+      "question": "What is SAM (Single Abstract Method)?",
+      "section": "Abstraction",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "functional",
+        "lambda"
+      ],
+      "title": "What is SAM (Single Abstract Method)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A SAM (Single Abstract Method) interface is an interface that contains exactly one abstract method. It is also called a functional interface. SAM interfaces are the foundation of lambda expressions in Java 8+."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "@FunctionalInterface\ninterface Comparator<T> {\n    int compare(T o1, T o2); // The single abstract method\n}\n\n// Using a lambda instead of an anonymous class\nComparator<Integer> comp = (a, b) -> a - b;"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Annotated with @FunctionalInterface (optional but recommended for compile-time safety).",
+            "Can have default and static methods — only the abstract method count matters.",
+            "Built-in SAM interfaces: Runnable, Callable, Comparator, OnClickListener.",
+            "In Android: View.OnClickListener is a SAM — can be replaced with a lambda."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 177,
+      "question": "What is the Object class?",
+      "section": "Object Class",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What is the Object class?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "java.lang.Object is the root class of the Java class hierarchy. Every class in Java implicitly extends Object if it doesn't explicitly extend another class. All Java objects are instances of Object."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Matters",
+          "items": [
+            "Provides a common type — any object can be referred to as an Object reference.",
+            "Defines common methods all objects inherit: equals(), hashCode(), toString(), clone(), finalize(), wait(), notify(), notifyAll(), getClass().",
+            "Enables polymorphic containers — List<Object>, Object[] can hold any Java object."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Dog { } // Implicitly: class Dog extends Object { }\nDog d = new Dog();\nSystem.out.println(d.toString()); // Inherited from Object"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 178,
+      "question": "Which methods are inherited from Object class?",
+      "section": "Object Class",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "Which methods are inherited from Object class?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Methods Inherited from Object",
+          "items": [
+            "equals(Object obj) — checks logical equality. Default: reference equality (==).",
+            "hashCode() — returns hash value. Default: based on memory address.",
+            "toString() — returns string representation. Default: ClassName@hashCode.",
+            "clone() — creates a copy of the object. Protected; must implement Cloneable.",
+            "getClass() — returns the runtime Class object. Cannot be overridden (final).",
+            "finalize() — called before GC collects the object. Deprecated in Java 9.",
+            "wait() / notify() / notifyAll() — for thread synchronization using object monitor."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Most Commonly Overridden",
+          "content": "equals(), hashCode(), and toString() are the three methods most commonly overridden in custom classes."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 179,
+      "question": "What is toString()?",
+      "section": "Object Class",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What is toString()?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "toString() is a method defined in java.lang.Object that returns a String representation of the object. By default, it returns ClassName@hexHashCode, which is rarely useful."
+        },
+        {
+          "type": "text_code",
+          "heading": "Default vs Overridden",
+          "content": "",
+          "language": "java",
+          "code": "// Default\nUser user = new User();\nSystem.out.println(user); // User@1b6d3586\n\n// Overridden\nclass User {\n    String name; int age;\n    @Override\n    public String toString() { return \"User(name=\" + name + \", age=\" + age + \")\"; }\n}\nSystem.out.println(user); // User(name=Aasim, age=25)"
+        },
+        {
+          "type": "text",
+          "heading": "Auto-called",
+          "content": "toString() is automatically called when an object is concatenated with a String or passed to println()."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 180,
+      "question": "Why override toString()?",
+      "section": "Object Class",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "Why override toString()?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Reasons to Override toString()",
+          "items": [
+            "Meaningful output — default 'ClassName@hashCode' is useless for debugging.",
+            "Logging — Log.d(TAG, user.toString()) shows actual data instead of a memory address.",
+            "Debugging — IDE debuggers use toString() to display object values in the watch window.",
+            "Readability — System.out.println(user) shows useful information.",
+            "Data classes — Kotlin data classes auto-generate toString() with all fields."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "@Override\npublic String toString() {\n    return \"User{name='\" + name + \"', age=\" + age + \"}\";\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 181,
+      "question": "What is clone() method?",
+      "section": "Object Class",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop"
+      ],
+      "title": "What is clone() method?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "clone() is a protected method in java.lang.Object that creates and returns a copy of the object. To use it, the class must implement the Cloneable marker interface, otherwise it throws CloneNotSupportedException."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class User implements Cloneable {\n    String name;\n    @Override\n    protected Object clone() throws CloneNotSupportedException {\n        return super.clone(); // Performs shallow copy\n    }\n}\nUser u1 = new User(); u1.name = \"Aasim\";\nUser u2 = (User) u1.clone();"
+        },
+        {
+          "type": "bullet",
+          "heading": "Issues with clone()",
+          "items": [
+            "Performs shallow copy by default — reference fields still point to the same objects.",
+            "Requires unchecked cast.",
+            "Cloneable is a poor interface design — the method isn't even in Cloneable.",
+            "Modern alternative: use copy constructor or copy factory methods instead."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 182,
+      "question": "Difference between aggregation and composition?",
+      "section": "Advanced OOP Concepts",
+      "difficulty": "Medium",
+      "tags": [
+        "oop",
+        "design"
+      ],
+      "title": "Difference between aggregation and composition?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Composition (Strong has-a)",
+          "items": [
+            "The contained object's lifecycle is tied to the container.",
+            "Container owns the component — component cannot exist without it.",
+            "Example: Car HAS-A Engine — engine is created and destroyed with the car.",
+            "Represents a strong dependency."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Aggregation (Weak has-a)",
+          "items": [
+            "The contained object has an independent lifecycle.",
+            "Container references the component — component can exist without the container.",
+            "Example: University HAS-A Department — departments can exist without the university.",
+            "Represents a weaker association."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Quick Rule",
+          "content": "Ask: can the part survive without the whole? Yes → Aggregation. No → Composition."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 183,
+      "question": "What is association?",
+      "section": "Advanced OOP Concepts",
+      "difficulty": "Easy",
+      "tags": [
+        "oop",
+        "design"
+      ],
+      "title": "What is association?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Association is the most general relationship between two classes — one class uses or knows about another. Neither class owns the other, and both can exist independently."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of Association",
+          "items": [
+            "Unidirectional — Class A knows about Class B, but not vice versa.",
+            "Bidirectional — both classes know about each other."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Teacher { String name; }\nclass Student { String name; }\n// Both exist independently; association is through enrollment\nclass Enrollment {\n    Teacher teacher;\n    Student student;\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Hierarchy",
+          "content": "Association is the broadest term. Aggregation and Composition are specialized forms of association."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 184,
+      "question": "What are design patterns?",
+      "section": "Advanced OOP Concepts",
+      "difficulty": "Medium",
+      "tags": [
+        "oop",
+        "design"
+      ],
+      "title": "What are design patterns?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Design patterns are reusable, proven solutions to commonly occurring software design problems. They are not code — they are templates or blueprints describing how to solve a problem in a flexible, maintainable way."
+        },
+        {
+          "type": "bullet",
+          "heading": "Three Categories (GoF)",
+          "items": [
+            "Creational patterns — control object creation. Examples: Singleton, Factory, Builder, Prototype.",
+            "Structural patterns — define how classes/objects are composed. Examples: Adapter, Decorator, Composite, Proxy.",
+            "Behavioral patterns — define how objects communicate. Examples: Observer, Strategy, Command, Template Method."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "Android uses many design patterns: Singleton (Application), Observer (LiveData), Builder (AlertDialog, Retrofit), Factory (ViewModelProvider), Adapter (RecyclerView.Adapter)."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 185,
+      "question": "What is Builder pattern?",
+      "section": "Advanced OOP Concepts",
+      "difficulty": "Medium",
+      "tags": [
+        "oop",
+        "design",
+        "patterns"
+      ],
+      "title": "What is Builder pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Builder pattern separates the construction of a complex object from its representation. It allows you to create objects step-by-step, controlling exactly which parameters are set, using a fluent interface."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "class AlertDialog private constructor(\n    val title: String, val message: String, val isCancelable: Boolean\n) {\n    class Builder {\n        private var title = \"\"\n        private var message = \"\"\n        private var isCancelable = true\n        fun title(t: String) = apply { title = t }\n        fun message(m: String) = apply { message = m }\n        fun cancelable(c: Boolean) = apply { isCancelable = c }\n        fun build() = AlertDialog(title, message, isCancelable)\n    }\n}\nval dialog = AlertDialog.Builder().title(\"Alert\").message(\"Sure?\").build()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Android Examples",
+          "content": "AlertDialog.Builder, Retrofit.Builder, OkHttpClient.Builder, NotificationCompat.Builder — all use this pattern."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 186,
+      "question": "What is Strategy pattern?",
+      "section": "Advanced OOP Concepts",
+      "difficulty": "Medium",
+      "tags": [
+        "oop",
+        "design",
+        "patterns"
+      ],
+      "title": "What is Strategy pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Strategy pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. It lets the algorithm vary independently from the clients that use it."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface SortStrategy { fun sort(data: MutableList<Int>) }\n\nclass BubbleSort : SortStrategy {\n    override fun sort(data: MutableList<Int>) { /* bubble sort */ }\n}\nclass QuickSort : SortStrategy {\n    override fun sort(data: MutableList<Int>) { /* quick sort */ }\n}\n\nclass Sorter(private var strategy: SortStrategy) {\n    fun setStrategy(s: SortStrategy) { strategy = s }\n    fun sort(data: MutableList<Int>) = strategy.sort(data)\n}\n\nval sorter = Sorter(BubbleSort())\nsorter.sort(list)\nsorter.setStrategy(QuickSort()) // Swap strategy at runtime\nsorter.sort(list)"
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "Different image loading strategies (memory cache, disk cache, network) in Glide/Picasso use Strategy pattern internally."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 187,
+      "question": "What is MVC architecture?",
+      "section": "Advanced OOP Concepts",
+      "difficulty": "Medium",
+      "tags": [
+        "oop",
+        "android",
+        "architecture"
+      ],
+      "title": "What is MVC architecture?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "MVC (Model-View-Controller) is an architectural pattern that separates an application into three components, each with a distinct responsibility."
+        },
+        {
+          "type": "bullet",
+          "heading": "Components",
+          "items": [
+            "Model — holds data and business logic. Independent of UI.",
+            "View — displays data to the user. Observes Model and reflects changes.",
+            "Controller — handles user input, updates the Model, and selects the View to display."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "In Android",
+          "items": [
+            "Model — data classes, repositories, Room database.",
+            "View — XML layouts, Activities, Fragments.",
+            "Controller — Activity or Fragment (but this creates tight coupling — why MVVM is preferred)."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "MVC vs MVVM",
+          "content": "MVC has the Controller tightly coupled to both Model and View, making testing harder. MVVM separates the ViewModel from the View using observables, making it more testable and clean."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 188,
+      "question": "Why are collections object-oriented?",
+      "section": "Collections & OOP",
+      "difficulty": "Easy",
+      "tags": [
+        "java",
+        "collections",
+        "oop"
+      ],
+      "title": "Why are collections object-oriented?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Java's Collections Framework is fundamentally object-oriented — it is designed around interfaces, abstract classes, and concrete implementations following key OOP principles."
+        },
+        {
+          "type": "bullet",
+          "heading": "OOP Principles in Collections",
+          "items": [
+            "Abstraction — Collection, List, Set, Map are interfaces. Callers depend on contracts, not implementations.",
+            "Encapsulation — internal data structure (array, linked list, tree) is hidden from the user.",
+            "Polymorphism — you can pass ArrayList, LinkedList, or Vector where List is expected.",
+            "Inheritance — AbstractList, AbstractMap provide default implementations that concrete classes extend.",
+            "Open/Closed — add new collection types (TreeMap, LinkedHashMap) without changing existing code."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Polymorphism Example",
+          "content": "",
+          "language": "java",
+          "code": "List<String> list = new ArrayList<>(); // Or LinkedList — same interface\nprocessList(list); // Works for any List implementation\nvoid processList(List<String> list) { /* ... */ }"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 189,
+      "question": "Difference between ArrayList and LinkedList?",
+      "section": "Collections & OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "collections"
+      ],
+      "title": "Difference between ArrayList and LinkedList?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "ArrayList",
+          "items": [
+            "Backed by a dynamic array.",
+            "Fast random access — O(1) for get(index).",
+            "Slow insertion/deletion in the middle — O(n) due to shifting.",
+            "Better for read-heavy operations.",
+            "Less memory overhead — no node pointers."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "LinkedList",
+          "items": [
+            "Backed by a doubly linked list.",
+            "Slow random access — O(n) for get(index).",
+            "Fast insertion/deletion — O(1) if you have the node reference.",
+            "Better for frequent add/remove operations at the beginning or end.",
+            "More memory overhead — each node stores data + two pointers."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Android Recommendation",
+          "content": "Use ArrayList in almost all Android scenarios. LinkedList is rarely beneficial because random access (needed by RecyclerView adapters) is common."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 190,
+      "question": "Difference between HashMap and Hashtable?",
+      "section": "Collections & OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "collections"
+      ],
+      "title": "Difference between HashMap and Hashtable?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "HashMap",
+          "items": [
+            "Not synchronized — not thread-safe.",
+            "Allows one null key and multiple null values.",
+            "Faster — no synchronization overhead.",
+            "Part of Java Collections Framework (java.util).",
+            "Use in single-threaded or coroutine-managed environments."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Hashtable",
+          "items": [
+            "Synchronized — thread-safe.",
+            "Does NOT allow null keys or null values.",
+            "Slower — all methods are synchronized.",
+            "Legacy class — exists since Java 1.0, predates Collections Framework.",
+            "Avoid in modern code — use ConcurrentHashMap for thread-safe maps instead."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 191,
+      "question": "How does HashMap internally work?",
+      "section": "Collections & OOP",
+      "difficulty": "Hard",
+      "tags": [
+        "java",
+        "collections"
+      ],
+      "title": "How does HashMap internally work?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "HashMap stores key-value pairs using a hash table — an array of buckets. Each bucket holds a linked list (or tree in Java 8+) of entries that hash to the same bucket index."
+        },
+        {
+          "type": "bullet",
+          "heading": "How put(key, value) Works",
+          "items": [
+            "1. Compute hashCode() of the key.",
+            "2. Apply a hash function to get the bucket index: index = hash & (capacity - 1).",
+            "3. If the bucket is empty, insert the entry.",
+            "4. If not empty (hash collision), check each entry using equals(). If key matches, update the value. If not, add a new node to the chain.",
+            "5. If the load factor exceeds the threshold (default 0.75), resize the array (rehash)."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Java 8 Optimization",
+          "items": [
+            "If a bucket's chain exceeds 8 entries, it converts from a linked list to a balanced Red-Black Tree.",
+            "Tree lookup is O(log n) instead of O(n), improving worst-case performance."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 192,
+      "question": "Why must keys be immutable in HashMap?",
+      "section": "Collections & OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "collections"
+      ],
+      "title": "Why must keys be immutable in HashMap?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "HashMap uses the key's hashCode() to determine its bucket position. If the key's state changes after insertion, its hashCode() changes, but the entry remains in the original bucket — making it unreachable."
+        },
+        {
+          "type": "text_code",
+          "heading": "Problem with Mutable Keys",
+          "content": "",
+          "language": "java",
+          "code": "List<String> key = new ArrayList<>(List.of(\"a\"));\nMap<List<String>, String> map = new HashMap<>();\nmap.put(key, \"value\");\n\nkey.add(\"b\"); // Mutate key — hashCode changes!\nmap.get(key); // Returns null — key not found in original bucket"
+        },
+        {
+          "type": "bullet",
+          "heading": "Why Immutable Keys Work",
+          "items": [
+            "String is the most common HashMap key — it is immutable.",
+            "Integer, Long — immutable wrapper classes.",
+            "If you must use a mutable object, ensure you never mutate it after insertion.",
+            "Override hashCode() and equals() consistently for custom key objects."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 193,
+      "question": "What is Comparable vs Comparator?",
+      "section": "Collections & OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "collections"
+      ],
+      "title": "What is Comparable vs Comparator?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Comparable",
+          "items": [
+            "Interface in java.lang — implemented by the class itself.",
+            "Defines natural ordering via compareTo() method.",
+            "Only one ordering possible per class.",
+            "Used by Collections.sort() and Arrays.sort() by default."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Comparable Example",
+          "content": "",
+          "language": "java",
+          "code": "class User implements Comparable<User> {\n    int age;\n    public int compareTo(User other) { return this.age - other.age; }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Comparator",
+          "items": [
+            "Interface in java.util — defined externally, not in the class.",
+            "Defines custom ordering via compare() method.",
+            "Multiple Comparators possible — sort by name, age, salary separately.",
+            "More flexible — sort third-party classes without modifying them."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Comparator Example",
+          "content": "",
+          "language": "java",
+          "code": "users.sort((u1, u2) -> u1.name.compareTo(u2.name)); // Comparator lambda"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 194,
+      "question": "What is fail-fast vs fail-safe iterator?",
+      "section": "Collections & OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "collections"
+      ],
+      "title": "What is fail-fast vs fail-safe iterator?",
+      "sections": [
+        {
+          "type": "bullet",
+          "heading": "Fail-Fast Iterator",
+          "items": [
+            "Throws ConcurrentModificationException if the collection is modified during iteration.",
+            "Detects modification using modCount — throws exception immediately.",
+            "Examples: ArrayList, HashMap, HashSet iterators.",
+            "Safe in single-threaded code; use with care in multi-threaded scenarios."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Fail-Fast Example",
+          "content": "",
+          "language": "java",
+          "code": "List<String> list = new ArrayList<>(List.of(\"a\", \"b\"));\nfor (String s : list) { list.remove(s); } // ConcurrentModificationException!"
+        },
+        {
+          "type": "bullet",
+          "heading": "Fail-Safe Iterator",
+          "items": [
+            "Works on a copy of the collection — does not throw exceptions on modification.",
+            "Changes made during iteration may or may not be visible.",
+            "Examples: CopyOnWriteArrayList, ConcurrentHashMap iterators.",
+            "Slower — copying has overhead."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 195,
+      "question": "What are lambda expressions?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java8",
+        "functional"
+      ],
+      "title": "What are lambda expressions?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Lambda expressions (introduced in Java 8) are anonymous functions — they provide a concise way to represent a single-method interface (functional interface) without writing a full anonymous class."
+        },
+        {
+          "type": "text_code",
+          "heading": "Syntax and Example",
+          "content": "",
+          "language": "java",
+          "code": "// Before Java 8 — anonymous class\nRunnable r = new Runnable() {\n    public void run() { System.out.println(\"Running\"); }\n};\n\n// With lambda\nRunnable r = () -> System.out.println(\"Running\");\n\n// With parameters\nComparator<Integer> comp = (a, b) -> a - b;"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Lambdas implement functional interfaces (SAM interfaces).",
+            "No need for class name, method name, or return statement for single expressions.",
+            "Enables functional programming in Java.",
+            "In Android: used for OnClickListener, RecyclerView item callbacks, coroutine lambdas."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 196,
+      "question": "What is Stream API?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java8",
+        "functional"
+      ],
+      "title": "What is Stream API?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Stream API (Java 8+) provides a functional way to process collections of data — allowing operations like filter, map, reduce, sort, and collect in a declarative, pipeline-based style."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "List<String> names = List.of(\"Aasim\", \"Ali\", \"Sara\", \"Bob\");\n\nList<String> result = names.stream()\n    .filter(n -> n.length() > 3)   // Keep names with length > 3\n    .map(String::toUpperCase)       // Convert to uppercase\n    .sorted()                       // Sort alphabetically\n    .collect(Collectors.toList());  // Collect into a list\n// Result: [AASIM, SARA]"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Characteristics",
+          "items": [
+            "Lazy evaluation — intermediate operations are not executed until a terminal operation is called.",
+            "Non-destructive — streams don't modify the source collection.",
+            "Parallelizable — parallelStream() processes data on multiple threads.",
+            "Kotlin equivalent: Kotlin's sequence and collection operators (map, filter, etc.)."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 197,
+      "question": "What is method reference?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java8",
+        "functional"
+      ],
+      "title": "What is method reference?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A method reference is a shorthand syntax for a lambda expression that simply calls an existing method. It uses the :: operator and makes code more readable when the lambda just forwards to a method."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of Method References",
+          "items": [
+            "Static method — ClassName::methodName (e.g., Math::abs)",
+            "Instance method of a specific object — object::methodName (e.g., str::toUpperCase)",
+            "Instance method of an arbitrary object — ClassName::methodName (e.g., String::toUpperCase)",
+            "Constructor — ClassName::new (e.g., ArrayList::new)"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "// Lambda\nlist.forEach(s -> System.out.println(s));\n\n// Method reference — cleaner\nlist.forEach(System.out::println);\n\n// Constructor reference\nList<String> newList = Stream.of(\"a\", \"b\").collect(Collectors.toCollection(ArrayList::new));"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 198,
+      "question": "What is Optional class?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java8"
+      ],
+      "title": "What is Optional class?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Optional<T> (Java 8+) is a container object that may or may not contain a non-null value. It is designed to represent the absence of a value explicitly, reducing NullPointerExceptions."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "Optional<String> name = Optional.ofNullable(getUserName());\n\n// Without Optional\nif (name != null) System.out.println(name.toUpperCase());\n\n// With Optional\nname.ifPresent(n -> System.out.println(n.toUpperCase()));\n\n// With default\nString display = name.orElse(\"Guest\");"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Methods",
+          "items": [
+            "Optional.of(value) — creates Optional with non-null value.",
+            "Optional.ofNullable(value) — creates Optional, allowing null.",
+            "Optional.empty() — creates empty Optional.",
+            "isPresent() / isEmpty() — check if value exists.",
+            "get() — retrieve value (throws if empty).",
+            "orElse() / orElseGet() — provide a default.",
+            "ifPresent() — execute action if value exists."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 199,
+      "question": "What are records in Java?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java16"
+      ],
+      "title": "What are records in Java?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Records (introduced in Java 16) are a special kind of class designed to be transparent, immutable data carriers. They automatically generate a constructor, getters, equals(), hashCode(), and toString() from the declared components."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "record User(String name, int age) { }\n\n// Auto-generated:\n// - Constructor: User(String name, int age)\n// - Getters: name(), age()\n// - equals(), hashCode(), toString()\n\nUser user = new User(\"Aasim\", 25);\nSystem.out.println(user.name()); // Aasim\nSystem.out.println(user);        // User[name=Aasim, age=25]"
+        },
+        {
+          "type": "text",
+          "heading": "Kotlin Equivalent",
+          "content": "Java records are equivalent to Kotlin's data classes. Both provide immutable data holders with auto-generated utility methods."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 200,
+      "question": "What are sealed classes?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java17"
+      ],
+      "title": "What are sealed classes?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Sealed classes (Java 17) restrict which classes can extend or implement them. The permitted subclasses must be declared in the same file (or module). This provides exhaustive, closed hierarchies."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "sealed class Shape permits Circle, Square, Triangle { }\nfinal class Circle extends Shape { double radius; }\nfinal class Square extends Shape { double side; }\nfinal class Triangle extends Shape { double base, height; }\n\n// Compiler knows all possible subtypes — exhaustive switch:\nswitch (shape) {\n    case Circle c -> Math.PI * c.radius * c.radius;\n    case Square s -> s.side * s.side;\n    case Triangle t -> 0.5 * t.base * t.height;\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Kotlin Equivalent",
+          "content": "Sealed classes work identically in Kotlin and are widely used in Android for UI state management (UiState.Loading, UiState.Success, UiState.Error)."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 201,
+      "question": "What is pattern matching in Java?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "java16"
+      ],
+      "title": "What is pattern matching in Java?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Pattern matching (Java 16+) simplifies type checking and casting. The instanceof operator can now simultaneously check the type and bind the result to a typed variable, eliminating explicit casting."
+        },
+        {
+          "type": "text_code",
+          "heading": "Before Pattern Matching",
+          "content": "",
+          "language": "java",
+          "code": "if (obj instanceof String) {\n    String s = (String) obj; // Explicit cast needed\n    System.out.println(s.length());\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "With Pattern Matching",
+          "content": "",
+          "language": "java",
+          "code": "if (obj instanceof String s) { // Type check + binding in one step\n    System.out.println(s.length()); // s is already a String — no cast needed\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Switch Pattern Matching (Java 21)",
+          "content": "Java 21 extended pattern matching to switch statements, enabling matching on types, guards (when clause), and sealed class subtypes."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 202,
+      "question": "What are virtual threads?",
+      "section": "Java 8+ OOP",
+      "difficulty": "Hard",
+      "tags": [
+        "java",
+        "java21",
+        "concurrency"
+      ],
+      "title": "What are virtual threads?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Virtual threads (Project Loom, Java 21) are lightweight, user-mode threads managed by the JVM rather than the OS. They allow you to write blocking code that scales like non-blocking code, without callback complexity."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Characteristics",
+          "items": [
+            "Extremely lightweight — millions can run simultaneously with minimal memory.",
+            "Managed by JVM — not mapped 1-to-1 with OS threads.",
+            "Blocking operations suspend the virtual thread and release the OS thread for other work.",
+            "Write sequential blocking code — JVM handles concurrency efficiently under the hood.",
+            "Ideal for I/O-bound tasks (network, database)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "Thread.ofVirtual().start(() -> {\n    // Blocking network call — virtual thread suspends; OS thread freed\n    String result = fetchFromServer();\n    System.out.println(result);\n});"
+        },
+        {
+          "type": "text",
+          "heading": "Android Relevance",
+          "content": "Android still uses Kotlin Coroutines (Dispatchers.IO) for similar goals. Virtual threads are a JVM feature — not directly applicable to Android runtime (ART), but relevant for backend Android server projects."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 203,
+      "question": "Why are abstract methods not private?",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop",
+        "abstraction"
+      ],
+      "title": "Why are abstract methods not private?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Reason",
+          "content": "Abstract methods are meant to be overridden by subclasses. A private method is not visible to subclasses — so a private abstract method could never be implemented. This would be a contradiction — declaring a method that must be overridden but cannot be seen."
+        },
+        {
+          "type": "text_code",
+          "heading": "Compile Error",
+          "content": "",
+          "language": "java",
+          "code": "abstract class Animal {\n    // private abstract void sound(); // COMPILE ERROR — illegal combination\n    abstract void sound(); // OK — default or public visibility\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Valid Modifiers for Abstract Methods",
+          "items": [
+            "public — visible to all subclasses and external callers.",
+            "protected — visible to subclasses and same-package classes.",
+            "package-private (default) — visible to subclasses in the same package.",
+            "Cannot be: private, static, or final."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 204,
+      "question": "What happens if constructor throws exception?",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop",
+        "exceptions"
+      ],
+      "title": "What happens if constructor throws exception?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "If a constructor throws an exception, the object creation is aborted — the partially constructed object is not returned to the caller. The exception propagates to the caller, and the object reference is never assigned."
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class DatabaseConnection {\n    DatabaseConnection(String url) {\n        if (url == null) throw new IllegalArgumentException(\"URL cannot be null\");\n        connect(url);\n    }\n}\n\ntry {\n    DatabaseConnection db = new DatabaseConnection(null); // Throws\n    // db is never assigned — object doesn't exist\n} catch (IllegalArgumentException e) {\n    System.out.println(\"Connection failed: \" + e.getMessage());\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "The partially constructed object is eligible for GC — JVM handles cleanup.",
+            "Resource leaks can occur if the constructor acquired resources before throwing — use try-with-resources inside constructors.",
+            "Common pattern: validate inputs at the start of the constructor."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 205,
+      "question": "Why is object creation expensive?",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop",
+        "performance"
+      ],
+      "title": "Why is object creation expensive?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Object creation in Java involves several operations that together incur CPU and memory costs, especially when done frequently (e.g., inside loops or RecyclerView adapters)."
+        },
+        {
+          "type": "bullet",
+          "heading": "Costs Involved",
+          "items": [
+            "Memory allocation — JVM allocates heap space for the new object.",
+            "Class loading — if the class isn't loaded yet, the JVM must load and initialize it.",
+            "Constructor execution — fields are initialized, logic runs.",
+            "GC pressure — more objects mean more frequent garbage collection runs.",
+            "Thread safety overhead — allocation in a multi-threaded JVM requires coordination."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "How to Minimize in Android",
+          "items": [
+            "Reuse objects — RecyclerView ViewHolder pattern reuses view objects.",
+            "Object pooling — Bitmap pools, Thread pools.",
+            "Avoid allocation in onDraw() — called 60 times/second, any allocation causes GC jank.",
+            "Use primitives over wrappers where possible.",
+            "Use Kotlin's value classes (inline classes) for zero-overhead wrappers."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 206,
+      "question": "Can you override a method with weaker access modifier?",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Medium",
+      "tags": [
+        "java",
+        "oop",
+        "overriding"
+      ],
+      "title": "Can you override a method with weaker access modifier?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Answer",
+          "content": "No. When overriding a method, you cannot reduce (weaken) the access modifier. You can maintain or widen it. This is because widening is safe — callers who expected to call the method can still call it. Narrowing would break the contract."
+        },
+        {
+          "type": "bullet",
+          "heading": "Rules",
+          "items": [
+            "public method → override as public only.",
+            "protected method → override as protected or public.",
+            "default (package-private) → override as default, protected, or public.",
+            "private method → cannot be overridden at all."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "java",
+          "code": "class Parent {\n    public void show() { }\n    protected void display() { }\n}\nclass Child extends Parent {\n    // void show() { }    // COMPILE ERROR — weaker (public → default)\n    public void display() { } // OK — wider (protected → public)\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "30 sec"
+    },
+    {
+      "id": 207,
+      "question": "Explain real-life use case of abstraction in Android.",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Medium",
+      "tags": [
+        "android",
+        "oop",
+        "abstraction"
+      ],
+      "title": "Explain real-life use case of abstraction in Android.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Abstraction in Android hides complex implementation details and exposes only what is necessary. It simplifies code, makes it testable, and allows swapping implementations."
+        },
+        {
+          "type": "bullet",
+          "heading": "Real-Life Use Cases",
+          "items": [
+            "Repository pattern — UserRepository interface abstracts whether data comes from Room, Retrofit, or a cache. ViewModel doesn't know the source.",
+            "Retrofit API interface — you define an interface with @GET, @POST annotations; Retrofit generates the implementation. You never write the HTTP code.",
+            "RecyclerView.Adapter — an abstract class requiring you to implement onCreateViewHolder() and onBindViewHolder(). The framework handles scrolling, recycling internals.",
+            "ViewModel — hides data-fetching logic from Activity/Fragment. View only calls viewModel.loadUser(), not knowing how data is fetched."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Repository Abstraction Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface UserRepository {\n    suspend fun getUser(id: Int): User\n}\n\nclass UserRepositoryImpl(val api: ApiService, val db: UserDao) : UserRepository {\n    override suspend fun getUser(id: Int) = db.getUser(id) ?: api.getUser(id)\n}\n\n// ViewModel depends on interface — not the concrete class\nclass UserViewModel(val repo: UserRepository) : ViewModel()"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 208,
+      "question": "Why is Activity lifecycle considered an OOP example?",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Medium",
+      "tags": [
+        "android",
+        "oop"
+      ],
+      "title": "Why is Activity lifecycle considered an OOP example?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Android Activity lifecycle is a textbook example of multiple OOP principles working together."
+        },
+        {
+          "type": "bullet",
+          "heading": "OOP Principles Demonstrated",
+          "items": [
+            "Inheritance — your Activity extends AppCompatActivity (which extends Activity), inheriting lifecycle behavior.",
+            "Method Overriding — you override onCreate(), onStart(), onResume(), onPause(), etc. to customize behavior. The system calls these methods polymorphically.",
+            "Abstraction — you don't manage the lifecycle mechanics; Android calls the right method at the right time. You just implement what you need.",
+            "Encapsulation — internal rendering, event loop, and lifecycle state machine are hidden. You only interact via callbacks.",
+            "Template Method Pattern — the system defines the skeleton (lifecycle sequence); you fill in the steps (override methods)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "class MainActivity : AppCompatActivity() { // Inheritance\n    override fun onCreate(savedInstanceState: Bundle?) { // Overriding\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n    }\n    override fun onResume() { super.onResume(); startUpdates() } // Polymorphism\n    override fun onPause() { super.onPause(); stopUpdates() }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 209,
+      "question": "Explain how Jetpack Compose still uses OOP concepts internally.",
+      "section": "Scenario & Tricky Questions",
+      "difficulty": "Hard",
+      "tags": [
+        "android",
+        "compose",
+        "oop"
+      ],
+      "title": "Explain how Jetpack Compose still uses OOP concepts internally.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose appears functional and declarative on the surface, but it is built on OOP concepts under the hood."
+        },
+        {
+          "type": "bullet",
+          "heading": "OOP Concepts in Compose",
+          "items": [
+            "Classes for State — MutableState<T>, StateFlow<T> are classes with encapsulated state and behavior.",
+            "Encapsulation — internal composition slot table and recomposer are hidden from developers.",
+            "Inheritance — Modifier is an interface implemented by a chain of modifier objects. Each modifier wraps the previous — Decorator pattern.",
+            "Polymorphism — CompositionLocal uses polymorphic lookup; different composables can access different values for the same local.",
+            "ViewModel (OOP) + Compose (Declarative) — state is managed in a ViewModel class; Compose observes it reactively.",
+            "Kotlin classes for Themes — MaterialTheme uses object-oriented ColorScheme, Typography, Shapes classes."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Summary",
+          "content": "Compose is declarative at the API level but implemented using classes, interfaces, and OOP design patterns internally. It is functional programming on top of OOP infrastructure."
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    }
+  ]
+}
