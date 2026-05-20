@@ -176,7 +176,7 @@
         },
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Benefits",
           "items": [
             "Less Code – Removes XML layouts and reduces boilerplate.",
             "Faster Development – Declarative UI with live previews speeds up development.",
@@ -189,8 +189,8 @@
         },
         {
           "type": "text",
-          "heading": "Introduction",
-          "content": "Conclusion: Compose simplifies Android UI development with cleaner code, better performance, and faster UI creation."
+          "heading": "Conclusion",
+          "content": "Compose simplifies Android UI development with cleaner code, better performance, and faster UI creation."
         }
       ],
       "askedIn": [
@@ -211,7 +211,7 @@
       "sections": [
         {
           "type": "bullet",
-          "heading": "Introduction",
+          "heading": "Comparison",
           "items": [
             "Feature: UI Approach | Compose: Declarative | View System: Imperative",
             "Feature: Layout | Compose: Composables | View System: XML + Views",
@@ -286,7 +286,7 @@
         },
         {
           "type": "text",
-          "heading": "🆕 Composition",
+          "heading": "Composition",
           "content": "When a composable is first called, Compose creates the UI and adds it to the screen."
         },
         {
@@ -635,8 +635,8 @@
         },
         {
           "type": "text",
-          "heading": "Across Configuration Changes",
-          "content": "Key: remember → recomposition only, rememberSaveable → recomposition + config changes."
+          "heading": "Key Difference",
+          "content": "remember → recomposition only. rememberSaveable → recomposition + config changes."
         }
       ],
       "askedIn": [
@@ -811,15 +811,11 @@
         },
         {
           "type": "bullet",
-          "heading": "Primitive types**: **Int**, **Float**, **Boolean**, **String",
+          "heading": "Stable Types",
           "items": [
-            "Immutable collections: List, Map, Set from Kotlin's immutable types"
-          ]
-        },
-        {
-          "type": "bullet",
-          "heading": "Objects marked with **@Stable**",
-          "items": [
+            "Primitive types: Int, Float, Boolean, String",
+            "Immutable collections: List, Map, Set from Kotlin's immutable types",
+            "Objects marked with @Stable",
             "Functions / Lambdas that don't capture changing state"
           ]
         },
@@ -861,11 +857,6 @@
             "Writing to a database or shared preferences",
             "Launching coroutines for API calls"
           ]
-        },
-        {
-          "type": "text",
-          "heading": "Handling Side Effects",
-          "content": "Compose provides special APIs to safely handle side effects:"
         },
         {
           "type": "bullet",
@@ -955,26 +946,11 @@
           ]
         },
         {
-          "type": "bullet",
-          "heading": "Use Cases",
-          "items": [
-            "Performing asynchronous tasks on user interaction"
-          ]
-        },
-        {
           "type": "text_code",
-          "heading": " ",
+          "heading": "Use Case",
           "content": "",
           "language": "kotlin",
-          "code": "  val scope = rememberCoroutineScope()\n  Button(onClick = { \n      scope.launch { fetchData() } \n  })"
-        },
-        {
-          "type": "bullet",
-          "heading": "Note",
-          "items": [
-            "Animations triggered by events",
-            "Temporary background work tied to a composable"
-          ]
+          "code": "val scope = rememberCoroutineScope()\nButton(onClick = { \n    scope.launch { fetchData() } \n})"
         }
       ],
       "askedIn": [
@@ -1049,6 +1025,965 @@
         "Amazon"
       ],
       "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 26,
+      "question": "How to observe Flows and LiveData states in Compose UI?",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How to observe Flows and LiveData states in Compose UI?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Compose provides extension functions to convert Flows and LiveData into Compose State, so the UI automatically updates when new values are emitted."
+        },
+        {
+          "type": "bullet",
+          "heading": "Observing Flow",
+          "items": [
+            "Use collectAsState() to collect a Flow as Compose State.",
+            "Requires a coroutine scope internally — safe to use in composables."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Flow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val uiState by viewModel.uiStateFlow.collectAsState()\nText(text = uiState.message)"
+        },
+        {
+          "type": "bullet",
+          "heading": "Observing LiveData",
+          "items": [
+            "Use observeAsState() from the lifecycle-compose library.",
+            "Automatically starts and stops observation based on composable lifecycle."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "LiveData Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val uiState by viewModel.uiStateLiveData.observeAsState()\nText(text = uiState?.message ?: \"Loading\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "collectAsState() → for StateFlow / Flow",
+            "observeAsState() → for LiveData (add lifecycle-compose dependency)",
+            "Both return a State<T> that triggers recomposition on change."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 27,
+      "question": "How can we handle asynchronous operations in Jetpack Compose?",
+      "section": "Side Effects & Coroutines",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How can we handle asynchronous operations in Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose provides several ways to safely handle asynchronous operations tied to the composable lifecycle."
+        },
+        {
+          "type": "bullet",
+          "heading": "LaunchedEffect",
+          "items": [
+            "Best for triggering async work when a composable enters composition or a key changes.",
+            "Automatically cancelled when key changes or composable leaves."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "LaunchedEffect Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "LaunchedEffect(userId) {\n    val data = fetchUser(userId) // suspend function\n    updateState(data)\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "rememberCoroutineScope",
+          "items": [
+            "Best for launching coroutines from user interactions (button clicks, etc.).",
+            "Scope is tied to composable lifecycle."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "rememberCoroutineScope Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val scope = rememberCoroutineScope()\nButton(onClick = { scope.launch { saveData() } }) {\n    Text(\"Save\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "ViewModel + collectAsState",
+          "items": [
+            "Best practice: handle async logic in ViewModel, expose results as StateFlow, collect in Compose."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "ViewModel + Flow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val uiState by viewModel.uiState.collectAsState()\nText(text = uiState.message)"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 28,
+      "question": "How can we convert a non-compose state into a Compose state?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How can we convert a non-compose state into a Compose state?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Non-Compose state sources like Flow, LiveData, or RxJava observables can be converted into Compose State using adapter functions so they trigger recomposition automatically."
+        },
+        {
+          "type": "bullet",
+          "heading": "Flow → Compose State",
+          "items": [
+            "Use collectAsState()"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Flow Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val state by myFlow.collectAsState(initial = \"\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "LiveData → Compose State",
+          "items": [
+            "Use observeAsState()"
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "LiveData Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val state by myLiveData.observeAsState(initial = \"\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "RxJava / Custom Observable → Compose State",
+          "items": [
+            "Use produceState() to produce State from any async or callback source."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "produceState Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val state by produceState(initialValue = \"\") {\n    value = fetchData()\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Takeaway",
+          "items": [
+            "collectAsState() → Flow / StateFlow",
+            "observeAsState() → LiveData",
+            "produceState() → Any async source or callback"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 29,
+      "question": "Explain derivedStateOf.",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "Explain derivedStateOf.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "derivedStateOf is a Compose API that creates a derived state from one or more state objects. The derived state is only recomputed when the underlying state it depends on actually changes, preventing unnecessary recompositions."
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Use",
+          "items": [
+            "When a value is computed from other state values.",
+            "When you want to avoid recomposing a composable unless the derived value itself changes.",
+            "Common for filtering, mapping, or computing lists based on other state."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val items = remember { mutableStateListOf(\"Apple\", \"Banana\", \"Cherry\") }\nval query by remember { mutableStateOf(\"\") }\n\n// Only recomputes when items or query actually change\nval filteredItems by remember {\n    derivedStateOf { items.filter { it.contains(query, ignoreCase = true) } }\n}\n\nLazyColumn {\n    items(filteredItems) { item -> Text(item) }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Point",
+          "items": [
+            "Without derivedStateOf, the list would recompute on every recomposition.",
+            "With it, recomposition is skipped if the derived value hasn't changed."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 30,
+      "question": "Explain rememberUpdatedState.",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "Explain rememberUpdatedState.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "rememberUpdatedState is used to capture the latest value of a parameter inside a long-running effect (like LaunchedEffect) without restarting the effect when the value changes."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It's Needed",
+          "items": [
+            "LaunchedEffect restarts only when its key changes.",
+            "If a lambda or value inside it changes, the effect won't restart — it captures the old value.",
+            "rememberUpdatedState ensures the latest value is always available inside the effect without restarting it."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Problem without rememberUpdatedState",
+          "content": "",
+          "language": "kotlin",
+          "code": "// onTimeout may be stale if the lambda changes\nLaunchedEffect(Unit) {\n    delay(5000)\n    onTimeout() // might capture old onTimeout\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "With rememberUpdatedState",
+          "content": "",
+          "language": "kotlin",
+          "code": "val currentOnTimeout by rememberUpdatedState(onTimeout)\n\nLaunchedEffect(Unit) {\n    delay(5000)\n    currentOnTimeout() // Always the latest value\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Use Cases",
+          "items": [
+            "Timers or delays where the callback may change.",
+            "Long-running effects that reference frequently changing lambdas."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 31,
+      "question": "Difference between remember and rememberSaveable.",
+      "section": "State Management & Recomposition",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Difference between remember and rememberSaveable.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Both remember and rememberSaveable are used to persist state across recompositions, but they differ in what events they survive."
+        },
+        {
+          "type": "bullet",
+          "heading": "remember",
+          "items": [
+            "Stores state in memory during composition.",
+            "State is lost when the composable leaves the composition.",
+            "State is also lost on configuration changes (rotation, dark mode toggle).",
+            "Use for temporary state that doesn't need to outlive the screen."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "remember Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "var count by remember { mutableStateOf(0) }\n// count is lost on screen rotation"
+        },
+        {
+          "type": "bullet",
+          "heading": "rememberSaveable",
+          "items": [
+            "Stores state that survives recomposition AND configuration changes.",
+            "Uses Bundle under the hood (like saved instance state).",
+            "Works with primitive types and Parcelable/Serializable objects.",
+            "Use for state that should be retained across rotations or process death."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "rememberSaveable Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "var count by rememberSaveable { mutableStateOf(0) }\n// count survives screen rotation"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 32,
+      "question": "What are the best practices for performance optimization in Jetpack Compose?",
+      "section": "Performance",
+      "difficulty": "Hard",
+      "tags": [
+        "Advance"
+      ],
+      "title": "What are the best practices for performance optimization in Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Compose is efficient by default, but following best practices ensures minimal unnecessary recompositions and smooth UI performance."
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Practices",
+          "items": [
+            "Use stable types — Compose can skip recomposition for composables with stable/immutable parameters.",
+            "Use derivedStateOf — Compute derived values only when the source state actually changes.",
+            "Avoid reading state in the wrong phase — Read state as late as possible (in draw phase, not measure).",
+            "Use keys in LazyList — Provide stable keys to LazyColumn/LazyRow to avoid full list recomposition.",
+            "Hoist state up — Keep composables stateless where possible for better reuse and skipping.",
+            "Use @Stable and @Immutable annotations — Mark data classes to help Compose know they won't change unexpectedly.",
+            "Avoid creating lambdas inside composables — Lambda creation on each recomposition causes unnecessary allocations. Use remember or define outside.",
+            "Use lazy loading — Use LazyColumn/LazyRow instead of Column/Row for long lists."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Stable key in LazyColumn",
+          "content": "",
+          "language": "kotlin",
+          "code": "LazyColumn {\n    items(users, key = { it.id }) { user ->\n        UserItem(user)\n    }\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 33,
+      "question": "Can we use both Jetpack Compose and Android View in a Single App?",
+      "section": "Interoperability",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "Can we use both Jetpack Compose and Android View in a Single App?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Yes. Jetpack Compose and the traditional View system can coexist in the same app. This is called interoperability, and it allows gradual migration from Views to Compose."
+        },
+        {
+          "type": "bullet",
+          "heading": "Embedding Compose inside a View",
+          "items": [
+            "Use ComposeView inside an XML layout to host composables."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "ComposeView in XML",
+          "content": "",
+          "language": "kotlin",
+          "code": "// In your Fragment or Activity\nval composeView = ComposeView(context).apply {\n    setContent {\n        MyComposable()\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Embedding a View inside Compose",
+          "items": [
+            "Use AndroidView composable to embed traditional Views inside a composable."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "AndroidView in Compose",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun MapViewComposable() {\n    AndroidView(\n        factory = { context -> MapView(context) },\n        update = { mapView -> mapView.getMapAsync { /* ... */ } }\n    )\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "ComposeView → embed Compose inside XML/View hierarchy.",
+            "AndroidView → embed traditional Views inside Compose.",
+            "Ideal for gradual migration — no need to rewrite entire apps at once."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 34,
+      "question": "Explain CompositionLocal",
+      "section": "Advanced Compose",
+      "difficulty": "Hard",
+      "tags": [
+        "Advance"
+      ],
+      "title": "Explain CompositionLocal",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "CompositionLocal is a Compose mechanism that allows you to pass data implicitly down the composable tree without manually passing it as parameters to every composable."
+        },
+        {
+          "type": "bullet",
+          "heading": "Why It Exists",
+          "items": [
+            "Passing the same data (like theme, locale, or user context) through every composable is verbose.",
+            "CompositionLocal provides a scoped, implicit data channel down the tree."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Defining a CompositionLocal",
+          "content": "",
+          "language": "kotlin",
+          "code": "val LocalUser = compositionLocalOf<User> { error(\"No user provided\") }"
+        },
+        {
+          "type": "text_code",
+          "heading": "Providing a value",
+          "content": "",
+          "language": "kotlin",
+          "code": "CompositionLocalProvider(LocalUser provides currentUser) {\n    ProfileScreen() // Can access LocalUser anywhere inside\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Consuming the value",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun ProfileScreen() {\n    val user = LocalUser.current\n    Text(text = user.name)\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Built-in Examples",
+          "items": [
+            "LocalContext.current — Access Android Context",
+            "LocalDensity.current — Access screen density",
+            "MaterialTheme.colorScheme — Uses CompositionLocal internally"
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 35,
+      "question": "Explain Jetpack Compose Phases.",
+      "section": "Advanced Compose",
+      "difficulty": "Hard",
+      "tags": [
+        "Advance"
+      ],
+      "title": "Explain Jetpack Compose Phases.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose renders UI in three distinct phases: Composition, Layout, and Drawing. Understanding these helps write more efficient composables."
+        },
+        {
+          "type": "bullet",
+          "heading": "Phase 1 — Composition",
+          "items": [
+            "Compose executes composable functions to build the UI tree.",
+            "State is read here — any state read during composition triggers recomposition when changed.",
+            "Output: a tree of composable nodes."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Phase 2 — Layout",
+          "items": [
+            "Each composable node is measured and positioned.",
+            "Two steps: measure children, then place them on screen.",
+            "Modifiers like size(), padding(), fillMaxWidth() are applied here."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Phase 3 — Drawing",
+          "items": [
+            "Each composable node is painted on the screen.",
+            "Background colors, text, images, borders are drawn here.",
+            "Canvas-based drawing (drawBehind, drawWithContent) happens in this phase."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Performance Tip",
+          "items": [
+            "Reading state in the Drawing phase (via graphicsLayer or drawBehind) avoids triggering Composition and Layout, improving performance.",
+            "Example: Animating alpha with graphicsLayer skips recomposition entirely."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example — Reading state in Drawing phase",
+          "content": "",
+          "language": "kotlin",
+          "code": "val alpha by animateFloatAsState(if (visible) 1f else 0f)\nBox(Modifier.graphicsLayer { this.alpha = alpha }) { // Drawing phase only\n    Text(\"Hello\")\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 36,
+      "question": "What is the role of the Modifier in Jetpack Compose?",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Easy",
+      "tags": [
+        "Basic"
+      ],
+      "title": "What is the role of the Modifier in Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Modifier is a core concept in Jetpack Compose used to decorate or add behavior to composables — such as size, padding, background, click handling, and more — without modifying the composable itself."
+        },
+        {
+          "type": "bullet",
+          "heading": "What Modifier Does",
+          "items": [
+            "Adjusts size, padding, margin, and alignment.",
+            "Adds background colors, borders, and shapes.",
+            "Handles gestures (clickable, draggable, scrollable).",
+            "Controls visibility, clipping, and elevation.",
+            "Chains multiple behaviors together in order."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "Box(\n    modifier = Modifier\n        .fillMaxWidth()\n        .height(100.dp)\n        .background(Color.Blue)\n        .padding(16.dp)\n        .clickable { onClick() }\n) {\n    Text(\"Hello\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "Modifier order matters — padding before background differs from background before padding.",
+            "Pass Modifier as a parameter to make composables reusable and flexible.",
+            "Always start with the incoming modifier: Modifier = Modifier."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 37,
+      "question": "What are Semantics?",
+      "section": "Advanced Compose",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "What are Semantics?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Semantics in Jetpack Compose define the meaning of UI elements for accessibility services (like TalkBack) and UI testing. They attach metadata to composables so assistive tools know what each UI element represents."
+        },
+        {
+          "type": "bullet",
+          "heading": "Two Main Uses",
+          "items": [
+            "Accessibility — Screen readers use semantics to describe UI elements to users with disabilities.",
+            "Testing — UI tests use semantics to find and interact with composables."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Adding semantics via Modifier",
+          "content": "",
+          "language": "kotlin",
+          "code": "Image(\n    painter = painterResource(R.drawable.logo),\n    contentDescription = \"Company Logo\", // Semantic description for accessibility\n    modifier = Modifier.semantics {\n        contentDescription = \"Company Logo\"\n    }\n)"
+        },
+        {
+          "type": "text_code",
+          "heading": "Using semantics in UI tests",
+          "content": "",
+          "language": "kotlin",
+          "code": "composeTestRule\n    .onNodeWithContentDescription(\"Company Logo\")\n    .assertIsDisplayed()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "contentDescription is the most common semantic property.",
+            "Use mergeDescendants = true to group related elements for accessibility.",
+            "clearAndSetSemantics {} overrides all child semantics."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 38,
+      "question": "How can you handle user input and events in Jetpack Compose?",
+      "section": "Jetpack Compose Basics",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "How can you handle user input and events in Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose handles user input and events through Modifiers and composable event callbacks, following a unidirectional data flow pattern."
+        },
+        {
+          "type": "bullet",
+          "heading": "Click Events",
+          "items": [
+            "Use Modifier.clickable {} or Button's onClick parameter."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Click Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "Button(onClick = { doAction() }) {\n    Text(\"Click Me\")\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Text Input",
+          "items": [
+            "Use TextField with onValueChange to handle text input."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "TextField Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "var text by remember { mutableStateOf(\"\") }\nTextField(\n    value = text,\n    onValueChange = { text = it },\n    label = { Text(\"Enter name\") }\n)"
+        },
+        {
+          "type": "bullet",
+          "heading": "Gestures",
+          "items": [
+            "Modifier.pointerInput {} — for custom gestures (drag, long press, swipe).",
+            "Modifier.draggable {} — for drag interactions.",
+            "Modifier.scrollable {} — for custom scroll."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Gesture Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "Box(\n    Modifier.pointerInput(Unit) {\n        detectTapGestures(onLongPress = { /* long press */ })\n    }\n)"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 39,
+      "question": "How do you handle navigation in Jetpack Compose?",
+      "section": "Advanced Compose",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How do you handle navigation in Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose uses the Navigation Compose library (androidx.navigation:navigation-compose) to handle in-app navigation between composable screens."
+        },
+        {
+          "type": "bullet",
+          "heading": "Setup",
+          "items": [
+            "Add dependency: implementation(\"androidx.navigation:navigation-compose:x.x.x\")",
+            "Create a NavController using rememberNavController().",
+            "Define a NavHost with routes and composable destinations."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Basic Navigation Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val navController = rememberNavController()\n\nNavHost(navController = navController, startDestination = \"home\") {\n    composable(\"home\") { HomeScreen(navController) }\n    composable(\"detail/{id}\") { backStackEntry ->\n        val id = backStackEntry.arguments?.getString(\"id\")\n        DetailScreen(id)\n    }\n}\n\n// Navigate from HomeScreen\nnavController.navigate(\"detail/42\")"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "navController.navigate() — navigates to a route.",
+            "navController.popBackStack() — goes back.",
+            "Pass arguments via route strings or use safe args.",
+            "Use NavBackStackEntry to access arguments in destination composables."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 40,
+      "question": "How do you handle orientation changes in Jetpack Compose?",
+      "section": "State Management & Recomposition",
+      "difficulty": "Medium",
+      "tags": [
+        "Basic"
+      ],
+      "title": "How do you handle orientation changes in Jetpack Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "In Jetpack Compose, orientation changes (configuration changes) cause the composable to be re-created. State must be properly persisted to survive these changes."
+        },
+        {
+          "type": "bullet",
+          "heading": "Persisting State with rememberSaveable",
+          "items": [
+            "Use rememberSaveable instead of remember to retain state across rotations.",
+            "Works automatically for primitive types and Parcelable/Serializable objects."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "rememberSaveable Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "var count by rememberSaveable { mutableStateOf(0) }\n// count survives screen rotation"
+        },
+        {
+          "type": "bullet",
+          "heading": "Using ViewModel",
+          "items": [
+            "The recommended approach is to keep state in a ViewModel.",
+            "ViewModel survives configuration changes automatically.",
+            "Expose state as StateFlow and collect in Compose."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "ViewModel Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "val uiState by viewModel.uiState.collectAsState()\n// ViewModel state survives rotation"
+        },
+        {
+          "type": "bullet",
+          "heading": "Detecting Orientation",
+          "items": [
+            "Use LocalConfiguration.current to detect current orientation."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Detect Orientation",
+          "content": "",
+          "language": "kotlin",
+          "code": "val configuration = LocalConfiguration.current\nif (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {\n    LandscapeLayout()\n} else {\n    PortraitLayout()\n}"
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 41,
+      "question": "Explain the concept of unidirectional data flow in Jetpack Compose.",
+      "section": "Advanced Compose",
+      "difficulty": "Medium",
+      "tags": [
+        "Advance"
+      ],
+      "title": "Explain the concept of unidirectional data flow in Jetpack Compose.",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Unidirectional Data Flow (UDF) is a pattern in Jetpack Compose where state flows down the composable tree, and events flow up. This makes UI predictable and easy to debug."
+        },
+        {
+          "type": "bullet",
+          "heading": "How It Works",
+          "items": [
+            "State flows DOWN — parent passes state to child composables.",
+            "Events flow UP — child composables notify parent via callbacks.",
+            "The parent decides how to update state in response to events."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "// State flows down, event flows up\n@Composable\nfun CounterScreen() {\n    var count by remember { mutableStateOf(0) }\n    CounterButton(\n        count = count,          // State going DOWN\n        onIncrement = { count++ } // Event going UP\n    )\n}\n\n@Composable\nfun CounterButton(count: Int, onIncrement: () -> Unit) {\n    Button(onClick = onIncrement) {\n        Text(\"Count: $count\")\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Single source of truth — state is owned by one place.",
+            "Easier to test and debug — UI is a pure function of state.",
+            "Enables State Hoisting — children become stateless and reusable."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 42,
+      "question": "How to create Custom Layouts in Compose?",
+      "section": "Advanced Compose",
+      "difficulty": "Hard",
+      "tags": [
+        "Advance"
+      ],
+      "title": "How to create Custom Layouts in Compose?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Jetpack Compose allows creating fully custom layouts using the Layout composable. This lets you control how children are measured and positioned when built-in layouts (Column, Row, Box) are not sufficient."
+        },
+        {
+          "type": "text_code",
+          "heading": "Basic Custom Layout Example",
+          "content": "",
+          "language": "kotlin",
+          "code": "@Composable\nfun SimpleVerticalLayout(\n    modifier: Modifier = Modifier,\n    content: @Composable () -> Unit\n) {\n    Layout(\n        content = content,\n        modifier = modifier\n    ) { measurables, constraints ->\n        // Step 1: Measure all children\n        val placeables = measurables.map { it.measure(constraints) }\n\n        // Step 2: Calculate total height\n        val totalHeight = placeables.sumOf { it.height }\n        val maxWidth = placeables.maxOf { it.width }\n\n        // Step 3: Place children vertically\n        layout(maxWidth, totalHeight) {\n            var yOffset = 0\n            placeables.forEach { placeable ->\n                placeable.placeRelative(x = 0, y = yOffset)\n                yOffset += placeable.height\n            }\n        }\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Steps",
+          "items": [
+            "Measure children using measurables.map { it.measure(constraints) }.",
+            "Calculate the total size of the layout.",
+            "Place children using placeable.placeRelative(x, y).",
+            "Use layout(width, height) {} to define the overall size."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Use Custom Layouts",
+          "items": [
+            "Overlapping elements with custom rules.",
+            "Staggered or grid layouts not provided by default.",
+            "Performance-critical custom arrangements."
+          ]
+        }
+      ],
+      "askedIn": [
+        "Google",
+        "Amazon"
+      ],
+      "expectedReadTime": "1 min"
     }
   ]
 }
