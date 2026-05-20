@@ -24,6 +24,12 @@
         "title": "Collection",
         "totalQuestions": "25",
         "icon": " "
+      },
+ {
+        "category_id": "Java",
+        "title": "Java",
+        "totalQuestions": "25",
+        "icon": " "
       }
     ],
     "courses": [
