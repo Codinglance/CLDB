@@ -25,9 +25,15 @@
         "totalQuestions": "25",
         "icon": " "
       },
- {
+      {
         "category_id": "Java",
         "title": "Java",
+        "totalQuestions": "25",
+        "icon": " "
+      },
+      {
+        "category_id": "Oops",
+        "title": "Oops",
         "totalQuestions": "25",
         "icon": " "
       }
@@ -108,8 +114,7 @@
       "subtitle": "Git Cheat Sheet",
       "meta": "1 Sheet • 30 mins"
     },
-{
-
+    {
       "id": "Kotlin",
       "tag": "COURSE",
       "categoryId": "Kotlin",
@@ -118,7 +123,6 @@
       "title": "Master Kotlin for Android Development",
       "subtitle": "Null Safety, OOP, Functional Programming & More",
       "meta": "50 Chapters • 25 hrs"
-
     }
   ],
   "banners": [
