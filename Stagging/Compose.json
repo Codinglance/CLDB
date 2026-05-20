@@ -1098,11 +1098,6 @@
       "title": "How can we handle asynchronous operations in Jetpack Compose?",
       "sections": [
         {
-          "type": "text",
-          "heading": "Introduction",
-          "content": "Jetpack Compose provides several ways to safely handle asynchronous operations tied to the composable lifecycle."
-        },
-        {
           "type": "bullet",
           "heading": "LaunchedEffect",
           "items": [
@@ -1751,22 +1746,6 @@
           "content": "",
           "language": "kotlin",
           "code": "var text by remember { mutableStateOf(\"\") }\nTextField(\n    value = text,\n    onValueChange = { text = it },\n    label = { Text(\"Enter name\") }\n)"
-        },
-        {
-          "type": "bullet",
-          "heading": "Gestures",
-          "items": [
-            "Modifier.pointerInput {} — for custom gestures (drag, long press, swipe).",
-            "Modifier.draggable {} — for drag interactions.",
-            "Modifier.scrollable {} — for custom scroll."
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Gesture Example",
-          "content": "",
-          "language": "kotlin",
-          "code": "Box(\n    Modifier.pointerInput(Unit) {\n        detectTapGestures(onLongPress = { /* long press */ })\n    }\n)"
         }
       ],
       "askedIn": [
@@ -1868,20 +1847,6 @@
           "content": "",
           "language": "kotlin",
           "code": "val uiState by viewModel.uiState.collectAsState()\n// ViewModel state survives rotation"
-        },
-        {
-          "type": "bullet",
-          "heading": "Detecting Orientation",
-          "items": [
-            "Use LocalConfiguration.current to detect current orientation."
-          ]
-        },
-        {
-          "type": "text_code",
-          "heading": "Detect Orientation",
-          "content": "",
-          "language": "kotlin",
-          "code": "val configuration = LocalConfiguration.current\nif (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {\n    LandscapeLayout()\n} else {\n    PortraitLayout()\n}"
         }
       ],
       "askedIn": [
@@ -1958,25 +1923,6 @@
           "content": "",
           "language": "kotlin",
           "code": "@Composable\nfun SimpleVerticalLayout(\n    modifier: Modifier = Modifier,\n    content: @Composable () -> Unit\n) {\n    Layout(\n        content = content,\n        modifier = modifier\n    ) { measurables, constraints ->\n        // Step 1: Measure all children\n        val placeables = measurables.map { it.measure(constraints) }\n\n        // Step 2: Calculate total height\n        val totalHeight = placeables.sumOf { it.height }\n        val maxWidth = placeables.maxOf { it.width }\n\n        // Step 3: Place children vertically\n        layout(maxWidth, totalHeight) {\n            var yOffset = 0\n            placeables.forEach { placeable ->\n                placeable.placeRelative(x = 0, y = yOffset)\n                yOffset += placeable.height\n            }\n        }\n    }\n}"
-        },
-        {
-          "type": "bullet",
-          "heading": "Key Steps",
-          "items": [
-            "Measure children using measurables.map { it.measure(constraints) }.",
-            "Calculate the total size of the layout.",
-            "Place children using placeable.placeRelative(x, y).",
-            "Use layout(width, height) {} to define the overall size."
-          ]
-        },
-        {
-          "type": "bullet",
-          "heading": "When to Use Custom Layouts",
-          "items": [
-            "Overlapping elements with custom rules.",
-            "Staggered or grid layouts not provided by default.",
-            "Performance-critical custom arrangements."
-          ]
         }
       ],
       "askedIn": [
