@@ -36,6 +36,12 @@
         "title": "Oops",
         "totalQuestions": "25",
         "icon": " "
+      },
+{
+        "category_id": "Design pattern",
+        "title": "Oops",
+        "totalQuestions": "25",
+        "icon": " "
       }
     ],
     "courses": [
