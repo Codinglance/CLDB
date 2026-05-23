@@ -1,0 +1,1247 @@
+{
+  "category": "Design Patterns",
+  "questions": [
+    {
+      "id": 301,
+      "question": "What is SOLID principle?",
+      "section": "SOLID Principles",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "solid", "oop"],
+      "title": "What is SOLID principle?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "SOLID is an acronym for five object-oriented design principles introduced by Robert C. Martin (Uncle Bob). Following them makes software easier to maintain, extend, and test."
+        },
+        {
+          "type": "bullet",
+          "heading": "The Five Principles",
+          "items": [
+            "S — Single Responsibility Principle: A class should have only one reason to change (one responsibility).",
+            "O — Open/Closed Principle: A class should be open for extension but closed for modification.",
+            "L — Liskov Substitution Principle: Subclasses should be substitutable for their parent class without breaking the program.",
+            "I — Interface Segregation Principle: Clients should not be forced to depend on interfaces they do not use.",
+            "D — Dependency Inversion Principle: High-level modules should not depend on low-level modules; both should depend on abstractions."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "Android's MVVM architecture naturally follows SOLID: ViewModel (SRP), Repository interface (OCP + DIP), LiveData/StateFlow (ISP — observe only what you need)."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft", "Flipkart"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 302,
+      "question": "What are different design patterns you know about?",
+      "section": "Design Pattern Fundamentals",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "creational", "structural", "behavioral"],
+      "title": "What are different design patterns you know about?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Design patterns are reusable solutions to recurring software design problems. The Gang of Four (GoF) book categorized 23 classic patterns into three groups."
+        },
+        {
+          "type": "bullet",
+          "heading": "Creational Patterns",
+          "items": [
+            "Singleton — ensures only one instance of a class exists.",
+            "Factory Method — delegates object creation to subclasses.",
+            "Abstract Factory — creates families of related objects.",
+            "Builder — constructs complex objects step by step.",
+            "Prototype — clones existing objects."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Structural Patterns",
+          "items": [
+            "Adapter — makes incompatible interfaces work together.",
+            "Decorator — adds behavior to objects dynamically.",
+            "Facade — provides a simplified interface to a subsystem.",
+            "Composite — treats individual objects and groups uniformly.",
+            "Proxy — controls access to another object.",
+            "Bridge — separates abstraction from implementation.",
+            "Flyweight — shares common state to reduce memory usage."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Behavioral Patterns",
+          "items": [
+            "Observer — objects subscribe to and react to events.",
+            "Strategy — selects an algorithm at runtime.",
+            "Command — encapsulates a request as an object.",
+            "Template Method — defines a skeleton algorithm with steps overridden by subclasses.",
+            "Chain of Responsibility — passes a request along a chain of handlers.",
+            "State — changes behavior based on internal state.",
+            "Iterator — sequentially accesses elements of a collection."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 303,
+      "question": "What is a creational pattern?",
+      "section": "Design Pattern Fundamentals",
+      "difficulty": "Easy",
+      "tags": ["design-patterns", "creational"],
+      "title": "What is a creational pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Creational patterns deal with object creation mechanisms. They abstract the instantiation process, making a system independent of how its objects are created, composed, and represented."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Creational Patterns",
+          "items": [
+            "Singleton — one instance globally (Application class in Android).",
+            "Factory Method — subclass decides which class to instantiate (ViewModelProvider.Factory).",
+            "Abstract Factory — creates families of related objects (Themed UI components).",
+            "Builder — step-by-step construction (AlertDialog.Builder, Retrofit.Builder).",
+            "Prototype — clone an existing object instead of creating from scratch."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Why It Matters",
+          "content": "Creational patterns provide flexibility in what gets created, who creates it, how it gets created, and when. They reduce tight coupling to specific classes."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 304,
+      "question": "What is a structural pattern?",
+      "section": "Design Pattern Fundamentals",
+      "difficulty": "Easy",
+      "tags": ["design-patterns", "structural"],
+      "title": "What is a structural pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Structural patterns deal with how classes and objects are composed to form larger structures. They simplify the design by identifying relationships between entities."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Structural Patterns",
+          "items": [
+            "Adapter — wraps an incompatible interface (RecyclerView.Adapter bridges data and Views).",
+            "Decorator — adds responsibilities to objects dynamically (Kotlin extension functions, OkHttp interceptors).",
+            "Facade — hides complex subsystem behind a simple interface (Retrofit hides HTTP complexity).",
+            "Composite — tree structure of objects (Android View hierarchy).",
+            "Proxy — controls access to another object (Retrofit's dynamic proxy for API interfaces).",
+            "Bridge — decouples abstraction from implementation (separate platform rendering from logic).",
+            "Flyweight — shares state to minimize memory (Android's Bitmap Pool, String pool)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 305,
+      "question": "What is a behavioral pattern?",
+      "section": "Design Pattern Fundamentals",
+      "difficulty": "Easy",
+      "tags": ["design-patterns", "behavioral"],
+      "title": "What is a behavioral pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Behavioral patterns are concerned with communication and responsibility between objects. They define how objects interact and distribute work."
+        },
+        {
+          "type": "bullet",
+          "heading": "Common Behavioral Patterns",
+          "items": [
+            "Observer — LiveData, StateFlow, RxJava Observable in Android.",
+            "Strategy — pluggable sorting, caching, or authentication strategies.",
+            "Command — encapsulate operations as objects (undo/redo, WorkManager Tasks).",
+            "Template Method — Activity lifecycle (Android calls onCreate/onResume; you implement them).",
+            "Chain of Responsibility — OkHttp Interceptor chain.",
+            "State — manage UI states (Loading, Success, Error) via sealed classes.",
+            "Iterator — Kotlin's for-in loop over Iterable, Cursor in Room."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 306,
+      "question": "Create Singleton Pattern without Kotlin default implementation",
+      "section": "Singleton",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "singleton", "kotlin"],
+      "title": "Create Singleton Pattern without Kotlin default implementation",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Singleton ensures only one instance of a class exists across the application. In Kotlin, the object keyword provides it for free, but we can implement it manually for interview purposes."
+        },
+        {
+          "type": "text_code",
+          "heading": "Manual Singleton in Kotlin (Double-Checked Locking)",
+          "content": "",
+          "language": "kotlin",
+          "code": "class DatabaseHelper private constructor() {\n\n    companion object {\n        @Volatile\n        private var instance: DatabaseHelper? = null\n\n        fun getInstance(): DatabaseHelper {\n            return instance ?: synchronized(this) {\n                instance ?: DatabaseHelper().also { instance = it }\n            }\n        }\n    }\n\n    fun query(sql: String): String = \"Result for: $sql\"\n}\n\n// Usage\nval db = DatabaseHelper.getInstance()\nval db2 = DatabaseHelper.getInstance()\nprintln(db === db2) // true — same instance"
+        },
+        {
+          "type": "bullet",
+          "heading": "Key Points",
+          "items": [
+            "@Volatile — ensures visibility of the instance variable across threads.",
+            "synchronized(this) — prevents two threads from creating instances simultaneously.",
+            "Double-check — first null check avoids unnecessary synchronization on every call.",
+            "Private constructor — prevents direct instantiation from outside."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Uber", "Flipkart"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 307,
+      "question": "How to make a Singleton Pattern Thread Safe?",
+      "section": "Singleton",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "singleton", "thread-safety", "kotlin"],
+      "title": "How to make a Singleton Pattern Thread Safe?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "A basic null-check singleton is not thread-safe — two threads can both pass the null check simultaneously and create two instances. There are several approaches to fix this."
+        },
+        {
+          "type": "bullet",
+          "heading": "Approaches",
+          "items": [
+            "1. Synchronized method — simplest but slow; every call acquires a lock.",
+            "2. Double-Checked Locking — lock only on first creation; fast after initialization.",
+            "3. Eager initialization — create instance at class loading time; always thread-safe.",
+            "4. Kotlin object keyword — uses class loading guarantees; inherently thread-safe.",
+            "5. Initialization-on-demand holder — lazy + thread-safe via inner class loading."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Double-Checked Locking (Recommended)",
+          "content": "",
+          "language": "kotlin",
+          "code": "class AppConfig private constructor() {\n    companion object {\n        @Volatile private var instance: AppConfig? = null\n\n        fun getInstance(): AppConfig =\n            instance ?: synchronized(this) {\n                instance ?: AppConfig().also { instance = it }\n            }\n    }\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Kotlin object (Best for Android)",
+          "content": "",
+          "language": "kotlin",
+          "code": "object AppConfig {\n    val apiUrl = \"https://api.example.com\"\n    fun getConfig() = apiUrl\n    // JVM guarantees thread-safe single initialization via class loading\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 308,
+      "question": "Create Observer Pattern",
+      "section": "Observer",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "observer", "kotlin"],
+      "title": "Create Observer Pattern",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Observer pattern defines a one-to-many dependency. When one object (Subject/Observable) changes state, all its dependents (Observers) are notified and updated automatically."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface Observer {\n    fun onUpdate(event: String)\n}\n\nclass EventBus {\n    private val observers = mutableListOf<Observer>()\n\n    fun subscribe(observer: Observer) { observers.add(observer) }\n    fun unsubscribe(observer: Observer) { observers.remove(observer) }\n    fun publish(event: String) { observers.forEach { it.onUpdate(event) } }\n}\n\nclass Logger : Observer {\n    override fun onUpdate(event: String) = println(\"Log: $event\")\n}\n\nclass Analytics : Observer {\n    override fun onUpdate(event: String) = println(\"Track: $event\")\n}\n\n// Usage\nval bus = EventBus()\nbus.subscribe(Logger())\nbus.subscribe(Analytics())\nbus.publish(\"USER_LOGGED_IN\") // Both notified"
+        },
+        {
+          "type": "bullet",
+          "heading": "Android Examples",
+          "content": "LiveData (observers = UI), StateFlow (collect = observe), RxJava Observable, BroadcastReceiver, View.OnClickListener — all follow Observer pattern."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Swiggy", "Paytm"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 309,
+      "question": "Create Adapter Pattern",
+      "section": "Adapter",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "adapter", "structural", "kotlin"],
+      "title": "Create Adapter Pattern",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Adapter pattern converts the interface of a class into another interface that clients expect. It lets classes work together that couldn't otherwise due to incompatible interfaces — like a power plug adapter."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Existing legacy payment system\nclass LegacyPayment {\n    fun makePayment(amount: Double) = println(\"Legacy payment: $$amount\")\n}\n\n// New expected interface\ninterface PaymentProcessor {\n    fun processPayment(amountInCents: Int)\n}\n\n// Adapter bridges the two\nclass PaymentAdapter(private val legacy: LegacyPayment) : PaymentProcessor {\n    override fun processPayment(amountInCents: Int) {\n        val dollars = amountInCents / 100.0\n        legacy.makePayment(dollars) // Translates the call\n    }\n}\n\n// Usage — client only knows PaymentProcessor\nval processor: PaymentProcessor = PaymentAdapter(LegacyPayment())\nprocessor.processPayment(4999) // Legacy payment: $49.99"
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "RecyclerView.Adapter adapts a List<Item> data source to the View items the RecyclerView framework expects. You provide the adapter; the framework calls onCreateViewHolder() and onBindViewHolder()."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Zomato"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 310,
+      "question": "What is Dependency Inversion Principle?",
+      "section": "SOLID Principles",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "solid", "dependency-inversion"],
+      "title": "What is Dependency Inversion Principle?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Dependency Inversion Principle (DIP) states two things: high-level modules should not depend on low-level modules — both should depend on abstractions. And abstractions should not depend on details — details should depend on abstractions."
+        },
+        {
+          "type": "text_code",
+          "heading": "Violation — High-level depends on Low-level",
+          "content": "",
+          "language": "kotlin",
+          "code": "// BAD — ViewModel directly depends on concrete class\nclass UserViewModel {\n    private val repository = UserRepositoryImpl() // Tightly coupled!\n    fun getUser(id: Int) = repository.getUser(id)\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Following DIP — Both depend on abstraction",
+          "content": "",
+          "language": "kotlin",
+          "code": "// GOOD — Both depend on interface\ninterface UserRepository {\n    suspend fun getUser(id: Int): User\n}\n\nclass UserRepositoryImpl(val api: ApiService) : UserRepository {\n    override suspend fun getUser(id: Int) = api.getUser(id)\n}\n\nclass UserViewModel(private val repo: UserRepository) : ViewModel() {\n    fun getUser(id: Int) = viewModelScope.launch { repo.getUser(id) }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Testable — inject a FakeUserRepository in unit tests.",
+            "Flexible — swap implementations without changing the ViewModel.",
+            "Foundation for Dependency Injection frameworks like Hilt/Dagger."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft", "Flipkart"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 311,
+      "question": "Write a real-life example of Dependency Injection without using any library",
+      "section": "Dependency Injection",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "dependency-injection", "kotlin"],
+      "title": "Write a real-life example of Dependency Injection without using any library",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Dependency Injection (DI) is a technique where an object's dependencies are provided from outside rather than created inside. This makes code testable, flexible, and loosely coupled."
+        },
+        {
+          "type": "text_code",
+          "heading": "Manual DI — Constructor Injection",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Abstractions\ninterface ApiService { suspend fun fetchUser(id: Int): User }\ninterface UserRepository { suspend fun getUser(id: Int): User }\n\n// Low-level implementations\nclass RetrofitApiService : ApiService {\n    override suspend fun fetchUser(id: Int) = User(id, \"Aasim\") // Real API call\n}\n\nclass UserRepositoryImpl(private val api: ApiService) : UserRepository {\n    override suspend fun getUser(id: Int) = api.fetchUser(id)\n}\n\n// High-level module — receives dependencies, doesn't create them\nclass UserViewModel(private val repository: UserRepository) : ViewModel() {\n    val user = MutableLiveData<User>()\n    fun load(id: Int) = viewModelScope.launch { user.value = repository.getUser(id) }\n}\n\n// Manual DI composition root (e.g., in Application or Activity)\nval api: ApiService = RetrofitApiService()\nval repo: UserRepository = UserRepositoryImpl(api)\nval viewModel = UserViewModel(repo)\n\n// For unit tests — inject a fake\nclass FakeApiService : ApiService {\n    override suspend fun fetchUser(id: Int) = User(id, \"FakeUser\")\n}\nval testViewModel = UserViewModel(UserRepositoryImpl(FakeApiService()))"
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of DI",
+          "items": [
+            "Constructor Injection — dependencies passed via constructor (preferred).",
+            "Setter Injection — dependencies set via property or setter method.",
+            "Interface Injection — dependency provides an injector method the dependent implements."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Uber", "Netflix"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 312,
+      "question": "Explain how Android Architecture components utilize design patterns behind the scenes",
+      "section": "Android Architecture",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "android", "viewmodel", "livedata", "architecture"],
+      "title": "Explain how Android Architecture components utilize design patterns behind the scenes",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Android Architecture Components (ViewModel, LiveData, Room, WorkManager) are all built on well-known design patterns. Understanding them helps you use these components more effectively."
+        },
+        {
+          "type": "bullet",
+          "heading": "ViewModel",
+          "items": [
+            "Factory Pattern — ViewModelProvider.Factory creates the ViewModel; you define how it's constructed.",
+            "Facade Pattern — ViewModel exposes a clean interface for the UI while hiding repository/data-fetch complexity.",
+            "MVVM Pattern — ViewModel is literally the 'VM' in MVVM, separating UI state from View."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "LiveData",
+          "items": [
+            "Observer Pattern — Activity/Fragment observes LiveData and reacts to changes.",
+            "Null Object Pattern — LiveData.value is null by default; prevents NullPointerException at registration.",
+            "Lifecycle awareness — built-in State pattern that only notifies active observers."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Room",
+          "items": [
+            "Repository Pattern — DAOs abstract the SQL details; the app code never writes raw SQL.",
+            "Proxy Pattern — Room generates DAO implementations at compile time via annotation processing.",
+            "Builder Pattern — Room.databaseBuilder() constructs the database step by step."
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "WorkManager",
+          "items": [
+            "Command Pattern — each Worker encapsulates a unit of work to be scheduled and executed.",
+            "Chain of Responsibility — WorkManager.beginWith().then() chains workers."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe", "Microsoft"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 313,
+      "question": "What is the Builder Pattern?",
+      "section": "Builder",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "builder", "creational", "kotlin"],
+      "title": "What is the Builder Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Builder pattern separates the construction of a complex object from its representation. It lets you create an object step by step with a fluent API, and only produces the final object when build() is called."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "class NetworkRequest private constructor(\n    val url: String,\n    val method: String,\n    val headers: Map<String, String>,\n    val timeout: Int,\n    val retries: Int\n) {\n    class Builder(private val url: String) {\n        private var method = \"GET\"\n        private var headers = mutableMapOf<String, String>()\n        private var timeout = 30\n        private var retries = 3\n\n        fun method(method: String) = apply { this.method = method }\n        fun header(key: String, value: String) = apply { headers[key] = value }\n        fun timeout(seconds: Int) = apply { timeout = seconds }\n        fun retries(count: Int) = apply { retries = count }\n        fun build() = NetworkRequest(url, method, headers, timeout, retries)\n    }\n}\n\n// Usage\nval request = NetworkRequest.Builder(\"https://api.example.com/users\")\n    .method(\"POST\")\n    .header(\"Authorization\", \"Bearer token\")\n    .timeout(60)\n    .retries(2)\n    .build()"
+        },
+        {
+          "type": "bullet",
+          "heading": "Android Examples",
+          "content": "AlertDialog.Builder, Retrofit.Builder, OkHttpClient.Builder, NotificationCompat.Builder, Room.databaseBuilder() — all use this pattern."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Swiggy", "Flipkart"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 314,
+      "question": "What is the Factory Pattern?",
+      "section": "Factory",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "factory", "creational", "kotlin"],
+      "title": "What is the Factory Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Factory pattern defines an interface for creating an object, but lets subclasses decide which class to instantiate. It decouples object creation from object usage."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface Notification {\n    fun send(message: String)\n}\n\nclass PushNotification : Notification {\n    override fun send(message: String) = println(\"Push: $message\")\n}\n\nclass EmailNotification : Notification {\n    override fun send(message: String) = println(\"Email: $message\")\n}\n\nclass SMSNotification : Notification {\n    override fun send(message: String) = println(\"SMS: $message\")\n}\n\nobject NotificationFactory {\n    fun create(type: String): Notification = when (type) {\n        \"push\"  -> PushNotification()\n        \"email\" -> EmailNotification()\n        \"sms\"   -> SMSNotification()\n        else    -> throw IllegalArgumentException(\"Unknown type: $type\")\n    }\n}\n\n// Usage — caller doesn't know which class is created\nval notif = NotificationFactory.create(\"push\")\nnotif.send(\"Your order is confirmed!\")"
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "ViewModelProvider.Factory creates ViewModel instances. Hilt generates factories automatically. Fragment.instantiate() is an Android framework factory method."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Paytm"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 315,
+      "question": "What is the Repository Pattern?",
+      "section": "Repository",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "repository", "android", "architecture"],
+      "title": "What is the Repository Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Repository pattern mediates between the domain and data layers using a collection-like interface for accessing domain objects. It abstracts whether data comes from a network, database, or cache."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface UserRepository {\n    suspend fun getUser(id: Int): User\n}\n\nclass UserRepositoryImpl(\n    private val api: UserApiService,\n    private val dao: UserDao\n) : UserRepository {\n    override suspend fun getUser(id: Int): User {\n        val cached = dao.getUser(id)\n        if (cached != null) return cached      // Return from DB cache\n        val remote = api.getUser(id)           // Fetch from network\n        dao.insertUser(remote)                 // Cache it\n        return remote\n    }\n}\n\n// ViewModel only knows the abstraction\nclass UserViewModel(private val repo: UserRepository) : ViewModel() {\n    val user = MutableLiveData<User>()\n    fun load(id: Int) = viewModelScope.launch {\n        user.value = repo.getUser(id)\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Single source of truth — all data access goes through one place.",
+            "Testable — inject FakeRepository in ViewModel tests.",
+            "Swappable — change from REST to GraphQL without touching ViewModel.",
+            "Caching logic centralized — not scattered across the app."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Uber", "Netflix"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 316,
+      "question": "What is the Facade Pattern?",
+      "section": "Facade",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "facade", "structural", "kotlin"],
+      "title": "What is the Facade Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Facade pattern provides a simplified, unified interface to a complex subsystem. It hides the complexity of multiple classes behind a single class."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Complex subsystems\nclass VideoDecoder { fun decode(file: String) = println(\"Decoding $file\") }\nclass AudioMixer   { fun mix(file: String) = println(\"Mixing audio $file\") }\nclass VideoEncoder { fun encode(output: String) = println(\"Encoding $output\") }\nclass FileStorage  { fun save(path: String) = println(\"Saving to $path\") }\n\n// Facade — simple interface for complex workflow\nclass VideoProcessor(\n    private val decoder: VideoDecoder = VideoDecoder(),\n    private val mixer: AudioMixer = AudioMixer(),\n    private val encoder: VideoEncoder = VideoEncoder(),\n    private val storage: FileStorage = FileStorage()\n) {\n    fun process(inputFile: String, outputPath: String) {\n        decoder.decode(inputFile)\n        mixer.mix(inputFile)\n        encoder.encode(outputPath)\n        storage.save(outputPath)\n    }\n}\n\n// Client only interacts with Facade\nVideoProcessor().process(\"video.mp4\", \"/output/final.mp4\")"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "Retrofit is a facade over OkHttp + Gson/Moshi + threading. Glide is a facade over bitmap decoding + caching + threading. Context is a facade over Android system services."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 317,
+      "question": "What is the Strategy Pattern?",
+      "section": "Strategy",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "strategy", "behavioral", "kotlin"],
+      "title": "What is the Strategy Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Strategy pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable at runtime. The client code doesn't know which algorithm runs — it just calls the strategy."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface ImageCacheStrategy {\n    fun cache(url: String, bitmap: Bitmap)\n    fun retrieve(url: String): Bitmap?\n}\n\nclass MemoryCacheStrategy : ImageCacheStrategy {\n    private val cache = HashMap<String, Bitmap>()\n    override fun cache(url: String, bitmap: Bitmap) { cache[url] = bitmap }\n    override fun retrieve(url: String) = cache[url]\n}\n\nclass DiskCacheStrategy : ImageCacheStrategy {\n    override fun cache(url: String, bitmap: Bitmap) { /* write to disk */ }\n    override fun retrieve(url: String): Bitmap? = null /* read from disk */\n}\n\nclass ImageLoader(private var strategy: ImageCacheStrategy) {\n    fun setStrategy(s: ImageCacheStrategy) { strategy = s }\n    fun load(url: String): Bitmap? {\n        return strategy.retrieve(url) ?: fetchFromNetwork(url).also {\n            if (it != null) strategy.cache(url, it)\n        }\n    }\n    private fun fetchFromNetwork(url: String): Bitmap? = null\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "Glide's DiskCacheStrategy enum, OkHttp's CacheControl, Collections.sort() with different Comparators, RecyclerView's ItemAnimator — all implement Strategy pattern."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Zomato"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 318,
+      "question": "What design patterns are used in Retrofit library source code?",
+      "section": "Design Patterns in Libraries",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "retrofit", "android"],
+      "title": "What design patterns are used in Retrofit library source code?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Retrofit is one of the most pattern-rich libraries in the Android ecosystem. Understanding its internals reveals how expert-level library design works."
+        },
+        {
+          "type": "bullet",
+          "heading": "Patterns Used in Retrofit",
+          "items": [
+            "Builder Pattern — Retrofit.Builder() constructs the Retrofit instance step by step with baseUrl, converter factories, and call adapter factories.",
+            "Facade Pattern — Retrofit hides OkHttp, Gson/Moshi, and threading complexity behind a simple annotated interface.",
+            "Proxy Pattern — Retrofit.create(ApiService::class.java) returns a dynamic proxy (Java's Proxy.newProxyInstance). Every method call on the API interface is intercepted and converted to an OkHttp call.",
+            "Factory Pattern — CallAdapter.Factory and Converter.Factory decide how to convert responses (Gson, Moshi, Kotlin serialization) and how to return them (Call, Observable, suspend).",
+            "Adapter Pattern — CallAdapter adapts OkHttp's Call to Kotlin suspend functions, RxJava Observables, etc.",
+            "Template Method — ServiceMethod defines the template for processing an API call; subclasses (HttpServiceMethod) handle specifics."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe", "Flipkart"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 319,
+      "question": "What design patterns are used in Glide image loading library?",
+      "section": "Design Patterns in Libraries",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "glide", "android"],
+      "title": "What design patterns are used in Glide image loading library?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Glide is a complex image loading pipeline with multiple design patterns working together to provide efficient, flexible image loading."
+        },
+        {
+          "type": "bullet",
+          "heading": "Patterns Used in Glide",
+          "items": [
+            "Builder Pattern — Glide.with(context).load(url).placeholder().error().into(imageView) is a fluent builder chain.",
+            "Strategy Pattern — DiskCacheStrategy (NONE, DATA, RESOURCE, ALL, AUTOMATIC) switches caching behavior at runtime.",
+            "Factory Pattern — ModelLoaderFactory and DataFetcherFactory create the appropriate loaders for different input types (URL, File, URI, resource).",
+            "Flyweight Pattern — Glide reuses Bitmap objects via BitmapPool instead of creating new ones — reduces GC pressure.",
+            "Decorator Pattern — Transformations (CenterCrop, CircleCrop, RoundedCorners) wrap and modify bitmaps without altering the loader chain.",
+            "Observer Pattern — Target (ImageViewTarget, CustomTarget) observes the loading lifecycle (onResourceReady, onLoadFailed).",
+            "Lifecycle awareness — Glide attaches a headless Fragment to the Activity/Fragment to observe lifecycle events (pause/resume/destroy requests)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 320,
+      "question": "What are examples of Observer pattern used in Android?",
+      "section": "Observer",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "observer", "android", "livedata"],
+      "title": "What are examples of Observer pattern used in Android?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Observer pattern is the most pervasive design pattern in Android. The entire reactive programming model in Android is built on it."
+        },
+        {
+          "type": "bullet",
+          "heading": "Observer Pattern in Android",
+          "items": [
+            "LiveData — Activity/Fragment observes LiveData; auto-unsubscribes on lifecycle destroy.",
+            "StateFlow / SharedFlow — coroutine-based observers using collect {} block.",
+            "RxJava Observable — classic reactive pattern; subscribe() registers observers.",
+            "BroadcastReceiver — registers to receive system or custom broadcast events.",
+            "View.OnClickListener — button.setOnClickListener{} observes click events.",
+            "ContentObserver — observes changes to ContentProvider data (contacts, media).",
+            "SensorEventListener — observes accelerometer, gyroscope sensor changes.",
+            "RecyclerView.AdapterDataObserver — RecyclerView observes adapter for data changes.",
+            "Jetpack Compose — State<T> and MutableState cause recomposition (implicit observer)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Uber", "Ola"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 321,
+      "question": "What design patterns are used in AOSP (Android Open Source Project)?",
+      "section": "Design Patterns in Libraries",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "aosp", "android"],
+      "title": "What design patterns are used in AOSP (Android Open Source Project)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "AOSP itself is a masterclass in design patterns. The Android framework was designed by engineers applying GoF patterns to build a flexible, extensible mobile platform."
+        },
+        {
+          "type": "bullet",
+          "heading": "Patterns in AOSP",
+          "items": [
+            "Singleton — Application class, ActivityManagerService, PackageManagerService — system services are singletons.",
+            "Observer — BroadcastReceiver, ContentObserver, SensorEventListener, Handler/Looper message queue.",
+            "Factory — Fragment.instantiate(), LayoutInflater (creates View objects from XML), ViewModelProvider.Factory.",
+            "Adapter — RecyclerView.Adapter, CursorAdapter, ArrayAdapter — all bridge data to View.",
+            "Template Method — Activity lifecycle (the framework calls onCreate/onStart/onResume; subclasses override).",
+            "Composite — Android View hierarchy: ViewGroup contains Views; treated uniformly via draw(), measure(), layout().",
+            "Proxy — Binder IPC (inter-process communication) creates proxies for system services across processes.",
+            "Command — Pending Intent (encapsulates an Intent to be fired later by another app or alarm).",
+            "Decorator — Context → ContextWrapper → ContextThemeWrapper adds decoration layers over base Context.",
+            "Chain of Responsibility — Touch event dispatch chain (Activity → ViewGroup → View).",
+            "Flyweight — Android's String pool, Bitmap recycle pool, Message.obtain() from message pool.",
+            "State — Activity/Fragment lifecycle managed as a state machine (CREATED, STARTED, RESUMED, etc.)."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Qualcomm"],
+      "expectedReadTime": "1 min 30 sec"
+    },
+    {
+      "id": 322,
+      "question": "Kotlin Optional Parameters vs Builder Pattern — when to use which?",
+      "section": "Builder",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "builder", "kotlin"],
+      "title": "Kotlin Optional Parameters vs Builder Pattern — when to use which?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Kotlin's default/named parameters solve many of the same problems that the Builder pattern was invented to solve in Java. Knowing when to prefer each is an important Kotlin design decision."
+        },
+        {
+          "type": "bullet",
+          "heading": "Kotlin Optional Parameters",
+          "items": [
+            "Concise — no extra Builder class needed.",
+            "Type-safe — compiler enforces required vs optional parameters.",
+            "Best for: data classes, simple configuration objects, internal Kotlin-only APIs.",
+            "Example: data class Config(val host: String, val port: Int = 8080, val timeout: Int = 30)"
+          ]
+        },
+        {
+          "type": "bullet",
+          "heading": "Builder Pattern",
+          "items": [
+            "Java interoperability — Kotlin default params don't work cleanly from Java code.",
+            "Validation at build time — Builder can validate combinations before constructing.",
+            "Complex construction — steps have side effects, ordering matters, or creation is async.",
+            "Public API / SDK — @JvmOverloads partially helps, but Builder is cleaner for Java consumers.",
+            "Example: Retrofit.Builder, OkHttpClient.Builder."
+          ]
+        },
+        {
+          "type": "text",
+          "heading": "Rule of Thumb",
+          "content": "For Kotlin-only internal code: use default parameters. For public APIs consumed from Java or complex validated construction: use Builder. Use @JvmOverloads as a middle ground."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "JetBrains"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 323,
+      "question": "What is the Decorator Pattern?",
+      "section": "Decorator",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "decorator", "structural", "kotlin"],
+      "title": "What is the Decorator Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Decorator pattern attaches additional responsibilities to an object dynamically. It provides a flexible alternative to subclassing for extending functionality by wrapping objects in decorator classes."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface Logger {\n    fun log(message: String)\n}\n\nclass ConsoleLogger : Logger {\n    override fun log(message: String) = println(message)\n}\n\n// Decorator adds timestamp without modifying ConsoleLogger\nclass TimestampLogger(private val logger: Logger) : Logger {\n    override fun log(message: String) =\n        logger.log(\"[${System.currentTimeMillis()}] $message\")\n}\n\n// Decorator adds tag prefix\nclass TagLogger(private val logger: Logger, private val tag: String) : Logger {\n    override fun log(message: String) = logger.log(\"[$tag] $message\")\n}\n\n// Stack decorators\nval logger: Logger = TagLogger(TimestampLogger(ConsoleLogger()), \"AUTH\")\nlogger.log(\"User logged in\")\n// Output: [AUTH] [1718000000000] User logged in"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "OkHttp Interceptors (each interceptor decorates the next), Context → ContextWrapper → ContextThemeWrapper, Kotlin extension functions (syntactic decorator), Jetpack Compose Modifier chain."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 324,
+      "question": "What is the Command Pattern?",
+      "section": "Command",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "command", "behavioral", "kotlin"],
+      "title": "What is the Command Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Command pattern encapsulates a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface Command {\n    fun execute()\n    fun undo()\n}\n\nclass TextEditor {\n    val text = StringBuilder()\n}\n\nclass InsertCommand(private val editor: TextEditor, private val text: String) : Command {\n    override fun execute() { editor.text.append(text) }\n    override fun undo() { editor.text.delete(editor.text.length - text.length, editor.text.length) }\n}\n\nclass CommandHistory {\n    private val history = ArrayDeque<Command>()\n    fun execute(command: Command) { command.execute(); history.addLast(command) }\n    fun undo() { history.removeLastOrNull()?.undo() }\n}\n\n// Usage\nval editor = TextEditor()\nval history = CommandHistory()\nhistory.execute(InsertCommand(editor, \"Hello \"))\nhistory.execute(InsertCommand(editor, \"World\"))\nprintln(editor.text) // Hello World\nhistory.undo()\nprintln(editor.text) // Hello"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "PendingIntent encapsulates an Intent command to be fired later. WorkManager Workers encapsulate background tasks. Menu items with setOnMenuItemClickListener — each item is a command."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 325,
+      "question": "What is the Template Method Pattern?",
+      "section": "Template Method",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "template-method", "behavioral", "kotlin"],
+      "title": "What is the Template Method Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Template Method pattern defines the skeleton of an algorithm in a base class, deferring some steps to subclasses. Subclasses override specific steps without changing the overall algorithm structure."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "abstract class DataExporter {\n    // Template method — defines the algorithm skeleton\n    fun export(data: List<Any>) {\n        val formatted = format(data)       // Step 1: abstract\n        validate(formatted)                // Step 2: concrete default\n        write(formatted)                   // Step 3: abstract\n        notifyComplete()                   // Step 4: concrete hook\n    }\n\n    abstract fun format(data: List<Any>): String\n    abstract fun write(content: String)\n\n    open fun validate(content: String) {\n        if (content.isEmpty()) throw IllegalStateException(\"Empty content\")\n    }\n\n    open fun notifyComplete() = println(\"Export complete\")\n}\n\nclass CsvExporter : DataExporter() {\n    override fun format(data: List<Any>) = data.joinToString(\",\")\n    override fun write(content: String) = println(\"Writing CSV: $content\")\n}\n\nclass JsonExporter : DataExporter() {\n    override fun format(data: List<Any>) = \"{\\\"data\\\": $data}\"\n    override fun write(content: String) = println(\"Writing JSON: $content\")\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "Activity lifecycle is the most famous Android example — the framework calls onCreate → onStart → onResume in sequence; you override the steps. AsyncTask (deprecated) used the same pattern: doInBackground + onPostExecute."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 326,
+      "question": "What is the Prototype Pattern?",
+      "section": "Prototype",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "prototype", "creational", "kotlin"],
+      "title": "What is the Prototype Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Prototype pattern creates new objects by copying (cloning) an existing object — the prototype. It is useful when object creation is expensive and a similar object already exists."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation in Kotlin",
+          "content": "",
+          "language": "kotlin",
+          "code": "data class UserProfile(\n    val id: Int,\n    val name: String,\n    val role: String,\n    val permissions: List<String>\n)\n\n// Kotlin data class provides copy() — built-in Prototype pattern\nval adminProfile = UserProfile(\n    id = 1, name = \"Admin\", role = \"ADMIN\",\n    permissions = listOf(\"READ\", \"WRITE\", \"DELETE\")\n)\n\n// Clone and customize — Prototype pattern\nval guestProfile = adminProfile.copy(\n    id = 2, name = \"Guest\", role = \"GUEST\",\n    permissions = listOf(\"READ\")\n)"
+        },
+        {
+          "type": "bullet",
+          "heading": "When to Use",
+          "items": [
+            "Object construction is expensive (database reads, network calls).",
+            "You need many similar objects with minor differences.",
+            "Kotlin data class copy() is effectively a built-in Prototype implementation.",
+            "Android example: creating multiple similar notification configurations from a base template."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 327,
+      "question": "What is the Chain of Responsibility Pattern?",
+      "section": "Chain of Responsibility",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "chain-of-responsibility", "behavioral", "kotlin"],
+      "title": "What is the Chain of Responsibility Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Chain of Responsibility pattern passes a request along a chain of handlers. Each handler decides to process the request or pass it to the next handler in the chain."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "abstract class AuthHandler(private var next: AuthHandler? = null) {\n    fun setNext(handler: AuthHandler): AuthHandler {\n        next = handler\n        return handler\n    }\n    fun handle(request: AuthRequest) {\n        if (canHandle(request)) process(request)\n        else next?.handle(request) ?: println(\"No handler found\")\n    }\n    abstract fun canHandle(request: AuthRequest): Boolean\n    abstract fun process(request: AuthRequest)\n}\n\ndata class AuthRequest(val type: String, val token: String)\n\nclass ApiKeyHandler : AuthHandler() {\n    override fun canHandle(r: AuthRequest) = r.type == \"API_KEY\"\n    override fun process(r: AuthRequest) = println(\"Validated API key: ${r.token}\")\n}\n\nclass JwtHandler : AuthHandler() {\n    override fun canHandle(r: AuthRequest) = r.type == \"JWT\"\n    override fun process(r: AuthRequest) = println(\"Validated JWT: ${r.token}\")\n}\n\n// Build chain\nval chain = ApiKeyHandler()\nchain.setNext(JwtHandler())\nchain.handle(AuthRequest(\"JWT\", \"eyJhb...\")) // JwtHandler handles it"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "OkHttp Interceptor chain (each interceptor calls chain.proceed()), Android touch event dispatch (Activity → ViewGroup → View), exception handling chains."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Uber"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 328,
+      "question": "What is the State Pattern?",
+      "section": "State",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "state", "behavioral", "kotlin"],
+      "title": "What is the State Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The State pattern allows an object to alter its behavior when its internal state changes. The object appears to change its class. It replaces complex if-else or when chains based on state."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation with Sealed Class",
+          "content": "",
+          "language": "kotlin",
+          "code": "sealed class UiState<out T> {\n    object Loading : UiState<Nothing>()\n    data class Success<T>(val data: T) : UiState<T>()\n    data class Error(val message: String) : UiState<Nothing>()\n    object Empty : UiState<Nothing>()\n}\n\nclass UserViewModel(private val repo: UserRepository) : ViewModel() {\n    private val _state = MutableStateFlow<UiState<User>>(UiState.Loading)\n    val state: StateFlow<UiState<User>> = _state\n\n    fun loadUser(id: Int) = viewModelScope.launch {\n        _state.value = UiState.Loading\n        try {\n            val user = repo.getUser(id)\n            _state.value = if (user != null) UiState.Success(user) else UiState.Empty\n        } catch (e: Exception) {\n            _state.value = UiState.Error(e.message ?: \"Unknown error\")\n        }\n    }\n}\n\n// In Fragment\nviewModel.state.collect { state ->\n    when (state) {\n        is UiState.Loading -> showLoader()\n        is UiState.Success -> showUser(state.data)\n        is UiState.Error   -> showError(state.message)\n        is UiState.Empty   -> showEmptyView()\n    }\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "Sealed class UiState (Loading/Success/Error), Activity lifecycle state machine, MediaPlayer states (idle, prepared, playing, paused), Bluetooth connection states."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Netflix", "Uber"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 329,
+      "question": "What is the Proxy Pattern?",
+      "section": "Proxy",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "proxy", "structural", "kotlin"],
+      "title": "What is the Proxy Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Proxy pattern provides a surrogate or placeholder object that controls access to another object. It adds a layer of indirection for access control, lazy initialization, logging, or caching."
+        },
+        {
+          "type": "bullet",
+          "heading": "Types of Proxies",
+          "items": [
+            "Virtual Proxy — delays expensive object creation until first use (lazy initialization).",
+            "Protection Proxy — controls access based on permissions.",
+            "Remote Proxy — represents an object in a different address space (Binder in Android).",
+            "Caching Proxy — stores results of expensive operations."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Lazy Virtual Proxy in Kotlin",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface ImageLoader {\n    fun loadImage(url: String): Bitmap?\n}\n\nclass RealImageLoader : ImageLoader {\n    override fun loadImage(url: String): Bitmap? {\n        println(\"Expensive network call for $url\")\n        return null // Simulate fetched bitmap\n    }\n}\n\nclass CachingImageProxy : ImageLoader {\n    private val cache = HashMap<String, Bitmap?>()\n    private val real = RealImageLoader()\n\n    override fun loadImage(url: String): Bitmap? {\n        return cache.getOrPut(url) { real.loadImage(url) }\n    }\n}\n\n// Kotlin lazy delegate — built-in virtual proxy\nval expensiveObject: HeavyClass by lazy { HeavyClass() }"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "Retrofit.create() returns a dynamic Java Proxy. Android Binder IPC is a remote proxy. Kotlin's lazy {} delegate is a virtual proxy. Room's generated DAO implementations are compile-time proxies."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 330,
+      "question": "What is the Composite Pattern?",
+      "section": "Composite",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "composite", "structural", "kotlin"],
+      "title": "What is the Composite Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Composite pattern composes objects into tree structures to represent part-whole hierarchies. Clients treat individual objects and compositions of objects uniformly through a common interface."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface FileSystemItem {\n    val name: String\n    fun size(): Long\n    fun print(indent: String = \"\")\n}\n\nclass File(override val name: String, private val bytes: Long) : FileSystemItem {\n    override fun size() = bytes\n    override fun print(indent: String) = println(\"$indent📄 $name ($bytes bytes)\")\n}\n\nclass Folder(override val name: String) : FileSystemItem {\n    private val children = mutableListOf<FileSystemItem>()\n    fun add(item: FileSystemItem) { children.add(item) }\n    override fun size() = children.sumOf { it.size() }\n    override fun print(indent: String) {\n        println(\"$indent📁 $name\")\n        children.forEach { it.print(\"$indent  \") }\n    }\n}\n\n// Usage — treat files and folders uniformly\nval root = Folder(\"root\")\nval src = Folder(\"src\")\nsrc.add(File(\"Main.kt\", 1024))\nsrc.add(File(\"Utils.kt\", 512))\nroot.add(src)\nroot.add(File(\"README.md\", 256))\nroot.print() // Prints entire tree\nprintln(\"Total: ${root.size()} bytes\")"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "The Android View hierarchy is the canonical Composite pattern: ViewGroup (Folder) contains View children. draw(), measure(), and layout() are called recursively on the tree."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 331,
+      "question": "What is the Abstract Factory Pattern?",
+      "section": "Factory",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "abstract-factory", "creational", "kotlin"],
+      "title": "What is the Abstract Factory Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "Abstract Factory provides an interface for creating families of related or dependent objects without specifying their concrete classes. It's a factory of factories."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Product families\ninterface Button { fun render() }\ninterface Dialog { fun show() }\n\n// Concrete products — Light theme\nclass LightButton : Button { override fun render() = println(\"Light button\") }\nclass LightDialog : Dialog { override fun show() = println(\"Light dialog\") }\n\n// Concrete products — Dark theme\nclass DarkButton : Button { override fun render() = println(\"Dark button\") }\nclass DarkDialog : Dialog { override fun show() = println(\"Dark dialog\") }\n\n// Abstract factory\ninterface UIFactory {\n    fun createButton(): Button\n    fun createDialog(): Dialog\n}\n\n// Concrete factories\nclass LightThemeFactory : UIFactory {\n    override fun createButton() = LightButton()\n    override fun createDialog() = LightDialog()\n}\n\nclass DarkThemeFactory : UIFactory {\n    override fun createButton() = DarkButton()\n    override fun createDialog() = DarkDialog()\n}\n\n// Usage\nfun buildUI(factory: UIFactory) {\n    factory.createButton().render()\n    factory.createDialog().show()\n}\nbuildUI(DarkThemeFactory())"
+        },
+        {
+          "type": "text",
+          "heading": "Android Example",
+          "content": "Material Design component theming — a theme factory creates consistent Button, TextField, Card styles across the app. Hilt's component hierarchy provides related object graphs (ApplicationComponent → ActivityComponent)."
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 332,
+      "question": "What is the Single Responsibility Principle (SRP)?",
+      "section": "SOLID Principles",
+      "difficulty": "Easy",
+      "tags": ["design-patterns", "solid", "srp"],
+      "title": "What is the Single Responsibility Principle (SRP)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Definition",
+          "content": "A class should have only one reason to change. This means each class should have a single, well-defined responsibility — one job, one concern."
+        },
+        {
+          "type": "text_code",
+          "heading": "Violation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// BAD — handles UI, networking, AND persistence\nclass UserActivity : AppCompatActivity() {\n    fun onCreate() {\n        fetchFromNetwork()     // networking responsibility\n        saveToDatabase()       // persistence responsibility\n        renderUI()             // UI responsibility\n    }\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Correct SRP",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Each class has one job\nclass UserActivity : AppCompatActivity() { /* Only handles UI */ }\nclass UserViewModel : ViewModel() { /* Only manages UI state */ }\nclass UserRepository { /* Only handles data access */ }\nclass UserApiService { /* Only handles network calls */ }"
+        },
+        {
+          "type": "bullet",
+          "heading": "Benefits",
+          "items": [
+            "Easier to test each class in isolation.",
+            "Changes to one responsibility don't affect others.",
+            "Classes are smaller, more readable, and focused.",
+            "The Android MVVM architecture enforces SRP by design."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft", "Flipkart"],
+      "expectedReadTime": "45 sec"
+    },
+    {
+      "id": 333,
+      "question": "What is the Open/Closed Principle (OCP)?",
+      "section": "SOLID Principles",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "solid", "ocp"],
+      "title": "What is the Open/Closed Principle (OCP)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Definition",
+          "content": "Software entities (classes, modules, functions) should be open for extension but closed for modification. You add new behavior by adding new code, not by changing existing tested code."
+        },
+        {
+          "type": "text_code",
+          "heading": "Violation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// BAD — must modify existing class to add new payment type\nclass PaymentProcessor {\n    fun process(type: String) {\n        when (type) {\n            \"card\"   -> processCard()\n            \"paypal\" -> processPaypal()\n            // Every new type requires modifying this class\n        }\n    }\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Following OCP",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface PaymentStrategy { fun process() }\n\nclass CardPayment : PaymentStrategy { override fun process() = println(\"Card payment\") }\nclass PayPalPayment : PaymentStrategy { override fun process() = println(\"PayPal payment\") }\n// Adding UPI: just add a new class — no modification to existing code!\nclass UpiPayment : PaymentStrategy { override fun process() = println(\"UPI payment\") }\n\nclass PaymentProcessor(private val strategy: PaymentStrategy) {\n    fun process() = strategy.process()\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Adobe"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 334,
+      "question": "What is the Liskov Substitution Principle (LSP)?",
+      "section": "SOLID Principles",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "solid", "lsp"],
+      "title": "What is the Liskov Substitution Principle (LSP)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Definition",
+          "content": "Objects of a superclass should be replaceable with objects of its subclasses without breaking the application. Subclasses must honour the contract of the base class — they can extend it but never weaken it."
+        },
+        {
+          "type": "text_code",
+          "heading": "Violation — Classic Rectangle/Square Problem",
+          "content": "",
+          "language": "kotlin",
+          "code": "open class Rectangle {\n    open var width = 0\n    open var height = 0\n    fun area() = width * height\n}\n\nclass Square : Rectangle() {\n    override var width: Int\n        get() = super.width\n        set(value) { super.width = value; super.height = value } // Breaks LSP!\n}\n\n// Code that works for Rectangle BREAKS for Square\nfun setDimensions(r: Rectangle) {\n    r.width = 5; r.height = 3\n    println(r.area()) // Expected 15, but Square gives 9!\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "LSP Fix",
+          "items": [
+            "Don't extend Square from Rectangle — they have different contracts.",
+            "Use a common Shape interface instead.",
+            "Android example: any subclass of RecyclerView.Adapter must correctly implement getItemCount(), onBindViewHolder() — breaking this contract crashes the RecyclerView."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 335,
+      "question": "What is the Interface Segregation Principle (ISP)?",
+      "section": "SOLID Principles",
+      "difficulty": "Medium",
+      "tags": ["design-patterns", "solid", "isp"],
+      "title": "What is the Interface Segregation Principle (ISP)?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Definition",
+          "content": "Clients should not be forced to depend on interfaces they don't use. Instead of one large interface, create several small, specific interfaces so clients only implement what they need."
+        },
+        {
+          "type": "text_code",
+          "heading": "Violation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// BAD — GuestUser forced to implement methods it doesn't need\ninterface UserActions {\n    fun login()\n    fun logout()\n    fun deleteAccount() // Guests can't do this!\n    fun changePassword() // Guests can't do this!\n}\n\nclass GuestUser : UserActions {\n    override fun login() { }\n    override fun logout() { }\n    override fun deleteAccount() { throw UnsupportedOperationException() } // Smell!\n    override fun changePassword() { throw UnsupportedOperationException() } // Smell!\n}"
+        },
+        {
+          "type": "text_code",
+          "heading": "Following ISP",
+          "content": "",
+          "language": "kotlin",
+          "code": "interface Authenticatable { fun login(); fun logout() }\ninterface AccountManageable { fun deleteAccount(); fun changePassword() }\n\nclass GuestUser : Authenticatable { override fun login() {}; override fun logout() {} }\nclass RegisteredUser : Authenticatable, AccountManageable {\n    override fun login() {}; override fun logout() {}\n    override fun deleteAccount() {}; override fun changePassword() {}\n}"
+        }
+      ],
+      "askedIn": ["Google", "Amazon", "Microsoft"],
+      "expectedReadTime": "1 min"
+    },
+    {
+      "id": 336,
+      "question": "What is the MVI (Model-View-Intent) architecture pattern?",
+      "section": "Android Architecture",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "android", "mvi", "architecture"],
+      "title": "What is the MVI (Model-View-Intent) architecture pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "MVI is a unidirectional data flow architecture pattern commonly used with Jetpack Compose. It treats user actions as Intents, processes them into a State, and renders the State. Unlike MVVM, state flows in one direction only."
+        },
+        {
+          "type": "bullet",
+          "heading": "Components",
+          "items": [
+            "Model (State) — immutable data class representing the complete UI state at any moment.",
+            "View — renders the current State; sends user Intents to the ViewModel.",
+            "Intent — sealed class representing user actions or events (not Android Intent)."
+          ]
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Intent — user actions\nsealed class UserIntent {\n    data class LoadUser(val id: Int) : UserIntent()\n    object Retry : UserIntent()\n    object Logout : UserIntent()\n}\n\n// State — immutable UI snapshot\ndata class UserState(\n    val isLoading: Boolean = false,\n    val user: User? = null,\n    val error: String? = null\n)\n\nclass UserViewModel(private val repo: UserRepository) : ViewModel() {\n    private val _state = MutableStateFlow(UserState())\n    val state: StateFlow<UserState> = _state\n\n    fun handleIntent(intent: UserIntent) = viewModelScope.launch {\n        when (intent) {\n            is UserIntent.LoadUser -> {\n                _state.value = UserState(isLoading = true)\n                try {\n                    val user = repo.getUser(intent.id)\n                    _state.value = UserState(user = user)\n                } catch (e: Exception) {\n                    _state.value = UserState(error = e.message)\n                }\n            }\n            UserIntent.Retry -> handleIntent(UserIntent.LoadUser(1))\n            UserIntent.Logout -> _state.value = UserState()\n        }\n    }\n}"
+        },
+        {
+          "type": "bullet",
+          "heading": "MVI vs MVVM",
+          "items": [
+            "MVI has a single immutable state — no risk of multiple LiveData values being out of sync.",
+            "Unidirectional data flow — easier to reason about, test, and debug.",
+            "Better for Compose — Compose is designed around state rendering.",
+            "More boilerplate — each screen needs Intent, State, and ViewModel wired together."
+          ]
+        }
+      ],
+      "askedIn": ["Google", "Netflix", "Uber", "Grab"],
+      "expectedReadTime": "1 min 30 sec"
+    },
+    {
+      "id": 337,
+      "question": "What is the Flyweight Pattern?",
+      "section": "Flyweight",
+      "difficulty": "Hard",
+      "tags": ["design-patterns", "flyweight", "structural", "kotlin"],
+      "title": "What is the Flyweight Pattern?",
+      "sections": [
+        {
+          "type": "text",
+          "heading": "Introduction",
+          "content": "The Flyweight pattern reduces memory usage by sharing common state between many fine-grained objects. Instead of storing all data per object, it separates intrinsic (shared) state from extrinsic (unique) state."
+        },
+        {
+          "type": "text_code",
+          "heading": "Implementation",
+          "content": "",
+          "language": "kotlin",
+          "code": "// Intrinsic (shared) state — same for many objects\ndata class IconStyle(val color: String, val size: Int, val shape: String)\n\n// Flyweight factory — reuses existing instances\nobject IconFactory {\n    private val cache = HashMap<String, IconStyle>()\n\n    fun getIcon(color: String, size: Int, shape: String): IconStyle {\n        val key = \"$color-$size-$shape\"\n        return cache.getOrPut(key) { IconStyle(color, size, shape) }\n    }\n}\n\n// Extrinsic (unique) state stored externally\ndata class MapPin(val lat: Double, val lng: Double, val style: IconStyle)\n\n// 10,000 map pins sharing only a few IconStyle instances\nval pins = (1..10_000).map { i ->\n    MapPin(\n        lat = i.toDouble(), lng = i.toDouble(),\n        style = IconFactory.getIcon(\"red\", 24, \"circle\") // Reused!\n    )\n}"
+        },
+        {
+          "type": "text",
+          "heading": "Android Examples",
+          "content": "RecyclerView's ViewHolder pool (reuses views), Android's BitmapPool in Glide (reuses Bitmap memory), Java String pool, Message.obtain() pool, Drawable caches in Resources."
+        }
+      ],
+      "askedIn": ["Google", "Amazon"],
+      "expectedReadTime": "1 min"
+    }
+  ]
+}
