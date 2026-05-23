@@ -4,43 +4,43 @@
       {
         "category_id": "Android",
         "title": "Android",
-        "totalQuestions": "50",
+        "totalQuestions": "239",
         "icon": " "
       },
       {
         "category_id": "Kotlin",
         "title": "Kotlin",
-        "totalQuestions": "25",
+        "totalQuestions": "93",
         "icon": " "
       },
       {
         "category_id": "Compose",
         "title": "Compose",
-        "totalQuestions": "20",
+        "totalQuestions": "42",
         "icon": " "
       },
       {
         "category_id": "Collection",
         "title": "Collection",
-        "totalQuestions": "25",
+        "totalQuestions": "20",
         "icon": " "
       },
       {
         "category_id": "Java",
         "title": "Java",
-        "totalQuestions": "25",
+        "totalQuestions": "146",
         "icon": " "
       },
       {
         "category_id": "Oops",
         "title": "Oops",
-        "totalQuestions": "25",
+        "totalQuestions": "63",
         "icon": " "
       },
       {
         "category_id": "Design Pattern",
         "title": "Design Pattern",
-        "totalQuestions": "25",
+        "totalQuestions": "37",
         "icon": " "
       }
     ],
