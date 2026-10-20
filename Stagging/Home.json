@@ -58,7 +58,7 @@
         "icon": " "
       },
       {
-        "courseId": "dsa_patterns_cheatsheet",
+        "courseId": "DSA",
         "courseTitle": "DSA Patterns Cheat Sheet",
         "totalQuestions": 50,
         "icon": " "
@@ -92,6 +92,16 @@
         "color": "#0EA5E9",
         "totalItems": 15,
         "tag": "Commands"
+      },
+      {
+        "id": "dsa",
+        "categoryId": "DSA",
+        "title": "DSA Tips",
+        "subtitle": "Arrays, strings, two pointers, sliding window & more",
+        "emoji": "🧠",
+        "color": "#F97316",
+        "totalItems": 15,
+        "tag": "Algorithms"
       }
     ]
   },
