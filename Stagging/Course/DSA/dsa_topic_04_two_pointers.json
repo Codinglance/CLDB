@@ -1,0 +1,270 @@
+{
+  "title": "Two Pointers",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Two Pointers Pattern?",
+      "content": "Two Pointers uses two indices that move through a data structure, usually an array, string or linked list, to avoid a nested loop. Each pointer only moves in one direction, so the total work is O(n) instead of O(n²). It works best when the data is sorted or when the problem depends on a relationship between two positions."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "The array or string is sorted (or can be sorted)",
+        "You need to find a pair, triplet or subarray with a given sum",
+        "You must compare elements from both ends (palindromes)",
+        "You need to modify an array in place (remove duplicates, move zeros)",
+        "You need to merge two sorted sequences",
+        "The problem asks for O(1) extra space"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Three Types of Two Pointers",
+      "rows": [
+        {
+          "type": "Opposite Ends",
+          "start": "left = 0, right = n - 1",
+          "movement": "Move toward each other",
+          "example": "Two Sum II, Container With Most Water"
+        },
+        {
+          "type": "Same Direction (Read/Write)",
+          "start": "slow = 0, fast = 0",
+          "movement": "Both move forward, fast leads",
+          "example": "Remove Duplicates, Move Zeros"
+        },
+        {
+          "type": "Two Sequences",
+          "start": "i = 0 in A, j = 0 in B",
+          "movement": "Advance whichever is smaller",
+          "example": "Merge Sorted Arrays, Intersection"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Template 1: Opposite Ends",
+      "language": "kotlin",
+      "code": "fun oppositeEnds(a: IntArray, target: Int): IntArray {\n    var left = 0\n    var right = a.size - 1\n    while (left < right) {\n        val sum = a[left] + a[right]\n        when {\n            sum == target -> return intArrayOf(left, right)\n            sum < target -> left++     // need a bigger sum\n            else -> right--            // need a smaller sum\n        }\n    }\n    return intArrayOf(-1, -1)\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Template 2: Same Direction (Read / Write)",
+      "language": "kotlin",
+      "code": "fun sameDirection(a: IntArray): Int {\n    var write = 0\n    for (read in a.indices) {\n        if (/* keep a[read] */ true) {\n            a[write] = a[read]\n            write++\n        }\n    }\n    return write   // new length\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Template 3: Two Sequences",
+      "language": "kotlin",
+      "code": "fun twoSequences(a: IntArray, b: IntArray) {\n    var i = 0\n    var j = 0\n    while (i < a.size && j < b.size) {\n        when {\n            a[i] < b[j] -> i++\n            a[i] > b[j] -> j++\n            else -> { /* match found */ i++; j++ }\n        }\n    }\n}\n// Time: O(n + m)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 1: Two Sum II (Sorted Array)",
+      "language": "kotlin",
+      "code": "fun twoSumSorted(numbers: IntArray, target: Int): IntArray {\n    var l = 0\n    var r = numbers.size - 1\n    while (l < r) {\n        val sum = numbers[l] + numbers[r]\n        if (sum == target) return intArrayOf(l + 1, r + 1)  // 1-indexed\n        if (sum < target) l++ else r--\n    }\n    return intArrayOf()\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 2: Valid Palindrome",
+      "language": "kotlin",
+      "code": "fun isPalindrome(s: String): Boolean {\n    var l = 0\n    var r = s.length - 1\n    while (l < r) {\n        while (l < r && !s[l].isLetterOrDigit()) l++\n        while (l < r && !s[r].isLetterOrDigit()) r--\n        if (s[l].lowercaseChar() != s[r].lowercaseChar()) return false\n        l++\n        r--\n    }\n    return true\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 3: Remove Duplicates from Sorted Array",
+      "language": "kotlin",
+      "code": "fun removeDuplicates(nums: IntArray): Int {\n    if (nums.isEmpty()) return 0\n    var write = 1\n    for (read in 1 until nums.size) {\n        if (nums[read] != nums[read - 1]) {\n            nums[write] = nums[read]\n            write++\n        }\n    }\n    return write\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 4: Move Zeroes",
+      "language": "kotlin",
+      "code": "fun moveZeroes(nums: IntArray) {\n    var write = 0\n    for (read in nums.indices) {\n        if (nums[read] != 0) {\n            val tmp = nums[write]\n            nums[write] = nums[read]\n            nums[read] = tmp\n            write++\n        }\n    }\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 5: 3Sum",
+      "language": "kotlin",
+      "code": "fun threeSum(nums: IntArray): List<List<Int>> {\n    nums.sort()\n    val result = mutableListOf<List<Int>>()\n    for (i in 0 until nums.size - 2) {\n        if (i > 0 && nums[i] == nums[i - 1]) continue   // skip duplicates\n        var l = i + 1\n        var r = nums.size - 1\n        while (l < r) {\n            val sum = nums[i] + nums[l] + nums[r]\n            when {\n                sum == 0 -> {\n                    result.add(listOf(nums[i], nums[l], nums[r]))\n                    l++\n                    r--\n                    while (l < r && nums[l] == nums[l - 1]) l++\n                    while (l < r && nums[r] == nums[r + 1]) r--\n                }\n                sum < 0 -> l++\n                else -> r--\n            }\n        }\n    }\n    return result\n}\n// Time: O(n²)   Space: O(1) extra (ignoring output)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 6: Container With Most Water",
+      "language": "kotlin",
+      "code": "fun maxArea(height: IntArray): Int {\n    var l = 0\n    var r = height.size - 1\n    var best = 0\n    while (l < r) {\n        val area = minOf(height[l], height[r]) * (r - l)\n        best = maxOf(best, area)\n        // Move the shorter wall; moving the taller one cannot help\n        if (height[l] < height[r]) l++ else r--\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 7: Merge Sorted Array (In Place)",
+      "language": "kotlin",
+      "code": "fun merge(nums1: IntArray, m: Int, nums2: IntArray, n: Int) {\n    var i = m - 1          // last real element in nums1\n    var j = n - 1          // last element in nums2\n    var k = m + n - 1      // last position in nums1\n    while (j >= 0) {\n        if (i >= 0 && nums1[i] > nums2[j]) {\n            nums1[k--] = nums1[i--]\n        } else {\n            nums1[k--] = nums2[j--]\n        }\n    }\n}\n// Time: O(m + n)   Space: O(1)\n// Trick: fill from the back so nothing is overwritten"
+    },
+    {
+      "type": "code",
+      "heading": "Example 8: Longest Palindromic Substring (Expand from Center)",
+      "language": "kotlin",
+      "code": "fun longestPalindrome(s: String): String {\n    var start = 0\n    var maxLen = 0\n\n    fun expand(left: Int, right: Int) {\n        var l = left\n        var r = right\n        while (l >= 0 && r < s.length && s[l] == s[r]) {\n            l--\n            r++\n        }\n        val len = r - l - 1\n        if (len > maxLen) {\n            maxLen = len\n            start = l + 1\n        }\n    }\n\n    for (i in s.indices) {\n        expand(i, i)       // odd length\n        expand(i, i + 1)   // even length\n    }\n    return s.substring(start, start + maxLen)\n}\n// Time: O(n²)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 9: Sort Colors (Dutch National Flag)",
+      "language": "kotlin",
+      "code": "fun sortColors(nums: IntArray) {\n    var low = 0\n    var mid = 0\n    var high = nums.size - 1\n    while (mid <= high) {\n        when (nums[mid]) {\n            0 -> { swap(nums, low, mid); low++; mid++ }\n            1 -> mid++\n            else -> { swap(nums, mid, high); high-- }   // do not move mid\n        }\n    }\n}\n\nfun swap(a: IntArray, i: Int, j: Int) {\n    val t = a[i]; a[i] = a[j]; a[j] = t\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 10: Trapping Rain Water",
+      "language": "kotlin",
+      "code": "fun trap(height: IntArray): Int {\n    var l = 0\n    var r = height.size - 1\n    var leftMax = 0\n    var rightMax = 0\n    var water = 0\n    while (l < r) {\n        if (height[l] < height[r]) {\n            if (height[l] >= leftMax) leftMax = height[l]\n            else water += leftMax - height[l]\n            l++\n        } else {\n            if (height[r] >= rightMax) rightMax = height[r]\n            else water += rightMax - height[r]\n            r--\n        }\n    }\n    return water\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Two Sum II (sorted)",
+          "type": "Opposite ends",
+          "key_idea": "Sum too small: move left; too big: move right"
+        },
+        {
+          "problem": "3Sum / 4Sum",
+          "type": "Sort + opposite ends",
+          "key_idea": "Fix one (or two) numbers, two pointers for the rest, skip duplicates"
+        },
+        {
+          "problem": "Valid Palindrome",
+          "type": "Opposite ends",
+          "key_idea": "Compare ends, skip non-alphanumeric"
+        },
+        {
+          "problem": "Container With Most Water",
+          "type": "Opposite ends",
+          "key_idea": "Always move the shorter wall"
+        },
+        {
+          "problem": "Trapping Rain Water",
+          "type": "Opposite ends",
+          "key_idea": "Track max from the smaller side"
+        },
+        {
+          "problem": "Remove Duplicates",
+          "type": "Read / write",
+          "key_idea": "Write only when the value changes"
+        },
+        {
+          "problem": "Move Zeroes",
+          "type": "Read / write",
+          "key_idea": "Write non-zeros forward"
+        },
+        {
+          "problem": "Sort Colors",
+          "type": "Three pointers",
+          "key_idea": "Dutch flag: low, mid, high"
+        },
+        {
+          "problem": "Merge Sorted Array",
+          "type": "Two sequences",
+          "key_idea": "Fill from the back"
+        },
+        {
+          "problem": "Longest Palindromic Substring",
+          "type": "Expand from center",
+          "key_idea": "Try each center, odd and even"
+        },
+        {
+          "problem": "Intersection of Two Arrays",
+          "type": "Two sequences",
+          "key_idea": "Advance the smaller pointer"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Moving the Pointer is Safe",
+      "items": [
+        "In Two Sum II, if the sum is too small, a[left] paired with any smaller right value will be even smaller, so left can never be part of the answer",
+        "In Container With Most Water, the area is limited by the shorter wall, so moving the taller wall can only shrink the width without raising the height",
+        "Always be able to explain why discarding a position cannot lose the answer",
+        "This reasoning is what makes the O(n) solution correct"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using two pointers on an unsorted array when order matters (sort first or use a HashMap)",
+        "Using left <= right when left < right is needed (and the other way around)",
+        "Not skipping duplicates in 3Sum, which gives repeated triplets",
+        "Moving the wrong pointer when values are equal",
+        "Forgetting to handle empty arrays or a single element",
+        "Overwriting values in an in-place merge by filling from the front",
+        "Sorting changes indices, so use a HashMap if the original indices are required"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Brute force nested loops",
+          "time": "O(n²)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Two pointers on sorted data",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Sort + two pointers",
+          "time": "O(n log n)",
+          "space": "O(1) or O(log n)"
+        },
+        {
+          "approach": "Sort + fix one + two pointers (3Sum)",
+          "time": "O(n²)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "HashMap alternative (Two Sum)",
+          "time": "O(n)",
+          "space": "O(n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Two Sum II - Input Array Is Sorted",
+        "Valid Palindrome / Valid Palindrome II",
+        "Remove Duplicates from Sorted Array I and II",
+        "Move Zeroes",
+        "3Sum, 3Sum Closest, 4Sum",
+        "Container With Most Water",
+        "Trapping Rain Water",
+        "Sort Colors",
+        "Merge Sorted Array",
+        "Squares of a Sorted Array",
+        "Reverse String / Reverse Words in a String",
+        "Backspace String Compare",
+        "Longest Palindromic Substring"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Two pointers turns many O(n²) problems into O(n)",
+        "Opposite ends works on sorted data and symmetric checks",
+        "Read / write pointers modify arrays in place",
+        "Two sequences merge or compare sorted inputs",
+        "Always know why moving a pointer cannot skip the answer",
+        "Sort first when the problem allows it, and skip duplicates"
+      ]
+    }
+  ]
+}
