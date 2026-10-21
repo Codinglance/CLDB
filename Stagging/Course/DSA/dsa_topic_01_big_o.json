@@ -94,7 +94,7 @@
       ]
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Example: Add vs Multiply",
       "language": "kotlin",
       "code": "// Sequential: O(a + b)\nfor (x in listA) { }\nfor (y in listB) { }\n\n// Nested: O(a * b)\nfor (x in listA) {\n    for (y in listB) { }\n}\n\n// Halving: O(log n)\nvar i = n\nwhile (i > 1) {\n    i /= 2\n}"
@@ -231,19 +231,19 @@
       ]
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Pitfall 1: Hidden O(n) Inside a Loop",
       "language": "kotlin",
       "code": "// O(n²): contains() is O(n) on a List\nfor (x in list) {\n    if (other.contains(x)) { }\n}\n\n// O(n): convert to a Set first\nval set = other.toHashSet()\nfor (x in list) {\n    if (x in set) { }\n}"
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Pitfall 2: String Concatenation in a Loop",
       "language": "kotlin",
       "code": "// O(n²)\nvar s = \"\"\nfor (c in chars) s += c\n\n// O(n)\nval sb = StringBuilder()\nfor (c in chars) sb.append(c)"
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Pitfall 3: Removing from the Front of a List",
       "language": "kotlin",
       "code": "// O(n) per removal\nlist.removeAt(0)\n\n// O(1): use ArrayDeque\nval dq = ArrayDeque<Int>()\ndq.removeFirst()"
@@ -295,7 +295,7 @@
       "content": "With memoization, each unique state is computed only once. So time complexity = (number of states) × (work per state)."
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Worked Example: Two Sum",
       "language": "kotlin",
       "code": "fun twoSum(nums: IntArray, target: Int): IntArray {\n    val seen = HashMap<Int, Int>()          // O(n) space\n    for ((i, x) in nums.withIndex()) {      // O(n) time\n        val need = target - x\n        seen[need]?.let { return intArrayOf(it, i) }\n        seen[x] = i\n    }\n    return intArrayOf()\n}\n// Time: O(n)   Space: O(n)"
