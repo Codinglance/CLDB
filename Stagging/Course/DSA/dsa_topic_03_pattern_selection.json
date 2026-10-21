@@ -380,7 +380,7 @@
       "content": "If you must find the best answer, ask whether a local choice is always safe. If yes, try Greedy. If the choices overlap in subproblems, use DP. If the answer itself can be guessed and verified quickly, use Binary Search on Answer. If you must list every solution, use Backtracking."
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Brute Force First, Then Optimize",
       "language": "kotlin",
       "code": "// Problem: does any pair in a sorted array sum to target?\n\n// Brute force: O(n²)\nfun hasPairBrute(a: IntArray, target: Int): Boolean {\n    for (i in a.indices)\n        for (j in i + 1 until a.size)\n            if (a[i] + a[j] == target) return true\n    return false\n}\n\n// Clue: sorted + pair  ->  Two Pointers: O(n)\nfun hasPair(a: IntArray, target: Int): Boolean {\n    var l = 0\n    var r = a.size - 1\n    while (l < r) {\n        val sum = a[l] + a[r]\n        when {\n            sum == target -> return true\n            sum < target -> l++\n            else -> r--\n        }\n    }\n    return false\n}"
