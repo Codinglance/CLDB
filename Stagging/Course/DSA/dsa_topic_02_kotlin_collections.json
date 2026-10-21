@@ -97,7 +97,7 @@
       ]
     },
     {
-      "type": "code",
+      "type": "text_code",
       "heading": "Array Examples",
       "language": "kotlin",
       "code": "val arr = intArrayOf(5, 2, 9, 1)\narr.sort()                       // [1, 2, 5, 9]\nval last = arr[arr.size - 1]     // 9\nval grid = Array(3) { IntArray(4) }   // 3 x 4 grid of zeros\ngrid[1][2] = 7\n\n// Loop styles\nfor (x in arr) { }\nfor (i in arr.indices) { }\nfor ((i, x) in arr.withIndex()) { }"
