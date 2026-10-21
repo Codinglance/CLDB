@@ -62,7 +62,6 @@
       "heading": "Arrays",
       "rows": [
         {
-          "type": "text_code",
           "task": "Create with size",
           "code": "val a = IntArray(n)"
         },
