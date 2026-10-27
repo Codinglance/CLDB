@@ -1,0 +1,308 @@
+{
+  "title": "Prefix Sum & Difference Array",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Prefix Sum Pattern?",
+      "content": "A prefix sum array stores the running total of elements up to each index. Once built in O(n), the sum of any range [l, r] is answered in O(1) using one subtraction. The same idea extends to counts, XOR, products and 2D grids. A Difference Array is the reverse trick: it makes many range updates cheap, then one pass rebuilds the final array."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Many queries for the sum of a subarray or range",
+        "Count subarrays with a given sum (especially with negative numbers)",
+        "Find a subarray with sum divisible by K or equal to K",
+        "Compare the left part and right part of an array (pivot index)",
+        "Many range updates such as add x to every index from l to r",
+        "Range sums on a 2D matrix",
+        "The array does not change between queries (static data)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Prefix Sum vs Difference Array",
+      "rows": [
+        {
+          "technique": "Prefix Sum",
+          "purpose": "Fast range queries",
+          "build": "prefix[i + 1] = prefix[i] + a[i]",
+          "answer": "Range sum in O(1)"
+        },
+        {
+          "technique": "Difference Array",
+          "purpose": "Fast range updates",
+          "build": "diff[l] += x, diff[r + 1] -= x",
+          "answer": "Rebuild with a prefix sum in O(n)"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Template 1: Build a Prefix Sum Array",
+      "language": "kotlin",
+      "code": "fun buildPrefix(a: IntArray): LongArray {\n    val prefix = LongArray(a.size + 1)       // prefix[0] = 0\n    for (i in a.indices) {\n        prefix[i + 1] = prefix[i] + a[i]\n    }\n    return prefix\n}\n\n// Sum of a[l..r] inclusive\nfun rangeSum(prefix: LongArray, l: Int, r: Int): Long =\n    prefix[r + 1] - prefix[l]\n// Build: O(n)   Query: O(1)   Space: O(n)"
+    },
+    {
+      "type": "bullet",
+      "heading": "Why Use Size n + 1",
+      "items": [
+        "prefix[0] = 0 represents the empty prefix",
+        "It removes the special case when l = 0",
+        "Range sum of a[l..r] is always prefix[r + 1] - prefix[l]",
+        "Use LongArray when sums can exceed Int range (about 2.1 billion)"
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Template 2: Prefix Sum + HashMap (Subarray Sum Equals K)",
+      "language": "kotlin",
+      "code": "fun subarraySum(nums: IntArray, k: Int): Int {\n    val count = HashMap<Int, Int>()\n    count[0] = 1                  // empty prefix\n    var sum = 0\n    var result = 0\n    for (x in nums) {\n        sum += x\n        // we need an earlier prefix equal to (sum - k)\n        result += count[sum - k] ?: 0\n        count[sum] = (count[sum] ?: 0) + 1\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)\n// Works with negative numbers, unlike sliding window"
+    },
+    {
+      "type": "text",
+      "heading": "The Core Idea Behind Prefix Sum + HashMap",
+      "content": "If prefix[j] - prefix[i] = k, then the subarray between i and j sums to k. So while scanning, for each current prefix sum you look up how many earlier prefixes equal (current - k). Always put count[0] = 1 first so subarrays starting at index 0 are counted."
+    },
+    {
+      "type": "code",
+      "heading": "Template 3: Difference Array (Range Updates)",
+      "language": "kotlin",
+      "code": "fun applyUpdates(n: Int, updates: Array<IntArray>): IntArray {\n    val diff = IntArray(n + 1)\n    for ((l, r, x) in updates) {          // add x to a[l..r]\n        diff[l] += x\n        diff[r + 1] -= x\n    }\n    val result = IntArray(n)\n    var running = 0\n    for (i in 0 until n) {\n        running += diff[i]\n        result[i] = running\n    }\n    return result\n}\n// Each update: O(1)   Final rebuild: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 1: Range Sum Query (Immutable)",
+      "language": "kotlin",
+      "code": "class NumArray(nums: IntArray) {\n    private val prefix = IntArray(nums.size + 1)\n\n    init {\n        for (i in nums.indices) prefix[i + 1] = prefix[i] + nums[i]\n    }\n\n    fun sumRange(left: Int, right: Int): Int =\n        prefix[right + 1] - prefix[left]\n}\n// Constructor: O(n)   Each query: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 2: Find Pivot Index",
+      "language": "kotlin",
+      "code": "fun pivotIndex(nums: IntArray): Int {\n    val total = nums.sum()\n    var left = 0\n    for (i in nums.indices) {\n        // right sum = total - left - nums[i]\n        if (left == total - left - nums[i]) return i\n        left += nums[i]\n    }\n    return -1\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 3: Subarray Sums Divisible by K",
+      "language": "kotlin",
+      "code": "fun subarraysDivByK(nums: IntArray, k: Int): Int {\n    val count = IntArray(k)\n    count[0] = 1\n    var sum = 0\n    var result = 0\n    for (x in nums) {\n        sum = ((sum + x) % k + k) % k      // keep remainder non-negative\n        result += count[sum]\n        count[sum]++\n    }\n    return result\n}\n// Time: O(n)   Space: O(k)\n// Two equal remainders mean the sum between them is divisible by k"
+    },
+    {
+      "type": "code",
+      "heading": "Example 4: Contiguous Array (Equal 0s and 1s)",
+      "language": "kotlin",
+      "code": "fun findMaxLength(nums: IntArray): Int {\n    val firstSeen = HashMap<Int, Int>()\n    firstSeen[0] = -1\n    var balance = 0\n    var best = 0\n    for (i in nums.indices) {\n        balance += if (nums[i] == 1) 1 else -1    // treat 0 as -1\n        val prev = firstSeen[balance]\n        if (prev != null) best = maxOf(best, i - prev)\n        else firstSeen[balance] = i\n    }\n    return best\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 5: Product of Array Except Self (Prefix and Suffix)",
+      "language": "kotlin",
+      "code": "fun productExceptSelf(nums: IntArray): IntArray {\n    val n = nums.size\n    val result = IntArray(n)\n    result[0] = 1\n    for (i in 1 until n) result[i] = result[i - 1] * nums[i - 1]   // left products\n    var right = 1\n    for (i in n - 1 downTo 0) {\n        result[i] *= right                                          // times right products\n        right *= nums[i]\n    }\n    return result\n}\n// Time: O(n)   Space: O(1) extra (output not counted)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 6: Continuous Subarray Sum (Multiple of K, length >= 2)",
+      "language": "kotlin",
+      "code": "fun checkSubarraySum(nums: IntArray, k: Int): Boolean {\n    val firstSeen = HashMap<Int, Int>()\n    firstSeen[0] = -1\n    var sum = 0\n    for (i in nums.indices) {\n        sum = (sum + nums[i]) % k\n        val prev = firstSeen[sum]\n        if (prev != null) {\n            if (i - prev >= 2) return true\n        } else {\n            firstSeen[sum] = i\n        }\n    }\n    return false\n}\n// Time: O(n)   Space: O(min(n, k))"
+    },
+    {
+      "type": "code",
+      "heading": "Example 7: Corporate Flight Bookings (Difference Array)",
+      "language": "kotlin",
+      "code": "fun corpFlightBookings(bookings: Array<IntArray>, n: Int): IntArray {\n    val diff = IntArray(n + 2)\n    for ((first, last, seats) in bookings) {     // flights are 1-indexed\n        diff[first] += seats\n        diff[last + 1] -= seats\n    }\n    val result = IntArray(n)\n    var running = 0\n    for (i in 1..n) {\n        running += diff[i]\n        result[i - 1] = running\n    }\n    return result\n}\n// Time: O(n + bookings)   Space: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 8: Car Pooling (Difference Array)",
+      "language": "kotlin",
+      "code": "fun carPooling(trips: Array<IntArray>, capacity: Int): Boolean {\n    val diff = IntArray(1002)\n    for ((passengers, from, to) in trips) {\n        diff[from] += passengers\n        diff[to] -= passengers          // passengers leave at 'to'\n    }\n    var current = 0\n    for (d in diff) {\n        current += d\n        if (current > capacity) return false\n    }\n    return true\n}\n// Time: O(n + 1001)   Space: O(1001)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 9: 2D Prefix Sum (Range Sum Query 2D)",
+      "language": "kotlin",
+      "code": "class NumMatrix(matrix: Array<IntArray>) {\n    private val prefix: Array<IntArray>\n\n    init {\n        val rows = matrix.size\n        val cols = matrix[0].size\n        prefix = Array(rows + 1) { IntArray(cols + 1) }\n        for (r in 0 until rows) {\n            for (c in 0 until cols) {\n                prefix[r + 1][c + 1] = matrix[r][c] +\n                    prefix[r][c + 1] + prefix[r + 1][c] - prefix[r][c]\n            }\n        }\n    }\n\n    fun sumRegion(r1: Int, c1: Int, r2: Int, c2: Int): Int =\n        prefix[r2 + 1][c2 + 1] - prefix[r1][c2 + 1] -\n        prefix[r2 + 1][c1] + prefix[r1][c1]\n}\n// Build: O(rows * cols)   Each query: O(1)"
+    },
+    {
+      "type": "table",
+      "heading": "2D Prefix Sum Formulas",
+      "rows": [
+        {
+          "step": "Build",
+          "formula": "P[r+1][c+1] = M[r][c] + P[r][c+1] + P[r+1][c] - P[r][c]"
+        },
+        {
+          "step": "Query",
+          "formula": "P[r2+1][c2+1] - P[r1][c2+1] - P[r2+1][c1] + P[r1][c1]"
+        },
+        {
+          "step": "Idea",
+          "formula": "Add the big rectangle, subtract two overlaps, add back the corner counted twice"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Example 10: Maximum Subarray (Prefix Idea, Kadane)",
+      "language": "kotlin",
+      "code": "fun maxSubArray(nums: IntArray): Int {\n    var current = nums[0]\n    var best = nums[0]\n    for (i in 1 until nums.size) {\n        current = maxOf(nums[i], current + nums[i])   // extend or restart\n        best = maxOf(best, current)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)\n// Same as: best (prefix[j] - minimum earlier prefix)"
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Range Sum Query",
+          "technique": "Prefix array",
+          "key_idea": "prefix[r + 1] - prefix[l]"
+        },
+        {
+          "problem": "Subarray Sum Equals K",
+          "technique": "Prefix + HashMap",
+          "key_idea": "Look up count of (sum - k)"
+        },
+        {
+          "problem": "Subarray Sums Divisible by K",
+          "technique": "Prefix remainders",
+          "key_idea": "Same remainder means divisible"
+        },
+        {
+          "problem": "Contiguous Array",
+          "technique": "Prefix balance",
+          "key_idea": "Treat 0 as -1, find equal balances"
+        },
+        {
+          "problem": "Pivot Index",
+          "technique": "Running left sum",
+          "key_idea": "left == total - left - nums[i]"
+        },
+        {
+          "problem": "Product Except Self",
+          "technique": "Prefix + suffix products",
+          "key_idea": "Left product times right product"
+        },
+        {
+          "problem": "Flight Bookings / Car Pooling",
+          "technique": "Difference array",
+          "key_idea": "+x at start, -x at end + 1"
+        },
+        {
+          "problem": "Range Sum Query 2D",
+          "technique": "2D prefix",
+          "key_idea": "Inclusion-exclusion on rectangles"
+        },
+        {
+          "problem": "Maximum Subarray",
+          "technique": "Kadane (prefix idea)",
+          "key_idea": "Extend or restart at each index"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Prefix Sum vs Sliding Window",
+      "rows": [
+        {
+          "situation": "All numbers positive, find longest or shortest subarray",
+          "use": "Sliding Window"
+        },
+        {
+          "situation": "Negative numbers present",
+          "use": "Prefix Sum + HashMap"
+        },
+        {
+          "situation": "Many different range queries",
+          "use": "Prefix Sum array"
+        },
+        {
+          "situation": "Count subarrays with sum K",
+          "use": "Prefix Sum + HashMap"
+        },
+        {
+          "situation": "Many range updates then one read",
+          "use": "Difference Array"
+        },
+        {
+          "situation": "Array changes between queries",
+          "use": "Fenwick Tree or Segment Tree"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Forgetting count[0] = 1 (or firstSeen[0] = -1) in the HashMap version",
+        "Off by one: range sum is prefix[r + 1] - prefix[l], not prefix[r] - prefix[l]",
+        "Integer overflow: use Long for large sums or products",
+        "Negative remainder in Kotlin: % can return a negative value, so use ((x % k) + k) % k",
+        "Using a sliding window when the array has negative numbers",
+        "Updating the HashMap before checking it (this counts the same prefix with itself)",
+        "In a difference array, forgetting the extra slot at index r + 1"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Brute force range sum",
+          "time": "O(n) per query",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Prefix sum array",
+          "time": "O(n) build, O(1) query",
+          "space": "O(n)"
+        },
+        {
+          "approach": "Prefix sum + HashMap",
+          "time": "O(n)",
+          "space": "O(n)"
+        },
+        {
+          "approach": "Difference array",
+          "time": "O(1) per update, O(n) rebuild",
+          "space": "O(n)"
+        },
+        {
+          "approach": "2D prefix sum",
+          "time": "O(r * c) build, O(1) query",
+          "space": "O(r * c)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Range Sum Query - Immutable",
+        "Find Pivot Index",
+        "Subarray Sum Equals K",
+        "Subarray Sums Divisible by K",
+        "Continuous Subarray Sum",
+        "Contiguous Array",
+        "Product of Array Except Self",
+        "Corporate Flight Bookings",
+        "Car Pooling",
+        "Range Sum Query 2D - Immutable",
+        "Maximum Subarray",
+        "Count Number of Nice Subarrays",
+        "Minimum Value to Get Positive Step by Step Sum"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Prefix sum turns any range sum into one subtraction",
+        "Use size n + 1 with prefix[0] = 0 to avoid edge cases",
+        "Prefix sum + HashMap counts subarrays with a target sum, even with negatives",
+        "Equal prefix remainders mean the subarray sum is divisible by K",
+        "Difference arrays make many range updates O(1) each",
+        "2D prefix sums use inclusion-exclusion for rectangle queries"
+      ]
+    }
+  ]
+}

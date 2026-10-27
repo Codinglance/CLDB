@@ -1,0 +1,353 @@
+{
+  "title": "Binary Search on Answer",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Binary Search on Answer?",
+      "content": "Instead of searching for a value inside an array, you binary search over the range of possible answers. You guess a value, run a quick check function (is this answer feasible?), and move left or right depending on the result. It works when feasibility is monotonic: once an answer is feasible, every larger (or every smaller) answer is also feasible. The total cost is O(log(range) * cost of the check)."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "The problem asks to minimize the maximum or maximize the minimum",
+        "You can quickly check whether a given answer works (a yes/no test)",
+        "The answer lies in a numeric range with clear lower and upper bounds",
+        "If answer x works, then x + 1 (or x - 1) also works",
+        "Keywords: minimum time, smallest capacity, largest minimum distance, at most K days, split array",
+        "Brute forcing every possible answer is too slow"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Core Idea",
+      "content": "Imagine the answers laid out in a line: false, false, false, true, true, true. The check function tells you whether each candidate is feasible. Binary search finds the first true (for minimizing) or the last true (for maximizing). You never need the array to be sorted, only the feasibility to flip once."
+    },
+    {
+      "type": "table",
+      "heading": "Minimize vs Maximize",
+      "rows": [
+        {
+          "goal": "Minimize the answer (smallest feasible)",
+          "feasibility": "false ... false true ... true",
+          "search": "If feasible(mid) then right = mid, else left = mid + 1",
+          "returns": "left (first true)"
+        },
+        {
+          "goal": "Maximize the answer (largest feasible)",
+          "feasibility": "true ... true false ... false",
+          "search": "If feasible(mid) then left = mid, else right = mid - 1",
+          "returns": "left (last true), use upper mid"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Template 1: Minimize (Find First True)",
+      "language": "kotlin",
+      "code": "fun minimizeAnswer(low: Int, high: Int): Int {\n    var left = low\n    var right = high\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (isFeasible(mid)) right = mid        // mid works, try smaller\n        else left = mid + 1                     // mid fails, need larger\n    }\n    return left\n}\n\nfun isFeasible(x: Int): Boolean {\n    // problem-specific check\n    return true\n}\n// Time: O(log(high - low) * cost of isFeasible)"
+    },
+    {
+      "type": "code",
+      "heading": "Template 2: Maximize (Find Last True)",
+      "language": "kotlin",
+      "code": "fun maximizeAnswer(low: Int, high: Int): Int {\n    var left = low\n    var right = high\n    while (left < right) {\n        val mid = left + (right - left + 1) / 2   // round UP to avoid infinite loop\n        if (isFeasible(mid)) left = mid           // mid works, try larger\n        else right = mid - 1                      // mid fails, need smaller\n    }\n    return left\n}"
+    },
+    {
+      "type": "bullet",
+      "heading": "Step-by-Step Recipe",
+      "items": [
+        "1. Define what the answer is (time, speed, capacity, distance, size)",
+        "2. Find the lowest possible answer (low) and the highest possible answer (high)",
+        "3. Write isFeasible(x): can the task be done with this answer?",
+        "4. Check monotonicity: if x works, does every larger (or smaller) value work?",
+        "5. Pick the minimize or maximize template",
+        "6. Use Long if values or sums can exceed Int"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "How to Pick low and high",
+      "rows": [
+        {
+          "problem_type": "Minimize the largest subarray sum",
+          "low": "max element",
+          "high": "sum of all elements"
+        },
+        {
+          "problem_type": "Ship packages within D days",
+          "low": "max weight",
+          "high": "sum of all weights"
+        },
+        {
+          "problem_type": "Koko eating bananas",
+          "low": "1",
+          "high": "max pile size"
+        },
+        {
+          "problem_type": "Minimum days to make bouquets",
+          "low": "min bloom day",
+          "high": "max bloom day"
+        },
+        {
+          "problem_type": "Aggressive cows / magnetic force",
+          "low": "1",
+          "high": "(max position - min position)"
+        },
+        {
+          "problem_type": "Square root / nth root",
+          "low": "0 or 1",
+          "high": "x (or a safe bound)"
+        },
+        {
+          "problem_type": "Median in sorted matrix",
+          "low": "smallest value",
+          "high": "largest value"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Example 1: Koko Eating Bananas",
+      "language": "kotlin",
+      "code": "fun minEatingSpeed(piles: IntArray, h: Int): Int {\n    var left = 1\n    var right = piles.max()\n    while (left < right) {\n        val speed = left + (right - left) / 2\n        var hours = 0L\n        for (p in piles) hours += (p + speed - 1) / speed    // ceil(p / speed)\n        if (hours <= h) right = speed          // fast enough, try slower\n        else left = speed + 1\n    }\n    return left\n}\n// Time: O(n log(max pile))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 2: Capacity to Ship Packages Within D Days",
+      "language": "kotlin",
+      "code": "fun shipWithinDays(weights: IntArray, days: Int): Int {\n    var left = weights.max()               // must carry the heaviest package\n    var right = weights.sum()              // one day carries everything\n    while (left < right) {\n        val capacity = left + (right - left) / 2\n        var daysNeeded = 1\n        var load = 0\n        for (w in weights) {\n            if (load + w > capacity) {\n                daysNeeded++               // start a new day\n                load = 0\n            }\n            load += w\n        }\n        if (daysNeeded <= days) right = capacity\n        else left = capacity + 1\n    }\n    return left\n}\n// Time: O(n log(sum))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 3: Split Array Largest Sum",
+      "language": "kotlin",
+      "code": "fun splitArray(nums: IntArray, k: Int): Int {\n    var left = nums.max()\n    var right = nums.sum()\n    while (left < right) {\n        val maxSum = left + (right - left) / 2\n        var parts = 1\n        var current = 0\n        for (x in nums) {\n            if (current + x > maxSum) {\n                parts++\n                current = 0\n            }\n            current += x\n        }\n        if (parts <= k) right = maxSum     // can split into k or fewer parts\n        else left = maxSum + 1\n    }\n    return left\n}\n// Time: O(n log(sum))   Space: O(1)\n// Same check as ship packages: they are the same problem"
+    },
+    {
+      "type": "code",
+      "heading": "Example 4: Minimum Number of Days to Make m Bouquets",
+      "language": "kotlin",
+      "code": "fun minDays(bloomDay: IntArray, m: Int, k: Int): Int {\n    if (m.toLong() * k > bloomDay.size) return -1\n    var left = bloomDay.min()\n    var right = bloomDay.max()\n    while (left < right) {\n        val day = left + (right - left) / 2\n        var bouquets = 0\n        var flowers = 0\n        for (b in bloomDay) {\n            if (b <= day) {\n                flowers++\n                if (flowers == k) { bouquets++; flowers = 0 }\n            } else {\n                flowers = 0                // adjacency broken\n            }\n        }\n        if (bouquets >= m) right = day\n        else left = day + 1\n    }\n    return left\n}\n// Time: O(n log(maxDay))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 5: Aggressive Cows (Maximize the Minimum Distance)",
+      "language": "kotlin",
+      "code": "fun maxMinDistance(stalls: IntArray, cows: Int): Int {\n    stalls.sort()\n    var left = 1\n    var right = stalls.last() - stalls.first()\n    while (left < right) {\n        val dist = left + (right - left + 1) / 2        // round up: maximize\n        // greedy: place cows as early as possible\n        var placed = 1\n        var last = stalls[0]\n        for (i in 1 until stalls.size) {\n            if (stalls[i] - last >= dist) {\n                placed++\n                last = stalls[i]\n            }\n        }\n        if (placed >= cows) left = dist                 // feasible, try larger\n        else right = dist - 1\n    }\n    return left\n}\n// Time: O(n log n + n log(range))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 6: Magnetic Force Between Two Balls",
+      "language": "kotlin",
+      "code": "fun maxDistance(position: IntArray, m: Int): Int {\n    position.sort()\n    var left = 1\n    var right = position.last() - position.first()\n    while (left < right) {\n        val force = left + (right - left + 1) / 2\n        var count = 1\n        var last = position[0]\n        for (i in 1 until position.size) {\n            if (position[i] - last >= force) {\n                count++\n                last = position[i]\n            }\n        }\n        if (count >= m) left = force\n        else right = force - 1\n    }\n    return left\n}\n// Time: O(n log n + n log(range))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 7: Smallest Divisor Given a Threshold",
+      "language": "kotlin",
+      "code": "fun smallestDivisor(nums: IntArray, threshold: Int): Int {\n    var left = 1\n    var right = nums.max()\n    while (left < right) {\n        val d = left + (right - left) / 2\n        var sum = 0L\n        for (x in nums) sum += (x + d - 1) / d          // ceil(x / d)\n        if (sum <= threshold) right = d\n        else left = d + 1\n    }\n    return left\n}\n// Time: O(n log(max))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 8: Find the Nth Root (Floating Point Binary Search)",
+      "language": "kotlin",
+      "code": "fun nthRoot(x: Double, n: Int): Double {\n    var low = 0.0\n    var high = maxOf(1.0, x)\n    repeat(100) {                                        // fixed iterations for doubles\n        val mid = (low + high) / 2\n        if (Math.pow(mid, n.toDouble()) < x) low = mid\n        else high = mid\n    }\n    return low\n}\n// Time: O(100 * n)   Space: O(1)\n// With doubles use a fixed number of iterations, not left < right"
+    },
+    {
+      "type": "code",
+      "heading": "Example 9: Kth Smallest Element in a Sorted Matrix",
+      "language": "kotlin",
+      "code": "fun kthSmallest(matrix: Array<IntArray>, k: Int): Int {\n    val n = matrix.size\n    var left = matrix[0][0]\n    var right = matrix[n - 1][n - 1]\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        // count elements <= mid by walking from the bottom-left corner\n        var count = 0\n        var row = n - 1\n        var col = 0\n        while (row >= 0 && col < n) {\n            if (matrix[row][col] <= mid) {\n                count += row + 1\n                col++\n            } else {\n                row--\n            }\n        }\n        if (count >= k) right = mid\n        else left = mid + 1\n    }\n    return left\n}\n// Time: O(n log(max - min))   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 10: Median of Two Sorted Arrays (Partition Search)",
+      "language": "kotlin",
+      "code": "fun findMedianSortedArrays(a: IntArray, b: IntArray): Double {\n    if (a.size > b.size) return findMedianSortedArrays(b, a)\n    val m = a.size\n    val n = b.size\n    var low = 0\n    var high = m\n    while (low <= high) {\n        val i = (low + high) / 2                    // elements taken from a\n        val j = (m + n + 1) / 2 - i                 // elements taken from b\n        val aLeft = if (i == 0) Int.MIN_VALUE else a[i - 1]\n        val aRight = if (i == m) Int.MAX_VALUE else a[i]\n        val bLeft = if (j == 0) Int.MIN_VALUE else b[j - 1]\n        val bRight = if (j == n) Int.MAX_VALUE else b[j]\n        if (aLeft <= bRight && bLeft <= aRight) {\n            return if ((m + n) % 2 == 1) maxOf(aLeft, bLeft).toDouble()\n            else (maxOf(aLeft, bLeft) + minOf(aRight, bRight)) / 2.0\n        }\n        if (aLeft > bRight) high = i - 1 else low = i + 1\n    }\n    return 0.0\n}\n// Time: O(log(min(m, n)))   Space: O(1)"
+    },
+    {
+      "type": "table",
+      "heading": "Feasibility Check Patterns",
+      "rows": [
+        {
+          "check_style": "Greedy counting (days, parts, groups)",
+          "used_in": "Ship packages, split array, painter's partition",
+          "idea": "Fill each group up to the limit, count how many groups are needed"
+        },
+        {
+          "check_style": "Sum of ceil divisions",
+          "used_in": "Koko bananas, smallest divisor",
+          "idea": "Total time or total sum with the candidate speed or divisor"
+        },
+        {
+          "check_style": "Greedy placement",
+          "used_in": "Aggressive cows, magnetic force",
+          "idea": "Place items as early as possible, at least dist apart"
+        },
+        {
+          "check_style": "Count elements <= mid",
+          "used_in": "Kth smallest in matrix, multiplication table",
+          "idea": "Count how many values are at most mid, compare with k"
+        },
+        {
+          "check_style": "Simulation",
+          "used_in": "Bouquets, task scheduling",
+          "idea": "Walk through the data using the candidate value"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Koko Eating Bananas",
+          "goal": "Minimize speed",
+          "check": "Sum of ceil(pile / speed) <= h"
+        },
+        {
+          "problem": "Capacity to Ship Packages",
+          "goal": "Minimize capacity",
+          "check": "Days needed <= D"
+        },
+        {
+          "problem": "Split Array Largest Sum",
+          "goal": "Minimize the largest sum",
+          "check": "Parts needed <= k"
+        },
+        {
+          "problem": "Min Days to Make Bouquets",
+          "goal": "Minimize days",
+          "check": "Bouquets formed >= m"
+        },
+        {
+          "problem": "Aggressive Cows",
+          "goal": "Maximize min distance",
+          "check": "Cows placed >= required"
+        },
+        {
+          "problem": "Magnetic Force Between Balls",
+          "goal": "Maximize min distance",
+          "check": "Balls placed >= m"
+        },
+        {
+          "problem": "Smallest Divisor Given Threshold",
+          "goal": "Minimize divisor",
+          "check": "Sum of ceil(x / d) <= threshold"
+        },
+        {
+          "problem": "Kth Smallest in Sorted Matrix",
+          "goal": "Find the k-th value",
+          "check": "Count of elements <= mid >= k"
+        },
+        {
+          "problem": "Painter's Partition",
+          "goal": "Minimize the longest paint time",
+          "check": "Painters needed <= k"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Recognizing the Pattern",
+      "rows": [
+        {
+          "phrase": "Minimize the maximum ...",
+          "template": "Minimize (first true)"
+        },
+        {
+          "phrase": "Maximize the minimum ...",
+          "template": "Maximize (last true)"
+        },
+        {
+          "phrase": "Smallest value such that ...",
+          "template": "Minimize (first true)"
+        },
+        {
+          "phrase": "Largest value such that ...",
+          "template": "Maximize (last true)"
+        },
+        {
+          "phrase": "Within D days / at most K groups",
+          "template": "Minimize with a greedy count check"
+        },
+        {
+          "phrase": "Kth smallest in a structured space",
+          "template": "Count elements <= mid"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using the minimize template (mid rounded down) for a maximize problem, which loops forever; round mid up",
+        "Setting low or high wrongly (for example low = 0 when the answer must be at least the max element)",
+        "A check function that is not monotonic, which breaks binary search",
+        "Integer overflow in sums and ceil divisions; use Long",
+        "Using a comparison that is off by one: <= versus < in the feasibility test",
+        "Forgetting that ceil(a / b) in integers is (a + b - 1) / b",
+        "Using left < right style with doubles; use a fixed number of iterations instead",
+        "Forgetting to sort first in placement problems such as aggressive cows"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Brute force over every answer",
+          "time": "O(range * check)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Binary search on answer",
+          "time": "O(log(range) * check)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Typical check cost",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Typical total",
+          "time": "O(n log(range))",
+          "space": "O(1)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Koko Eating Bananas",
+        "Capacity To Ship Packages Within D Days",
+        "Split Array Largest Sum",
+        "Minimum Number of Days to Make m Bouquets",
+        "Find the Smallest Divisor Given a Threshold",
+        "Magnetic Force Between Two Balls",
+        "Aggressive Cows",
+        "Painter's Partition Problem",
+        "Kth Smallest Element in a Sorted Matrix",
+        "Median of Two Sorted Arrays",
+        "Minimum Time to Complete Trips",
+        "Maximum Candies Allocated to K Children",
+        "Cutting Ribbons"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Binary search works on any monotonic yes/no condition, not only sorted arrays",
+        "Define low, high and a feasibility check, then pick the right template",
+        "Minimize uses right = mid and rounds mid down; maximize uses left = mid and rounds mid up",
+        "Most feasibility checks are a single greedy O(n) pass",
+        "Use Long for large sums and (a + b - 1) / b for integer ceiling",
+        "Total time is O(n log(range)), far faster than trying every answer"
+      ]
+    }
+  ]
+}

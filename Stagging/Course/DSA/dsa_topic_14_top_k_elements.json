@@ -1,0 +1,328 @@
+{
+  "title": "Top K Elements (Heap)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Top K Elements Pattern?",
+      "content": "This pattern finds the K largest, K smallest, K most frequent or K closest items in a collection without fully sorting it. The trick is to keep a heap (priority queue) of size K. Each new element is compared with the heap's top, so you only ever store K items. That gives O(n log k) time, which is much better than O(n log n) when K is small."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Find the K largest or K smallest elements",
+        "Find the Kth largest or Kth smallest element",
+        "Find the K most frequent elements or words",
+        "Find the K closest points to a given point",
+        "Process a stream and always keep the best K so far",
+        "Keywords: top K, K-th, K closest, K frequent, K largest, K smallest",
+        "Full sorting is too slow or the data arrives as a stream"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Which Heap to Use",
+      "rows": [
+        {
+          "goal": "K largest elements",
+          "heap": "Min heap of size K",
+          "reason": "The top is the smallest of the K kept, so it is the first to be replaced"
+        },
+        {
+          "goal": "K smallest elements",
+          "heap": "Max heap of size K",
+          "reason": "The top is the largest of the K kept, so it is the first to be replaced"
+        },
+        {
+          "goal": "Kth largest element",
+          "heap": "Min heap of size K",
+          "reason": "After processing, the top is the Kth largest"
+        },
+        {
+          "goal": "Kth smallest element",
+          "heap": "Max heap of size K",
+          "reason": "After processing, the top is the Kth smallest"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Counter-Intuitive Rule",
+      "content": "To find the K largest, use a MIN heap. The smallest of your current K candidates sits on top, so when a bigger number arrives you remove that top and insert the new one. To find the K smallest, use a MAX heap for the same reason. Remember it as: the heap holds the winners and its top is the weakest winner."
+    },
+    {
+      "type": "code",
+      "heading": "Template 1: K Largest Elements (Min Heap of Size K)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kLargest(nums: IntArray, k: Int): List<Int> {\n    val minHeap = PriorityQueue<Int>()\n    for (x in nums) {\n        minHeap.add(x)\n        if (minHeap.size > k) minHeap.poll()      // drop the smallest\n    }\n    return minHeap.toList()                        // the K largest (unordered)\n}\n// Time: O(n log k)   Space: O(k)"
+    },
+    {
+      "type": "code",
+      "heading": "Template 2: K Smallest Elements (Max Heap of Size K)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kSmallest(nums: IntArray, k: Int): List<Int> {\n    val maxHeap = PriorityQueue<Int>(compareByDescending { it })\n    for (x in nums) {\n        maxHeap.add(x)\n        if (maxHeap.size > k) maxHeap.poll()      // drop the largest\n    }\n    return maxHeap.toList()\n}\n// Time: O(n log k)   Space: O(k)"
+    },
+    {
+      "type": "code",
+      "heading": "Template 3: Top K by a Custom Key (Pairs in a Heap)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\n// Keep the K items with the largest score\nfun topKByScore(items: List<Pair<String, Int>>, k: Int): List<String> {\n    val minHeap = PriorityQueue<Pair<String, Int>>(compareBy { it.second })\n    for (item in items) {\n        minHeap.add(item)\n        if (minHeap.size > k) minHeap.poll()\n    }\n    return minHeap.sortedByDescending { it.second }.map { it.first }\n}\n// Time: O(n log k)   Space: O(k)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 1: Kth Largest Element in an Array",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun findKthLargest(nums: IntArray, k: Int): Int {\n    val minHeap = PriorityQueue<Int>()\n    for (x in nums) {\n        minHeap.add(x)\n        if (minHeap.size > k) minHeap.poll()\n    }\n    return minHeap.peek()                          // Kth largest\n}\n// Time: O(n log k)   Space: O(k)\n// Quick select gives O(n) average, see Sorting topic"
+    },
+    {
+      "type": "code",
+      "heading": "Example 2: Top K Frequent Elements",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun topKFrequent(nums: IntArray, k: Int): IntArray {\n    val freq = HashMap<Int, Int>()\n    for (x in nums) freq[x] = (freq[x] ?: 0) + 1\n\n    // min heap ordered by frequency\n    val heap = PriorityQueue<Map.Entry<Int, Int>>(compareBy { it.value })\n    for (entry in freq.entries) {\n        heap.add(entry)\n        if (heap.size > k) heap.poll()\n    }\n    return heap.map { it.key }.toIntArray()\n}\n// Time: O(n log k)   Space: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 3: Top K Frequent Words",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun topKFrequentWords(words: Array<String>, k: Int): List<String> {\n    val freq = HashMap<String, Int>()\n    for (w in words) freq[w] = (freq[w] ?: 0) + 1\n\n    // min heap: lowest frequency first; for equal frequency, alphabetically LARGER first\n    val heap = PriorityQueue<String>(Comparator { a, b ->\n        if (freq[a] == freq[b]) b.compareTo(a)\n        else freq[a]!! - freq[b]!!\n    })\n    for (w in freq.keys) {\n        heap.add(w)\n        if (heap.size > k) heap.poll()\n    }\n    val result = mutableListOf<String>()\n    while (heap.isNotEmpty()) result.add(heap.poll())\n    return result.reversed()                       // highest frequency first\n}\n// Time: O(n log k)   Space: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 4: K Closest Points to Origin",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kClosest(points: Array<IntArray>, k: Int): Array<IntArray> {\n    // max heap by squared distance: farthest of the kept points on top\n    val maxHeap = PriorityQueue<IntArray>(compareByDescending { it[0] * it[0] + it[1] * it[1] })\n    for (p in points) {\n        maxHeap.add(p)\n        if (maxHeap.size > k) maxHeap.poll()       // remove the farthest\n    }\n    return maxHeap.toTypedArray()\n}\n// Time: O(n log k)   Space: O(k)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 5: Kth Largest Element in a Stream",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nclass KthLargest(private val k: Int, nums: IntArray) {\n    private val minHeap = PriorityQueue<Int>()\n\n    init {\n        for (x in nums) add(x)\n    }\n\n    fun add(value: Int): Int {\n        minHeap.add(value)\n        if (minHeap.size > k) minHeap.poll()\n        return minHeap.peek()\n    }\n}\n// Each add: O(log k)   Space: O(k)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 6: Kth Smallest Element in a Sorted Matrix",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kthSmallest(matrix: Array<IntArray>, k: Int): Int {\n    val n = matrix.size\n    // heap of [value, row, col], start with the first column\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })\n    for (r in 0 until minOf(n, k)) minHeap.add(intArrayOf(matrix[r][0], r, 0))\n\n    var result = 0\n    repeat(k) {\n        val (value, r, c) = minHeap.poll()\n        result = value\n        if (c + 1 < n) minHeap.add(intArrayOf(matrix[r][c + 1], r, c + 1))\n    }\n    return result\n}\n// Time: O(k log n)   Space: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 7: Reorganize String (Heap by Frequency)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun reorganizeString(s: String): String {\n    val freq = IntArray(26)\n    for (c in s) freq[c - 'a']++\n    val maxHeap = PriorityQueue<Pair<Char, Int>>(compareByDescending { it.second })\n    for (i in 0 until 26) {\n        if (freq[i] > 0) maxHeap.add(Pair('a' + i, freq[i]))\n    }\n    val sb = StringBuilder()\n    var prev: Pair<Char, Int>? = null\n    while (maxHeap.isNotEmpty()) {\n        val (ch, count) = maxHeap.poll()\n        sb.append(ch)\n        prev?.let { if (it.second > 0) maxHeap.add(it) }     // put the previous one back\n        prev = Pair(ch, count - 1)\n    }\n    return if (sb.length == s.length) sb.toString() else \"\"\n}\n// Time: O(n log 26)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 8: Connect Ropes (Minimum Cost)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun connectRopes(ropes: IntArray): Int {\n    val minHeap = PriorityQueue<Int>()\n    for (r in ropes) minHeap.add(r)\n    var cost = 0\n    while (minHeap.size > 1) {\n        val a = minHeap.poll()\n        val b = minHeap.poll()\n        cost += a + b                       // cost of joining the two shortest\n        minHeap.add(a + b)\n    }\n    return cost\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 9: Sum of Elements Between K1-th and K2-th Smallest",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun sumBetween(nums: IntArray, k1: Int, k2: Int): Int {\n    val maxHeap = PriorityQueue<Int>(compareByDescending { it })\n    for (x in nums) {\n        maxHeap.add(x)\n        if (maxHeap.size > k2 - 1) maxHeap.poll()   // keep the k2 - 1 smallest\n    }\n    var sum = 0\n    repeat(k2 - k1 - 1) { sum += maxHeap.poll() }   // the numbers strictly between\n    return sum\n}\n// Time: O(n log k2)   Space: O(k2)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 10: Find K Pairs With Smallest Sums",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kSmallestPairs(nums1: IntArray, nums2: IntArray, k: Int): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    if (nums1.isEmpty() || nums2.isEmpty()) return result\n    // heap of [sum, i, j]\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })\n    for (i in 0 until minOf(nums1.size, k)) {\n        minHeap.add(intArrayOf(nums1[i] + nums2[0], i, 0))\n    }\n    while (result.size < k && minHeap.isNotEmpty()) {\n        val (_, i, j) = minHeap.poll()\n        result.add(listOf(nums1[i], nums2[j]))\n        if (j + 1 < nums2.size) {\n            minHeap.add(intArrayOf(nums1[i] + nums2[j + 1], i, j + 1))\n        }\n    }\n    return result\n}\n// Time: O(k log k)   Space: O(k)"
+    },
+    {
+      "type": "table",
+      "heading": "Approaches to Top K Problems",
+      "rows": [
+        {
+          "approach": "Sort everything and take K",
+          "time": "O(n log n)",
+          "space": "O(1) to O(n)",
+          "best_when": "Small n, or you need the full order anyway"
+        },
+        {
+          "approach": "Heap of size K",
+          "time": "O(n log k)",
+          "space": "O(k)",
+          "best_when": "K is small, or data arrives as a stream"
+        },
+        {
+          "approach": "Heap of all n elements",
+          "time": "O(n + k log n)",
+          "space": "O(n)",
+          "best_when": "You can build the heap in one go with all data"
+        },
+        {
+          "approach": "Quick select",
+          "time": "O(n) average",
+          "space": "O(1)",
+          "best_when": "You need only the Kth element, order does not matter"
+        },
+        {
+          "approach": "Bucket sort by frequency",
+          "time": "O(n)",
+          "space": "O(n)",
+          "best_when": "Top K frequent where counts are bounded by n"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "PriorityQueue Quick Reference (Kotlin / Java)",
+      "rows": [
+        {
+          "operation": "PriorityQueue<Int>()",
+          "result": "Min heap (smallest first)"
+        },
+        {
+          "operation": "PriorityQueue<Int>(compareByDescending { it })",
+          "result": "Max heap (largest first)"
+        },
+        {
+          "operation": "PriorityQueue<IntArray>(compareBy { it[0] })",
+          "result": "Min heap by the first array element"
+        },
+        {
+          "operation": "add(x) / offer(x)",
+          "result": "Insert in O(log n)"
+        },
+        {
+          "operation": "poll()",
+          "result": "Remove and return the top in O(log n), null if empty"
+        },
+        {
+          "operation": "peek()",
+          "result": "Look at the top in O(1), null if empty"
+        },
+        {
+          "operation": "size / isEmpty()",
+          "result": "O(1)"
+        },
+        {
+          "operation": "remove(x)",
+          "result": "O(n), avoid it in hot loops"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Kth Largest Element in an Array",
+          "heap": "Min heap, size K",
+          "answer": "heap.peek()"
+        },
+        {
+          "problem": "Kth Largest in a Stream",
+          "heap": "Min heap, size K",
+          "answer": "heap.peek() after each add"
+        },
+        {
+          "problem": "K Closest Points to Origin",
+          "heap": "Max heap by distance, size K",
+          "answer": "All points left in the heap"
+        },
+        {
+          "problem": "Top K Frequent Elements",
+          "heap": "Min heap by frequency, size K",
+          "answer": "All keys left in the heap"
+        },
+        {
+          "problem": "Top K Frequent Words",
+          "heap": "Min heap with tie-break rule",
+          "answer": "Reverse the polled order"
+        },
+        {
+          "problem": "Kth Smallest in Sorted Matrix",
+          "heap": "Min heap of row heads",
+          "answer": "Pop K times"
+        },
+        {
+          "problem": "Connect Ropes",
+          "heap": "Min heap of all lengths",
+          "answer": "Sum of merge costs"
+        },
+        {
+          "problem": "Reorganize String",
+          "heap": "Max heap by frequency",
+          "answer": "Alternate the two most frequent"
+        },
+        {
+          "problem": "K Pairs With Smallest Sums",
+          "heap": "Min heap of candidate pairs",
+          "answer": "Pop K times"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using a max heap for K largest (it should be a min heap) and vice versa",
+        "Forgetting to pop when the heap size goes above K",
+        "Putting the whole array in a heap and calling it O(n log k)",
+        "Subtracting values in a comparator, which can overflow (use compareBy or compareByDescending)",
+        "Forgetting that PriorityQueue iteration is not in sorted order; poll repeatedly or sort the result",
+        "Using remove(x) on PriorityQueue in a loop, which is O(n) each",
+        "Wrong tie-breaking when equal counts must be sorted alphabetically",
+        "Using sqrt for distance comparison; compare squared distances instead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Heap of size K over n items",
+          "time": "O(n log k)",
+          "space": "O(k)"
+        },
+        {
+          "approach": "Sorting then slicing",
+          "time": "O(n log n)",
+          "space": "O(n)"
+        },
+        {
+          "approach": "Quick select",
+          "time": "O(n) average, O(n²) worst",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Stream: each new element",
+          "time": "O(log k)",
+          "space": "O(k)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Kth Largest Element in an Array",
+        "Kth Largest Element in a Stream",
+        "Top K Frequent Elements",
+        "Top K Frequent Words",
+        "K Closest Points to Origin",
+        "Kth Smallest Element in a Sorted Matrix",
+        "Find K Pairs with Smallest Sums",
+        "Connect Ropes / Minimum Cost to Connect Sticks",
+        "Reorganize String",
+        "Sort Characters By Frequency",
+        "Task Scheduler",
+        "Find K Closest Elements",
+        "Last Stone Weight"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Keep a heap of size K instead of sorting everything",
+        "K largest uses a min heap, and K smallest uses a max heap",
+        "After each insert, remove the top when the size exceeds K",
+        "Time is O(n log k), which beats O(n log n) when K is small",
+        "For frequency problems, count with a HashMap first, then use a heap on the counts",
+        "Heaps also fit streaming data, since each new item costs only O(log k)"
+      ]
+    }
+  ]
+}

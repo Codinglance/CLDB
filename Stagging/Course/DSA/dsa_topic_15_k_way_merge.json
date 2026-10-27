@@ -1,0 +1,281 @@
+{
+  "title": "K-Way Merge",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the K-Way Merge Pattern?",
+      "content": "K-Way Merge combines K sorted lists, arrays or streams into one sorted result, or finds the Kth smallest element across them. Instead of merging two lists at a time or concatenating everything and sorting, you keep a min heap that holds the current front element of each list. Repeatedly remove the smallest from the heap and push the next element from the same list. With N total elements this takes O(N log K)."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "You are given K sorted arrays, lists or matrix rows",
+        "Merge K sorted linked lists into one",
+        "Find the Kth smallest element across sorted lists or a sorted matrix",
+        "Find the smallest range that covers elements from every list",
+        "Find pairs with the smallest sums from two sorted arrays",
+        "Merge sorted streams or files too large to fit in memory",
+        "Keywords: K sorted, merge, sorted matrix, smallest range, kth smallest across lists"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Core Idea",
+      "content": "Each sorted list already has its smallest value at the front. The overall smallest value must therefore be one of the K fronts. A min heap gives you the smallest front in O(log K). After you take it, the next candidate from that same list becomes a new front, so you push it in. Each of the N elements is pushed and popped once, so the total cost is O(N log K)."
+    },
+    {
+      "type": "table",
+      "heading": "Merge Strategies Compared",
+      "rows": [
+        {
+          "strategy": "Concatenate and sort",
+          "time": "O(N log N)",
+          "space": "O(N)",
+          "note": "Simple but ignores that inputs are sorted"
+        },
+        {
+          "strategy": "Merge one list at a time",
+          "time": "O(N * K)",
+          "space": "O(1) extra",
+          "note": "Slow when K is large"
+        },
+        {
+          "strategy": "Min heap of K fronts",
+          "time": "O(N log K)",
+          "space": "O(K)",
+          "note": "The K-way merge pattern"
+        },
+        {
+          "strategy": "Divide and conquer (merge pairs)",
+          "time": "O(N log K)",
+          "space": "O(log K) stack",
+          "note": "Same speed, no heap needed"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "heading": "Template 1: Merge K Sorted Arrays (Min Heap)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun mergeKArrays(arrays: List<IntArray>): List<Int> {\n    // heap holds [value, arrayIndex, elementIndex]\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })\n    for ((i, arr) in arrays.withIndex()) {\n        if (arr.isNotEmpty()) minHeap.add(intArrayOf(arr[0], i, 0))\n    }\n    val result = mutableListOf<Int>()\n    while (minHeap.isNotEmpty()) {\n        val (value, arrIdx, elemIdx) = minHeap.poll()\n        result.add(value)\n        val next = elemIdx + 1\n        if (next < arrays[arrIdx].size) {\n            minHeap.add(intArrayOf(arrays[arrIdx][next], arrIdx, next))\n        }\n    }\n    return result\n}\n// Time: O(N log K)   Space: O(K) heap + O(N) output"
+    },
+    {
+      "type": "code",
+      "heading": "Template 2: Merge K Sorted Linked Lists (Heap of Nodes)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nclass ListNode(var `val`: Int) {\n    var next: ListNode? = null\n}\n\nfun mergeKLists(lists: Array<ListNode?>): ListNode? {\n    val minHeap = PriorityQueue<ListNode>(compareBy { it.`val` })\n    for (head in lists) {\n        if (head != null) minHeap.add(head)\n    }\n    val dummy = ListNode(0)\n    var tail = dummy\n    while (minHeap.isNotEmpty()) {\n        val node = minHeap.poll()\n        tail.next = node\n        tail = node\n        node.next?.let { minHeap.add(it) }\n    }\n    return dummy.next\n}\n// Time: O(N log K)   Space: O(K)"
+    },
+    {
+      "type": "code",
+      "heading": "Template 3: Divide and Conquer Merge (No Heap)",
+      "language": "kotlin",
+      "code": "fun mergeKListsDC(lists: Array<ListNode?>): ListNode? {\n    if (lists.isEmpty()) return null\n    var step = 1\n    val work = lists.copyOf()\n    while (step < work.size) {\n        var i = 0\n        while (i + step < work.size) {\n            work[i] = mergeTwo(work[i], work[i + step])\n            i += step * 2\n        }\n        step *= 2\n    }\n    return work[0]\n}\n\nfun mergeTwo(a: ListNode?, b: ListNode?): ListNode? {\n    val dummy = ListNode(0)\n    var tail = dummy\n    var l1 = a\n    var l2 = b\n    while (l1 != null && l2 != null) {\n        if (l1.`val` <= l2.`val`) { tail.next = l1; l1 = l1.next }\n        else { tail.next = l2; l2 = l2.next }\n        tail = tail.next!!\n    }\n    tail.next = l1 ?: l2\n    return dummy.next\n}\n// Time: O(N log K)   Space: O(1) extra"
+    },
+    {
+      "type": "text",
+      "heading": "Merge Two Sorted Lists Is the Building Block",
+      "content": "Almost every K-way merge idea reduces to merging two sorted sequences with two pointers. The heap simply picks the next list to take from, and divide and conquer repeats the two-list merge in rounds. If you are comfortable with mergeTwo, you can solve most of the problems in this topic."
+    },
+    {
+      "type": "code",
+      "heading": "Example 1: Merge Two Sorted Lists",
+      "language": "kotlin",
+      "code": "fun mergeTwoLists(list1: ListNode?, list2: ListNode?): ListNode? {\n    val dummy = ListNode(0)\n    var tail = dummy\n    var a = list1\n    var b = list2\n    while (a != null && b != null) {\n        if (a.`val` <= b.`val`) { tail.next = a; a = a.next }\n        else { tail.next = b; b = b.next }\n        tail = tail.next!!\n    }\n    tail.next = a ?: b          // attach the leftover\n    return dummy.next\n}\n// Time: O(n + m)   Space: O(1)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 2: Kth Smallest Element in a Sorted Matrix",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kthSmallest(matrix: Array<IntArray>, k: Int): Int {\n    val n = matrix.size\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })\n    for (r in 0 until minOf(n, k)) {\n        minHeap.add(intArrayOf(matrix[r][0], r, 0))      // first element of each row\n    }\n    var result = 0\n    repeat(k) {\n        val (value, r, c) = minHeap.poll()\n        result = value\n        if (c + 1 < n) minHeap.add(intArrayOf(matrix[r][c + 1], r, c + 1))\n    }\n    return result\n}\n// Time: O(k log min(n, k))   Space: O(min(n, k))"
+    },
+    {
+      "type": "code",
+      "heading": "Example 3: Smallest Range Covering Elements from K Lists",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun smallestRange(nums: List<List<Int>>): IntArray {\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })  // [value, list, index]\n    var currentMax = Int.MIN_VALUE\n    for ((i, list) in nums.withIndex()) {\n        minHeap.add(intArrayOf(list[0], i, 0))\n        currentMax = maxOf(currentMax, list[0])\n    }\n    var rangeStart = 0\n    var rangeEnd = Int.MAX_VALUE\n    while (minHeap.size == nums.size) {          // one element from every list\n        val (value, listIdx, elemIdx) = minHeap.poll()\n        if (currentMax - value < rangeEnd - rangeStart) {\n            rangeStart = value\n            rangeEnd = currentMax\n        }\n        if (elemIdx + 1 == nums[listIdx].size) break     // a list is exhausted\n        val next = nums[listIdx][elemIdx + 1]\n        minHeap.add(intArrayOf(next, listIdx, elemIdx + 1))\n        currentMax = maxOf(currentMax, next)\n    }\n    return intArrayOf(rangeStart, rangeEnd)\n}\n// Time: O(N log K)   Space: O(K)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 4: Find K Pairs with Smallest Sums",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun kSmallestPairs(nums1: IntArray, nums2: IntArray, k: Int): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    if (nums1.isEmpty() || nums2.isEmpty()) return result\n    // each nums1[i] is a 'list' of sums with nums2\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })   // [sum, i, j]\n    for (i in 0 until minOf(nums1.size, k)) {\n        minHeap.add(intArrayOf(nums1[i] + nums2[0], i, 0))\n    }\n    while (result.size < k && minHeap.isNotEmpty()) {\n        val (_, i, j) = minHeap.poll()\n        result.add(listOf(nums1[i], nums2[j]))\n        if (j + 1 < nums2.size) {\n            minHeap.add(intArrayOf(nums1[i] + nums2[j + 1], i, j + 1))\n        }\n    }\n    return result\n}\n// Time: O(k log k)   Space: O(k)"
+    },
+    {
+      "type": "code",
+      "heading": "Example 5: Merge Sorted Arrays In Place",
+      "language": "kotlin",
+      "code": "fun mergeInPlace(nums1: IntArray, m: Int, nums2: IntArray, n: Int) {\n    var i = m - 1\n    var j = n - 1\n    var k = m + n - 1\n    while (j >= 0) {\n        nums1[k--] = if (i >= 0 && nums1[i] > nums2[j]) nums1[i--] else nums2[j--]\n    }\n}\n// Time: O(m + n)   Space: O(1)\n// Fill from the back so unread values are never overwritten"
+    },
+    {
+      "type": "code",
+      "heading": "Example 6: Ugly Number II (Merging Three Virtual Lists)",
+      "language": "kotlin",
+      "code": "fun nthUglyNumber(n: Int): Int {\n    val ugly = IntArray(n)\n    ugly[0] = 1\n    var i2 = 0\n    var i3 = 0\n    var i5 = 0\n    for (i in 1 until n) {\n        val next2 = ugly[i2] * 2\n        val next3 = ugly[i3] * 3\n        val next5 = ugly[i5] * 5\n        val next = minOf(next2, next3, next5)\n        ugly[i] = next\n        if (next == next2) i2++            // advance every list that produced 'next'\n        if (next == next3) i3++\n        if (next == next5) i5++\n    }\n    return ugly[n - 1]\n}\n// Time: O(n)   Space: O(n)\n// Three sorted sequences (x2, x3, x5) merged on the fly"
+    },
+    {
+      "type": "code",
+      "heading": "Example 7: Merge K Sorted Streams With an Iterator",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nclass StreamEntry<T>(val value: T, val source: Int)\n\nfun <T : Comparable<T>> mergeSorted(iterators: List<Iterator<T>>): Sequence<T> = sequence {\n    val heap = PriorityQueue<StreamEntry<T>>(compareBy { it.value })\n    for ((i, iterator) in iterators.withIndex()) {\n        if (iterator.hasNext()) heap.add(StreamEntry(iterator.next(), i))\n    }\n    while (heap.isNotEmpty()) {\n        val entry = heap.poll()\n        yield(entry.value)\n        val source = iterators[entry.source]\n        if (source.hasNext()) heap.add(StreamEntry(source.next(), entry.source))\n    }\n}\n// Time: O(N log K)   Space: O(K)   Lazy: never holds all N items"
+    },
+    {
+      "type": "code",
+      "heading": "Example 8: Median of K Sorted Arrays (Idea With Merge)",
+      "language": "kotlin",
+      "code": "// To find the median of K sorted arrays with total N elements:\n// 1. Merge with a min heap until you have popped N / 2 + 1 elements.\n// 2. If N is odd, the last popped value is the median.\n// 3. If N is even, average the last two popped values.\n\nimport java.util.PriorityQueue\n\nfun medianOfKArrays(arrays: List<IntArray>): Double {\n    val total = arrays.sumOf { it.size }\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })\n    for ((i, arr) in arrays.withIndex()) {\n        if (arr.isNotEmpty()) minHeap.add(intArrayOf(arr[0], i, 0))\n    }\n    var prev = 0\n    var curr = 0\n    repeat(total / 2 + 1) {\n        prev = curr\n        val (value, a, idx) = minHeap.poll()\n        curr = value\n        if (idx + 1 < arrays[a].size) minHeap.add(intArrayOf(arrays[a][idx + 1], a, idx + 1))\n    }\n    return if (total % 2 == 1) curr.toDouble() else (prev + curr) / 2.0\n}\n// Time: O((N / 2) log K)   Space: O(K)"
+    },
+    {
+      "type": "table",
+      "heading": "Heap Entry Design",
+      "rows": [
+        {
+          "input_type": "K arrays",
+          "heap_entry": "[value, arrayIndex, elementIndex]",
+          "next_element": "arrays[arrayIndex][elementIndex + 1]"
+        },
+        {
+          "input_type": "K linked lists",
+          "heap_entry": "The node itself",
+          "next_element": "node.next"
+        },
+        {
+          "input_type": "Sorted matrix rows",
+          "heap_entry": "[value, row, col]",
+          "next_element": "matrix[row][col + 1]"
+        },
+        {
+          "input_type": "Two arrays (pair sums)",
+          "heap_entry": "[sum, i, j]",
+          "next_element": "[nums1[i] + nums2[j + 1], i, j + 1]"
+        },
+        {
+          "input_type": "Iterators or streams",
+          "heap_entry": "(value, source index)",
+          "next_element": "iterator.next()"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Merge K Sorted Lists",
+          "technique": "Min heap of nodes or divide and conquer",
+          "key_idea": "Push the head of each list, push node.next after popping"
+        },
+        {
+          "problem": "Merge Two Sorted Lists",
+          "technique": "Two pointers",
+          "key_idea": "Building block of everything else"
+        },
+        {
+          "problem": "Kth Smallest in Sorted Matrix",
+          "technique": "Min heap of row heads",
+          "key_idea": "Pop K times, push the next in that row"
+        },
+        {
+          "problem": "Smallest Range Covering K Lists",
+          "technique": "Min heap plus a tracked maximum",
+          "key_idea": "Window is [heap top, current max]"
+        },
+        {
+          "problem": "K Pairs with Smallest Sums",
+          "technique": "Min heap of (i, j) pairs",
+          "key_idea": "Treat each nums1[i] as a sorted list of sums"
+        },
+        {
+          "problem": "Merge Sorted Array",
+          "technique": "Two pointers from the back",
+          "key_idea": "Fill from the end"
+        },
+        {
+          "problem": "Ugly Number II",
+          "technique": "Merge virtual lists",
+          "key_idea": "Advance every pointer that matched the minimum"
+        },
+        {
+          "problem": "Find K Closest Elements",
+          "technique": "Binary search or heap",
+          "key_idea": "Sorted window of K near x"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Pushing all N elements into the heap at the start, which gives O(N log N) space and time",
+        "Forgetting to push the next element from the same list after a pop",
+        "Not storing the list index and element index in the heap entry",
+        "Pushing null nodes into the heap (check node != null before adding)",
+        "Comparing nodes without a comparator, which throws ClassCastException",
+        "Skipping empty lists or arrays when building the initial heap",
+        "Not handling K = 0, an empty input array, or a list of only empty lists",
+        "Subtracting values in the comparator, which can overflow (use compareBy)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Min heap of K fronts",
+          "time": "O(N log K)",
+          "space": "O(K)"
+        },
+        {
+          "approach": "Divide and conquer",
+          "time": "O(N log K)",
+          "space": "O(1) to O(log K)"
+        },
+        {
+          "approach": "Merge one by one",
+          "time": "O(N * K)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Concatenate and sort",
+          "time": "O(N log N)",
+          "space": "O(N)"
+        },
+        {
+          "approach": "Kth smallest in matrix with heap",
+          "time": "O(k log n)",
+          "space": "O(n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Merge Two Sorted Lists",
+        "Merge k Sorted Lists",
+        "Merge Sorted Array",
+        "Kth Smallest Element in a Sorted Matrix",
+        "Smallest Range Covering Elements from K Lists",
+        "Find K Pairs with Smallest Sums",
+        "Ugly Number II",
+        "Super Ugly Number",
+        "Find K Closest Elements",
+        "Merge Intervals from multiple sorted lists",
+        "Median of Two Sorted Arrays",
+        "Kth Smallest Number in M Sorted Lists"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "K-way merge uses a min heap holding one front element from each sorted list",
+        "Pop the smallest, then push the next element from the same list",
+        "Time is O(N log K) and the heap holds at most K items",
+        "Divide and conquer gives the same time without a heap",
+        "Many problems (sorted matrix, pair sums, smallest range) are a hidden K-way merge",
+        "Always store which list and which index each heap element came from"
+      ]
+    }
+  ]
+}
