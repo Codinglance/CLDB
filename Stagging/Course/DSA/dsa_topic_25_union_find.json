@@ -1,0 +1,374 @@
+{
+  "title": "Union Find (Disjoint Set)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Union Find?",
+      "content": "Union Find (also called Disjoint Set Union, or DSU) tracks a collection of items split into groups that never overlap. It supports two operations: find(x) tells you which group x belongs to (by returning the group's representative, or root), and union(a, b) merges the groups of a and b. With two optimizations, path compression and union by size or rank, both operations run in nearly constant time, O(α(n)), where α is the inverse Ackermann function and is below 5 for any realistic input."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Connectivity queries: are two nodes in the same group?",
+        "Count connected components while edges are added over time (dynamic connectivity)",
+        "Detect a cycle in an undirected graph (an edge whose endpoints are already connected)",
+        "Merge groups by shared properties (accounts with a common email, equal variables)",
+        "Kruskal's algorithm for minimum spanning trees",
+        "Grid problems where land cells are added one by one",
+        "Group indices that can be swapped, then sort within each group",
+        "Keywords: connected, group, merge, same set, redundant connection, components, equivalence, union"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Imagine every person at a party starts as their own group, each with themselves as the leader. When two people become friends, their groups merge: one leader now reports to the other. To check whether two people are in the same group, follow the 'leader' chain from each person to the top and compare the two top leaders. Path compression flattens the chain after you walk it, and union by size always attaches the smaller group under the larger one, so chains stay very short."
+    },
+    {
+      "type": "table",
+      "heading": "Core Operations",
+      "rows": [
+        {
+          "operation": "find(x)",
+          "what_it_does": "Follows parent pointers to the root and compresses the path",
+          "returns": "Root of x's group"
+        },
+        {
+          "operation": "union(a, b)",
+          "what_it_does": "Finds both roots, attaches the smaller tree under the larger one",
+          "returns": "true if merged, false if already in the same group"
+        },
+        {
+          "operation": "connected(a, b)",
+          "what_it_does": "Compares find(a) with find(b)",
+          "returns": "true or false"
+        },
+        {
+          "operation": "size of a group",
+          "what_it_does": "Reads size[find(x)]",
+          "returns": "Number of items in the group"
+        },
+        {
+          "operation": "components",
+          "what_it_does": "Starts at n and decreases by one on each successful union",
+          "returns": "Number of groups"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Effect of the Optimizations",
+      "rows": [
+        {
+          "variant": "Naive (no optimizations)",
+          "find_union": "O(n) worst case",
+          "note": "Trees can degenerate into a chain"
+        },
+        {
+          "variant": "Path compression only",
+          "find_union": "O(log n) amortized",
+          "note": "Flattens the tree on every find"
+        },
+        {
+          "variant": "Union by size or rank only",
+          "find_union": "O(log n)",
+          "note": "Keeps the tree height small"
+        },
+        {
+          "variant": "Both together",
+          "find_union": "O(α(n)), practically constant",
+          "note": "Standard implementation"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Union Find With Path Compression and Union by Size",
+      "language": "kotlin",
+      "code": "class UnionFind(n: Int) {\n    private val parent = IntArray(n) { it }          // every node starts as its own root\n    private val size = IntArray(n) { 1 }\n    var components = n\n        private set\n\n    fun find(x: Int): Int {\n        if (parent[x] != x) {\n            parent[x] = find(parent[x])              // path compression\n        }\n        return parent[x]\n    }\n\n    fun union(a: Int, b: Int): Boolean {\n        var rootA = find(a)\n        var rootB = find(b)\n        if (rootA == rootB) return false             // already in the same group\n        if (size[rootA] < size[rootB]) {             // attach the smaller tree under the larger\n            val tmp = rootA\n            rootA = rootB\n            rootB = tmp\n        }\n        parent[rootB] = rootA\n        size[rootA] += size[rootB]\n        components--\n        return true\n    }\n\n    fun connected(a: Int, b: Int): Boolean = find(a) == find(b)\n\n    fun sizeOf(x: Int): Int = size[find(x)]\n}\n// find / union: O(α(n)) amortized   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Iterative find With Path Halving",
+      "language": "kotlin",
+      "code": "fun find(x: Int): Int {\n    var cur = x\n    while (parent[cur] != cur) {\n        parent[cur] = parent[parent[cur]]            // skip one level on the way up\n        cur = parent[cur]\n    }\n    return cur\n}\n// Same complexity, no recursion: safe for very large inputs"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Union Find for Any Key Type (HashMap)",
+      "language": "kotlin",
+      "code": "class MapUnionFind<T> {\n    private val parent = HashMap<T, T>()\n    private val size = HashMap<T, Int>()\n\n    private fun add(x: T) {\n        if (x !in parent) {\n            parent[x] = x\n            size[x] = 1\n        }\n    }\n\n    fun find(x: T): T {\n        add(x)\n        var root = x\n        while (parent[root] != root) root = parent[root]!!\n        var cur = x\n        while (cur != root) {                        // compress the path\n            val next = parent[cur]!!\n            parent[cur] = root\n            cur = next\n        }\n        return root\n    }\n\n    fun union(a: T, b: T): Boolean {\n        var rootA = find(a)\n        var rootB = find(b)\n        if (rootA == rootB) return false\n        if (size[rootA]!! < size[rootB]!!) {\n            val tmp = rootA\n            rootA = rootB\n            rootB = tmp\n        }\n        parent[rootB] = rootA\n        size[rootA] = size[rootA]!! + size[rootB]!!\n        return true\n    }\n}\n// Use for strings, pairs or sparse IDs where an array index is not available"
+    },
+    {
+      "type": "bullet",
+      "heading": "Mapping Problems to Indices",
+      "items": [
+        "Nodes labeled 0 to n - 1: use the label directly",
+        "Nodes labeled 1 to n: create UnionFind(n + 1) and ignore index 0",
+        "Grid cell (r, c): use id = r * cols + c",
+        "Letters 'a' to 'z': use c - 'a' with UnionFind(26)",
+        "Strings, emails or large sparse numbers: map to indices with a HashMap, or use MapUnionFind",
+        "Rows and columns as separate nodes: offset the column ids so they do not collide with row ids"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Number of Connected Components",
+      "language": "kotlin",
+      "code": "fun countComponents(n: Int, edges: Array<IntArray>): Int {\n    val uf = UnionFind(n)\n    for ((a, b) in edges) uf.union(a, b)\n    return uf.components\n}\n// Time: O((V + E) * α(V))   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Number of Provinces (Adjacency Matrix)",
+      "language": "kotlin",
+      "code": "fun findCircleNum(isConnected: Array<IntArray>): Int {\n    val n = isConnected.size\n    val uf = UnionFind(n)\n    for (i in 0 until n) {\n        for (j in i + 1 until n) {\n            if (isConnected[i][j] == 1) uf.union(i, j)\n        }\n    }\n    return uf.components\n}\n// Time: O(n² * α(n))   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Redundant Connection (Cycle Detection)",
+      "language": "kotlin",
+      "code": "fun findRedundantConnection(edges: Array<IntArray>): IntArray {\n    val uf = UnionFind(edges.size + 1)               // nodes are 1-indexed\n    for (edge in edges) {\n        if (!uf.union(edge[0], edge[1])) {           // endpoints already connected: this edge closes a cycle\n            return edge\n        }\n    }\n    return intArrayOf()\n}\n// Time: O(n * α(n))   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Graph Valid Tree",
+      "language": "kotlin",
+      "code": "fun validTree(n: Int, edges: Array<IntArray>): Boolean {\n    if (edges.size != n - 1) return false            // a tree has exactly n - 1 edges\n    val uf = UnionFind(n)\n    for ((a, b) in edges) {\n        if (!uf.union(a, b)) return false            // a cycle means it is not a tree\n    }\n    return true\n}\n// Time: O(n * α(n))   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Accounts Merge",
+      "language": "kotlin",
+      "code": "fun accountsMerge(accounts: List<List<String>>): List<List<String>> {\n    val uf = UnionFind(accounts.size)\n    val emailOwner = HashMap<String, Int>()          // email -> first account that had it\n\n    for ((i, account) in accounts.withIndex()) {\n        for (j in 1 until account.size) {\n            val email = account[j]\n            val owner = emailOwner[email]\n            if (owner == null) emailOwner[email] = i\n            else uf.union(owner, i)                  // shared email: merge the two accounts\n        }\n    }\n\n    val groups = HashMap<Int, MutableList<String>>()\n    for ((email, owner) in emailOwner) {\n        groups.getOrPut(uf.find(owner)) { mutableListOf() }.add(email)\n    }\n\n    val result = mutableListOf<List<String>>()\n    for ((root, emails) in groups) {\n        emails.sort()\n        result.add(listOf(accounts[root][0]) + emails)\n    }\n    return result\n}\n// Time: O(N * L * α + E log E)   Space: O(N * L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Number of Islands II (Adding Land Over Time)",
+      "language": "kotlin",
+      "code": "fun numIslands2(m: Int, n: Int, positions: Array<IntArray>): List<Int> {\n    val dirs = arrayOf(intArrayOf(1, 0), intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(0, -1))\n    val uf = UnionFind(m * n)\n    val isLand = BooleanArray(m * n)\n    var islands = 0\n    val result = mutableListOf<Int>()\n\n    for ((r, c) in positions) {\n        val id = r * n + c\n        if (!isLand[id]) {\n            isLand[id] = true\n            islands++                                // a new island\n            for ((dr, dc) in dirs) {\n                val nr = r + dr\n                val nc = c + dc\n                if (nr in 0 until m && nc in 0 until n && isLand[nr * n + nc]) {\n                    if (uf.union(id, nr * n + nc)) islands--   // merging two islands removes one\n                }\n            }\n        }\n        result.add(islands)\n    }\n    return result\n}\n// Time: O(k * α(m * n))   Space: O(m * n)\n// DFS would redo the whole grid after each addition: O(k * m * n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Most Stones Removed",
+      "language": "kotlin",
+      "code": "fun removeStones(stones: Array<IntArray>): Int {\n    val uf = UnionFind(20002)\n    for ((r, c) in stones) {\n        uf.union(r, c + 10001)                       // row r and column c become connected\n    }\n    val roots = HashSet<Int>()\n    for ((r, _) in stones) roots.add(uf.find(r))     // distinct groups\n    return stones.size - roots.size                  // keep one stone per group\n}\n// Time: O(n * α)   Space: O(20002)\n// Stones sharing a row or column are in one group, and each group can shrink to one stone"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Satisfiability of Equality Equations",
+      "language": "kotlin",
+      "code": "fun equationsPossible(equations: Array<String>): Boolean {\n    val uf = UnionFind(26)\n    for (e in equations) {\n        if (e[1] == '=') uf.union(e[0] - 'a', e[3] - 'a')     // first apply all equalities\n    }\n    for (e in equations) {\n        if (e[1] == '!' && uf.connected(e[0] - 'a', e[3] - 'a')) return false\n    }\n    return true\n}\n// Time: O(n * α)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Longest Consecutive Sequence (Union Find Version)",
+      "language": "kotlin",
+      "code": "fun longestConsecutive(nums: IntArray): Int {\n    if (nums.isEmpty()) return 0\n    val uf = UnionFind(nums.size)\n    val index = HashMap<Int, Int>()                  // value -> index in nums\n    for ((i, x) in nums.withIndex()) {\n        if (x in index) continue                     // skip duplicates\n        index[x] = i\n        index[x - 1]?.let { uf.union(i, it) }\n        index[x + 1]?.let { uf.union(i, it) }\n    }\n    var best = 1\n    for (i in nums.indices) best = maxOf(best, uf.sizeOf(i))\n    return best\n}\n// Time: O(n * α(n))   Space: O(n)\n// The HashSet start-of-sequence method is simpler, this shows the DSU idea"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Smallest String With Swaps",
+      "language": "kotlin",
+      "code": "fun smallestStringWithSwaps(s: String, pairs: List<List<Int>>): String {\n    val uf = UnionFind(s.length)\n    for ((a, b) in pairs) uf.union(a, b)\n\n    val groups = HashMap<Int, MutableList<Int>>()\n    for (i in s.indices) {\n        groups.getOrPut(uf.find(i)) { mutableListOf() }.add(i)   // indices in ascending order\n    }\n\n    val result = CharArray(s.length)\n    for (indices in groups.values) {\n        val chars = indices.map { s[it] }.sorted()               // sort letters of the group\n        for ((k, idx) in indices.withIndex()) {\n            result[idx] = chars[k]                               // smallest letters to earliest slots\n        }\n    }\n    return String(result)\n}\n// Time: O(n log n)   Space: O(n)\n// Swaps inside a connected group can reach any permutation of that group"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Evaluate Division (Weighted Union Find)",
+      "language": "kotlin",
+      "code": "class WeightedUnionFind {\n    private val parent = HashMap<String, String>()\n    private val weight = HashMap<String, Double>()       // value of node / value of its parent\n\n    fun find(x: String): String {\n        if (x !in parent) {\n            parent[x] = x\n            weight[x] = 1.0\n        }\n        if (parent[x] != x) {\n            val p = parent[x]!!\n            val root = find(p)\n            weight[x] = weight[x]!! * weight[p]!!        // now x / root\n            parent[x] = root\n        }\n        return parent[x]!!\n    }\n\n    fun union(a: String, b: String, value: Double) {     // a / b = value\n        val rootA = find(a)\n        val rootB = find(b)\n        if (rootA != rootB) {\n            parent[rootA] = rootB\n            weight[rootA] = value * weight[b]!! / weight[a]!!\n        }\n    }\n\n    fun query(a: String, b: String): Double {\n        if (a !in parent || b !in parent) return -1.0\n        if (find(a) != find(b)) return -1.0\n        return weight[a]!! / weight[b]!!\n    }\n}\n\nfun calcEquation(\n    equations: List<List<String>>,\n    values: DoubleArray,\n    queries: List<List<String>>\n): DoubleArray {\n    val uf = WeightedUnionFind()\n    for ((i, eq) in equations.withIndex()) uf.union(eq[0], eq[1], values[i])\n    return DoubleArray(queries.size) { uf.query(queries[it][0], queries[it][1]) }\n}\n// Time: O((E + Q) * α)   Space: O(V)\n// Each node stores a ratio to its parent, so the path product gives the ratio to the root"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Min Cost to Connect All Points (Kruskal's MST)",
+      "language": "kotlin",
+      "code": "import kotlin.math.abs\n\nfun minCostConnectPoints(points: Array<IntArray>): Int {\n    val n = points.size\n    val edges = ArrayList<IntArray>()\n    for (i in 0 until n) {\n        for (j in i + 1 until n) {\n            val dist = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1])\n            edges.add(intArrayOf(dist, i, j))\n        }\n    }\n    edges.sortBy { it[0] }                           // cheapest edges first\n\n    val uf = UnionFind(n)\n    var total = 0\n    var used = 0\n    for ((dist, a, b) in edges) {\n        if (uf.union(a, b)) {                        // take the edge only if it joins two groups\n            total += dist\n            used++\n            if (used == n - 1) break\n        }\n    }\n    return total\n}\n// Time: O(E log E) with E = n²   Space: O(E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Number of Operations to Make Network Connected",
+      "language": "kotlin",
+      "code": "fun makeConnected(n: Int, connections: Array<IntArray>): Int {\n    if (connections.size < n - 1) return -1          // not enough cables to link every computer\n    val uf = UnionFind(n)\n    for ((a, b) in connections) uf.union(a, b)\n    return uf.components - 1                         // one move connects two components\n}\n// Time: O((n + E) * α(n))   Space: O(n)"
+    },
+    {
+      "type": "table",
+      "heading": "Union Find vs DFS or BFS",
+      "rows": [
+        {
+          "situation": "Graph is fixed, one connectivity question",
+          "best": "DFS or BFS",
+          "reason": "One O(V + E) pass answers everything"
+        },
+        {
+          "situation": "Edges arrive over time, queries in between",
+          "best": "Union Find",
+          "reason": "Each update costs O(α(n)) instead of re-traversing"
+        },
+        {
+          "situation": "Need the actual path between nodes",
+          "best": "DFS or BFS",
+          "reason": "Union Find only knows groups, not paths"
+        },
+        {
+          "situation": "Need shortest path",
+          "best": "BFS or Dijkstra",
+          "reason": "Union Find has no distance information"
+        },
+        {
+          "situation": "Detect a cycle in an undirected graph",
+          "best": "Union Find or DFS",
+          "reason": "Both work, Union Find is shorter"
+        },
+        {
+          "situation": "Directed graph",
+          "best": "DFS or topological sort",
+          "reason": "Union Find treats edges as undirected"
+        },
+        {
+          "situation": "Minimum spanning tree",
+          "best": "Union Find (Kruskal)",
+          "reason": "Needs fast 'same group' checks"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Number of Provinces / Connected Components",
+          "technique": "Union all edges, read components",
+          "key_idea": "components decreases on each successful union"
+        },
+        {
+          "problem": "Redundant Connection",
+          "technique": "Union until one fails",
+          "key_idea": "Failed union means the edge closes a cycle"
+        },
+        {
+          "problem": "Graph Valid Tree",
+          "technique": "n - 1 edges and no failed union",
+          "key_idea": "Connected and acyclic"
+        },
+        {
+          "problem": "Accounts Merge",
+          "technique": "Union accounts sharing an email",
+          "key_idea": "Group emails by root account"
+        },
+        {
+          "problem": "Number of Islands II",
+          "technique": "Online union with grid ids",
+          "key_idea": "Add land, then merge with land neighbors"
+        },
+        {
+          "problem": "Most Stones Removed",
+          "technique": "Union rows with columns",
+          "key_idea": "Answer is stones minus groups"
+        },
+        {
+          "problem": "Equality Equations",
+          "technique": "Union equal pairs, then check not-equal pairs",
+          "key_idea": "Two passes in a fixed order"
+        },
+        {
+          "problem": "Smallest String With Swaps",
+          "technique": "Union swappable indices, sort per group",
+          "key_idea": "Any group order is reachable"
+        },
+        {
+          "problem": "Evaluate Division",
+          "technique": "Weighted Union Find",
+          "key_idea": "Store ratio to the parent"
+        },
+        {
+          "problem": "Min Cost to Connect All Points",
+          "technique": "Kruskal with Union Find",
+          "key_idea": "Sort edges, take those that merge groups"
+        },
+        {
+          "problem": "Make Network Connected",
+          "technique": "Count components",
+          "key_idea": "Need components - 1 spare cables"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Linking the nodes themselves instead of their roots, which breaks the group structure",
+        "Skipping path compression or union by size, which can degrade operations to O(n)",
+        "Using an array of size n for 1-indexed nodes (use n + 1)",
+        "Forgetting to decrement the component count only when a union actually merges two groups",
+        "Using Union Find on a directed graph, where edge direction matters",
+        "Reading parent[x] instead of find(x) when asking for the group, since parent is not always the root",
+        "Letting row and column ids collide when modeling both in one structure (add an offset)",
+        "Recursive find on a very long chain (use the iterative version when n is huge and compression has not run yet)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "operation": "find / union (both optimizations)",
+          "time": "O(α(n)) amortized, nearly O(1)",
+          "space": "O(n)"
+        },
+        {
+          "operation": "Build for n elements",
+          "time": "O(n)",
+          "space": "O(n)"
+        },
+        {
+          "operation": "Process E edges",
+          "time": "O(E * α(n))",
+          "space": "O(n)"
+        },
+        {
+          "operation": "Kruskal's MST",
+          "time": "O(E log E) for the sort",
+          "space": "O(n + E)"
+        },
+        {
+          "operation": "Weighted Union Find",
+          "time": "O(α(n)) per operation",
+          "space": "O(n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Number of Provinces",
+        "Number of Connected Components in an Undirected Graph",
+        "Redundant Connection",
+        "Graph Valid Tree",
+        "Accounts Merge",
+        "Number of Islands II",
+        "Most Stones Removed with Same Row or Column",
+        "Satisfiability of Equality Equations",
+        "Smallest String With Swaps",
+        "Evaluate Division",
+        "Min Cost to Connect All Points",
+        "Number of Operations to Make Network Connected",
+        "Longest Consecutive Sequence",
+        "Regions Cut by Slashes",
+        "Largest Component Size by Common Factor"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Union Find maintains disjoint groups with find (which group?) and union (merge groups)",
+        "Path compression plus union by size gives near-constant O(α(n)) operations",
+        "A union that returns false means the two items were already connected, which detects cycles",
+        "Track the number of components by decreasing it on every successful merge",
+        "Map grid cells, letters and strings to integer ids so one array-based structure works",
+        "Choose Union Find when connections arrive over time or when you only need group membership, and DFS or BFS when you need paths"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,400 @@
+{
+  "title": "Tree DFS (Pre/In/Post Order)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Tree DFS Pattern?",
+      "content": "Tree DFS (Depth-First Search) explores a tree by going as deep as possible down one branch before backing up and trying the next. It is usually written with recursion, where the call stack remembers the path, or with an explicit stack. DFS is the natural tool for questions about paths, subtrees, depths and heights, because the answer for a node depends on the answers for its children. It runs in O(n) time and O(h) space, where h is the height of the tree."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Root-to-leaf or any-to-any path problems (path sum, all paths, maximum path)",
+        "Subtree properties: height, diameter, balance, symmetry, equality",
+        "Validate or compare trees (same tree, subtree, mirror)",
+        "Lowest common ancestor and ancestor-descendant questions",
+        "Building or modifying trees (invert, flatten, construct from traversals)",
+        "Counting or collecting nodes that satisfy a condition along the path",
+        "Backtracking over tree paths",
+        "Keywords: path, subtree, height, depth, diameter, ancestor, root to leaf, balanced, symmetric"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "TreeNode Definition",
+      "language": "kotlin",
+      "code": "class TreeNode(var `val`: Int) {\n    var left: TreeNode? = null\n    var right: TreeNode? = null\n}"
+    },
+    {
+      "type": "table",
+      "heading": "Three DFS Orders",
+      "rows": [
+        {
+          "order": "Preorder",
+          "visit_sequence": "Node, Left, Right",
+          "use_it_for": "Copying or serializing a tree, passing info downward, root-to-leaf paths",
+          "note": "Root comes first"
+        },
+        {
+          "order": "Inorder",
+          "visit_sequence": "Left, Node, Right",
+          "use_it_for": "Sorted order of a BST, kth smallest, validate BST",
+          "note": "Gives a sorted list for a BST"
+        },
+        {
+          "order": "Postorder",
+          "visit_sequence": "Left, Right, Node",
+          "use_it_for": "Height, diameter, deleting a tree, combining children results",
+          "note": "Root comes last"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Picture walking through a maze of corridors that fork in two. DFS picks a corridor and follows it all the way to a dead end, then returns to the last fork and takes the other branch. The only difference between preorder, inorder and postorder is when you do your work at a node: before visiting the children, between them, or after both are done."
+    },
+    {
+      "type": "table",
+      "heading": "Top-Down vs Bottom-Up Recursion",
+      "rows": [
+        {
+          "style": "Top-down",
+          "how_it_works": "Pass information down as parameters (current sum, max so far, path)",
+          "when": "The node needs info from its ancestors",
+          "examples": "Path Sum, Good Nodes, Sum Root to Leaf Numbers"
+        },
+        {
+          "style": "Bottom-up",
+          "how_it_works": "Return information up from the children and combine it",
+          "when": "The node's answer depends on its subtrees",
+          "examples": "Height, Diameter, Balanced Tree, Max Path Sum, LCA"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Recursive Traversals",
+      "language": "kotlin",
+      "code": "fun preorder(node: TreeNode?, out: MutableList<Int>) {\n    if (node == null) return\n    out.add(node.`val`)                 // visit\n    preorder(node.left, out)\n    preorder(node.right, out)\n}\n\nfun inorder(node: TreeNode?, out: MutableList<Int>) {\n    if (node == null) return\n    inorder(node.left, out)\n    out.add(node.`val`)                 // visit\n    inorder(node.right, out)\n}\n\nfun postorder(node: TreeNode?, out: MutableList<Int>) {\n    if (node == null) return\n    postorder(node.left, out)\n    postorder(node.right, out)\n    out.add(node.`val`)                 // visit\n}\n// Time: O(n)   Space: O(h) call stack"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Iterative Preorder",
+      "language": "kotlin",
+      "code": "fun preorderIterative(root: TreeNode?): List<Int> {\n    val result = mutableListOf<Int>()\n    if (root == null) return result\n    val stack = ArrayDeque<TreeNode>()\n    stack.addLast(root)\n    while (stack.isNotEmpty()) {\n        val node = stack.removeLast()\n        result.add(node.`val`)\n        node.right?.let { stack.addLast(it) }     // push right first\n        node.left?.let { stack.addLast(it) }      // so left is processed first\n    }\n    return result\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Iterative Inorder",
+      "language": "kotlin",
+      "code": "fun inorderIterative(root: TreeNode?): List<Int> {\n    val result = mutableListOf<Int>()\n    val stack = ArrayDeque<TreeNode>()\n    var curr = root\n    while (curr != null || stack.isNotEmpty()) {\n        while (curr != null) {                    // go as far left as possible\n            stack.addLast(curr)\n            curr = curr.left\n        }\n        val node = stack.removeLast()\n        result.add(node.`val`)                    // visit\n        curr = node.right                         // then explore the right subtree\n    }\n    return result\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Iterative Postorder",
+      "language": "kotlin",
+      "code": "fun postorderIterative(root: TreeNode?): List<Int> {\n    val result = ArrayDeque<Int>()\n    if (root == null) return result\n    val stack = ArrayDeque<TreeNode>()\n    stack.addLast(root)\n    while (stack.isNotEmpty()) {\n        val node = stack.removeLast()\n        result.addFirst(node.`val`)               // root, right, left, then reversed\n        node.left?.let { stack.addLast(it) }\n        node.right?.let { stack.addLast(it) }\n    }\n    return result\n}\n// Time: O(n)   Space: O(h) for the stack, O(n) for the result"
+    },
+    {
+      "type": "bullet",
+      "heading": "The DFS Recipe for Tree Problems",
+      "items": [
+        "1. Base case: what should a null node return (0, true, null, empty list)?",
+        "2. Decide what each node needs to know: from ancestors (parameters) or from children (return value)?",
+        "3. Decide what to return from a call (height, sum, boolean, node)",
+        "4. Combine the left and right results at the current node",
+        "5. If the answer is not what you return (diameter, max path), update a variable outside the recursion",
+        "6. Leaf check is node.left == null && node.right == null, not just node == null"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Maximum Depth (Bottom-Up)",
+      "language": "kotlin",
+      "code": "fun maxDepth(root: TreeNode?): Int {\n    if (root == null) return 0\n    return 1 + maxOf(maxDepth(root.left), maxDepth(root.right))\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Same Tree and Symmetric Tree",
+      "language": "kotlin",
+      "code": "fun isSameTree(p: TreeNode?, q: TreeNode?): Boolean {\n    if (p == null && q == null) return true\n    if (p == null || q == null) return false\n    return p.`val` == q.`val` &&\n        isSameTree(p.left, q.left) &&\n        isSameTree(p.right, q.right)\n}\n\nfun isSymmetric(root: TreeNode?): Boolean =\n    root == null || isMirror(root.left, root.right)\n\nfun isMirror(a: TreeNode?, b: TreeNode?): Boolean {\n    if (a == null && b == null) return true\n    if (a == null || b == null) return false\n    return a.`val` == b.`val` &&\n        isMirror(a.left, b.right) &&              // outer pair\n        isMirror(a.right, b.left)                 // inner pair\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Invert Binary Tree",
+      "language": "kotlin",
+      "code": "fun invertTree(root: TreeNode?): TreeNode? {\n    if (root == null) return null\n    val left = invertTree(root.left)\n    val right = invertTree(root.right)\n    root.left = right\n    root.right = left\n    return root\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Path Sum (Top-Down)",
+      "language": "kotlin",
+      "code": "fun hasPathSum(root: TreeNode?, target: Int): Boolean {\n    if (root == null) return false\n    if (root.left == null && root.right == null) return root.`val` == target   // leaf\n    val remaining = target - root.`val`\n    return hasPathSum(root.left, remaining) || hasPathSum(root.right, remaining)\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Path Sum II (All Paths With Backtracking)",
+      "language": "kotlin",
+      "code": "fun pathSum(root: TreeNode?, targetSum: Int): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun dfs(node: TreeNode?, remaining: Int) {\n        if (node == null) return\n        path.add(node.`val`)                                   // choose\n        if (node.left == null && node.right == null && node.`val` == remaining) {\n            result.add(ArrayList(path))                        // copy the current path\n        } else {\n            dfs(node.left, remaining - node.`val`)\n            dfs(node.right, remaining - node.`val`)\n        }\n        path.removeAt(path.lastIndex)                          // un-choose (backtrack)\n    }\n\n    dfs(root, targetSum)\n    return result\n}\n// Time: O(n * h) in the worst case because of path copies   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Sum Root to Leaf Numbers",
+      "language": "kotlin",
+      "code": "fun sumNumbers(root: TreeNode?): Int {\n    fun dfs(node: TreeNode?, current: Int): Int {\n        if (node == null) return 0\n        val value = current * 10 + node.`val`\n        if (node.left == null && node.right == null) return value\n        return dfs(node.left, value) + dfs(node.right, value)\n    }\n    return dfs(root, 0)\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Binary Tree Paths",
+      "language": "kotlin",
+      "code": "fun binaryTreePaths(root: TreeNode?): List<String> {\n    val result = mutableListOf<String>()\n\n    fun dfs(node: TreeNode?, path: String) {\n        if (node == null) return\n        val current = if (path.isEmpty()) \"${node.`val`}\" else \"$path->${node.`val`}\"\n        if (node.left == null && node.right == null) {\n            result.add(current)\n            return\n        }\n        dfs(node.left, current)\n        dfs(node.right, current)\n    }\n\n    dfs(root, \"\")\n    return result\n}\n// Time: O(n * h) for building strings   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Path Sum III (Any Downward Path, Prefix Sum + Map)",
+      "language": "kotlin",
+      "code": "fun pathSumIII(root: TreeNode?, targetSum: Int): Int {\n    val prefixCount = HashMap<Long, Int>()\n    prefixCount[0L] = 1\n\n    fun dfs(node: TreeNode?, current: Long): Int {\n        if (node == null) return 0\n        val sum = current + node.`val`\n        var count = prefixCount[sum - targetSum] ?: 0          // paths ending here\n        prefixCount[sum] = (prefixCount[sum] ?: 0) + 1\n        count += dfs(node.left, sum) + dfs(node.right, sum)\n        prefixCount[sum] = prefixCount[sum]!! - 1              // backtrack\n        return count\n    }\n\n    return dfs(root, 0L)\n}\n// Time: O(n)   Space: O(h)\n// Same idea as Subarray Sum Equals K, applied to root-to-node paths"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Diameter of Binary Tree (Global Update)",
+      "language": "kotlin",
+      "code": "fun diameterOfBinaryTree(root: TreeNode?): Int {\n    var best = 0\n\n    fun height(node: TreeNode?): Int {\n        if (node == null) return 0\n        val l = height(node.left)\n        val r = height(node.right)\n        best = maxOf(best, l + r)               // longest path through this node\n        return 1 + maxOf(l, r)                  // but only one side can extend upward\n    }\n\n    height(root)\n    return best\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Binary Tree Maximum Path Sum",
+      "language": "kotlin",
+      "code": "fun maxPathSum(root: TreeNode?): Int {\n    var best = Int.MIN_VALUE\n\n    fun gain(node: TreeNode?): Int {\n        if (node == null) return 0\n        val l = maxOf(0, gain(node.left))       // ignore negative branches\n        val r = maxOf(0, gain(node.right))\n        best = maxOf(best, node.`val` + l + r)  // path that bends at this node\n        return node.`val` + maxOf(l, r)         // path that continues upward\n    }\n\n    gain(root)\n    return best\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Lowest Common Ancestor",
+      "language": "kotlin",
+      "code": "fun lowestCommonAncestor(root: TreeNode?, p: TreeNode, q: TreeNode): TreeNode? {\n    if (root == null || root === p || root === q) return root\n    val left = lowestCommonAncestor(root.left, p, q)\n    val right = lowestCommonAncestor(root.right, p, q)\n    return if (left != null && right != null) root     // p and q are on different sides\n    else left ?: right                                  // both are on one side\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Balanced Binary Tree (Early Exit With -1)",
+      "language": "kotlin",
+      "code": "import kotlin.math.abs\n\nfun isBalanced(root: TreeNode?): Boolean {\n    fun height(node: TreeNode?): Int {\n        if (node == null) return 0\n        val l = height(node.left)\n        if (l == -1) return -1                  // left subtree already unbalanced\n        val r = height(node.right)\n        if (r == -1) return -1\n        if (abs(l - r) > 1) return -1\n        return 1 + maxOf(l, r)\n    }\n    return height(root) != -1\n}\n// Time: O(n)   Space: O(h)\n// Calling height() repeatedly from each node would be O(n²)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Subtree of Another Tree",
+      "language": "kotlin",
+      "code": "fun isSubtree(root: TreeNode?, subRoot: TreeNode?): Boolean {\n    if (subRoot == null) return true\n    if (root == null) return false\n    return isSameTree(root, subRoot) ||\n        isSubtree(root.left, subRoot) ||\n        isSubtree(root.right, subRoot)\n}\n// Time: O(n * m)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Count Good Nodes (Top-Down)",
+      "language": "kotlin",
+      "code": "fun goodNodes(root: TreeNode?): Int {\n    fun dfs(node: TreeNode?, maxSoFar: Int): Int {\n        if (node == null) return 0\n        val good = if (node.`val` >= maxSoFar) 1 else 0\n        val newMax = maxOf(maxSoFar, node.`val`)\n        return good + dfs(node.left, newMax) + dfs(node.right, newMax)\n    }\n    return dfs(root, Int.MIN_VALUE)\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Construct Tree From Preorder and Inorder",
+      "language": "kotlin",
+      "code": "fun buildTree(preorder: IntArray, inorder: IntArray): TreeNode? {\n    val indexOf = HashMap<Int, Int>()\n    for ((i, v) in inorder.withIndex()) indexOf[v] = i\n    var preIdx = 0\n\n    fun build(left: Int, right: Int): TreeNode? {\n        if (left > right) return null\n        val rootVal = preorder[preIdx++]                  // preorder gives the root first\n        val root = TreeNode(rootVal)\n        val mid = indexOf[rootVal]!!                      // inorder splits left and right\n        root.left = build(left, mid - 1)\n        root.right = build(mid + 1, right)\n        return root\n    }\n\n    return build(0, inorder.size - 1)\n}\n// Time: O(n)   Space: O(n)\n// Build the left subtree before the right one because preIdx moves in preorder"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 16: Flatten Binary Tree to Linked List (O(1) Space)",
+      "language": "kotlin",
+      "code": "fun flatten(root: TreeNode?) {\n    var curr = root\n    while (curr != null) {\n        val left = curr.left\n        if (left != null) {\n            var pred: TreeNode = left\n            while (pred.right != null) pred = pred.right!!    // rightmost node of the left subtree\n            pred.right = curr.right                           // attach the old right subtree\n            curr.right = left                                 // move the left subtree to the right\n            curr.left = null\n        }\n        curr = curr.right\n    }\n}\n// Time: O(n)   Space: O(1)\n// Result follows preorder order"
+    },
+    {
+      "type": "text_code",
+      "heading": "Deep Trees: Avoiding StackOverflowError",
+      "language": "kotlin",
+      "code": "// A skewed tree with 100,000 nodes can overflow the default call stack.\n// Option 1: use an iterative version with your own stack (see the templates above).\n// Option 2: run the recursion in a thread with a larger stack:\nfun runWithBigStack(block: () -> Unit) {\n    val t = Thread(null, block, \"dfs\", 512L * 1024 * 1024)\n    t.start()\n    t.join()\n}"
+    },
+    {
+      "type": "table",
+      "heading": "What Does Each Node Return?",
+      "rows": [
+        {
+          "problem": "Height or depth",
+          "return_value": "1 + max(left, right)",
+          "extra_state": "None"
+        },
+        {
+          "problem": "Diameter",
+          "return_value": "Height of the node",
+          "extra_state": "Global best = left + right"
+        },
+        {
+          "problem": "Max path sum",
+          "return_value": "Best downward gain",
+          "extra_state": "Global best = val + left + right"
+        },
+        {
+          "problem": "Balanced tree",
+          "return_value": "Height, or -1 if unbalanced",
+          "extra_state": "None"
+        },
+        {
+          "problem": "Lowest common ancestor",
+          "return_value": "The node if found, else null",
+          "extra_state": "None"
+        },
+        {
+          "problem": "Path sum",
+          "return_value": "Boolean",
+          "extra_state": "Remaining sum passed down"
+        },
+        {
+          "problem": "All root-to-leaf paths",
+          "return_value": "Nothing (collect in a list)",
+          "extra_state": "Current path with backtracking"
+        },
+        {
+          "problem": "Same or symmetric tree",
+          "return_value": "Boolean",
+          "extra_state": "None"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Maximum Depth",
+          "style": "Bottom-up",
+          "key_idea": "1 + max of the child depths"
+        },
+        {
+          "problem": "Invert Binary Tree",
+          "style": "Postorder or preorder",
+          "key_idea": "Swap left and right at every node"
+        },
+        {
+          "problem": "Path Sum I, II, III",
+          "style": "Top-down",
+          "key_idea": "Pass the remaining sum; III uses prefix sums"
+        },
+        {
+          "problem": "Diameter of Binary Tree",
+          "style": "Bottom-up + global",
+          "key_idea": "left height + right height at each node"
+        },
+        {
+          "problem": "Binary Tree Maximum Path Sum",
+          "style": "Bottom-up + global",
+          "key_idea": "Ignore negative branches"
+        },
+        {
+          "problem": "Lowest Common Ancestor",
+          "style": "Bottom-up",
+          "key_idea": "Both sides found means this node is the LCA"
+        },
+        {
+          "problem": "Balanced Binary Tree",
+          "style": "Bottom-up",
+          "key_idea": "Return -1 to propagate failure"
+        },
+        {
+          "problem": "Same, Symmetric, Subtree",
+          "style": "Parallel recursion",
+          "key_idea": "Compare two nodes at once"
+        },
+        {
+          "problem": "Count Good Nodes",
+          "style": "Top-down",
+          "key_idea": "Pass the max on the path"
+        },
+        {
+          "problem": "Construct from Preorder + Inorder",
+          "style": "Divide and conquer",
+          "key_idea": "Preorder gives the root, inorder splits the sides"
+        },
+        {
+          "problem": "Flatten to Linked List",
+          "style": "Morris-like",
+          "key_idea": "Attach the right subtree to the left subtree's rightmost node"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Treating a node with one child as a leaf (a leaf has both children null)",
+        "Forgetting the base case for null, which causes a NullPointerException",
+        "Not backtracking (removing the last element from the path) after exploring a branch",
+        "Adding the same path list to the result instead of copying it (ArrayList(path))",
+        "Returning the diameter or max path sum instead of the height or gain, and updating a variable separately",
+        "Not ignoring negative branches in the maximum path sum problem",
+        "Recomputing heights from every node, which gives O(n²) instead of O(n)",
+        "Overflowing the call stack on very deep trees (use an iterative version)",
+        "Mixing up preorder, inorder and postorder when building or serializing a tree"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Recursive DFS",
+          "time": "O(n)",
+          "space": "O(h), from O(log n) for a balanced tree to O(n) for a skewed tree"
+        },
+        {
+          "approach": "Iterative DFS with a stack",
+          "time": "O(n)",
+          "space": "O(h)"
+        },
+        {
+          "approach": "Morris traversal",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Path collection",
+          "time": "O(n * h)",
+          "space": "O(h) plus the output"
+        },
+        {
+          "approach": "Height computed from every node",
+          "time": "O(n²) worst case",
+          "space": "O(h)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Maximum Depth of Binary Tree",
+        "Same Tree / Symmetric Tree / Subtree of Another Tree",
+        "Invert Binary Tree",
+        "Path Sum, Path Sum II and Path Sum III",
+        "Sum Root to Leaf Numbers",
+        "Binary Tree Paths",
+        "Diameter of Binary Tree",
+        "Binary Tree Maximum Path Sum",
+        "Lowest Common Ancestor of a Binary Tree",
+        "Balanced Binary Tree",
+        "Count Good Nodes in Binary Tree",
+        "Construct Binary Tree from Preorder and Inorder Traversal",
+        "Flatten Binary Tree to Linked List",
+        "Serialize and Deserialize Binary Tree"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "DFS goes deep first and is usually written with recursion",
+        "Preorder works on the node before the children, inorder between them, postorder after them",
+        "Pass information down for top-down problems and return information up for bottom-up problems",
+        "When the answer is not the return value (diameter, max path sum), track it in an outer variable",
+        "A leaf has no left and no right child, so check both",
+        "Time is O(n) and space is O(h), where h is the tree height"
+      ]
+    }
+  ]
+}

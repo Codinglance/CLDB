@@ -1,0 +1,367 @@
+{
+  "title": "Trie (Prefix Tree)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is a Trie?",
+      "content": "A Trie (pronounced 'try', also called a prefix tree) is a tree that stores strings one character per edge. All words that share a prefix share the same path from the root, so the prefix is stored only once. Each node can mark whether a word ends there. A trie answers 'does this word exist?' and 'does any word start with this prefix?' in O(L) time, where L is the length of the query, independent of how many words are stored."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Prefix search and autocomplete (words that start with 'app')",
+        "Check whether a word or a prefix exists in a dictionary",
+        "Search with wildcards such as '.' in a word dictionary",
+        "Search many words in a grid at once (Word Search II)",
+        "Replace words by their shortest root, or find the longest common prefix",
+        "Count how many words share a prefix",
+        "Binary tries for maximum XOR and bitwise prefix problems",
+        "Keywords: prefix, startsWith, dictionary, autocomplete, suggestions, wildcard, longest prefix"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Imagine the words 'cat', 'car' and 'cart'. A HashSet stores three separate strings. A trie stores one path c, a, t and one path c, a, r, and 'cart' simply extends the 'car' path by one more node. The shared prefix 'ca' exists once. To check whether any word starts with 'ca', you walk two edges and you are done, with no need to scan every word."
+    },
+    {
+      "type": "table",
+      "heading": "Trie vs Other Structures",
+      "rows": [
+        {
+          "structure": "Trie",
+          "search_word": "O(L)",
+          "prefix_query": "O(L)",
+          "space": "O(total characters)",
+          "best_for": "Many prefix queries, autocomplete, shared prefixes"
+        },
+        {
+          "structure": "HashSet<String>",
+          "search_word": "O(L) to hash",
+          "prefix_query": "O(N * L), must scan every word",
+          "space": "O(total characters)",
+          "best_for": "Exact membership only"
+        },
+        {
+          "structure": "Sorted array + binary search",
+          "search_word": "O(L log N)",
+          "prefix_query": "O(L log N)",
+          "space": "O(total characters)",
+          "best_for": "Static dictionary, low memory"
+        },
+        {
+          "structure": "TreeMap / TreeSet",
+          "search_word": "O(L log N)",
+          "prefix_query": "O(L log N) with ceiling",
+          "space": "O(total characters)",
+          "best_for": "Sorted order and range queries"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Ways to Store Children",
+      "rows": [
+        {
+          "option": "Array of 26 (arrayOfNulls)",
+          "lookup": "O(1), direct index",
+          "memory": "26 pointers per node, even if unused",
+          "use_when": "Lowercase letters only"
+        },
+        {
+          "option": "HashMap<Char, Node>",
+          "lookup": "O(1) average",
+          "memory": "Only the children that exist",
+          "use_when": "Any characters, large or unknown alphabet"
+        },
+        {
+          "option": "Array of 2",
+          "lookup": "O(1)",
+          "memory": "2 pointers per node",
+          "use_when": "Binary trie for numbers (XOR problems)"
+        },
+        {
+          "option": "TreeMap<Char, Node>",
+          "lookup": "O(log k)",
+          "memory": "Only existing children",
+          "use_when": "Children must be visited in sorted order"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Trie With an Array of 26 Children",
+      "language": "kotlin",
+      "code": "class TrieNode {\n    val children = arrayOfNulls<TrieNode>(26)\n    var isEnd = false\n}\n\nclass Trie {\n    private val root = TrieNode()\n\n    fun insert(word: String) {\n        var node = root\n        for (c in word) {\n            val i = c - 'a'\n            if (node.children[i] == null) node.children[i] = TrieNode()\n            node = node.children[i]!!\n        }\n        node.isEnd = true                           // a word ends here\n    }\n\n    fun search(word: String): Boolean = findNode(word)?.isEnd == true\n\n    fun startsWith(prefix: String): Boolean = findNode(prefix) != null\n\n    private fun findNode(s: String): TrieNode? {\n        var node = root\n        for (c in s) {\n            node = node.children[c - 'a'] ?: return null\n        }\n        return node\n    }\n}\n// insert / search / startsWith: O(L)   Space: O(total characters * 26) in the worst case"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Trie With a HashMap (Any Character)",
+      "language": "kotlin",
+      "code": "class MapTrieNode {\n    val children = HashMap<Char, MapTrieNode>()\n    var isEnd = false\n}\n\nclass MapTrie {\n    private val root = MapTrieNode()\n\n    fun insert(word: String) {\n        var node = root\n        for (c in word) {\n            node = node.children.getOrPut(c) { MapTrieNode() }\n        }\n        node.isEnd = true\n    }\n\n    fun search(word: String): Boolean {\n        var node = root\n        for (c in word) node = node.children[c] ?: return false\n        return node.isEnd\n    }\n\n    fun startsWith(prefix: String): Boolean {\n        var node = root\n        for (c in prefix) node = node.children[c] ?: return false\n        return true\n    }\n}\n// Same complexity, much less memory when the alphabet is large or sparse"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Trie With Counts (Words and Prefixes)",
+      "language": "kotlin",
+      "code": "class CountNode {\n    val children = arrayOfNulls<CountNode>(26)\n    var passCount = 0        // how many words pass through this node (prefix count)\n    var endCount = 0         // how many words end exactly here\n}\n\nclass CountTrie {\n    private val root = CountNode()\n\n    fun insert(word: String) {\n        var node = root\n        for (c in word) {\n            val i = c - 'a'\n            if (node.children[i] == null) node.children[i] = CountNode()\n            node = node.children[i]!!\n            node.passCount++\n        }\n        node.endCount++\n    }\n\n    fun countWordsEqualTo(word: String): Int = find(word)?.endCount ?: 0\n\n    fun countWordsStartingWith(prefix: String): Int = find(prefix)?.passCount ?: 0\n\n    fun erase(word: String) {                       // assumes the word exists\n        var node = root\n        for (c in word) {\n            node = node.children[c - 'a']!!\n            node.passCount--\n        }\n        node.endCount--\n    }\n\n    private fun find(s: String): CountNode? {\n        var node = root\n        for (c in s) node = node.children[c - 'a'] ?: return null\n        return node\n    }\n}\n// All operations: O(L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Helper: Insert Into a Raw TrieNode",
+      "language": "kotlin",
+      "code": "// Used by several examples below\nfun insertInto(root: TrieNode, word: String) {\n    var node = root\n    for (c in word) {\n        val i = c - 'a'\n        if (node.children[i] == null) node.children[i] = TrieNode()\n        node = node.children[i]!!\n    }\n    node.isEnd = true\n}"
+    },
+    {
+      "type": "bullet",
+      "heading": "Four Things a Trie Node Can Store",
+      "items": [
+        "isEnd: marks that a complete word ends here (needed to tell 'car' from the prefix of 'cart')",
+        "passCount: how many words use this node, for prefix counting and safe deletion",
+        "word: the full word at its end node, which saves rebuilding it during DFS (Word Search II)",
+        "A small list of suggestions, for autocomplete problems"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Design Add and Search Words (Wildcard '.')",
+      "language": "kotlin",
+      "code": "class WordDictionary {\n    private class Node {\n        val next = arrayOfNulls<Node>(26)\n        var isEnd = false\n    }\n\n    private val root = Node()\n\n    fun addWord(word: String) {\n        var node = root\n        for (c in word) {\n            val i = c - 'a'\n            if (node.next[i] == null) node.next[i] = Node()\n            node = node.next[i]!!\n        }\n        node.isEnd = true\n    }\n\n    fun search(word: String): Boolean {\n        fun dfs(node: Node, i: Int): Boolean {\n            if (i == word.length) return node.isEnd\n            val c = word[i]\n            if (c == '.') {                              // try every child\n                for (child in node.next) {\n                    if (child != null && dfs(child, i + 1)) return true\n                }\n                return false\n            }\n            val child = node.next[c - 'a'] ?: return false\n            return dfs(child, i + 1)\n        }\n        return dfs(root, 0)\n    }\n}\n// addWord: O(L)   search: O(L) without dots, O(26^dots * L) worst case"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Longest Common Prefix",
+      "language": "kotlin",
+      "code": "fun longestCommonPrefix(strs: Array<String>): String {\n    if (strs.isEmpty()) return \"\"\n    val root = TrieNode()\n    for (s in strs) insertInto(root, s)\n\n    val sb = StringBuilder()\n    var node = root\n    while (true) {\n        var count = 0\n        var index = -1\n        for (i in 0 until 26) {\n            if (node.children[i] != null) { count++; index = i }\n        }\n        if (count != 1 || node.isEnd) break              // branch or a word ends: stop\n        sb.append('a' + index)\n        node = node.children[index]!!\n    }\n    return sb.toString()\n}\n// Time: O(total characters)   Space: O(total characters)\n// A simple vertical scan also works in O(total characters) with O(1) space"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Replace Words (Shortest Root)",
+      "language": "kotlin",
+      "code": "fun replaceWords(dictionary: List<String>, sentence: String): String {\n    val root = TrieNode()\n    for (word in dictionary) insertInto(root, word)\n\n    fun shortestRoot(word: String): String {\n        var node = root\n        for ((i, c) in word.withIndex()) {\n            node = node.children[c - 'a'] ?: return word     // no root matches\n            if (node.isEnd) return word.substring(0, i + 1)  // first root found\n        }\n        return word\n    }\n\n    return sentence.split(\" \").joinToString(\" \") { shortestRoot(it) }\n}\n// Time: O(total characters)   Space: O(dictionary characters)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Word Search II (Trie + Backtracking)",
+      "language": "kotlin",
+      "code": "class WsNode {\n    val children = arrayOfNulls<WsNode>(26)\n    var word: String? = null              // full word stored at the end node\n}\n\nfun findWords(board: Array<CharArray>, words: Array<String>): List<String> {\n    val root = WsNode()\n    for (w in words) {\n        var node = root\n        for (c in w) {\n            val i = c - 'a'\n            if (node.children[i] == null) node.children[i] = WsNode()\n            node = node.children[i]!!\n        }\n        node.word = w\n    }\n\n    val result = mutableListOf<String>()\n    val rows = board.size\n    val cols = board[0].size\n\n    fun dfs(r: Int, c: Int, parent: WsNode) {\n        val ch = board[r][c]\n        val node = parent.children[ch - 'a'] ?: return          // no word has this prefix\n        node.word?.let {\n            result.add(it)\n            node.word = null                                    // avoid duplicates\n        }\n        board[r][c] = '#'                                       // mark visited\n        if (r > 0 && board[r - 1][c] != '#') dfs(r - 1, c, node)\n        if (r < rows - 1 && board[r + 1][c] != '#') dfs(r + 1, c, node)\n        if (c > 0 && board[r][c - 1] != '#') dfs(r, c - 1, node)\n        if (c < cols - 1 && board[r][c + 1] != '#') dfs(r, c + 1, node)\n        board[r][c] = ch                                        // backtrack\n        // prune: remove exhausted branches so later searches are faster\n        if (node.word == null && node.children.all { it == null }) {\n            parent.children[ch - 'a'] = null\n        }\n    }\n\n    for (r in 0 until rows) for (c in 0 until cols) dfs(r, c, root)\n    return result\n}\n// Time: O(rows * cols * 4 * 3^(L - 1)) worst case   Space: O(total characters)\n// One trie lets you search all words in a single board traversal"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Search Suggestions System (Top 3 per Prefix)",
+      "language": "kotlin",
+      "code": "class SuggestNode {\n    val children = arrayOfNulls<SuggestNode>(26)\n    val top = ArrayList<String>(3)                  // up to 3 smallest words with this prefix\n}\n\nfun suggestedProducts(products: Array<String>, searchWord: String): List<List<String>> {\n    products.sort()                                 // insertion order is lexicographic\n    val root = SuggestNode()\n    for (p in products) {\n        var node = root\n        for (c in p) {\n            val i = c - 'a'\n            if (node.children[i] == null) node.children[i] = SuggestNode()\n            node = node.children[i]!!\n            if (node.top.size < 3) node.top.add(p)\n        }\n    }\n\n    val result = mutableListOf<List<String>>()\n    var node: SuggestNode? = root\n    for (c in searchWord) {\n        node = node?.children?.get(c - 'a')         // becomes null once the prefix is not found\n        result.add(node?.top ?: emptyList())\n    }\n    return result\n}\n// Time: O(total characters + L)   Space: O(total characters)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Map Sum Pairs",
+      "language": "kotlin",
+      "code": "class MapSum {\n    private class Node {\n        val children = arrayOfNulls<Node>(26)\n        var sum = 0                                  // sum of values of all keys with this prefix\n    }\n\n    private val root = Node()\n    private val values = HashMap<String, Int>()\n\n    fun insert(key: String, value: Int) {\n        val delta = value - (values[key] ?: 0)      // handles overwriting an existing key\n        values[key] = value\n        var node = root\n        for (c in key) {\n            val i = c - 'a'\n            if (node.children[i] == null) node.children[i] = Node()\n            node = node.children[i]!!\n            node.sum += delta\n        }\n    }\n\n    fun sum(prefix: String): Int {\n        var node = root\n        for (c in prefix) node = node.children[c - 'a'] ?: return 0\n        return node.sum\n    }\n}\n// insert / sum: O(L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Longest Word in Dictionary (Built One Letter at a Time)",
+      "language": "kotlin",
+      "code": "fun longestWord(words: Array<String>): String {\n    val root = TrieNode()\n    for (w in words) insertInto(root, w)\n\n    var best = \"\"\n    fun dfs(node: TrieNode, path: StringBuilder) {\n        if (path.length > best.length) best = path.toString()   // strictly longer keeps the smallest tie\n        for (i in 0 until 26) {                                  // a to z gives lexicographic order\n            val child = node.children[i] ?: continue\n            if (!child.isEnd) continue                           // every prefix must be a word\n            path.append('a' + i)\n            dfs(child, path)\n            path.deleteCharAt(path.length - 1)\n        }\n    }\n\n    dfs(root, StringBuilder())\n    return best\n}\n// Time: O(total characters)   Space: O(total characters)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Maximum XOR of Two Numbers (Binary Trie)",
+      "language": "kotlin",
+      "code": "class BitNode {\n    val children = arrayOfNulls<BitNode>(2)\n}\n\nfun findMaximumXOR(nums: IntArray): Int {\n    val root = BitNode()\n    for (num in nums) {                               // insert 31 bits, most significant first\n        var node = root\n        for (bit in 30 downTo 0) {\n            val b = (num shr bit) and 1\n            if (node.children[b] == null) node.children[b] = BitNode()\n            node = node.children[b]!!\n        }\n    }\n\n    var best = 0\n    for (num in nums) {\n        var node = root\n        var xor = 0\n        for (bit in 30 downTo 0) {\n            val b = (num shr bit) and 1\n            val want = 1 - b                          // the opposite bit gives a 1 in the XOR\n            val opposite = node.children[want]\n            if (opposite != null) {\n                xor = xor or (1 shl bit)\n                node = opposite\n            } else {\n                node = node.children[b]!!\n            }\n        }\n        best = maxOf(best, xor)\n    }\n    return best\n}\n// Time: O(32 * n)   Space: O(32 * n)\n// Assumes non-negative numbers"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Stream of Characters (Reversed Trie)",
+      "language": "kotlin",
+      "code": "class StreamChecker(words: Array<String>) {\n    private class Node {\n        val children = arrayOfNulls<Node>(26)\n        var isEnd = false\n    }\n\n    private val root = Node()\n    private val stream = StringBuilder()\n    private var maxLen = 0\n\n    init {\n        for (w in words) {\n            maxLen = maxOf(maxLen, w.length)\n            var node = root\n            for (i in w.indices.reversed()) {              // insert each word reversed\n                val idx = w[i] - 'a'\n                if (node.children[idx] == null) node.children[idx] = Node()\n                node = node.children[idx]!!\n            }\n            node.isEnd = true\n        }\n    }\n\n    fun query(letter: Char): Boolean {\n        stream.append(letter)\n        var node = root\n        // walk backward through the most recent characters\n        var i = stream.length - 1\n        var steps = 0\n        while (i >= 0 && steps < maxLen) {\n            node = node.children[stream[i] - 'a'] ?: return false\n            if (node.isEnd) return true                    // a word is a suffix of the stream\n            i--\n            steps++\n        }\n        return false\n    }\n}\n// query: O(maxLen)   Space: O(total characters + stream length)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Count Words With a Given Prefix",
+      "language": "kotlin",
+      "code": "fun prefixCountDemo(words: List<String>, prefix: String): Int {\n    val trie = CountTrie()\n    for (w in words) trie.insert(w)\n    return trie.countWordsStartingWith(prefix)\n}\n// Build: O(total characters)   Each query: O(L)\n// Without a trie each query would scan all words: O(N * L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Autocomplete With DFS From the Prefix Node",
+      "language": "kotlin",
+      "code": "fun autocomplete(root: TrieNode, prefix: String, limit: Int): List<String> {\n    var node = root\n    for (c in prefix) node = node.children[c - 'a'] ?: return emptyList()\n\n    val result = mutableListOf<String>()\n    val path = StringBuilder(prefix)\n\n    fun dfs(cur: TrieNode) {\n        if (result.size == limit) return\n        if (cur.isEnd) result.add(path.toString())\n        for (i in 0 until 26) {                            // alphabetical order\n            val child = cur.children[i] ?: continue\n            path.append('a' + i)\n            dfs(child)\n            path.deleteCharAt(path.length - 1)\n        }\n    }\n\n    dfs(node)\n    return result\n}\n// Time: O(L + size of the explored subtree)   Space: O(depth)"
+    },
+    {
+      "type": "table",
+      "heading": "Trie Operations Quick Reference",
+      "rows": [
+        {
+          "operation": "Insert a word",
+          "steps": "Walk or create nodes for each character, mark isEnd",
+          "time": "O(L)"
+        },
+        {
+          "operation": "Search a whole word",
+          "steps": "Walk the path, check isEnd at the last node",
+          "time": "O(L)"
+        },
+        {
+          "operation": "Starts with a prefix",
+          "steps": "Walk the path, no isEnd check",
+          "time": "O(L)"
+        },
+        {
+          "operation": "Count words with a prefix",
+          "steps": "Read passCount at the end of the prefix",
+          "time": "O(L)"
+        },
+        {
+          "operation": "Delete a word",
+          "steps": "Decrement passCount and endCount, optionally prune empty nodes",
+          "time": "O(L)"
+        },
+        {
+          "operation": "Wildcard search",
+          "steps": "DFS, branch into all children on '.'",
+          "time": "O(26^dots * L) worst case"
+        },
+        {
+          "operation": "List words with a prefix",
+          "steps": "Walk to the prefix node, DFS below it",
+          "time": "O(L + results)"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Implement Trie (Prefix Tree)",
+          "technique": "Basic trie",
+          "key_idea": "insert, search with isEnd, startsWith without it"
+        },
+        {
+          "problem": "Design Add and Search Words",
+          "technique": "Trie + DFS",
+          "key_idea": "Branch into every child when the character is '.'"
+        },
+        {
+          "problem": "Longest Common Prefix",
+          "technique": "Trie walk",
+          "key_idea": "Follow single-child nodes that are not word ends"
+        },
+        {
+          "problem": "Replace Words",
+          "technique": "Trie of roots",
+          "key_idea": "Return the first prefix that is a word"
+        },
+        {
+          "problem": "Word Search II",
+          "technique": "Trie + grid backtracking",
+          "key_idea": "Store the word at the end node and prune dead branches"
+        },
+        {
+          "problem": "Search Suggestions System",
+          "technique": "Trie with top lists",
+          "key_idea": "Insert sorted words, keep the first 3 at each node"
+        },
+        {
+          "problem": "Map Sum Pairs",
+          "technique": "Trie with sums",
+          "key_idea": "Store the delta along the path when a key is overwritten"
+        },
+        {
+          "problem": "Longest Word in Dictionary",
+          "technique": "Trie DFS",
+          "key_idea": "Only walk through nodes that are word ends"
+        },
+        {
+          "problem": "Maximum XOR of Two Numbers",
+          "technique": "Binary trie",
+          "key_idea": "Prefer the opposite bit at each level"
+        },
+        {
+          "problem": "Stream of Characters",
+          "technique": "Reversed trie",
+          "key_idea": "Check suffixes of the stream against reversed words"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Forgetting the isEnd flag, so 'car' is wrongly reported as a word when only 'cart' was inserted",
+        "Returning true from search when you should check isEnd (search needs isEnd, startsWith does not)",
+        "Using an array of 26 for input that contains uppercase letters, digits or symbols",
+        "Using the trie for exact-match-only queries where a HashSet is simpler and lighter",
+        "Not copying the path when collecting words in DFS (use StringBuilder and delete the last character)",
+        "Adding duplicate results in Word Search II (clear the stored word after it is found)",
+        "Underestimating memory: 26 pointers per node can be heavy for large, sparse dictionaries",
+        "Forgetting to handle the empty string and the null child cases"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "operation": "Insert, search, startsWith",
+          "time": "O(L)",
+          "space": "O(1) extra"
+        },
+        {
+          "operation": "Build a trie of N words with average length L",
+          "time": "O(N * L)",
+          "space": "O(N * L), times the alphabet size for arrays"
+        },
+        {
+          "operation": "Word Search II",
+          "time": "O(rows * cols * 3^L)",
+          "space": "O(total characters)"
+        },
+        {
+          "operation": "Binary trie for XOR",
+          "time": "O(n * bits)",
+          "space": "O(n * bits)"
+        },
+        {
+          "operation": "Independent of N",
+          "time": "Query time depends only on the query length L, not on how many words are stored",
+          "space": "-"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Implement Trie (Prefix Tree)",
+        "Design Add and Search Words Data Structure",
+        "Longest Common Prefix",
+        "Replace Words",
+        "Word Search II",
+        "Search Suggestions System",
+        "Map Sum Pairs",
+        "Longest Word in Dictionary",
+        "Maximum XOR of Two Numbers in an Array",
+        "Stream of Characters",
+        "Prefix and Suffix Search",
+        "Palindrome Pairs",
+        "Implement Trie II (Prefix Tree with counts)",
+        "Count Prefix and Suffix Pairs"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "A trie stores strings character by character so words with the same prefix share a path",
+        "Insert, search and prefix queries cost O(L), independent of the number of stored words",
+        "Use isEnd to tell complete words from prefixes",
+        "Use an array of 26 for lowercase letters and a HashMap for larger alphabets",
+        "Store extra data in nodes (counts, the word, top suggestions) to answer harder questions in O(L)",
+        "Pair a trie with DFS or backtracking for wildcard search and for searching many words in a grid"
+      ]
+    }
+  ]
+}

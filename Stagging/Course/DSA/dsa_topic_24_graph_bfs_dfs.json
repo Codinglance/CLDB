@@ -1,0 +1,448 @@
+{
+  "title": "Graph BFS & DFS",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Graph BFS & DFS?",
+      "content": "A graph is a set of nodes (vertices) connected by edges. BFS (Breadth-First Search) explores it in waves: all neighbors first, then neighbors of neighbors, using a queue. DFS (Depth-First Search) follows one path as deep as it can before backing up, using recursion or a stack. Unlike a tree, a graph can contain cycles, so you must keep a visited set to avoid looping forever. Both run in O(V + E), where V is the number of nodes and E is the number of edges."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Explore everything reachable from a starting node",
+        "Count connected components, islands or provinces",
+        "Find the shortest path in an unweighted graph or grid (BFS)",
+        "Check if a path exists between two nodes",
+        "Detect cycles, check bipartiteness or validate a tree",
+        "Flood fill, matrix traversal and region problems",
+        "Search an implicit graph where states are nodes (word ladder, lock combinations)",
+        "Keywords: connected, reachable, islands, shortest path, minimum steps, nearest, clone, bipartite, cycle"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Ways to Represent a Graph",
+      "rows": [
+        {
+          "representation": "Adjacency list",
+          "structure": "List of neighbor lists",
+          "space": "O(V + E)",
+          "check_edge": "O(degree)",
+          "best_for": "Most problems, sparse graphs"
+        },
+        {
+          "representation": "Adjacency matrix",
+          "structure": "V x V array of 0/1 or weights",
+          "space": "O(V²)",
+          "check_edge": "O(1)",
+          "best_for": "Dense graphs, small V, provinces input"
+        },
+        {
+          "representation": "Edge list",
+          "structure": "List of (u, v) or (u, v, w)",
+          "space": "O(E)",
+          "check_edge": "O(E)",
+          "best_for": "Union Find, Kruskal, input format"
+        },
+        {
+          "representation": "Implicit graph",
+          "structure": "Neighbors computed on the fly",
+          "space": "Depends on visited set",
+          "check_edge": "-",
+          "best_for": "Grids, word ladder, puzzle states"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "BFS vs DFS",
+      "rows": [
+        {
+          "aspect": "Data structure",
+          "bfs": "Queue",
+          "dfs": "Stack or recursion"
+        },
+        {
+          "aspect": "Order",
+          "bfs": "Level by level (distance 0, 1, 2, ...)",
+          "dfs": "Deep along one path, then backtrack"
+        },
+        {
+          "aspect": "Shortest path (unweighted)",
+          "bfs": "Yes, the first arrival is the shortest",
+          "dfs": "No"
+        },
+        {
+          "aspect": "Space",
+          "bfs": "O(width of the graph)",
+          "dfs": "O(depth), up to O(V)"
+        },
+        {
+          "aspect": "Best for",
+          "bfs": "Minimum steps, nearest target, multi-source spread",
+          "dfs": "All paths, cycle detection, components, backtracking"
+        },
+        {
+          "aspect": "Risk",
+          "bfs": "Large queue on wide graphs",
+          "dfs": "Stack overflow on very deep graphs"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "BFS is a ripple spreading from a stone dropped in water: it reaches everything at distance 1 before anything at distance 2, which is why it finds shortest paths. DFS is exploring a maze by always taking the next corridor until you hit a dead end, then retracing your steps. In both cases the visited set is your breadcrumb trail so you never walk the same corridor twice."
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Build an Adjacency List",
+      "language": "kotlin",
+      "code": "fun buildGraph(n: Int, edges: Array<IntArray>, directed: Boolean = false): List<List<Int>> {\n    val graph = List(n) { mutableListOf<Int>() }\n    for ((u, v) in edges) {\n        graph[u].add(v)\n        if (!directed) graph[v].add(u)             // undirected: add both directions\n    }\n    return graph\n}\n\n// Weighted version: neighbor and weight\nfun buildWeightedGraph(n: Int, edges: Array<IntArray>): List<List<Pair<Int, Int>>> {\n    val graph = List(n) { mutableListOf<Pair<Int, Int>>() }\n    for ((u, v, w) in edges) {\n        graph[u].add(Pair(v, w))\n        graph[v].add(Pair(u, w))\n    }\n    return graph\n}\n// Build: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: BFS From a Start Node",
+      "language": "kotlin",
+      "code": "fun bfs(graph: List<List<Int>>, start: Int): List<Int> {\n    val order = mutableListOf<Int>()\n    val visited = BooleanArray(graph.size)\n    val queue = ArrayDeque<Int>()\n    visited[start] = true                          // mark when ADDING to the queue\n    queue.addLast(start)\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        order.add(node)\n        for (next in graph[node]) {\n            if (!visited[next]) {\n                visited[next] = true\n                queue.addLast(next)\n            }\n        }\n    }\n    return order\n}\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: BFS Shortest Distances (Unweighted)",
+      "language": "kotlin",
+      "code": "fun shortestDistances(graph: List<List<Int>>, start: Int): IntArray {\n    val dist = IntArray(graph.size) { -1 }         // -1 means unreachable\n    val queue = ArrayDeque<Int>()\n    dist[start] = 0\n    queue.addLast(start)\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        for (next in graph[node]) {\n            if (dist[next] == -1) {\n                dist[next] = dist[node] + 1\n                queue.addLast(next)\n            }\n        }\n    }\n    return dist\n}\n// dist doubles as the visited array\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: DFS Recursive",
+      "language": "kotlin",
+      "code": "fun dfs(graph: List<List<Int>>, start: Int): List<Int> {\n    val order = mutableListOf<Int>()\n    val visited = BooleanArray(graph.size)\n\n    fun visit(node: Int) {\n        visited[node] = true\n        order.add(node)\n        for (next in graph[node]) {\n            if (!visited[next]) visit(next)\n        }\n    }\n\n    visit(start)\n    return order\n}\n// Time: O(V + E)   Space: O(V) for visited and recursion"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: DFS Iterative",
+      "language": "kotlin",
+      "code": "fun dfsIterative(graph: List<List<Int>>, start: Int): List<Int> {\n    val order = mutableListOf<Int>()\n    val visited = BooleanArray(graph.size)\n    val stack = ArrayDeque<Int>()\n    stack.addLast(start)\n    while (stack.isNotEmpty()) {\n        val node = stack.removeLast()\n        if (visited[node]) continue                // mark when POPPING for iterative DFS\n        visited[node] = true\n        order.add(node)\n        for (next in graph[node].asReversed()) {   // reversed to match recursive order\n            if (!visited[next]) stack.addLast(next)\n        }\n    }\n    return order\n}\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Grid Traversal Setup (Implicit Graph)",
+      "language": "kotlin",
+      "code": "// Each cell is a node; its neighbors are up, down, left and right.\nval DIRS = arrayOf(\n    intArrayOf(1, 0), intArrayOf(-1, 0),\n    intArrayOf(0, 1), intArrayOf(0, -1)\n)\n\nfun inBounds(r: Int, c: Int, rows: Int, cols: Int): Boolean =\n    r in 0 until rows && c in 0 until cols\n\n// Grid BFS shortest path (0 = open, 1 = wall)\nfun shortestPathGrid(grid: Array<IntArray>, start: IntArray, end: IntArray): Int {\n    val rows = grid.size\n    val cols = grid[0].size\n    val visited = Array(rows) { BooleanArray(cols) }\n    val queue = ArrayDeque<IntArray>()\n    queue.addLast(intArrayOf(start[0], start[1], 0))   // row, col, distance\n    visited[start[0]][start[1]] = true\n    while (queue.isNotEmpty()) {\n        val (r, c, d) = queue.removeFirst()\n        if (r == end[0] && c == end[1]) return d\n        for ((dr, dc) in DIRS) {\n            val nr = r + dr\n            val nc = c + dc\n            if (inBounds(nr, nc, rows, cols) && grid[nr][nc] == 0 && !visited[nr][nc]) {\n                visited[nr][nc] = true\n                queue.addLast(intArrayOf(nr, nc, d + 1))\n            }\n        }\n    }\n    return -1\n}\n// Time: O(rows * cols)   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: Count Connected Components",
+      "language": "kotlin",
+      "code": "fun countComponents(n: Int, edges: Array<IntArray>): Int {\n    val graph = buildGraph(n, edges)\n    val visited = BooleanArray(n)\n    var count = 0\n\n    fun dfs(node: Int) {\n        visited[node] = true\n        for (next in graph[node]) {\n            if (!visited[next]) dfs(next)\n        }\n    }\n\n    for (i in 0 until n) {\n        if (!visited[i]) {                         // a new, unvisited component\n            count++\n            dfs(i)\n        }\n    }\n    return count\n}\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 8: Multi-Source BFS Skeleton",
+      "language": "kotlin",
+      "code": "// Start BFS from several sources at once. Every source is at distance 0.\nfun multiSourceBfs(rows: Int, cols: Int, sources: List<IntArray>): Array<IntArray> {\n    val dist = Array(rows) { IntArray(cols) { -1 } }\n    val queue = ArrayDeque<IntArray>()\n    for (s in sources) {\n        dist[s[0]][s[1]] = 0\n        queue.addLast(s)\n    }\n    while (queue.isNotEmpty()) {\n        val (r, c) = queue.removeFirst()\n        for ((dr, dc) in DIRS) {\n            val nr = r + dr\n            val nc = c + dc\n            if (inBounds(nr, nc, rows, cols) && dist[nr][nc] == -1) {\n                dist[nr][nc] = dist[r][c] + 1\n                queue.addLast(intArrayOf(nr, nc))\n            }\n        }\n    }\n    return dist\n}\n// Time: O(rows * cols)   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 9: Cycle Detection (Undirected Graph)",
+      "language": "kotlin",
+      "code": "fun hasCycleUndirected(n: Int, edges: Array<IntArray>): Boolean {\n    val graph = buildGraph(n, edges)\n    val visited = BooleanArray(n)\n\n    fun dfs(node: Int, parent: Int): Boolean {\n        visited[node] = true\n        for (next in graph[node]) {\n            if (!visited[next]) {\n                if (dfs(next, node)) return true\n            } else if (next != parent) {\n                return true                        // reached a visited node that is not the parent\n            }\n        }\n        return false\n    }\n\n    for (i in 0 until n) {\n        if (!visited[i] && dfs(i, -1)) return true\n    }\n    return false\n}\n// Time: O(V + E)   Space: O(V)\n// For a directed graph use three states (see Course Schedule below)"
+    },
+    {
+      "type": "bullet",
+      "heading": "Visited Set Rules",
+      "items": [
+        "BFS: mark a node visited when you ADD it to the queue, so it is never queued twice",
+        "Recursive DFS: mark a node visited when you ENTER it",
+        "Iterative DFS: mark when you POP it (or when you push, if you only need reachability)",
+        "For grids you can mark visited in place (overwrite the cell), but only if modifying the input is allowed",
+        "Loop over all start nodes when the graph can be disconnected"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Number of Islands (DFS Flood Fill)",
+      "language": "kotlin",
+      "code": "fun numIslands(grid: Array<CharArray>): Int {\n    val rows = grid.size\n    val cols = grid[0].size\n    var count = 0\n\n    fun dfs(r: Int, c: Int) {\n        if (r !in 0 until rows || c !in 0 until cols || grid[r][c] != '1') return\n        grid[r][c] = '0'                           // sink the land so it is not counted again\n        dfs(r + 1, c); dfs(r - 1, c)\n        dfs(r, c + 1); dfs(r, c - 1)\n    }\n\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            if (grid[r][c] == '1') {\n                count++\n                dfs(r, c)\n            }\n        }\n    }\n    return count\n}\n// Time: O(rows * cols)   Space: O(rows * cols) worst-case recursion"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Max Area of Island",
+      "language": "kotlin",
+      "code": "fun maxAreaOfIsland(grid: Array<IntArray>): Int {\n    val rows = grid.size\n    val cols = grid[0].size\n\n    fun dfs(r: Int, c: Int): Int {\n        if (r !in 0 until rows || c !in 0 until cols || grid[r][c] != 1) return 0\n        grid[r][c] = 0\n        return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)\n    }\n\n    var best = 0\n    for (r in 0 until rows) for (c in 0 until cols) {\n        if (grid[r][c] == 1) best = maxOf(best, dfs(r, c))\n    }\n    return best\n}\n// Time: O(rows * cols)   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Flood Fill",
+      "language": "kotlin",
+      "code": "fun floodFill(image: Array<IntArray>, sr: Int, sc: Int, color: Int): Array<IntArray> {\n    val original = image[sr][sc]\n    if (original == color) return image            // nothing to do, avoids an infinite loop\n    val rows = image.size\n    val cols = image[0].size\n\n    fun dfs(r: Int, c: Int) {\n        if (r !in 0 until rows || c !in 0 until cols || image[r][c] != original) return\n        image[r][c] = color\n        dfs(r + 1, c); dfs(r - 1, c)\n        dfs(r, c + 1); dfs(r, c - 1)\n    }\n\n    dfs(sr, sc)\n    return image\n}\n// Time: O(rows * cols)   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Rotting Oranges (Multi-Source BFS)",
+      "language": "kotlin",
+      "code": "fun orangesRotting(grid: Array<IntArray>): Int {\n    val rows = grid.size\n    val cols = grid[0].size\n    val queue = ArrayDeque<IntArray>()\n    var fresh = 0\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            when (grid[r][c]) {\n                2 -> queue.addLast(intArrayOf(r, c))\n                1 -> fresh++\n            }\n        }\n    }\n\n    var minutes = 0\n    while (queue.isNotEmpty() && fresh > 0) {\n        repeat(queue.size) {                       // one minute = one BFS level\n            val (r, c) = queue.removeFirst()\n            for ((dr, dc) in DIRS) {\n                val nr = r + dr\n                val nc = c + dc\n                if (inBounds(nr, nc, rows, cols) && grid[nr][nc] == 1) {\n                    grid[nr][nc] = 2\n                    fresh--\n                    queue.addLast(intArrayOf(nr, nc))\n                }\n            }\n        }\n        minutes++\n    }\n    return if (fresh == 0) minutes else -1\n}\n// Time: O(rows * cols)   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Shortest Path in Binary Matrix (8 Directions)",
+      "language": "kotlin",
+      "code": "fun shortestPathBinaryMatrix(grid: Array<IntArray>): Int {\n    val n = grid.size\n    if (grid[0][0] == 1 || grid[n - 1][n - 1] == 1) return -1\n    val queue = ArrayDeque<IntArray>()\n    queue.addLast(intArrayOf(0, 0, 1))             // row, col, path length\n    grid[0][0] = 1                                 // mark visited\n    while (queue.isNotEmpty()) {\n        val (r, c, d) = queue.removeFirst()\n        if (r == n - 1 && c == n - 1) return d\n        for (dr in -1..1) {\n            for (dc in -1..1) {\n                if (dr == 0 && dc == 0) continue\n                val nr = r + dr\n                val nc = c + dc\n                if (nr in 0 until n && nc in 0 until n && grid[nr][nc] == 0) {\n                    grid[nr][nc] = 1\n                    queue.addLast(intArrayOf(nr, nc, d + 1))\n                }\n            }\n        }\n    }\n    return -1\n}\n// Time: O(n²)   Space: O(n²)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: 01 Matrix (Distance to Nearest 0)",
+      "language": "kotlin",
+      "code": "fun updateMatrix(mat: Array<IntArray>): Array<IntArray> {\n    val rows = mat.size\n    val cols = mat[0].size\n    val dist = Array(rows) { IntArray(cols) { -1 } }\n    val queue = ArrayDeque<IntArray>()\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            if (mat[r][c] == 0) {\n                dist[r][c] = 0\n                queue.addLast(intArrayOf(r, c))     // every 0 is a source\n            }\n        }\n    }\n    while (queue.isNotEmpty()) {\n        val (r, c) = queue.removeFirst()\n        for ((dr, dc) in DIRS) {\n            val nr = r + dr\n            val nc = c + dc\n            if (inBounds(nr, nc, rows, cols) && dist[nr][nc] == -1) {\n                dist[nr][nc] = dist[r][c] + 1\n                queue.addLast(intArrayOf(nr, nc))\n            }\n        }\n    }\n    return dist\n}\n// Time: O(rows * cols)   Space: O(rows * cols)\n// One BFS from all zeros beats a BFS from every 1"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Pacific Atlantic Water Flow (Reverse DFS)",
+      "language": "kotlin",
+      "code": "fun pacificAtlantic(heights: Array<IntArray>): List<List<Int>> {\n    val rows = heights.size\n    val cols = heights[0].size\n    val pacific = Array(rows) { BooleanArray(cols) }\n    val atlantic = Array(rows) { BooleanArray(cols) }\n\n    // flow uphill from the ocean: move to cells that are at least as high\n    fun dfs(r: Int, c: Int, visited: Array<BooleanArray>) {\n        visited[r][c] = true\n        for ((dr, dc) in DIRS) {\n            val nr = r + dr\n            val nc = c + dc\n            if (inBounds(nr, nc, rows, cols) && !visited[nr][nc] &&\n                heights[nr][nc] >= heights[r][c]) {\n                dfs(nr, nc, visited)\n            }\n        }\n    }\n\n    for (r in 0 until rows) {\n        dfs(r, 0, pacific)\n        dfs(r, cols - 1, atlantic)\n    }\n    for (c in 0 until cols) {\n        dfs(0, c, pacific)\n        dfs(rows - 1, c, atlantic)\n    }\n\n    val result = mutableListOf<List<Int>>()\n    for (r in 0 until rows) for (c in 0 until cols) {\n        if (pacific[r][c] && atlantic[r][c]) result.add(listOf(r, c))\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(rows * cols)\n// Searching from the border inward avoids testing every cell separately"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Clone Graph",
+      "language": "kotlin",
+      "code": "class GNode(var `val`: Int) {\n    var neighbors: MutableList<GNode> = mutableListOf()\n}\n\nfun cloneGraph(node: GNode?): GNode? {\n    if (node == null) return null\n    val copies = HashMap<GNode, GNode>()            // original -> copy, also acts as visited\n\n    fun dfs(cur: GNode): GNode {\n        copies[cur]?.let { return it }              // already cloned\n        val copy = GNode(cur.`val`)\n        copies[cur] = copy                          // register BEFORE visiting neighbors\n        for (nb in cur.neighbors) copy.neighbors.add(dfs(nb))\n        return copy\n    }\n\n    return dfs(node)\n}\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Number of Provinces (Adjacency Matrix)",
+      "language": "kotlin",
+      "code": "fun findCircleNum(isConnected: Array<IntArray>): Int {\n    val n = isConnected.size\n    val visited = BooleanArray(n)\n    var provinces = 0\n\n    fun dfs(i: Int) {\n        visited[i] = true\n        for (j in 0 until n) {\n            if (isConnected[i][j] == 1 && !visited[j]) dfs(j)\n        }\n    }\n\n    for (i in 0 until n) {\n        if (!visited[i]) {\n            provinces++\n            dfs(i)\n        }\n    }\n    return provinces\n}\n// Time: O(V²)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Find if Path Exists in Graph (BFS)",
+      "language": "kotlin",
+      "code": "fun validPath(n: Int, edges: Array<IntArray>, source: Int, destination: Int): Boolean {\n    val graph = buildGraph(n, edges)\n    val visited = BooleanArray(n)\n    val queue = ArrayDeque<Int>()\n    queue.addLast(source)\n    visited[source] = true\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        if (node == destination) return true\n        for (next in graph[node]) {\n            if (!visited[next]) {\n                visited[next] = true\n                queue.addLast(next)\n            }\n        }\n    }\n    return false\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: All Paths From Source to Target (DAG Backtracking)",
+      "language": "kotlin",
+      "code": "fun allPathsSourceTarget(graph: Array<IntArray>): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n    val target = graph.size - 1\n    path.add(0)\n\n    fun dfs(node: Int) {\n        if (node == target) {\n            result.add(ArrayList(path))             // copy the current path\n            return\n        }\n        for (next in graph[node]) {\n            path.add(next)\n            dfs(next)\n            path.removeAt(path.lastIndex)           // backtrack\n        }\n    }\n\n    dfs(0)\n    return result\n}\n// Time: O(2^V * V) worst case   Space: O(V)\n// No visited set needed in a DAG, because there are no cycles"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Course Schedule (Directed Cycle Detection With 3 States)",
+      "language": "kotlin",
+      "code": "fun canFinish(numCourses: Int, prerequisites: Array<IntArray>): Boolean {\n    val graph = List(numCourses) { mutableListOf<Int>() }\n    for ((course, pre) in prerequisites) graph[pre].add(course)\n\n    val state = IntArray(numCourses)               // 0 = unvisited, 1 = on current path, 2 = done\n\n    fun hasCycle(node: Int): Boolean {\n        if (state[node] == 1) return true          // back edge: found a cycle\n        if (state[node] == 2) return false\n        state[node] = 1\n        for (next in graph[node]) {\n            if (hasCycle(next)) return true\n        }\n        state[node] = 2\n        return false\n    }\n\n    for (i in 0 until numCourses) {\n        if (hasCycle(i)) return false\n    }\n    return true\n}\n// Time: O(V + E)   Space: O(V + E)\n// See Topological Sort for producing the actual order"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Is Graph Bipartite? (BFS Coloring)",
+      "language": "kotlin",
+      "code": "fun isBipartite(graph: Array<IntArray>): Boolean {\n    val color = IntArray(graph.size) { -1 }         // -1 = uncolored\n    for (start in graph.indices) {\n        if (color[start] != -1) continue\n        color[start] = 0\n        val queue = ArrayDeque<Int>()\n        queue.addLast(start)\n        while (queue.isNotEmpty()) {\n            val node = queue.removeFirst()\n            for (next in graph[node]) {\n                if (color[next] == -1) {\n                    color[next] = 1 - color[node]   // opposite color\n                    queue.addLast(next)\n                } else if (color[next] == color[node]) {\n                    return false                    // two neighbors share a color\n                }\n            }\n        }\n    }\n    return true\n}\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Word Ladder (BFS on an Implicit Graph)",
+      "language": "kotlin",
+      "code": "fun ladderLength(beginWord: String, endWord: String, wordList: List<String>): Int {\n    val words = wordList.toHashSet()\n    if (endWord !in words) return 0\n    val visited = HashSet<String>()\n    val queue = ArrayDeque<Pair<String, Int>>()\n    queue.addLast(Pair(beginWord, 1))\n    visited.add(beginWord)\n    while (queue.isNotEmpty()) {\n        val (word, steps) = queue.removeFirst()\n        if (word == endWord) return steps\n        val chars = word.toCharArray()\n        for (i in chars.indices) {\n            val original = chars[i]\n            for (c in 'a'..'z') {\n                if (c == original) continue\n                chars[i] = c\n                val next = String(chars)\n                if (next in words && visited.add(next)) {\n                    queue.addLast(Pair(next, steps + 1))\n                }\n            }\n            chars[i] = original                     // restore before changing the next position\n        }\n    }\n    return 0\n}\n// Time: O(N * L * 26)   Space: O(N * L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Open the Lock (BFS Over States)",
+      "language": "kotlin",
+      "code": "fun openLock(deadends: Array<String>, target: String): Int {\n    val dead = deadends.toHashSet()\n    if (\"0000\" in dead) return -1\n    if (target == \"0000\") return 0\n    val visited = hashSetOf(\"0000\")\n    val queue = ArrayDeque<String>()\n    queue.addLast(\"0000\")\n    var steps = 0\n    while (queue.isNotEmpty()) {\n        steps++\n        repeat(queue.size) {\n            val cur = queue.removeFirst()\n            for (i in 0 until 4) {\n                for (delta in intArrayOf(1, 9)) {            // +1 or -1 modulo 10\n                    val chars = cur.toCharArray()\n                    chars[i] = '0' + (chars[i] - '0' + delta) % 10\n                    val next = String(chars)\n                    if (next in dead || !visited.add(next)) continue\n                    if (next == target) return steps\n                    queue.addLast(next)\n                }\n            }\n        }\n    }\n    return -1\n}\n// Time: O(10^4 * 4 * 2)   Space: O(10^4)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 16: Graph Valid Tree",
+      "language": "kotlin",
+      "code": "fun validTree(n: Int, edges: Array<IntArray>): Boolean {\n    if (edges.size != n - 1) return false           // a tree has exactly n - 1 edges\n    val graph = buildGraph(n, edges)\n    val visited = BooleanArray(n)\n    val stack = ArrayDeque<Int>()\n    stack.addLast(0)\n    visited[0] = true\n    var seen = 1\n    while (stack.isNotEmpty()) {\n        val node = stack.removeLast()\n        for (next in graph[node]) {\n            if (!visited[next]) {\n                visited[next] = true\n                seen++\n                stack.addLast(next)\n            }\n        }\n    }\n    return seen == n                                // n - 1 edges and connected means no cycle\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "table",
+      "heading": "Choosing BFS or DFS",
+      "rows": [
+        {
+          "question": "Shortest path or minimum number of steps?",
+          "choose": "BFS",
+          "reason": "First arrival is the shortest in an unweighted graph"
+        },
+        {
+          "question": "Spread from several sources at the same time?",
+          "choose": "Multi-source BFS",
+          "reason": "All sources start in the queue at distance 0"
+        },
+        {
+          "question": "Count components, islands, regions?",
+          "choose": "DFS or BFS",
+          "reason": "Either works, DFS is shorter to write"
+        },
+        {
+          "question": "Need all paths or backtracking?",
+          "choose": "DFS",
+          "reason": "Path state is kept on the recursion stack"
+        },
+        {
+          "question": "Detect a cycle in a directed graph?",
+          "choose": "DFS with 3 states",
+          "reason": "Needs to know a node is on the current path"
+        },
+        {
+          "question": "Two-color check or level-based logic?",
+          "choose": "BFS",
+          "reason": "Levels alternate naturally"
+        },
+        {
+          "question": "Very deep graph, risk of stack overflow?",
+          "choose": "BFS or iterative DFS",
+          "reason": "No deep recursion"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Number of Islands / Max Area of Island",
+          "technique": "DFS or BFS flood fill",
+          "key_idea": "Sink visited land and count starts"
+        },
+        {
+          "problem": "Flood Fill",
+          "technique": "DFS",
+          "key_idea": "Stop if the new color equals the old color"
+        },
+        {
+          "problem": "Rotting Oranges",
+          "technique": "Multi-source BFS",
+          "key_idea": "Each BFS level is one minute"
+        },
+        {
+          "problem": "01 Matrix / Walls and Gates",
+          "technique": "Multi-source BFS",
+          "key_idea": "Start from all targets at once"
+        },
+        {
+          "problem": "Shortest Path in Binary Matrix",
+          "technique": "BFS with 8 directions",
+          "key_idea": "Mark visited when enqueuing"
+        },
+        {
+          "problem": "Pacific Atlantic Water Flow",
+          "technique": "Reverse DFS from borders",
+          "key_idea": "Move to equal or higher cells"
+        },
+        {
+          "problem": "Clone Graph",
+          "technique": "DFS + HashMap",
+          "key_idea": "Map original to copy before recursing"
+        },
+        {
+          "problem": "Number of Provinces / Connected Components",
+          "technique": "DFS over all start nodes",
+          "key_idea": "Each new start is a new component"
+        },
+        {
+          "problem": "Course Schedule",
+          "technique": "DFS 3-state cycle detection",
+          "key_idea": "A node on the current path means a cycle"
+        },
+        {
+          "problem": "Is Graph Bipartite",
+          "technique": "BFS coloring",
+          "key_idea": "Neighbors need opposite colors"
+        },
+        {
+          "problem": "Word Ladder / Open the Lock",
+          "technique": "BFS on states",
+          "key_idea": "Generate neighbors by changing one element"
+        },
+        {
+          "problem": "Graph Valid Tree",
+          "technique": "Edge count + connectivity",
+          "key_idea": "n - 1 edges and one component"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Forgetting the visited set, which causes infinite loops on graphs with cycles",
+        "Marking visited when popping from the BFS queue, which lets nodes be queued many times",
+        "Starting the search from only one node when the graph can be disconnected",
+        "Adding edges in only one direction for an undirected graph",
+        "Using the parent trick for cycle detection in a directed graph (use 3 states instead)",
+        "Skipping bounds checks on grids, or mixing up row and column order",
+        "Running a BFS from each source separately instead of one multi-source BFS",
+        "Recursive DFS on a graph with 100,000+ nodes, which can overflow the stack",
+        "Modifying the input grid when the problem requires it to stay unchanged"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "BFS or DFS on an adjacency list",
+          "time": "O(V + E)",
+          "space": "O(V)"
+        },
+        {
+          "approach": "BFS or DFS on an adjacency matrix",
+          "time": "O(V²)",
+          "space": "O(V)"
+        },
+        {
+          "approach": "BFS or DFS on an R x C grid",
+          "time": "O(R * C)",
+          "space": "O(R * C)"
+        },
+        {
+          "approach": "Multi-source BFS",
+          "time": "O(V + E)",
+          "space": "O(V)"
+        },
+        {
+          "approach": "All paths with backtracking",
+          "time": "Exponential in the worst case",
+          "space": "O(V)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Number of Islands",
+        "Max Area of Island",
+        "Flood Fill",
+        "Rotting Oranges",
+        "01 Matrix",
+        "Shortest Path in Binary Matrix",
+        "Pacific Atlantic Water Flow",
+        "Surrounded Regions",
+        "Clone Graph",
+        "Number of Provinces",
+        "Find if Path Exists in Graph",
+        "All Paths From Source to Target",
+        "Course Schedule",
+        "Is Graph Bipartite?",
+        "Word Ladder",
+        "Open the Lock",
+        "Graph Valid Tree"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "BFS uses a queue and finds shortest paths in unweighted graphs, while DFS uses recursion or a stack and explores deeply",
+        "Always keep a visited set, and mark nodes when you enqueue them in BFS",
+        "Loop over every node as a start to handle disconnected graphs and count components",
+        "Grids are implicit graphs: use a directions array and bounds checks",
+        "Multi-source BFS starts from all sources at once for nearest-distance problems",
+        "Both run in O(V + E), which is O(rows * cols) on a grid"
+      ]
+    }
+  ]
+}
