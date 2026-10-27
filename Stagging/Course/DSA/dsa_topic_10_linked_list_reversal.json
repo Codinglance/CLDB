@@ -21,7 +21,7 @@
       ]
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Linked List Node Definition",
       "language": "kotlin",
       "code": "class ListNode(var `val`: Int) {\n    var next: ListNode? = null\n}"
@@ -32,19 +32,19 @@
       "content": "Keep three references: prev (the already reversed part), curr (the node you are working on) and next (saved so you do not lose the rest of the list). At each step: save curr.next, point curr.next to prev, then move prev and curr one step forward. When curr becomes null, prev is the new head."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 1: Reverse the Entire List (Iterative)",
       "language": "kotlin",
       "code": "fun reverseList(head: ListNode?): ListNode? {\n    var prev: ListNode? = null\n    var curr = head\n    while (curr != null) {\n        val next = curr.next     // 1. save the rest of the list\n        curr.next = prev         // 2. reverse the pointer\n        prev = curr              // 3. move prev forward\n        curr = next              // 4. move curr forward\n    }\n    return prev                  // new head\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 2: Reverse the Entire List (Recursive)",
       "language": "kotlin",
       "code": "fun reverseListRecursive(head: ListNode?): ListNode? {\n    if (head?.next == null) return head\n    val newHead = reverseListRecursive(head.next)\n    head.next!!.next = head      // make the next node point back to head\n    head.next = null             // head becomes the tail\n    return newHead\n}\n// Time: O(n)   Space: O(n) call stack"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 3: Reverse a Sublist (Positions left to right)",
       "language": "kotlin",
       "code": "fun reverseBetween(head: ListNode?, left: Int, right: Int): ListNode? {\n    if (head == null || left == right) return head\n    val dummy = ListNode(0)\n    dummy.next = head\n    var before: ListNode = dummy\n    repeat(left - 1) { before = before.next!! }   // node just before the sublist\n\n    val start = before.next!!                      // first node of the sublist\n    var prev: ListNode? = null\n    var curr: ListNode? = start\n    repeat(right - left + 1) {\n        val next = curr!!.next\n        curr!!.next = prev\n        prev = curr\n        curr = next\n    }\n    before.next = prev          // connect to the new start of the sublist\n    start.next = curr           // connect the old start (now the tail) to the rest\n    return dummy.next\n}\n// Time: O(n)   Space: O(1)"
@@ -55,55 +55,55 @@
       "content": "A dummy node placed before the head removes special cases. If the reversal starts at position 1, the real head changes. With a dummy, 'the node before the sublist' always exists, and you can simply return dummy.next at the end."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 1: Reverse Nodes in K-Group",
       "language": "kotlin",
       "code": "fun reverseKGroup(head: ListNode?, k: Int): ListNode? {\n    // check if at least k nodes remain\n    var check = head\n    var count = 0\n    while (check != null && count < k) {\n        check = check.next\n        count++\n    }\n    if (count < k) return head          // fewer than k nodes, keep as is\n\n    // reverse k nodes\n    var prev: ListNode? = null\n    var curr = head\n    repeat(k) {\n        val next = curr!!.next\n        curr!!.next = prev\n        prev = curr\n        curr = next\n    }\n    // head is now the tail of this group, connect it to the next reversed group\n    head!!.next = reverseKGroup(curr, k)\n    return prev\n}\n// Time: O(n)   Space: O(n / k) recursion stack"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 2: Reverse Nodes in K-Group (Iterative, O(1) Space)",
       "language": "kotlin",
       "code": "fun reverseKGroupIterative(head: ListNode?, k: Int): ListNode? {\n    val dummy = ListNode(0)\n    dummy.next = head\n    var groupPrev: ListNode = dummy\n\n    while (true) {\n        // find the k-th node from groupPrev\n        var kth: ListNode? = groupPrev\n        repeat(k) { kth = kth?.next }\n        if (kth == null) break\n\n        val groupNext = kth!!.next\n        var prev: ListNode? = groupNext\n        var curr = groupPrev.next\n        while (curr !== groupNext) {\n            val next = curr!!.next\n            curr.next = prev\n            prev = curr\n            curr = next\n        }\n        val tail = groupPrev.next!!        // old first node is the new tail\n        groupPrev.next = kth               // k-th node is the new first node\n        groupPrev = tail\n    }\n    return dummy.next\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 3: Swap Nodes in Pairs",
       "language": "kotlin",
       "code": "fun swapPairs(head: ListNode?): ListNode? {\n    val dummy = ListNode(0)\n    dummy.next = head\n    var prev: ListNode = dummy\n    while (prev.next?.next != null) {\n        val first = prev.next!!\n        val second = first.next!!\n        first.next = second.next        // first skips over second\n        second.next = first             // second points back to first\n        prev.next = second              // connect previous part\n        prev = first                    // first is now the tail of the pair\n    }\n    return dummy.next\n}\n// Time: O(n)   Space: O(1)\n// Same as reverseKGroup with k = 2"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 4: Rotate List",
       "language": "kotlin",
       "code": "fun rotateRight(head: ListNode?, k: Int): ListNode? {\n    if (head?.next == null || k == 0) return head\n    // 1. find length and tail\n    var tail = head\n    var length = 1\n    while (tail!!.next != null) {\n        tail = tail.next\n        length++\n    }\n    // 2. make it circular\n    tail.next = head\n    // 3. find the new tail: (length - k % length - 1) steps from head\n    val steps = length - k % length - 1\n    var newTail = head\n    repeat(steps) { newTail = newTail!!.next }\n    // 4. break the circle\n    val newHead = newTail!!.next\n    newTail.next = null\n    return newHead\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 5: Reverse Alternating K-Element Sublists",
       "language": "kotlin",
       "code": "fun reverseAlternateK(head: ListNode?, k: Int): ListNode? {\n    var curr = head\n    var prevTail: ListNode? = null\n    var newHead: ListNode? = null\n\n    while (curr != null) {\n        val groupStart = curr\n        var prev: ListNode? = null\n        var count = 0\n        // reverse up to k nodes\n        while (curr != null && count < k) {\n            val next = curr.next\n            curr.next = prev\n            prev = curr\n            curr = next\n            count++\n        }\n        if (newHead == null) newHead = prev\n        prevTail?.next = prev\n        groupStart.next = curr             // reversed group's tail points on\n        // skip the next k nodes without reversing\n        var skipped = 0\n        var tail = groupStart\n        while (curr != null && skipped < k) {\n            tail = curr\n            curr = curr.next\n            skipped++\n        }\n        prevTail = tail\n    }\n    return newHead\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 6: Add Two Numbers (Digits in Reverse Order)",
       "language": "kotlin",
       "code": "fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {\n    val dummy = ListNode(0)\n    var tail = dummy\n    var a = l1\n    var b = l2\n    var carry = 0\n    while (a != null || b != null || carry != 0) {\n        val sum = (a?.`val` ?: 0) + (b?.`val` ?: 0) + carry\n        carry = sum / 10\n        tail.next = ListNode(sum % 10)\n        tail = tail.next!!\n        a = a?.next\n        b = b?.next\n    }\n    return dummy.next\n}\n// Time: O(max(n, m))   Space: O(1) extra (output not counted)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7: Add Two Numbers II (Digits in Forward Order)",
       "language": "kotlin",
       "code": "fun addTwoNumbersForward(l1: ListNode?, l2: ListNode?): ListNode? {\n    fun reverse(head: ListNode?): ListNode? {\n        var prev: ListNode? = null\n        var curr = head\n        while (curr != null) {\n            val next = curr.next\n            curr.next = prev\n            prev = curr\n            curr = next\n        }\n        return prev\n    }\n    var a = reverse(l1)\n    var b = reverse(l2)\n    var result: ListNode? = null\n    var carry = 0\n    while (a != null || b != null || carry != 0) {\n        val sum = (a?.`val` ?: 0) + (b?.`val` ?: 0) + carry\n        carry = sum / 10\n        val node = ListNode(sum % 10)\n        node.next = result            // build the answer backwards\n        result = node\n        a = a?.next\n        b = b?.next\n    }\n    return result\n}\n// Time: O(n + m)   Space: O(1) extra"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7b: Palindrome Linked List",
       "language": "kotlin",
       "code": "fun isPalindrome(head: ListNode?): Boolean {\n    var slow = head\n    var fast = head\n    while (fast?.next != null) {           // find the middle\n        slow = slow!!.next\n        fast = fast.next!!.next\n    }\n    var prev: ListNode? = null             // reverse the second half\n    var curr = slow\n    while (curr != null) {\n        val next = curr.next\n        curr.next = prev\n        prev = curr\n        curr = next\n    }\n    var left = head\n    var right = prev\n    while (right != null) {                // compare both halves\n        if (left!!.`val` != right.`val`) return false\n        left = left.next\n        right = right.next\n    }\n    return true\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 8: Reverse a List Using a Stack (Comparison)",
       "language": "kotlin",
       "code": "fun reverseWithStack(head: ListNode?): ListNode? {\n    val stack = ArrayDeque<ListNode>()\n    var curr = head\n    while (curr != null) {\n        stack.addLast(curr)\n        curr = curr.next\n    }\n    val dummy = ListNode(0)\n    var tail = dummy\n    while (stack.isNotEmpty()) {\n        tail.next = stack.removeLast()\n        tail = tail.next!!\n    }\n    tail.next = null                       // avoid creating a cycle\n    return dummy.next\n}\n// Time: O(n)   Space: O(n)   -> this is NOT in place"

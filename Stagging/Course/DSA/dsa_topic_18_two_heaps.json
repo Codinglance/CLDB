@@ -65,13 +65,13 @@
       ]
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 1: Find Median From Data Stream",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\nclass MedianFinder {\n    private val small = PriorityQueue<Int>(compareByDescending { it })   // max heap\n    private val large = PriorityQueue<Int>()                              // min heap\n\n    fun addNum(num: Int) {\n        // 1. push through the small heap, then move its largest to the large heap\n        small.add(num)\n        large.add(small.poll())\n        // 2. rebalance so that small has the same size or one more\n        if (large.size > small.size) {\n            small.add(large.poll())\n        }\n    }\n\n    fun findMedian(): Double =\n        if (small.size > large.size) small.peek().toDouble()\n        else (small.peek() + large.peek()) / 2.0\n}\n// addNum: O(log n)   findMedian: O(1)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 2: Alternate Insert Logic (Compare With the Top)",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\nclass MedianFinder2 {\n    private val small = PriorityQueue<Int>(compareByDescending { it })\n    private val large = PriorityQueue<Int>()\n\n    fun addNum(num: Int) {\n        if (small.isEmpty() || num <= small.peek()) small.add(num)\n        else large.add(num)\n\n        // rebalance\n        if (small.size > large.size + 1) large.add(small.poll())\n        else if (large.size > small.size) small.add(large.poll())\n    }\n\n    fun findMedian(): Double =\n        if (small.size > large.size) small.peek().toDouble()\n        else (small.peek() + large.peek()) / 2.0\n}\n// Same complexity, easier to extend with removals"
@@ -82,49 +82,49 @@
       "content": "If values can be near Int.MAX_VALUE, small.peek() + large.peek() can overflow. Convert to Long or Double before adding, for example small.peek().toDouble() / 2 + large.peek().toDouble() / 2, or use small.peek().toLong() + large.peek()."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 1: Sliding Window Median (Two Heaps With Lazy Removal)",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\nfun medianSlidingWindow(nums: IntArray, k: Int): DoubleArray {\n    val small = PriorityQueue<Int>(compareByDescending { it })\n    val large = PriorityQueue<Int>()\n    val result = DoubleArray(nums.size - k + 1)\n\n    fun median(): Double =\n        if (k % 2 == 1) small.peek().toDouble()\n        else small.peek().toDouble() / 2 + large.peek().toDouble() / 2\n\n    // Simple version: PriorityQueue.remove(x) is O(k), fine for moderate k\n    for (i in nums.indices) {\n        // add the new number\n        if (small.isEmpty() || nums[i] <= small.peek()) small.add(nums[i]) else large.add(nums[i])\n\n        // remove the number leaving the window\n        if (i >= k) {\n            val out = nums[i - k]\n            if (out <= small.peek()) small.remove(out) else large.remove(out)\n        }\n        // rebalance\n        while (small.size > large.size + 1) large.add(small.poll())\n        while (large.size > small.size) small.add(large.poll())\n\n        if (i >= k - 1) result[i - k + 1] = median()\n    }\n    return result\n}\n// Time: O(n * k) because of remove(); use lazy deletion or two TreeMaps for O(n log k)\n// Space: O(k)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 2: IPO (Maximize Capital)",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\nfun findMaximizedCapital(k: Int, w: Int, profits: IntArray, capital: IntArray): Int {\n    // min heap: projects ordered by required capital\n    val byCapital = PriorityQueue<Int>(compareBy { capital[it] })\n    for (i in profits.indices) byCapital.add(i)\n    // max heap: profits of affordable projects\n    val byProfit = PriorityQueue<Int>(compareByDescending { it })\n\n    var money = w\n    repeat(k) {\n        // move every affordable project into the profit heap\n        while (byCapital.isNotEmpty() && capital[byCapital.peek()] <= money) {\n            byProfit.add(profits[byCapital.poll()])\n        }\n        if (byProfit.isEmpty()) return money\n        money += byProfit.poll()                       // take the most profitable one\n    }\n    return money\n}\n// Time: O((n + k) log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 3: Maximize Capital With Pairs",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\nfun maximumCapital(k: Int, w: Int, profits: IntArray, capital: IntArray): Int {\n    val projects = profits.indices.sortedBy { capital[it] }     // sort by capital once\n    val maxProfit = PriorityQueue<Int>(compareByDescending { it })\n    var money = w\n    var idx = 0\n    repeat(k) {\n        while (idx < projects.size && capital[projects[idx]] <= money) {\n            maxProfit.add(profits[projects[idx]])\n            idx++\n        }\n        if (maxProfit.isEmpty()) return money\n        money += maxProfit.poll()\n    }\n    return money\n}\n// Time: O(n log n + k log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 4: Find Median in a Sorted Stream With Counts",
       "language": "kotlin",
       "code": "// Median of a stream where every value is between 0 and 100:\n// a counting array gives O(100) per query with no heaps.\nclass MedianCounting {\n    private val counts = IntArray(101)\n    private var total = 0\n\n    fun add(x: Int) { counts[x]++; total++ }\n\n    fun median(): Double {\n        fun kth(k: Int): Int {                 // k is 1-based\n            var seen = 0\n            for (v in 0..100) {\n                seen += counts[v]\n                if (seen >= k) return v\n            }\n            return -1\n        }\n        return if (total % 2 == 1) kth(total / 2 + 1).toDouble()\n        else (kth(total / 2) + kth(total / 2 + 1)) / 2.0\n    }\n}\n// Use this trick when the value range is small"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 5: Next Interval / Meeting Rooms With Two Heaps",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\n// Minimum number of rooms: one heap of end times is enough,\n// but two heaps of sorted starts and ends also work:\nfun minMeetingRooms(intervals: Array<IntArray>): Int {\n    val starts = PriorityQueue<Int>()\n    val ends = PriorityQueue<Int>()\n    for ((s, e) in intervals) { starts.add(s); ends.add(e) }\n    var rooms = 0\n    var best = 0\n    while (starts.isNotEmpty()) {\n        if (starts.peek() < ends.peek()) {\n            starts.poll()\n            rooms++\n            best = maxOf(best, rooms)\n        } else {\n            ends.poll()\n            rooms--\n        }\n    }\n    return best\n}\n// Time: O(n log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 6: Maximum Performance of a Team (Sort + Min Heap)",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\nfun maxPerformance(n: Int, speed: IntArray, efficiency: IntArray, k: Int): Int {\n    val mod = 1_000_000_007L\n    val order = (0 until n).sortedByDescending { efficiency[it] }   // best efficiency first\n    val minSpeed = PriorityQueue<Int>()                              // keeps the k fastest\n    var speedSum = 0L\n    var best = 0L\n    for (i in order) {\n        minSpeed.add(speed[i])\n        speedSum += speed[i]\n        if (minSpeed.size > k) speedSum -= minSpeed.poll()          // drop the slowest\n        best = maxOf(best, speedSum * efficiency[i])                // efficiency[i] is the minimum so far\n    }\n    return (best % mod).toInt()\n}\n// Time: O(n log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7: Smallest Range Using Two Heaps Idea (Min and Max Tracking)",
       "language": "kotlin",
       "code": "import java.util.PriorityQueue\n\n// Track both the smallest and the largest of the current candidates.\nfun minRangeOfK(lists: List<IntArray>): IntArray {\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })       // [value, list, index]\n    var currentMax = Int.MIN_VALUE\n    for ((i, list) in lists.withIndex()) {\n        minHeap.add(intArrayOf(list[0], i, 0))\n        currentMax = maxOf(currentMax, list[0])\n    }\n    var start = 0\n    var end = Int.MAX_VALUE\n    while (minHeap.size == lists.size) {\n        val (value, li, idx) = minHeap.poll()\n        if (currentMax - value < end - start) { start = value; end = currentMax }\n        if (idx + 1 == lists[li].size) break\n        val next = lists[li][idx + 1]\n        minHeap.add(intArrayOf(next, li, idx + 1))\n        currentMax = maxOf(currentMax, next)\n    }\n    return intArrayOf(start, end)\n}\n// Time: O(N log K)   Space: O(K)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 8: Median Using One TreeMap (Alternative View)",
       "language": "kotlin",
       "code": "import java.util.TreeMap\n\n// A TreeMap of counts supports add, remove and k-th lookup in O(log n)\n// (counting elements while walking the keys is O(distinct values)).\nclass SortedCounter {\n    private val map = TreeMap<Int, Int>()\n    var size = 0\n        private set\n\n    fun add(x: Int) { map[x] = (map[x] ?: 0) + 1; size++ }\n\n    fun remove(x: Int) {\n        val c = map[x] ?: return\n        if (c == 1) map.remove(x) else map[x] = c - 1\n        size--\n    }\n\n    fun kth(k: Int): Int {               // 1-based\n        var seen = 0\n        for ((value, count) in map) {\n            seen += count\n            if (seen >= k) return value\n        }\n        throw NoSuchElementException()\n    }\n}\n// Good for sliding window median with removals; heaps need lazy deletion"

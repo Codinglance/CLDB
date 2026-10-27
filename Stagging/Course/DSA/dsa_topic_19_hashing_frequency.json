@@ -67,115 +67,115 @@
       "content": "A HashMap computes a hash code from the key to find a bucket, so lookups, inserts and deletes are O(1) on average. In the worst case (many collisions) they degrade, but this is rare in practice. Keys must have stable hashCode() and equals(). Strings, numbers, Pairs and data classes work well. Arrays and mutable lists are poor keys because they use identity hashing or change after insertion."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "HashMap and HashSet Cheat Sheet",
       "language": "kotlin",
       "code": "val map = HashMap<String, Int>()\nmap[\"a\"] = 1                                   // put\nval v = map[\"a\"]                               // Int? (null if missing)\nval d = map.getOrDefault(\"b\", 0)               // default when missing\nmap.containsKey(\"a\")                           // O(1)\nmap.remove(\"a\")\n\n// increment pattern (three equivalent ways)\nmap[\"x\"] = (map[\"x\"] ?: 0) + 1\nmap.merge(\"x\", 1) { old, new -> old + new }\nmap.compute(\"x\") { _, old -> (old ?: 0) + 1 }\n\n// group pattern\nval groups = HashMap<Int, MutableList<String>>()\ngroups.getOrPut(3) { mutableListOf() }.add(\"abc\")\n\n// set\nval set = HashSet<Int>()\nset.add(5)                                     // false if it was already present\n5 in set                                       // O(1)\n\n// iteration\nfor ((key, value) in map) { }"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 1: Frequency Counter",
       "language": "kotlin",
       "code": "fun frequency(nums: IntArray): HashMap<Int, Int> {\n    val freq = HashMap<Int, Int>()\n    for (x in nums) {\n        freq[x] = (freq[x] ?: 0) + 1\n    }\n    return freq\n}\n\n// One line with the standard library\nval freq2 = nums.toList().groupingBy { it }.eachCount()\n// Time: O(n)   Space: O(distinct values)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 2: Seen Set (Duplicate Detection)",
       "language": "kotlin",
       "code": "fun hasDuplicate(nums: IntArray): Boolean {\n    val seen = HashSet<Int>()\n    for (x in nums) {\n        if (!seen.add(x)) return true          // add returns false when already present\n    }\n    return false\n}\n// Time: O(n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 3: Complement Lookup (Two Sum)",
       "language": "kotlin",
       "code": "fun twoSum(nums: IntArray, target: Int): IntArray {\n    val indexOf = HashMap<Int, Int>()          // value -> index\n    for ((i, x) in nums.withIndex()) {\n        val need = target - x\n        indexOf[need]?.let { return intArrayOf(it, i) }\n        indexOf[x] = i                         // add AFTER checking to avoid using x twice\n    }\n    return intArrayOf()\n}\n// Time: O(n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 4: Group by Signature",
       "language": "kotlin",
       "code": "fun groupAnagrams(strs: Array<String>): List<List<String>> {\n    val groups = HashMap<String, MutableList<String>>()\n    for (s in strs) {\n        val key = String(s.toCharArray().also { it.sort() })    // sorted letters as the key\n        groups.getOrPut(key) { mutableListOf() }.add(s)\n    }\n    return groups.values.toList()\n}\n// Time: O(n * L log L)   Space: O(n * L)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 1: Valid Anagram (Array as Frequency Map)",
       "language": "kotlin",
       "code": "fun isAnagram(s: String, t: String): Boolean {\n    if (s.length != t.length) return false\n    val count = IntArray(26)\n    for (i in s.indices) {\n        count[s[i] - 'a']++\n        count[t[i] - 'a']--\n    }\n    return count.all { it == 0 }\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 2: First Non-Repeating Character",
       "language": "kotlin",
       "code": "fun firstUniqChar(s: String): Int {\n    val count = IntArray(26)\n    for (c in s) count[c - 'a']++\n    for (i in s.indices) {\n        if (count[s[i] - 'a'] == 1) return i\n    }\n    return -1\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 3: Contains Duplicate II (Within K Distance)",
       "language": "kotlin",
       "code": "fun containsNearbyDuplicate(nums: IntArray, k: Int): Boolean {\n    val lastSeen = HashMap<Int, Int>()\n    for ((i, x) in nums.withIndex()) {\n        val prev = lastSeen[x]\n        if (prev != null && i - prev <= k) return true\n        lastSeen[x] = i\n    }\n    return false\n}\n// Time: O(n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 4: Longest Consecutive Sequence",
       "language": "kotlin",
       "code": "fun longestConsecutive(nums: IntArray): Int {\n    val set = nums.toHashSet()\n    var best = 0\n    for (x in set) {\n        if ((x - 1) !in set) {                  // x is the start of a sequence\n            var length = 1\n            var cur = x\n            while ((cur + 1) in set) {\n                cur++\n                length++\n            }\n            best = maxOf(best, length)\n        }\n    }\n    return best\n}\n// Time: O(n)   Space: O(n)\n// Each number is visited at most twice because we only start at sequence beginnings"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 5: Subarray Sum Equals K (Prefix Sum + Map)",
       "language": "kotlin",
       "code": "fun subarraySum(nums: IntArray, k: Int): Int {\n    val count = HashMap<Int, Int>()\n    count[0] = 1\n    var sum = 0\n    var result = 0\n    for (x in nums) {\n        sum += x\n        result += count[sum - k] ?: 0\n        count[sum] = (count[sum] ?: 0) + 1\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 6: Isomorphic Strings (Two Maps)",
       "language": "kotlin",
       "code": "fun isIsomorphic(s: String, t: String): Boolean {\n    if (s.length != t.length) return false\n    val st = HashMap<Char, Char>()\n    val ts = HashMap<Char, Char>()\n    for (i in s.indices) {\n        val a = s[i]\n        val b = t[i]\n        if (st.containsKey(a) && st[a] != b) return false\n        if (ts.containsKey(b) && ts[b] != a) return false\n        st[a] = b\n        ts[b] = a\n    }\n    return true\n}\n// Time: O(n)   Space: O(1) for a fixed alphabet"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7: Word Pattern",
       "language": "kotlin",
       "code": "fun wordPattern(pattern: String, s: String): Boolean {\n    val words = s.split(\" \")\n    if (pattern.length != words.size) return false\n    val charToWord = HashMap<Char, String>()\n    val wordToChar = HashMap<String, Char>()\n    for (i in pattern.indices) {\n        val c = pattern[i]\n        val w = words[i]\n        if (charToWord.getOrPut(c) { w } != w) return false\n        if (wordToChar.getOrPut(w) { c } != c) return false\n    }\n    return true\n}\n// Time: O(n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 8: Intersection of Two Arrays II (Counts)",
       "language": "kotlin",
       "code": "fun intersect(nums1: IntArray, nums2: IntArray): IntArray {\n    val count = HashMap<Int, Int>()\n    for (x in nums1) count[x] = (count[x] ?: 0) + 1\n    val result = mutableListOf<Int>()\n    for (x in nums2) {\n        val c = count[x] ?: 0\n        if (c > 0) {\n            result.add(x)\n            count[x] = c - 1\n        }\n    }\n    return result.toIntArray()\n}\n// Time: O(n + m)   Space: O(min(n, m))"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 9: 4Sum II (Split Into Two Halves)",
       "language": "kotlin",
       "code": "fun fourSumCount(a: IntArray, b: IntArray, c: IntArray, d: IntArray): Int {\n    val sums = HashMap<Int, Int>()\n    for (x in a) for (y in b) {\n        val s = x + y\n        sums[s] = (sums[s] ?: 0) + 1\n    }\n    var count = 0\n    for (x in c) for (y in d) {\n        count += sums[-(x + y)] ?: 0\n    }\n    return count\n}\n// Time: O(n²)   Space: O(n²)\n// Meet in the middle: n⁴ becomes two n² passes"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 10: Top K Frequent Words (Map + Sort)",
       "language": "kotlin",
       "code": "fun topKFrequent(words: Array<String>, k: Int): List<String> {\n    val freq = HashMap<String, Int>()\n    for (w in words) freq[w] = (freq[w] ?: 0) + 1\n    return freq.keys\n        .sortedWith(compareByDescending<String> { freq[it] }.thenBy { it })\n        .take(k)\n}\n// Time: O(n log n)   Space: O(n)\n// Use a heap of size k for O(n log k)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 11: Minimum Index Sum of Two Lists",
       "language": "kotlin",
       "code": "fun findRestaurant(list1: Array<String>, list2: Array<String>): Array<String> {\n    val index = HashMap<String, Int>()\n    for ((i, s) in list1.withIndex()) index[s] = i\n    var best = Int.MAX_VALUE\n    val result = mutableListOf<String>()\n    for ((j, s) in list2.withIndex()) {\n        val i = index[s] ?: continue\n        val sum = i + j\n        if (sum < best) { best = sum; result.clear(); result.add(s) }\n        else if (sum == best) result.add(s)\n    }\n    return result.toTypedArray()\n}\n// Time: O(n + m)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 12: LRU Cache (LinkedHashMap)",
       "language": "kotlin",
       "code": "class LRUCache(private val capacity: Int) {\n    private val map = LinkedHashMap<Int, Int>()\n\n    fun get(key: Int): Int {\n        val value = map.remove(key) ?: return -1\n        map[key] = value                         // re-insert to mark as most recent\n        return value\n    }\n\n    fun put(key: Int, value: Int) {\n        map.remove(key)\n        map[key] = value\n        if (map.size > capacity) {\n            val oldest = map.keys.first()        // first key is the least recently used\n            map.remove(oldest)\n        }\n    }\n}\n// get / put: O(1) average   Space: O(capacity)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 13: Insert Delete GetRandom O(1)",
       "language": "kotlin",
       "code": "class RandomizedSet {\n    private val list = ArrayList<Int>()\n    private val index = HashMap<Int, Int>()          // value -> position in list\n\n    fun insert(v: Int): Boolean {\n        if (v in index) return false\n        index[v] = list.size\n        list.add(v)\n        return true\n    }\n\n    fun remove(v: Int): Boolean {\n        val pos = index[v] ?: return false\n        val last = list.last()\n        list[pos] = last                             // move last into the gap\n        index[last] = pos\n        list.removeAt(list.lastIndex)\n        index.remove(v)\n        return true\n    }\n\n    fun getRandom(): Int = list[(0 until list.size).random()]\n}\n// All operations: O(1) average"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 14: Custom Hash Keys (Pair and Data Class)",
       "language": "kotlin",
       "code": "// Pair keys work out of the box\nval grid = HashSet<Pair<Int, Int>>()\ngrid.add(Pair(2, 3))\n(2 to 3) in grid                                  // true\n\n// Data class keys also have equals and hashCode\ndata class Point(val x: Int, val y: Int)\nval visited = HashSet<Point>()\nvisited.add(Point(1, 2))\nPoint(1, 2) in visited                            // true\n\n// Encode a 2D cell as a Long for speed\nfun key(r: Int, c: Int): Long = r.toLong() * 100_003 + c\n\n// Do NOT use arrays or mutable lists as keys\n// val bad = HashSet<IntArray>()   // compares by reference, not by content"

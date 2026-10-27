@@ -42,13 +42,13 @@
       ]
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 1: Minimize (Find First True)",
       "language": "kotlin",
       "code": "fun minimizeAnswer(low: Int, high: Int): Int {\n    var left = low\n    var right = high\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (isFeasible(mid)) right = mid        // mid works, try smaller\n        else left = mid + 1                     // mid fails, need larger\n    }\n    return left\n}\n\nfun isFeasible(x: Int): Boolean {\n    // problem-specific check\n    return true\n}\n// Time: O(log(high - low) * cost of isFeasible)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 2: Maximize (Find Last True)",
       "language": "kotlin",
       "code": "fun maximizeAnswer(low: Int, high: Int): Int {\n    var left = low\n    var right = high\n    while (left < right) {\n        val mid = left + (right - left + 1) / 2   // round UP to avoid infinite loop\n        if (isFeasible(mid)) left = mid           // mid works, try larger\n        else right = mid - 1                      // mid fails, need smaller\n    }\n    return left\n}"
@@ -107,61 +107,61 @@
       ]
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 1: Koko Eating Bananas",
       "language": "kotlin",
       "code": "fun minEatingSpeed(piles: IntArray, h: Int): Int {\n    var left = 1\n    var right = piles.max()\n    while (left < right) {\n        val speed = left + (right - left) / 2\n        var hours = 0L\n        for (p in piles) hours += (p + speed - 1) / speed    // ceil(p / speed)\n        if (hours <= h) right = speed          // fast enough, try slower\n        else left = speed + 1\n    }\n    return left\n}\n// Time: O(n log(max pile))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 2: Capacity to Ship Packages Within D Days",
       "language": "kotlin",
       "code": "fun shipWithinDays(weights: IntArray, days: Int): Int {\n    var left = weights.max()               // must carry the heaviest package\n    var right = weights.sum()              // one day carries everything\n    while (left < right) {\n        val capacity = left + (right - left) / 2\n        var daysNeeded = 1\n        var load = 0\n        for (w in weights) {\n            if (load + w > capacity) {\n                daysNeeded++               // start a new day\n                load = 0\n            }\n            load += w\n        }\n        if (daysNeeded <= days) right = capacity\n        else left = capacity + 1\n    }\n    return left\n}\n// Time: O(n log(sum))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 3: Split Array Largest Sum",
       "language": "kotlin",
       "code": "fun splitArray(nums: IntArray, k: Int): Int {\n    var left = nums.max()\n    var right = nums.sum()\n    while (left < right) {\n        val maxSum = left + (right - left) / 2\n        var parts = 1\n        var current = 0\n        for (x in nums) {\n            if (current + x > maxSum) {\n                parts++\n                current = 0\n            }\n            current += x\n        }\n        if (parts <= k) right = maxSum     // can split into k or fewer parts\n        else left = maxSum + 1\n    }\n    return left\n}\n// Time: O(n log(sum))   Space: O(1)\n// Same check as ship packages: they are the same problem"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 4: Minimum Number of Days to Make m Bouquets",
       "language": "kotlin",
       "code": "fun minDays(bloomDay: IntArray, m: Int, k: Int): Int {\n    if (m.toLong() * k > bloomDay.size) return -1\n    var left = bloomDay.min()\n    var right = bloomDay.max()\n    while (left < right) {\n        val day = left + (right - left) / 2\n        var bouquets = 0\n        var flowers = 0\n        for (b in bloomDay) {\n            if (b <= day) {\n                flowers++\n                if (flowers == k) { bouquets++; flowers = 0 }\n            } else {\n                flowers = 0                // adjacency broken\n            }\n        }\n        if (bouquets >= m) right = day\n        else left = day + 1\n    }\n    return left\n}\n// Time: O(n log(maxDay))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 5: Aggressive Cows (Maximize the Minimum Distance)",
       "language": "kotlin",
       "code": "fun maxMinDistance(stalls: IntArray, cows: Int): Int {\n    stalls.sort()\n    var left = 1\n    var right = stalls.last() - stalls.first()\n    while (left < right) {\n        val dist = left + (right - left + 1) / 2        // round up: maximize\n        // greedy: place cows as early as possible\n        var placed = 1\n        var last = stalls[0]\n        for (i in 1 until stalls.size) {\n            if (stalls[i] - last >= dist) {\n                placed++\n                last = stalls[i]\n            }\n        }\n        if (placed >= cows) left = dist                 // feasible, try larger\n        else right = dist - 1\n    }\n    return left\n}\n// Time: O(n log n + n log(range))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 6: Magnetic Force Between Two Balls",
       "language": "kotlin",
       "code": "fun maxDistance(position: IntArray, m: Int): Int {\n    position.sort()\n    var left = 1\n    var right = position.last() - position.first()\n    while (left < right) {\n        val force = left + (right - left + 1) / 2\n        var count = 1\n        var last = position[0]\n        for (i in 1 until position.size) {\n            if (position[i] - last >= force) {\n                count++\n                last = position[i]\n            }\n        }\n        if (count >= m) left = force\n        else right = force - 1\n    }\n    return left\n}\n// Time: O(n log n + n log(range))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7: Smallest Divisor Given a Threshold",
       "language": "kotlin",
       "code": "fun smallestDivisor(nums: IntArray, threshold: Int): Int {\n    var left = 1\n    var right = nums.max()\n    while (left < right) {\n        val d = left + (right - left) / 2\n        var sum = 0L\n        for (x in nums) sum += (x + d - 1) / d          // ceil(x / d)\n        if (sum <= threshold) right = d\n        else left = d + 1\n    }\n    return left\n}\n// Time: O(n log(max))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 8: Find the Nth Root (Floating Point Binary Search)",
       "language": "kotlin",
       "code": "fun nthRoot(x: Double, n: Int): Double {\n    var low = 0.0\n    var high = maxOf(1.0, x)\n    repeat(100) {                                        // fixed iterations for doubles\n        val mid = (low + high) / 2\n        if (Math.pow(mid, n.toDouble()) < x) low = mid\n        else high = mid\n    }\n    return low\n}\n// Time: O(100 * n)   Space: O(1)\n// With doubles use a fixed number of iterations, not left < right"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 9: Kth Smallest Element in a Sorted Matrix",
       "language": "kotlin",
       "code": "fun kthSmallest(matrix: Array<IntArray>, k: Int): Int {\n    val n = matrix.size\n    var left = matrix[0][0]\n    var right = matrix[n - 1][n - 1]\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        // count elements <= mid by walking from the bottom-left corner\n        var count = 0\n        var row = n - 1\n        var col = 0\n        while (row >= 0 && col < n) {\n            if (matrix[row][col] <= mid) {\n                count += row + 1\n                col++\n            } else {\n                row--\n            }\n        }\n        if (count >= k) right = mid\n        else left = mid + 1\n    }\n    return left\n}\n// Time: O(n log(max - min))   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 10: Median of Two Sorted Arrays (Partition Search)",
       "language": "kotlin",
       "code": "fun findMedianSortedArrays(a: IntArray, b: IntArray): Double {\n    if (a.size > b.size) return findMedianSortedArrays(b, a)\n    val m = a.size\n    val n = b.size\n    var low = 0\n    var high = m\n    while (low <= high) {\n        val i = (low + high) / 2                    // elements taken from a\n        val j = (m + n + 1) / 2 - i                 // elements taken from b\n        val aLeft = if (i == 0) Int.MIN_VALUE else a[i - 1]\n        val aRight = if (i == m) Int.MAX_VALUE else a[i]\n        val bLeft = if (j == 0) Int.MIN_VALUE else b[j - 1]\n        val bRight = if (j == n) Int.MAX_VALUE else b[j]\n        if (aLeft <= bRight && bLeft <= aRight) {\n            return if ((m + n) % 2 == 1) maxOf(aLeft, bLeft).toDouble()\n            else (maxOf(aLeft, bLeft) + minOf(aRight, bRight)) / 2.0\n        }\n        if (aLeft > bRight) high = i - 1 else low = i + 1\n    }\n    return 0.0\n}\n// Time: O(log(min(m, n)))   Space: O(1)"

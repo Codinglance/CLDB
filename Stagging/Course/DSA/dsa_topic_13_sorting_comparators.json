@@ -78,109 +78,109 @@
       "content": "On the JVM, sorting primitive arrays like IntArray uses a dual-pivot quicksort (average O(n log n), worst case rarely seen). Sorting objects, lists and Array<T> uses TimSort, which is stable and O(n log n). Stable means equal elements keep their original relative order, which matters when you sort by one key and then another."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Basic Sorting in Kotlin",
       "language": "kotlin",
       "code": "val nums = intArrayOf(5, 2, 9, 1)\nnums.sort()                           // in place, ascending\nnums.sortDescending()                 // in place, descending\nval asc = nums.sortedArray()          // new IntArray\nval list = listOf(5, 2, 9, 1)\nval sortedList = list.sorted()        // new List, ascending\nval desc = list.sortedDescending()    // new List, descending\n\nval mutable = mutableListOf(5, 2, 9, 1)\nmutable.sort()                        // in place for MutableList\n\n// Sort only a range [from, to)\nnums.sort(1, 3)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Sorting With Comparators",
       "language": "kotlin",
       "code": "val words = listOf(\"banana\", \"fig\", \"apple\", \"kiwi\")\n\nwords.sortedBy { it.length }                       // by one key\nwords.sortedByDescending { it.length }\nwords.sortedWith(compareBy({ it.length }, { it }))   // length, then alphabetical\nwords.sortedWith(compareByDescending<String> { it.length }.thenBy { it })\n\n// Explicit comparator\nwords.sortedWith(Comparator { a, b -> a.length - b.length })\nwords.sortedWith { a, b -> b.length.compareTo(a.length) }   // descending by length\n\n// In place on a mutable list or array\nval arr = arrayOf(\"banana\", \"fig\", \"apple\")\narr.sortWith(compareBy { it.length })"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Safe Comparator Rules",
       "language": "kotlin",
       "code": "// WRONG: subtraction can overflow\n// compare { a, b -> a - b }\n\n// RIGHT:\nval safe = Comparator<Int> { a, b -> a.compareTo(b) }\nval safe2 = compareBy<Int> { it }\n\n// A comparator returns:\n//   negative -> a comes before b\n//   zero     -> equal\n//   positive -> a comes after b\n\n// Contract: it must be consistent and transitive.\n// If a < b and b < c, then a < c, otherwise sort may throw an exception."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Sorting 2D Arrays and Pairs",
       "language": "kotlin",
       "code": "val intervals = arrayOf(intArrayOf(5, 8), intArrayOf(1, 3), intArrayOf(1, 2))\n\nintervals.sortBy { it[0] }                                  // by start\nintervals.sortWith(compareBy({ it[0] }, { it[1] }))         // start, then end\nintervals.sortWith(compareBy({ it[0] }, { -it[1] }))        // start asc, end desc\n\nval pairs = listOf(Pair(1, \"b\"), Pair(1, \"a\"), Pair(0, \"z\"))\npairs.sortedWith(compareBy({ it.first }, { it.second }))\n\n// Sort indices by value (keep the original array)\nval values = intArrayOf(30, 10, 20)\nval order = values.indices.sortedBy { values[it] }          // [1, 2, 0]"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 1: Largest Number (Custom String Comparator)",
       "language": "kotlin",
       "code": "fun largestNumber(nums: IntArray): String {\n    val strs = nums.map { it.toString() }\n    // a before b if a+b is bigger than b+a\n    val sorted = strs.sortedWith { a, b -> (b + a).compareTo(a + b) }\n    if (sorted[0] == \"0\") return \"0\"          // all zeros\n    return sorted.joinToString(\"\")\n}\n// Time: O(n log n * L)   Space: O(n * L), L = digits per number"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 2: Sort Characters by Frequency",
       "language": "kotlin",
       "code": "fun frequencySort(s: String): String {\n    val freq = s.groupingBy { it }.eachCount()\n    return s.toList()\n        .sortedWith(compareByDescending<Char> { freq[it] }.thenBy { it })\n        .joinToString(\"\")\n}\n// Time: O(n log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 3: Sort Array by Parity and Custom Key",
       "language": "kotlin",
       "code": "fun sortByBits(arr: IntArray): IntArray {\n    return arr.sortedWith(\n        compareBy({ Integer.bitCount(it) }, { it })      // bit count, then value\n    ).toIntArray()\n}\n// Time: O(n log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 4: Meeting Rooms (Sort by Start)",
       "language": "kotlin",
       "code": "fun canAttendMeetings(intervals: Array<IntArray>): Boolean {\n    intervals.sortBy { it[0] }\n    for (i in 1 until intervals.size) {\n        if (intervals[i][0] < intervals[i - 1][1]) return false\n    }\n    return true\n}\n// Time: O(n log n)   Space: O(1) extra"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 5: Merge Overlapping Intervals",
       "language": "kotlin",
       "code": "fun merge(intervals: Array<IntArray>): Array<IntArray> {\n    intervals.sortBy { it[0] }\n    val result = mutableListOf<IntArray>()\n    for (iv in intervals) {\n        if (result.isEmpty() || result.last()[1] < iv[0]) result.add(iv)\n        else result.last()[1] = maxOf(result.last()[1], iv[1])\n    }\n    return result.toTypedArray()\n}\n// Time: O(n log n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 6: Two Sum After Sorting (Indices Not Needed)",
       "language": "kotlin",
       "code": "fun hasPairWithSum(nums: IntArray, target: Int): Boolean {\n    nums.sort()\n    var l = 0\n    var r = nums.size - 1\n    while (l < r) {\n        val sum = nums[l] + nums[r]\n        when {\n            sum == target -> return true\n            sum < target -> l++\n            else -> r--\n        }\n    }\n    return false\n}\n// Time: O(n log n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7: Assign Cookies (Sort + Greedy)",
       "language": "kotlin",
       "code": "fun findContentChildren(greed: IntArray, cookies: IntArray): Int {\n    greed.sort()\n    cookies.sort()\n    var child = 0\n    for (cookie in cookies) {\n        if (child < greed.size && cookie >= greed[child]) child++\n    }\n    return child\n}\n// Time: O(n log n + m log m)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 8: Sort Colors with Counting Sort",
       "language": "kotlin",
       "code": "fun sortColors(nums: IntArray) {\n    val count = IntArray(3)\n    for (x in nums) count[x]++\n    var i = 0\n    for (color in 0..2) {\n        repeat(count[color]) { nums[i++] = color }\n    }\n}\n// Time: O(n)   Space: O(1)\n// Use counting sort when the value range is small"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 9: Top K Frequent Elements (Bucket Sort)",
       "language": "kotlin",
       "code": "fun topKFrequent(nums: IntArray, k: Int): IntArray {\n    val freq = HashMap<Int, Int>()\n    for (x in nums) freq[x] = (freq[x] ?: 0) + 1\n\n    // bucket[i] holds numbers that appear i times\n    val buckets = Array(nums.size + 1) { mutableListOf<Int>() }\n    for ((num, count) in freq) buckets[count].add(num)\n\n    val result = mutableListOf<Int>()\n    for (i in buckets.indices.reversed()) {\n        for (num in buckets[i]) {\n            result.add(num)\n            if (result.size == k) return result.toIntArray()\n        }\n    }\n    return result.toIntArray()\n}\n// Time: O(n)   Space: O(n)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 10: Relative Sort Array",
       "language": "kotlin",
       "code": "fun relativeSortArray(arr1: IntArray, arr2: IntArray): IntArray {\n    val rank = HashMap<Int, Int>()\n    for ((i, v) in arr2.withIndex()) rank[v] = i\n    return arr1.sortedWith(\n        compareBy({ rank[it] ?: Int.MAX_VALUE }, { it })   // known order first, rest ascending\n    ).toIntArray()\n}\n// Time: O(n log n)   Space: O(m)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 11: K Closest Points to Origin",
       "language": "kotlin",
       "code": "fun kClosest(points: Array<IntArray>, k: Int): Array<IntArray> {\n    return points\n        .sortedBy { it[0] * it[0] + it[1] * it[1] }     // squared distance, no sqrt\n        .take(k)\n        .toTypedArray()\n}\n// Time: O(n log n)   Space: O(n)\n// Faster: a max heap of size k gives O(n log k), see Top K Elements"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 12: Custom Class With Comparable",
       "language": "kotlin",
       "code": "data class Task(val name: String, val priority: Int, val duration: Int) : Comparable<Task> {\n    override fun compareTo(other: Task): Int {\n        // higher priority first, then shorter duration\n        return when {\n            priority != other.priority -> other.priority.compareTo(priority)\n            else -> duration.compareTo(other.duration)\n        }\n    }\n}\n\nval tasks = listOf(Task(\"a\", 1, 5), Task(\"b\", 3, 2), Task(\"c\", 3, 1))\ntasks.sorted()                         // uses compareTo\ntasks.sortedWith(compareBy { it.name })    // override with a comparator"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 13: Merge Sort Implementation",
       "language": "kotlin",
       "code": "fun mergeSort(a: IntArray, l: Int = 0, r: Int = a.size - 1) {\n    if (l >= r) return\n    val m = l + (r - l) / 2\n    mergeSort(a, l, m)\n    mergeSort(a, m + 1, r)\n    val temp = IntArray(r - l + 1)\n    var i = l\n    var j = m + 1\n    var k = 0\n    while (i <= m && j <= r) temp[k++] = if (a[i] <= a[j]) a[i++] else a[j++]\n    while (i <= m) temp[k++] = a[i++]\n    while (j <= r) temp[k++] = a[j++]\n    for (x in temp.indices) a[l + x] = temp[x]\n}\n// Time: O(n log n)   Space: O(n)   Stable"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 14: Quick Select (Kth Largest Without Full Sort)",
       "language": "kotlin",
       "code": "fun findKthLargest(nums: IntArray, k: Int): Int {\n    val target = nums.size - k                   // index in sorted order\n    var left = 0\n    var right = nums.size - 1\n    while (true) {\n        val pivot = nums[right]\n        var store = left\n        for (i in left until right) {\n            if (nums[i] < pivot) {\n                val t = nums[i]; nums[i] = nums[store]; nums[store] = t\n                store++\n            }\n        }\n        val t = nums[store]; nums[store] = nums[right]; nums[right] = t\n        when {\n            store == target -> return nums[store]\n            store < target -> left = store + 1\n            else -> right = store - 1\n        }\n    }\n}\n// Time: O(n) average, O(n²) worst   Space: O(1)"

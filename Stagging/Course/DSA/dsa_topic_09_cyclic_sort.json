@@ -46,13 +46,13 @@
       "content": "Look at the element at index i. If it is not in its home index, swap it with whatever sits at its home. Repeat on index i until the element at i is either home or a duplicate of the one already home. Then move to i + 1. Every swap places at least one number permanently, so there are at most n swaps in total. Even though there is a loop inside a loop, the total time is O(n)."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 1: Cyclic Sort (Values 1..n)",
       "language": "kotlin",
       "code": "fun cyclicSort(nums: IntArray) {\n    var i = 0\n    while (i < nums.size) {\n        val correct = nums[i] - 1            // home index of nums[i]\n        if (nums[i] != nums[correct]) {\n            // swap nums[i] with nums[correct]\n            val tmp = nums[i]\n            nums[i] = nums[correct]\n            nums[correct] = tmp\n        } else {\n            i++                              // already home or duplicate\n        }\n    }\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Template 2: Cyclic Sort with Range Guard",
       "language": "kotlin",
       "code": "fun cyclicSortSafe(nums: IntArray) {\n    val n = nums.size\n    var i = 0\n    while (i < n) {\n        val correct = nums[i] - 1\n        // only swap if the value is in range 1..n and not already placed\n        if (nums[i] in 1..n && nums[i] != nums[correct]) {\n            val tmp = nums[i]\n            nums[i] = nums[correct]\n            nums[correct] = tmp\n        } else {\n            i++\n        }\n    }\n}\n// Use this when values can be zero, negative or larger than n"
@@ -63,49 +63,49 @@
       "content": "Checking nums[i] != nums[correct] (the values) instead of i != correct (the positions) is what protects you from infinite loops when duplicates exist. If the target slot already holds the same value, a swap would change nothing, so you must advance i."
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 1: Missing Number (0..n)",
       "language": "kotlin",
       "code": "fun missingNumber(nums: IntArray): Int {\n    val n = nums.size\n    var i = 0\n    while (i < n) {\n        val correct = nums[i]\n        if (correct < n && nums[i] != nums[correct]) {\n            val tmp = nums[i]; nums[i] = nums[correct]; nums[correct] = tmp\n        } else {\n            i++\n        }\n    }\n    for (j in 0 until n) {\n        if (nums[j] != j) return j\n    }\n    return n\n}\n// Time: O(n)   Space: O(1)\n// Math alternative: n * (n + 1) / 2 - nums.sum()"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 2: Find All Missing Numbers (1..n)",
       "language": "kotlin",
       "code": "fun findDisappearedNumbers(nums: IntArray): List<Int> {\n    var i = 0\n    while (i < nums.size) {\n        val correct = nums[i] - 1\n        if (nums[i] != nums[correct]) {\n            val tmp = nums[i]; nums[i] = nums[correct]; nums[correct] = tmp\n        } else {\n            i++\n        }\n    }\n    val missing = mutableListOf<Int>()\n    for (j in nums.indices) {\n        if (nums[j] != j + 1) missing.add(j + 1)\n    }\n    return missing\n}\n// Time: O(n)   Space: O(1) extra (output not counted)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 3: Find the Duplicate Number",
       "language": "kotlin",
       "code": "fun findDuplicate(nums: IntArray): Int {\n    var i = 0\n    while (i < nums.size) {\n        if (nums[i] != i + 1) {\n            val correct = nums[i] - 1\n            if (nums[i] != nums[correct]) {\n                val tmp = nums[i]; nums[i] = nums[correct]; nums[correct] = tmp\n            } else {\n                return nums[i]            // value is already home elsewhere\n            }\n        } else {\n            i++\n        }\n    }\n    return -1\n}\n// Time: O(n)   Space: O(1)\n// Modifies the array. For a read-only array use Fast & Slow Pointers"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 4: Find All Duplicates in an Array",
       "language": "kotlin",
       "code": "fun findDuplicates(nums: IntArray): List<Int> {\n    var i = 0\n    while (i < nums.size) {\n        val correct = nums[i] - 1\n        if (nums[i] != nums[correct]) {\n            val tmp = nums[i]; nums[i] = nums[correct]; nums[correct] = tmp\n        } else {\n            i++\n        }\n    }\n    val duplicates = mutableListOf<Int>()\n    for (j in nums.indices) {\n        if (nums[j] != j + 1) duplicates.add(nums[j])\n    }\n    return duplicates\n}\n// Time: O(n)   Space: O(1) extra"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 5: First Missing Positive",
       "language": "kotlin",
       "code": "fun firstMissingPositive(nums: IntArray): Int {\n    val n = nums.size\n    var i = 0\n    while (i < n) {\n        val correct = nums[i] - 1\n        if (nums[i] in 1..n && nums[i] != nums[correct]) {\n            val tmp = nums[i]; nums[i] = nums[correct]; nums[correct] = tmp\n        } else {\n            i++\n        }\n    }\n    for (j in 0 until n) {\n        if (nums[j] != j + 1) return j + 1\n    }\n    return n + 1\n}\n// Time: O(n)   Space: O(1)\n// The answer is always in the range 1..n + 1"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 6: Set Mismatch (Duplicate and Missing)",
       "language": "kotlin",
       "code": "fun findErrorNums(nums: IntArray): IntArray {\n    var i = 0\n    while (i < nums.size) {\n        val correct = nums[i] - 1\n        if (nums[i] != nums[correct]) {\n            val tmp = nums[i]; nums[i] = nums[correct]; nums[correct] = tmp\n        } else {\n            i++\n        }\n    }\n    for (j in nums.indices) {\n        if (nums[j] != j + 1) {\n            return intArrayOf(nums[j], j + 1)     // [duplicate, missing]\n        }\n    }\n    return intArrayOf(-1, -1)\n}\n// Time: O(n)   Space: O(1)"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 7: Find the Smallest Missing Positive Using Marking (Alternative)",
       "language": "kotlin",
       "code": "fun firstMissingPositiveMark(nums: IntArray): Int {\n    val n = nums.size\n    // 1. Replace non-positive and too-large numbers with n + 1\n    for (i in nums.indices) {\n        if (nums[i] <= 0 || nums[i] > n) nums[i] = n + 1\n    }\n    // 2. Mark presence by making nums[value - 1] negative\n    for (i in nums.indices) {\n        val v = Math.abs(nums[i])\n        if (v <= n && nums[v - 1] > 0) nums[v - 1] = -nums[v - 1]\n    }\n    // 3. First positive index means that number is missing\n    for (i in nums.indices) {\n        if (nums[i] > 0) return i + 1\n    }\n    return n + 1\n}\n// Time: O(n)   Space: O(1)\n// Another O(1) space way to reach the same result"
     },
     {
-      "type": "code",
+       "type": "text_code",
       "heading": "Example 8: Find the Corrupt Pair Walkthrough",
       "language": "kotlin",
       "code": "// nums = [3, 1, 2, 5, 2]\n// i = 0: nums[0] = 3, home index 2 (value 2) -> swap  -> [2, 1, 3, 5, 2]\n// i = 0: nums[0] = 2, home index 1 (value 1) -> swap  -> [1, 2, 3, 5, 2]\n// i = 0: nums[0] = 1, home index 0 -> already placed  -> i = 1\n// i = 1: 2 is home -> i = 2\n// i = 2: 3 is home -> i = 3\n// i = 3: nums[3] = 5, home index 4 (value 2) -> swap  -> [1, 2, 3, 2, 5]\n// i = 3: nums[3] = 2, home index 1 (value 2) -> same -> i = 4\n// i = 4: 5 is home -> done\n// Scan: index 3 holds 2 but should hold 4\n// duplicate = 2, missing = 4"
