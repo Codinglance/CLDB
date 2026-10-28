@@ -1,0 +1,435 @@
+{
+  "title": "Greedy Patterns",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Greedy Pattern?",
+      "content": "A greedy algorithm builds a solution step by step and, at each step, makes the choice that looks best right now, without ever reconsidering it. It works when two properties hold: the greedy-choice property (a locally best choice can always be extended to a globally optimal solution) and optimal substructure (what remains after the choice is a smaller problem of the same kind). When it applies, greedy is usually simple and fast, often O(n log n) because of a sort, or O(n) with a single scan."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Optimization problems: maximize or minimize a count, sum, length or cost",
+        "Scheduling and selection: intervals, meetings, tasks, deadlines",
+        "Problems where sorting by one key makes the best choice obvious",
+        "Taking the best available option repeatedly (usually with a heap)",
+        "Reachability and coverage: jumps, gas stations, refueling, covering a range",
+        "Assigning or matching items (cookies to children, boats to people)",
+        "Constructing the smallest or largest string, number or arrangement",
+        "Keywords: minimum number of, maximum number of, earliest, latest, at most, can you reach, always pick"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Imagine making change for a customer with the fewest coins using standard currency. You grab the biggest coin that fits, then repeat. You never need to undo a choice, because the biggest coin never blocks a better solution. Greedy is that style of thinking: commit to the best local move and trust it. The hard part is not writing the code, it is knowing whether the greedy choice is actually safe."
+    },
+    {
+      "type": "table",
+      "heading": "Greedy vs Dynamic Programming vs Backtracking",
+      "rows": [
+        {
+          "approach": "Greedy",
+          "decision": "One locally best choice, never undone",
+          "speed": "Fastest, often O(n) or O(n log n)",
+          "correctness": "Only valid when the greedy-choice property holds",
+          "example": "Interval scheduling, Jump Game"
+        },
+        {
+          "approach": "Dynamic Programming",
+          "decision": "Tries all choices but reuses overlapping subproblems",
+          "speed": "Polynomial",
+          "correctness": "Always optimal when the state is defined correctly",
+          "example": "0/1 Knapsack, Longest Increasing Subsequence"
+        },
+        {
+          "approach": "Backtracking",
+          "decision": "Tries all choices, undoes bad ones",
+          "speed": "Exponential",
+          "correctness": "Always finds all solutions",
+          "example": "Subsets, N-Queens"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Common Greedy Strategies",
+      "rows": [
+        {
+          "strategy": "Sort by end time",
+          "use_when": "Select the most non-overlapping intervals",
+          "why_it_works": "Finishing earliest leaves the most room for the rest"
+        },
+        {
+          "strategy": "Sort by start time",
+          "use_when": "Merge intervals, meeting rooms",
+          "why_it_works": "Neighbors in order are the only ones that can overlap"
+        },
+        {
+          "strategy": "Sort by ratio (value / weight)",
+          "use_when": "Fractional knapsack, job ordering",
+          "why_it_works": "Best value per unit first"
+        },
+        {
+          "strategy": "Sort by difference or deadline",
+          "use_when": "Two City Scheduling, deadline scheduling",
+          "why_it_works": "Pick the choice with the smallest regret"
+        },
+        {
+          "strategy": "Heap of best available",
+          "use_when": "Refueling stops, events attended, merging cheapest",
+          "why_it_works": "Always take the best option you can currently reach"
+        },
+        {
+          "strategy": "Track the farthest reach",
+          "use_when": "Jump Game, coverage problems",
+          "why_it_works": "The set of reachable positions is always a prefix"
+        },
+        {
+          "strategy": "Two-pass scan",
+          "use_when": "Candy, trapping rain water",
+          "why_it_works": "Each element depends on both neighbors, so handle each side separately"
+        },
+        {
+          "strategy": "Count and place the most frequent",
+          "use_when": "Task Scheduler, Reorganize String",
+          "why_it_works": "The most frequent item controls the minimum length"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Sort by End Time (Interval Scheduling)",
+      "language": "kotlin",
+      "text_code": "fun maxNonOverlapping(intervals: Array<IntArray>): Int {\n    intervals.sortBy { it[1] }                    // earliest finish first\n    var count = 0\n    var lastEnd = Int.MIN_VALUE\n    for ((start, end) in intervals) {\n        if (start >= lastEnd) {                   // does not overlap the last chosen one\n            count++\n            lastEnd = end\n        }\n    }\n    return count\n}\n// Time: O(n log n)   Space: O(1) extra\n// Sorting by start time or by length can fail on simple counterexamples"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Sort by Ratio (Fractional Knapsack)",
+      "language": "kotlin",
+      "text_code": "fun fractionalKnapsack(values: IntArray, weights: IntArray, capacity: Int): Double {\n    val order = values.indices.sortedByDescending { values[it].toDouble() / weights[it] }\n    var remaining = capacity.toDouble()\n    var total = 0.0\n    for (i in order) {\n        if (remaining <= 0) break\n        val take = minOf(remaining, weights[i].toDouble())     // a whole item or the fraction that fits\n        total += values[i] * (take / weights[i])\n        remaining -= take\n    }\n    return total\n}\n// Time: O(n log n)   Space: O(n)\n// Greedy is optimal for the FRACTIONAL knapsack but NOT for the 0/1 knapsack (use DP)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Heap of Best Available (Maximum Events Attended)",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\nfun maxEvents(events: Array<IntArray>): Int {\n    events.sortBy { it[0] }                       // by start day\n    val endDays = PriorityQueue<Int>()            // events we could attend today, earliest deadline on top\n    var day = 0\n    var i = 0\n    var attended = 0\n\n    while (i < events.size || endDays.isNotEmpty()) {\n        if (endDays.isEmpty()) day = events[i][0]                       // jump to the next start\n        while (i < events.size && events[i][0] <= day) {                // add everything that has started\n            endDays.add(events[i][1])\n            i++\n        }\n        while (endDays.isNotEmpty() && endDays.peek() < day) endDays.poll()   // drop expired events\n        if (endDays.isNotEmpty()) {\n            endDays.poll()                                              // attend the one ending soonest\n            attended++\n            day++\n        }\n    }\n    return attended\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Running Reach (Jump Game)",
+      "language": "kotlin",
+      "text_code": "fun canJump(nums: IntArray): Boolean {\n    var farthest = 0\n    for (i in nums.indices) {\n        if (i > farthest) return false            // a gap: position i can never be reached\n        farthest = maxOf(farthest, i + nums[i])\n        if (farthest >= nums.size - 1) return true\n    }\n    return true\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Two-Pass Scan (Candy)",
+      "language": "kotlin",
+      "text_code": "fun candy(ratings: IntArray): Int {\n    val n = ratings.size\n    val candies = IntArray(n) { 1 }                          // everyone gets at least one\n    for (i in 1 until n) {                                   // left to right: compare with the left neighbor\n        if (ratings[i] > ratings[i - 1]) candies[i] = candies[i - 1] + 1\n    }\n    for (i in n - 2 downTo 0) {                              // right to left: compare with the right neighbor\n        if (ratings[i] > ratings[i + 1]) candies[i] = maxOf(candies[i], candies[i + 1] + 1)\n    }\n    return candies.sum()\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Count the Most Frequent (Task Scheduler)",
+      "language": "kotlin",
+      "text_code": "fun leastInterval(tasks: CharArray, n: Int): Int {\n    val freq = IntArray(26)\n    for (t in tasks) freq[t - 'A']++\n    val maxFreq = freq.max()                                  // use maxOrNull()!! on Kotlin before 1.7\n    val countMax = freq.count { it == maxFreq }\n    // (maxFreq - 1) full cycles of length n + 1, plus the final row of the most frequent tasks\n    return maxOf(tasks.size, (maxFreq - 1) * (n + 1) + countMax)\n}\n// Time: O(tasks)   Space: O(1)\n// If the formula is smaller than the task count, there is no idle time"
+    },
+    {
+      "type": "bullet",
+      "heading": "How to Check That a Greedy Idea Is Correct",
+      "items": [
+        "Exchange argument: take any optimal solution and show you can swap in the greedy choice without making it worse",
+        "Greedy stays ahead: show that after each step the greedy solution is at least as good as any other partial solution",
+        "Counterexample search: try tiny inputs (n = 3 or 4), including ties, zeros and sorted or reversed order",
+        "Brute-force comparison: write a slow backtracking solution and compare answers on random small inputs",
+        "If a counterexample appears, the problem likely needs dynamic programming"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "When Greedy Fails: Coin Change",
+      "language": "kotlin",
+      "text_code": "// Coins {1, 3, 4}, amount 6\n// Greedy picks 4 + 1 + 1 = 3 coins\n// Optimal is 3 + 3 = 2 coins\n\nfun coinChangeGreedy(coins: IntArray, amount: Int): Int {\n    var remaining = amount\n    var count = 0\n    for (coin in coins.sortedDescending()) {\n        count += remaining / coin\n        remaining %= coin\n    }\n    return if (remaining == 0) count else -1\n}\n// Correct only for canonical systems such as {1, 5, 10, 25}\n// For arbitrary coins use dynamic programming"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Jump Game II (Minimum Jumps)",
+      "language": "kotlin",
+      "text_code": "fun jump(nums: IntArray): Int {\n    var jumps = 0\n    var currentEnd = 0                             // farthest index reachable with 'jumps' jumps\n    var farthest = 0                               // farthest index reachable with one more jump\n    for (i in 0 until nums.size - 1) {\n        farthest = maxOf(farthest, i + nums[i])\n        if (i == currentEnd) {                     // must jump now to go any further\n            jumps++\n            currentEnd = farthest\n        }\n    }\n    return jumps\n}\n// Time: O(n)   Space: O(1)\n// This is BFS by levels, done without a queue"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Gas Station",
+      "language": "kotlin",
+      "text_code": "fun canCompleteCircuit(gas: IntArray, cost: IntArray): Int {\n    var total = 0                                  // net gas over the whole circuit\n    var tank = 0                                   // net gas since the candidate start\n    var start = 0\n    for (i in gas.indices) {\n        val diff = gas[i] - cost[i]\n        total += diff\n        tank += diff\n        if (tank < 0) {                            // cannot reach i + 1 from the current start\n            start = i + 1                          // so no start between them works either\n            tank = 0\n        }\n    }\n    return if (total >= 0) start else -1\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Best Time to Buy and Sell Stock II",
+      "language": "kotlin",
+      "text_code": "fun maxProfit(prices: IntArray): Int {\n    var profit = 0\n    for (i in 1 until prices.size) {\n        if (prices[i] > prices[i - 1]) {\n            profit += prices[i] - prices[i - 1]    // collect every upward step\n        }\n    }\n    return profit\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Partition Labels",
+      "language": "kotlin",
+      "text_code": "fun partitionLabels(s: String): List<Int> {\n    val last = IntArray(26)\n    for (i in s.indices) last[s[i] - 'a'] = i      // last position of every letter\n\n    val result = mutableListOf<Int>()\n    var start = 0\n    var end = 0\n    for (i in s.indices) {\n        end = maxOf(end, last[s[i] - 'a'])         // the part must extend to cover this letter\n        if (i == end) {                            // no letter in this part appears later\n            result.add(end - start + 1)\n            start = i + 1\n        }\n    }\n    return result\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Boats to Save People",
+      "language": "kotlin",
+      "text_code": "fun numRescueBoats(people: IntArray, limit: Int): Int {\n    people.sort()\n    var l = 0\n    var r = people.size - 1\n    var boats = 0\n    while (l <= r) {\n        if (people[l] + people[r] <= limit) l++    // the lightest person fits with the heaviest\n        r--                                        // the heaviest always takes a boat\n        boats++\n    }\n    return boats\n}\n// Time: O(n log n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Two City Scheduling",
+      "language": "kotlin",
+      "text_code": "fun twoCitySchedCost(costs: Array<IntArray>): Int {\n    costs.sortBy { it[0] - it[1] }                 // how much cheaper A is than B\n    val half = costs.size / 2\n    var total = 0\n    for (i in costs.indices) {\n        total += if (i < half) costs[i][0] else costs[i][1]    // most A-favoring people go to A\n    }\n    return total\n}\n// Time: O(n log n)   Space: O(1) extra"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Minimum Number of Refueling Stops",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\nfun minRefuelStops(target: Int, startFuel: Int, stations: Array<IntArray>): Int {\n    val fuelHeap = PriorityQueue<Int>(compareByDescending { it })   // fuel from stations already passed\n    var fuel = startFuel.toLong()\n    var stops = 0\n    var i = 0\n    while (fuel < target) {\n        while (i < stations.size && stations[i][0] <= fuel) {\n            fuelHeap.add(stations[i][1])                             // stations we could have stopped at\n            i++\n        }\n        if (fuelHeap.isEmpty()) return -1                            // stuck\n        fuel += fuelHeap.poll()                                      // refuel retroactively at the biggest one\n        stops++\n    }\n    return stops\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Queue Reconstruction by Height",
+      "language": "kotlin",
+      "text_code": "fun reconstructQueue(people: Array<IntArray>): Array<IntArray> {\n    // tallest first; for equal heights, fewer people in front first\n    people.sortWith(compareBy({ -it[0] }, { it[1] }))\n    val result = ArrayList<IntArray>()\n    for (p in people) {\n        result.add(p[1], p)                        // insert at index k: shorter people placed later do not matter\n    }\n    return result.toTypedArray()\n}\n// Time: O(n²) because of the inserts   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Lemonade Change",
+      "language": "kotlin",
+      "text_code": "fun lemonadeChange(bills: IntArray): Boolean {\n    var five = 0\n    var ten = 0\n    for (b in bills) {\n        when (b) {\n            5 -> five++\n            10 -> {\n                if (five == 0) return false\n                five--\n                ten++\n            }\n            else -> {                              // 20: prefer giving a 10 and a 5, keep the more flexible 5s\n                if (ten > 0 && five > 0) { ten--; five-- }\n                else if (five >= 3) five -= 3\n                else return false\n            }\n        }\n    }\n    return true\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Valid Parenthesis String (Range of Possibilities)",
+      "language": "kotlin",
+      "text_code": "fun checkValidString(s: String): Boolean {\n    var low = 0                                    // fewest possible open parentheses\n    var high = 0                                   // most possible open parentheses\n    for (c in s) {\n        when (c) {\n            '(' -> { low++; high++ }\n            ')' -> { low--; high-- }\n            else -> { low--; high++ }              // '*' can be ')', empty or '('\n        }\n        if (high < 0) return false                 // too many closing parentheses even in the best case\n        low = maxOf(low, 0)                        // we cannot have a negative number of open ones\n    }\n    return low == 0\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Hand of Straights",
+      "language": "kotlin",
+      "text_code": "import java.util.TreeMap\n\nfun isNStraightHand(hand: IntArray, groupSize: Int): Boolean {\n    if (hand.size % groupSize != 0) return false\n    val count = TreeMap<Int, Int>()\n    for (card in hand) count[card] = (count[card] ?: 0) + 1\n\n    while (count.isNotEmpty()) {\n        val first = count.firstKey()               // the smallest card must start a group\n        for (card in first until first + groupSize) {\n            val c = count[card] ?: return false\n            if (c == 1) count.remove(card) else count[card] = c - 1\n        }\n    }\n    return true\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Maximum Units on a Truck",
+      "language": "kotlin",
+      "text_code": "fun maximumUnits(boxTypes: Array<IntArray>, truckSize: Int): Int {\n    boxTypes.sortByDescending { it[1] }            // most units per box first\n    var remaining = truckSize\n    var units = 0\n    for ((boxes, perBox) in boxTypes) {\n        val take = minOf(remaining, boxes)\n        units += take * perBox\n        remaining -= take\n        if (remaining == 0) break\n    }\n    return units\n}\n// Time: O(n log n)   Space: O(1) extra"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Remove K Digits (Greedy With a Stack)",
+      "language": "kotlin",
+      "text_code": "// Smallest number after removing k digits: remove a digit when the next digit is smaller.\nfun removeKdigits(num: String, k: Int): String {\n    val stack = StringBuilder()\n    var remaining = k\n    for (c in num) {\n        while (remaining > 0 && stack.isNotEmpty() && stack.last() > c) {\n            stack.deleteCharAt(stack.length - 1)   // a larger digit before a smaller one is wasteful\n            remaining--\n        }\n        stack.append(c)\n    }\n    while (remaining > 0 && stack.isNotEmpty()) {\n        stack.deleteCharAt(stack.length - 1)\n        remaining--\n    }\n    val result = stack.toString().trimStart('0')\n    return if (result.isEmpty()) \"0\" else result\n}\n// Time: O(n)   Space: O(n)\n// Greedy choice: make the leftmost digit as small as possible"
+    },
+    {
+      "type": "table",
+      "heading": "Greedy Choice Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Max non-overlapping intervals / min removals",
+          "greedy_choice": "Take the interval that ends earliest",
+          "sort_key": "End time ascending"
+        },
+        {
+          "problem": "Minimum arrows to burst balloons",
+          "greedy_choice": "Shoot at the earliest end",
+          "sort_key": "End time ascending"
+        },
+        {
+          "problem": "Jump Game I and II",
+          "greedy_choice": "Track the farthest reach",
+          "sort_key": "None, single scan"
+        },
+        {
+          "problem": "Gas Station",
+          "greedy_choice": "Reset the start whenever the tank goes negative",
+          "sort_key": "None, single scan"
+        },
+        {
+          "problem": "Assign Cookies / Boats",
+          "greedy_choice": "Match smallest with smallest, or heaviest with lightest",
+          "sort_key": "Ascending, then two pointers"
+        },
+        {
+          "problem": "Candy",
+          "greedy_choice": "Satisfy left neighbors, then right neighbors",
+          "sort_key": "None, two passes"
+        },
+        {
+          "problem": "Two City Scheduling",
+          "greedy_choice": "Send the people with the largest savings to A",
+          "sort_key": "cost A - cost B"
+        },
+        {
+          "problem": "Maximum Units on a Truck / Fractional Knapsack",
+          "greedy_choice": "Highest value per unit first",
+          "sort_key": "Ratio descending"
+        },
+        {
+          "problem": "Task Scheduler",
+          "greedy_choice": "The most frequent task decides the frame size",
+          "sort_key": "Counts"
+        },
+        {
+          "problem": "Refueling Stops / Events Attended",
+          "greedy_choice": "Pick the best available with a heap",
+          "sort_key": "Position or start day, then a heap"
+        },
+        {
+          "problem": "Remove K Digits",
+          "greedy_choice": "Drop a digit larger than the one after it",
+          "sort_key": "None, monotonic stack"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Jump Game",
+          "technique": "Running reach",
+          "key_idea": "If i > farthest, you are stuck"
+        },
+        {
+          "problem": "Jump Game II",
+          "technique": "Implicit BFS levels",
+          "key_idea": "Jump only when you reach the end of the current range"
+        },
+        {
+          "problem": "Gas Station",
+          "technique": "Total and tank",
+          "key_idea": "Total >= 0 guarantees a start exists, and the reset point is it"
+        },
+        {
+          "problem": "Best Time to Buy and Sell Stock II",
+          "technique": "Sum of rises",
+          "key_idea": "Take every positive difference"
+        },
+        {
+          "problem": "Partition Labels",
+          "technique": "Last occurrence",
+          "key_idea": "Close the part when i equals the farthest last occurrence"
+        },
+        {
+          "problem": "Candy",
+          "technique": "Two passes",
+          "key_idea": "Left rule, then right rule with maxOf"
+        },
+        {
+          "problem": "Task Scheduler",
+          "technique": "Frequency formula",
+          "key_idea": "(maxFreq - 1) * (n + 1) + countMax"
+        },
+        {
+          "problem": "Queue Reconstruction by Height",
+          "technique": "Sort then insert",
+          "key_idea": "Tallest first, insert at index k"
+        },
+        {
+          "problem": "Valid Parenthesis String",
+          "technique": "Range of open counts",
+          "key_idea": "Keep a low and high bound"
+        },
+        {
+          "problem": "Hand of Straights",
+          "technique": "Smallest card starts a group",
+          "key_idea": "TreeMap of counts"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Applying greedy to a problem that needs dynamic programming (0/1 knapsack, general coin change, longest increasing subsequence)",
+        "Sorting by the wrong key: end time for most-intervals, start time for merging",
+        "Not testing the greedy idea on small tricky inputs with ties, zeros or negative numbers",
+        "Subtracting values in a comparator, which can overflow (use compareBy)",
+        "Updating the answer before checking the greedy condition in a scan",
+        "Forgetting to handle empty input or a single element",
+        "Overcomplicating: if every step is forced, a single loop is enough",
+        "Assuming the greedy answer is unique, since many optimal solutions can exist"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "pattern": "Sort + single scan",
+          "time": "O(n log n)",
+          "space": "O(1) to O(n)"
+        },
+        {
+          "pattern": "Single scan with running state",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "pattern": "Heap of best available",
+          "time": "O(n log n)",
+          "space": "O(n)"
+        },
+        {
+          "pattern": "Two-pass scan",
+          "time": "O(n)",
+          "space": "O(n)"
+        },
+        {
+          "pattern": "Frequency counting",
+          "time": "O(n)",
+          "space": "O(alphabet)"
+        },
+        {
+          "pattern": "Sort + insert (queue reconstruction)",
+          "time": "O(n²)",
+          "space": "O(n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Assign Cookies",
+        "Jump Game and Jump Game II",
+        "Gas Station",
+        "Best Time to Buy and Sell Stock II",
+        "Partition Labels",
+        "Candy",
+        "Task Scheduler",
+        "Non-overlapping Intervals",
+        "Minimum Number of Arrows to Burst Balloons",
+        "Queue Reconstruction by Height",
+        "Two City Scheduling",
+        "Boats to Save People",
+        "Valid Parenthesis String",
+        "Hand of Straights",
+        "Minimum Number of Refueling Stops",
+        "Maximum Events That Can Be Attended",
+        "Remove K Digits"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Greedy picks the best local choice at each step and never undoes it",
+        "It is correct only when the greedy-choice property and optimal substructure hold, so justify it or test it",
+        "Most greedy solutions begin with a sort (by end, ratio or difference) or use a heap of the best available option",
+        "Track a running quantity such as the farthest reach, the tank or a range of possibilities",
+        "Use an exchange argument or brute-force comparison to check your idea",
+        "If a counterexample exists, switch to dynamic programming"
+      ]
+    }
+  ]
+}
