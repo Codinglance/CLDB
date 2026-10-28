@@ -1,0 +1,449 @@
+{
+  "title": "LCS, LIS & String DP",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is String / Sequence DP?",
+      "content": "This family of DP problems works on one or two sequences (strings or arrays) and asks for the longest, shortest, cheapest or number of ways to match, transform or select parts of them. The most common state is dp[i][j]: the answer for the first i characters of string A and the first j characters of string B. Each cell is built from three neighbors: the diagonal (both characters used), the cell above (skip a character of A) and the cell to the left (skip a character of B). The core problems are Longest Common Subsequence (LCS), Edit Distance, Longest Increasing Subsequence (LIS) and their many variants."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Compare two strings: longest common subsequence, edit distance, interleaving, matching with wildcards",
+        "Find the longest increasing, palindromic or chain-like subsequence in one sequence",
+        "Count the ways one string can be formed from another (distinct subsequences)",
+        "Convert one string into another with the fewest operations",
+        "Questions about deleting, inserting or replacing characters",
+        "Keywords: subsequence, common, edit distance, delete, insert, replace, match, interleave, palindromic subsequence, increasing"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Imagine laying the two strings along the edges of a grid, one down the left and one across the top. Cell (i, j) answers the question for the prefixes A[0 until i] and B[0 until j]. When the last characters of the two prefixes match, you can pair them and build on cell (i - 1, j - 1). When they do not match, one of them has to be left out, so you take the better of dropping the last character of A (cell above) or of B (cell to the left). Filling the grid row by row builds the full answer from tiny prefixes."
+    },
+    {
+      "type": "table",
+      "heading": "Subsequence vs Substring",
+      "rows": [
+        {
+          "term": "Substring",
+          "definition": "Characters that are contiguous (next to each other)",
+          "example": "'bcd' in 'abcde'",
+          "dp_note": "On a mismatch the length resets to 0"
+        },
+        {
+          "term": "Subsequence",
+          "definition": "Characters in order, but gaps are allowed",
+          "example": "'ace' in 'abcde'",
+          "dp_note": "On a mismatch carry over the best of the neighbors"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "The Three Moves in a Two-String Table",
+      "rows": [
+        {
+          "move": "Diagonal dp[i - 1][j - 1]",
+          "meaning": "Use both A[i - 1] and B[j - 1]",
+          "used_when": "Characters match (LCS), or replace in Edit Distance"
+        },
+        {
+          "move": "Up dp[i - 1][j]",
+          "meaning": "Skip or delete A[i - 1]",
+          "used_when": "Mismatch: drop a character of A"
+        },
+        {
+          "move": "Left dp[i][j - 1]",
+          "meaning": "Skip or delete B[j - 1]",
+          "used_when": "Mismatch: drop a character of B (or insert into A in Edit Distance)"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Base Cases for Prefix Tables",
+      "rows": [
+        {
+          "problem": "LCS, Longest Common Substring",
+          "base_case": "dp[0][j] and dp[i][0] are 0",
+          "reason": "An empty string has no common part"
+        },
+        {
+          "problem": "Edit Distance",
+          "base_case": "dp[i][0] = i and dp[0][j] = j",
+          "reason": "Turning a prefix into the empty string takes i deletions"
+        },
+        {
+          "problem": "Distinct Subsequences",
+          "base_case": "dp[i][0] = 1",
+          "reason": "The empty target can be formed one way"
+        },
+        {
+          "problem": "Interleaving, Regex, Wildcard",
+          "base_case": "dp[0][0] = true",
+          "reason": "Two empty strings match"
+        },
+        {
+          "problem": "Min ASCII Delete Sum",
+          "base_case": "dp[i][0] = sum of A's first i codes",
+          "reason": "Everything must be deleted"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Longest Common Subsequence (2D Table)",
+      "language": "kotlin",
+      "code": "fun longestCommonSubsequence(a: String, b: String): Int {\n    val n = a.length\n    val m = b.length\n    val dp = Array(n + 1) { IntArray(m + 1) }          // dp[i][j] = LCS of a[0 until i] and b[0 until j]\n    for (i in 1..n) {\n        for (j in 1..m) {\n            dp[i][j] = if (a[i - 1] == b[j - 1]) {\n                dp[i - 1][j - 1] + 1                    // match: extend the common subsequence\n            } else {\n                maxOf(dp[i - 1][j], dp[i][j - 1])       // mismatch: drop a character from either side\n            }\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: LCS With Two Rows (Space Optimized)",
+      "language": "kotlin",
+      "code": "fun lcsOptimized(a: String, b: String): Int {\n    var prev = IntArray(b.length + 1)\n    for (i in 1..a.length) {\n        val cur = IntArray(b.length + 1)\n        for (j in 1..b.length) {\n            cur[j] = if (a[i - 1] == b[j - 1]) prev[j - 1] + 1\n                     else maxOf(prev[j], cur[j - 1])\n        }\n        prev = cur\n    }\n    return prev[b.length]\n}\n// Time: O(n * m)   Space: O(m)\n// You lose the ability to rebuild the string, so use the full table when you need it"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Rebuild the LCS String",
+      "language": "kotlin",
+      "code": "fun lcsString(a: String, b: String): String {\n    val n = a.length\n    val m = b.length\n    val dp = Array(n + 1) { IntArray(m + 1) }\n    for (i in 1..n) {\n        for (j in 1..m) {\n            dp[i][j] = if (a[i - 1] == b[j - 1]) dp[i - 1][j - 1] + 1\n                       else maxOf(dp[i - 1][j], dp[i][j - 1])\n        }\n    }\n\n    val sb = StringBuilder()\n    var i = n\n    var j = m\n    while (i > 0 && j > 0) {                           // walk back from the bottom-right corner\n        when {\n            a[i - 1] == b[j - 1] -> { sb.append(a[i - 1]); i--; j-- }\n            dp[i - 1][j] >= dp[i][j - 1] -> i--\n            else -> j--\n        }\n    }\n    return sb.reverse().toString()\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Longest Common Substring (Reset on Mismatch)",
+      "language": "kotlin",
+      "code": "fun longestCommonSubstring(a: String, b: String): Int {\n    val dp = Array(a.length + 1) { IntArray(b.length + 1) }\n    var best = 0\n    for (i in 1..a.length) {\n        for (j in 1..b.length) {\n            if (a[i - 1] == b[j - 1]) {\n                dp[i][j] = dp[i - 1][j - 1] + 1\n                best = maxOf(best, dp[i][j])\n            } else {\n                dp[i][j] = 0                           // a substring must be contiguous, so the run ends\n            }\n        }\n    }\n    return best\n}\n// Time: O(n * m)   Space: O(n * m), or O(m) with one row"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Edit Distance (Levenshtein)",
+      "language": "kotlin",
+      "code": "fun minDistance(a: String, b: String): Int {\n    val n = a.length\n    val m = b.length\n    val dp = Array(n + 1) { IntArray(m + 1) }\n    for (i in 0..n) dp[i][0] = i                       // delete all i characters\n    for (j in 0..m) dp[0][j] = j                       // insert all j characters\n    for (i in 1..n) {\n        for (j in 1..m) {\n            dp[i][j] = if (a[i - 1] == b[j - 1]) {\n                dp[i - 1][j - 1]                        // characters already equal: no cost\n            } else {\n                1 + minOf(\n                    dp[i - 1][j - 1],                   // replace\n                    dp[i - 1][j],                       // delete from a\n                    dp[i][j - 1]                        // insert into a\n                )\n            }\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m), or O(m) with two rows"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: LIS With Sequence Recovery (O(n²))",
+      "language": "kotlin",
+      "code": "fun lisSequence(nums: IntArray): List<Int> {\n    if (nums.isEmpty()) return emptyList()\n    val n = nums.size\n    val dp = IntArray(n) { 1 }                          // longest increasing subsequence ending at i\n    val parent = IntArray(n) { -1 }\n    var bestIdx = 0\n    for (i in 0 until n) {\n        for (j in 0 until i) {\n            if (nums[j] < nums[i] && dp[j] + 1 > dp[i]) {\n                dp[i] = dp[j] + 1\n                parent[i] = j                           // remember the predecessor\n            }\n        }\n        if (dp[i] > dp[bestIdx]) bestIdx = i\n    }\n    val result = ArrayList<Int>()\n    var cur = bestIdx\n    while (cur != -1) {\n        result.add(nums[cur])\n        cur = parent[cur]\n    }\n    result.reverse()\n    return result\n}\n// Time: O(n²)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: LIS in O(n log n)",
+      "language": "kotlin",
+      "code": "fun lengthOfLIS(nums: IntArray): Int {\n    val tails = ArrayList<Int>()                        // tails[k] = smallest tail of an increasing subsequence of length k + 1\n    for (x in nums) {\n        var lo = 0\n        var hi = tails.size\n        while (lo < hi) {\n            val mid = (lo + hi) / 2\n            if (tails[mid] < x) lo = mid + 1 else hi = mid    // first tail that is >= x\n        }\n        if (lo == tails.size) tails.add(x) else tails[lo] = x\n    }\n    return tails.size\n}\n// Time: O(n log n)   Space: O(n)\n// For a non-decreasing subsequence use tails[mid] <= x"
+    },
+    {
+      "type": "table",
+      "heading": "Problems That Reduce to LCS",
+      "rows": [
+        {
+          "problem": "Delete Operation for Two Strings",
+          "formula": "n + m - 2 * LCS",
+          "idea": "Keep the common subsequence, delete the rest from both strings"
+        },
+        {
+          "problem": "Shortest Common Supersequence (length)",
+          "formula": "n + m - LCS",
+          "idea": "Write the common part once"
+        },
+        {
+          "problem": "Longest Palindromic Subsequence",
+          "formula": "LCS(s, reverse(s))",
+          "idea": "A palindrome reads the same in both directions"
+        },
+        {
+          "problem": "Minimum Insertions to Make a String a Palindrome",
+          "formula": "n - LPS(s)",
+          "idea": "Insert a mirror for each character outside the palindromic part"
+        },
+        {
+          "problem": "Minimum Deletions to Make a String a Palindrome",
+          "formula": "n - LPS(s)",
+          "idea": "Delete the characters outside the longest palindromic subsequence"
+        },
+        {
+          "problem": "Uncrossed Lines",
+          "formula": "LCS(nums1, nums2)",
+          "idea": "Matching in order without crossing is a common subsequence"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Delete Operation for Two Strings",
+      "language": "kotlin",
+      "code": "fun minDeleteDistance(word1: String, word2: String): Int {\n    val lcs = longestCommonSubsequence(word1, word2)\n    return word1.length + word2.length - 2 * lcs\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Minimum ASCII Delete Sum for Two Strings",
+      "language": "kotlin",
+      "code": "fun minimumDeleteSum(s1: String, s2: String): Int {\n    val n = s1.length\n    val m = s2.length\n    val dp = Array(n + 1) { IntArray(m + 1) }\n    for (i in 1..n) dp[i][0] = dp[i - 1][0] + s1[i - 1].code      // delete all of s1's prefix\n    for (j in 1..m) dp[0][j] = dp[0][j - 1] + s2[j - 1].code      // delete all of s2's prefix\n    for (i in 1..n) {\n        for (j in 1..m) {\n            dp[i][j] = if (s1[i - 1] == s2[j - 1]) {\n                dp[i - 1][j - 1]\n            } else {\n                minOf(dp[i - 1][j] + s1[i - 1].code, dp[i][j - 1] + s2[j - 1].code)\n            }\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Shortest Common Supersequence (String)",
+      "language": "kotlin",
+      "code": "fun shortestCommonSupersequence(a: String, b: String): String {\n    val n = a.length\n    val m = b.length\n    val dp = Array(n + 1) { IntArray(m + 1) }\n    for (i in 1..n) {\n        for (j in 1..m) {\n            dp[i][j] = if (a[i - 1] == b[j - 1]) dp[i - 1][j - 1] + 1\n                       else maxOf(dp[i - 1][j], dp[i][j - 1])\n        }\n    }\n\n    val sb = StringBuilder()\n    var i = n\n    var j = m\n    while (i > 0 && j > 0) {\n        if (a[i - 1] == b[j - 1]) {                     // common character is written once\n            sb.append(a[i - 1]); i--; j--\n        } else if (dp[i - 1][j] >= dp[i][j - 1]) {\n            sb.append(a[i - 1]); i--\n        } else {\n            sb.append(b[j - 1]); j--\n        }\n    }\n    while (i > 0) { sb.append(a[i - 1]); i-- }          // leftovers\n    while (j > 0) { sb.append(b[j - 1]); j-- }\n    return sb.reverse().toString()\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Longest Palindromic Subsequence",
+      "language": "kotlin",
+      "code": "fun longestPalindromeSubseq(s: String): Int {\n    val n = s.length\n    if (n == 0) return 0\n    val dp = Array(n) { IntArray(n) }                   // dp[i][j] = LPS inside s[i..j]\n    for (i in n - 1 downTo 0) {\n        dp[i][i] = 1\n        for (j in i + 1 until n) {\n            dp[i][j] = if (s[i] == s[j]) {\n                dp[i + 1][j - 1] + 2                    // wrap the inner palindrome with the matching ends\n            } else {\n                maxOf(dp[i + 1][j], dp[i][j - 1])\n            }\n        }\n    }\n    return dp[0][n - 1]\n}\n// Time: O(n²)   Space: O(n²)\n// Minimum insertions to make s a palindrome = n - longestPalindromeSubseq(s)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Distinct Subsequences",
+      "language": "kotlin",
+      "code": "fun numDistinct(s: String, t: String): Int {\n    val n = s.length\n    val m = t.length\n    val dp = Array(n + 1) { IntArray(m + 1) }           // ways s[0 until i] contains t[0 until j] as a subsequence\n    for (i in 0..n) dp[i][0] = 1                        // the empty target has exactly one way\n    for (i in 1..n) {\n        for (j in 1..m) {\n            dp[i][j] = dp[i - 1][j]                     // skip s[i - 1]\n            if (s[i - 1] == t[j - 1]) {\n                dp[i][j] += dp[i - 1][j - 1]            // or use it to match t[j - 1]\n            }\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m)\n// The answer is guaranteed to fit in a 32-bit Int on the usual platform tests; use Long otherwise"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Interleaving String",
+      "language": "kotlin",
+      "code": "fun isInterleave(s1: String, s2: String, s3: String): Boolean {\n    val n = s1.length\n    val m = s2.length\n    if (n + m != s3.length) return false\n    val dp = Array(n + 1) { BooleanArray(m + 1) }       // dp[i][j] = s3[0 until i + j] is an interleaving of s1[0 until i] and s2[0 until j]\n    dp[0][0] = true\n    for (i in 0..n) {\n        for (j in 0..m) {\n            if (i > 0 && dp[i - 1][j] && s1[i - 1] == s3[i + j - 1]) dp[i][j] = true\n            if (j > 0 && dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]) dp[i][j] = true\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Regular Expression Matching ('.' and '*')",
+      "language": "kotlin",
+      "code": "fun isMatch(s: String, p: String): Boolean {\n    val n = s.length\n    val m = p.length\n    val dp = Array(n + 1) { BooleanArray(m + 1) }\n    dp[0][0] = true\n    for (j in 2..m) {\n        if (p[j - 1] == '*') dp[0][j] = dp[0][j - 2]    // 'a*' can match the empty string\n    }\n    for (i in 1..n) {\n        for (j in 1..m) {\n            if (p[j - 1] == '*') {\n                dp[i][j] = dp[i][j - 2]                                    // zero copies of the previous element\n                if (p[j - 2] == '.' || p[j - 2] == s[i - 1]) {\n                    dp[i][j] = dp[i][j] || dp[i - 1][j]                    // one more copy\n                }\n            } else if (p[j - 1] == '.' || p[j - 1] == s[i - 1]) {\n                dp[i][j] = dp[i - 1][j - 1]\n            }\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Wildcard Matching ('?' and '*')",
+      "language": "kotlin",
+      "code": "fun isMatchWildcard(s: String, p: String): Boolean {\n    val n = s.length\n    val m = p.length\n    val dp = Array(n + 1) { BooleanArray(m + 1) }\n    dp[0][0] = true\n    for (j in 1..m) {\n        if (p[j - 1] == '*') dp[0][j] = dp[0][j - 1]    // a leading '*' can match nothing\n    }\n    for (i in 1..n) {\n        for (j in 1..m) {\n            if (p[j - 1] == '*') {\n                dp[i][j] = dp[i][j - 1] || dp[i - 1][j]  // '*' matches empty, or one more character\n            } else if (p[j - 1] == '?' || p[j - 1] == s[i - 1]) {\n                dp[i][j] = dp[i - 1][j - 1]\n            }\n        }\n    }\n    return dp[n][m]\n}\n// Time: O(n * m)   Space: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Number of Longest Increasing Subsequences",
+      "language": "kotlin",
+      "code": "fun findNumberOfLIS(nums: IntArray): Int {\n    val n = nums.size\n    val length = IntArray(n) { 1 }                      // LIS length ending at i\n    val count = IntArray(n) { 1 }                       // number of LIS ending at i\n    var maxLen = 0\n    for (i in 0 until n) {\n        for (j in 0 until i) {\n            if (nums[j] < nums[i]) {\n                if (length[j] + 1 > length[i]) {\n                    length[i] = length[j] + 1\n                    count[i] = count[j]                 // a strictly better length resets the count\n                } else if (length[j] + 1 == length[i]) {\n                    count[i] += count[j]                // another way to reach the same length\n                }\n            }\n        }\n        maxLen = maxOf(maxLen, length[i])\n    }\n    var result = 0\n    for (i in 0 until n) {\n        if (length[i] == maxLen) result += count[i]\n    }\n    return result\n}\n// Time: O(n²)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Russian Doll Envelopes (Sort + LIS)",
+      "language": "kotlin",
+      "code": "fun maxEnvelopes(envelopes: Array<IntArray>): Int {\n    // width ascending; for equal widths height DESCENDING so equal widths cannot chain\n    envelopes.sortWith(compareBy({ it[0] }, { -it[1] }))\n    val tails = ArrayList<Int>()\n    for (e in envelopes) {\n        val h = e[1]\n        var lo = 0\n        var hi = tails.size\n        while (lo < hi) {\n            val mid = (lo + hi) / 2\n            if (tails[mid] < h) lo = mid + 1 else hi = mid\n        }\n        if (lo == tails.size) tails.add(h) else tails[lo] = h\n    }\n    return tails.size\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Longest String Chain",
+      "language": "kotlin",
+      "code": "fun longestStrChain(words: Array<String>): Int {\n    words.sortBy { it.length }                          // shorter words first\n    val dp = HashMap<String, Int>()                     // longest chain ending at this word\n    var best = 1\n    for (w in words) {\n        var cur = 1\n        for (i in w.indices) {\n            val predecessor = w.removeRange(i, i + 1)   // delete one character\n            cur = maxOf(cur, (dp[predecessor] ?: 0) + 1)\n        }\n        dp[w] = cur\n        best = maxOf(best, cur)\n    }\n    return best\n}\n// Time: O(n * L²)   Space: O(n * L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Longest Arithmetic Subsequence of Given Difference",
+      "language": "kotlin",
+      "code": "fun longestSubsequence(arr: IntArray, difference: Int): Int {\n    val dp = HashMap<Int, Int>()                        // value -> longest such subsequence ending with it\n    var best = 0\n    for (x in arr) {\n        val len = (dp[x - difference] ?: 0) + 1\n        dp[x] = len\n        best = maxOf(best, len)\n    }\n    return best\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Longest Valid Parentheses (1D String DP)",
+      "language": "kotlin",
+      "code": "fun longestValidParentheses(s: String): Int {\n    val dp = IntArray(s.length)                         // dp[i] = longest valid substring ending at i\n    var best = 0\n    for (i in 1 until s.length) {\n        if (s[i] == ')') {\n            if (s[i - 1] == '(') {\n                dp[i] = (if (i >= 2) dp[i - 2] else 0) + 2          // \"...()\"\n            } else {\n                val j = i - dp[i - 1] - 1                           // index before the valid block ending at i - 1\n                if (j >= 0 && s[j] == '(') {\n                    dp[i] = dp[i - 1] + 2 + (if (j >= 1) dp[j - 1] else 0)\n                }\n            }\n            best = maxOf(best, dp[i])\n        }\n    }\n    return best\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Maximum Length of Repeated Subarray",
+      "language": "kotlin",
+      "code": "fun findLength(nums1: IntArray, nums2: IntArray): Int {\n    val dp = Array(nums1.size + 1) { IntArray(nums2.size + 1) }\n    var best = 0\n    for (i in 1..nums1.size) {\n        for (j in 1..nums2.size) {\n            if (nums1[i - 1] == nums2[j - 1]) {\n                dp[i][j] = dp[i - 1][j - 1] + 1          // contiguous run grows\n                best = maxOf(best, dp[i][j])\n            }                                             // mismatch leaves dp[i][j] = 0\n        }\n    }\n    return best\n}\n// Time: O(n * m)   Space: O(n * m)\n// Same as Longest Common Substring, applied to arrays"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Is Subsequence (Two Pointers vs DP)",
+      "language": "kotlin",
+      "code": "fun isSubsequence(s: String, t: String): Boolean {\n    var i = 0\n    for (c in t) {\n        if (i < s.length && s[i] == c) i++\n    }\n    return i == s.length\n}\n// Time: O(|t|)   Space: O(1)\n// When there are MANY queries for the same t, preprocess positions per letter and binary search"
+    },
+    {
+      "type": "table",
+      "heading": "Recurrence Cheat Sheet",
+      "rows": [
+        {
+          "problem": "LCS",
+          "match": "dp[i - 1][j - 1] + 1",
+          "mismatch": "max(dp[i - 1][j], dp[i][j - 1])"
+        },
+        {
+          "problem": "Longest Common Substring",
+          "match": "dp[i - 1][j - 1] + 1",
+          "mismatch": "0"
+        },
+        {
+          "problem": "Edit Distance",
+          "match": "dp[i - 1][j - 1]",
+          "mismatch": "1 + min(replace, delete, insert)"
+        },
+        {
+          "problem": "Distinct Subsequences",
+          "match": "dp[i - 1][j] + dp[i - 1][j - 1]",
+          "mismatch": "dp[i - 1][j]"
+        },
+        {
+          "problem": "Longest Palindromic Subsequence",
+          "match": "dp[i + 1][j - 1] + 2",
+          "mismatch": "max(dp[i + 1][j], dp[i][j - 1])"
+        },
+        {
+          "problem": "Interleaving String",
+          "match": "dp[i - 1][j] or dp[i][j - 1] if the character fits",
+          "mismatch": "false"
+        },
+        {
+          "problem": "LIS",
+          "match": "dp[i] = max(dp[j] + 1) for j < i with nums[j] < nums[i]",
+          "mismatch": "dp[i] stays 1"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Longest Common Subsequence",
+          "state": "dp[i][j] over two prefixes",
+          "key_idea": "Match extends the diagonal, mismatch takes the better neighbor"
+        },
+        {
+          "problem": "Edit Distance",
+          "state": "dp[i][j] = fewest operations",
+          "key_idea": "Replace, delete or insert each costs 1"
+        },
+        {
+          "problem": "Longest Increasing Subsequence",
+          "state": "dp[i] ending at i, or the tails array",
+          "key_idea": "O(n log n) with binary search on tails"
+        },
+        {
+          "problem": "Longest Palindromic Subsequence",
+          "state": "dp[i][j] on an interval",
+          "key_idea": "Equal ends add 2 to the inner answer"
+        },
+        {
+          "problem": "Distinct Subsequences",
+          "state": "dp[i][j] = number of ways",
+          "key_idea": "Skip the character, or use it if it matches"
+        },
+        {
+          "problem": "Regex and Wildcard Matching",
+          "state": "dp[i][j] = boolean prefix match",
+          "key_idea": "Handle '*' as zero or more of the previous element"
+        },
+        {
+          "problem": "Interleaving String",
+          "state": "dp[i][j] = boolean",
+          "key_idea": "Take the next character from s1 or from s2"
+        },
+        {
+          "problem": "Russian Doll Envelopes",
+          "state": "Sort + tails array",
+          "key_idea": "Heights in descending order for equal widths"
+        },
+        {
+          "problem": "Longest String Chain",
+          "state": "HashMap from word to chain length",
+          "key_idea": "Try deleting each character to find predecessors"
+        },
+        {
+          "problem": "Longest Valid Parentheses",
+          "state": "dp[i] ending at i",
+          "key_idea": "Look back over the previous valid block"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Mixing up the dp index (first i characters) and the string index (a[i - 1] for dp row i)",
+        "Forgetting the base cases for the empty prefixes (row 0 and column 0)",
+        "Resetting to 0 on mismatch in a subsequence problem, or carrying over in a substring problem",
+        "Computing max and min with the wrong neighbors in Edit Distance (replace uses the diagonal)",
+        "Sorting heights ascending for equal widths in Russian Doll Envelopes",
+        "Using the O(n log n) LIS tails array as if it were the actual subsequence",
+        "Using strict < for a non-decreasing subsequence, which needs <=",
+        "Space-optimizing before confirming correctness, then losing the ability to rebuild the answer",
+        "Int overflow when counting subsequences (use Long or a modulo if the problem says so)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "problem": "LCS, Edit Distance, matching tables",
+          "time": "O(n * m)",
+          "space": "O(n * m), O(min(n, m)) with rolling rows"
+        },
+        {
+          "problem": "LIS, quadratic DP",
+          "time": "O(n²)",
+          "space": "O(n)"
+        },
+        {
+          "problem": "LIS with binary search",
+          "time": "O(n log n)",
+          "space": "O(n)"
+        },
+        {
+          "problem": "Longest palindromic subsequence",
+          "time": "O(n²)",
+          "space": "O(n²)"
+        },
+        {
+          "problem": "Longest string chain",
+          "time": "O(n * L²)",
+          "space": "O(n * L)"
+        },
+        {
+          "problem": "Is Subsequence",
+          "time": "O(|t|)",
+          "space": "O(1)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Longest Common Subsequence",
+        "Edit Distance",
+        "Longest Increasing Subsequence",
+        "Number of Longest Increasing Subsequence",
+        "Russian Doll Envelopes",
+        "Longest Palindromic Subsequence",
+        "Minimum Insertion Steps to Make a String Palindrome",
+        "Delete Operation for Two Strings",
+        "Minimum ASCII Delete Sum for Two Strings",
+        "Shortest Common Supersequence",
+        "Distinct Subsequences",
+        "Interleaving String",
+        "Regular Expression Matching",
+        "Wildcard Matching",
+        "Longest String Chain",
+        "Uncrossed Lines",
+        "Maximum Length of Repeated Subarray",
+        "Longest Valid Parentheses"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Two-string DP uses dp[i][j] over prefixes, built from the diagonal, up and left neighbors",
+        "On a match LCS extends the diagonal, and on a mismatch it takes the better of up or left",
+        "Substring problems reset to 0 on a mismatch, while subsequence problems carry the best neighbor",
+        "Edit Distance adds 1 for replace, delete or insert and takes the minimum of the three",
+        "Many problems reduce to LCS: delete distance, supersequence, palindromic subsequence",
+        "LIS is O(n²) with DP and O(n log n) with a tails array and binary search"
+      ]
+    }
+  ]
+}

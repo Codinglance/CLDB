@@ -1,0 +1,539 @@
+{
+  "title": "Bit Manipulation",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Bit Manipulation?",
+      "content": "Bit manipulation works directly on the binary representation of numbers using bitwise operators (AND, OR, XOR, NOT and shifts). Because these operations run in a single CPU instruction, they let you solve some problems in O(1) time and O(1) space that would otherwise need loops, extra arrays or hash sets. Bits are also a compact way to represent a set of up to about 20 to 30 items as a single integer (a bitmask), which makes subset enumeration and bitmask DP possible."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Find the element that appears an odd number of times, or the missing or duplicate number, with O(1) extra space",
+        "Check, set, clear or toggle a particular bit; count set bits; test for a power of two",
+        "Represent a small set (up to about 20 to 30 elements) as an integer bitmask",
+        "Enumerate all subsets or submasks of a set",
+        "Bitmask DP: states described by which items are already used (traveling salesman, assignment)",
+        "Binary tries and maximum XOR problems",
+        "Arithmetic without operators, fast multiply or divide by powers of two",
+        "Keywords: single number, XOR, power of two, number of 1 bits, bitmask, subset, binary representation, without using + or -"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Think of an integer as a row of light switches. Each switch is a bit that is either 1 (on) or 0 (off). AND keeps a switch on only if it is on in both rows, OR turns a switch on if it is on in either row, and XOR turns a switch on only when the two rows differ. Shifts slide the whole row left or right, which doubles or halves the number. A handful of tiny tricks built from these moves, such as n and (n - 1), cover most interview problems."
+    },
+    {
+      "type": "table",
+      "heading": "Bitwise Operators in Kotlin",
+      "rows": [
+        {
+          "operation": "AND",
+          "kotlin": "a and b",
+          "result": "1 only where both bits are 1",
+          "example": "0b1011 and 0b0110 = 0b0010"
+        },
+        {
+          "operation": "OR",
+          "kotlin": "a or b",
+          "result": "1 where at least one bit is 1",
+          "example": "0b1011 or 0b0110 = 0b1111"
+        },
+        {
+          "operation": "XOR",
+          "kotlin": "a xor b",
+          "result": "1 where the bits differ",
+          "example": "0b1011 xor 0b0110 = 0b1101"
+        },
+        {
+          "operation": "NOT",
+          "kotlin": "a.inv()",
+          "result": "Flips every bit",
+          "example": "11.inv() = -12"
+        },
+        {
+          "operation": "Left shift",
+          "kotlin": "a shl k",
+          "result": "Multiplies by 2^k",
+          "example": "3 shl 2 = 12"
+        },
+        {
+          "operation": "Arithmetic right shift",
+          "kotlin": "a shr k",
+          "result": "Divides by 2^k and keeps the sign bit",
+          "example": "-8 shr 1 = -4"
+        },
+        {
+          "operation": "Unsigned right shift",
+          "kotlin": "a ushr k",
+          "result": "Shifts in zeros, ignoring the sign",
+          "example": "-8 ushr 28 = 15"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Basic Operations in Code",
+      "language": "kotlin",
+      "code": "val a = 0b1011                     // 11\nval b = 0b0110                     // 6\n\nprintln(a and b)                   // 2   (0b0010)\nprintln(a or b)                    // 15  (0b1111)\nprintln(a xor b)                   // 13  (0b1101)\nprintln(a.inv())                   // -12 (flips all 32 bits)\nprintln(a shl 2)                   // 44\nprintln(a shr 1)                   // 5\nprintln((-8) shr 1)                // -4  (sign is kept)\nprintln((-8) ushr 28)              // 15  (zeros are shifted in)\n\n// Binary strings and parsing\nprintln(Integer.toBinaryString(11))        // 1011\nprintln(Integer.parseInt(\"1011\", 2))       // 11"
+    },
+    {
+      "type": "table",
+      "heading": "Kotlin Built-in Bit Helpers",
+      "rows": [
+        {
+          "function": "x.countOneBits()",
+          "returns": "Number of 1 bits (Integer.bitCount)"
+        },
+        {
+          "function": "x.countLeadingZeroBits()",
+          "returns": "Zeros before the highest 1 bit"
+        },
+        {
+          "function": "x.countTrailingZeroBits()",
+          "returns": "Zeros after the lowest 1 bit"
+        },
+        {
+          "function": "x.takeHighestOneBit()",
+          "returns": "Only the highest set bit, others cleared"
+        },
+        {
+          "function": "x.takeLowestOneBit()",
+          "returns": "Only the lowest set bit, others cleared"
+        },
+        {
+          "function": "x.rotateLeft(k) / x.rotateRight(k)",
+          "returns": "Circular shift"
+        },
+        {
+          "function": "Int.SIZE_BITS / Long.SIZE_BITS",
+          "returns": "32 and 64"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "The Essential Bit Tricks",
+      "rows": [
+        {
+          "goal": "Check if bit i is set",
+          "expression": "(x shr i) and 1 == 1, or (x and (1 shl i)) != 0",
+          "note": "Bit 0 is the least significant bit"
+        },
+        {
+          "goal": "Set bit i",
+          "expression": "x or (1 shl i)",
+          "note": "Turns the bit on"
+        },
+        {
+          "goal": "Clear bit i",
+          "expression": "x and (1 shl i).inv()",
+          "note": "Turns the bit off"
+        },
+        {
+          "goal": "Toggle bit i",
+          "expression": "x xor (1 shl i)",
+          "note": "Flips the bit"
+        },
+        {
+          "goal": "Lowest set bit",
+          "expression": "x and -x",
+          "note": "Two's complement: -x flips all bits above the lowest 1"
+        },
+        {
+          "goal": "Clear the lowest set bit",
+          "expression": "x and (x - 1)",
+          "note": "Brian Kernighan's trick"
+        },
+        {
+          "goal": "Power of two",
+          "expression": "x > 0 && (x and (x - 1)) == 0",
+          "note": "A power of two has exactly one set bit"
+        },
+        {
+          "goal": "Mask of the lowest k bits",
+          "expression": "(1 shl k) - 1",
+          "note": "k ones in a row"
+        },
+        {
+          "goal": "Keep the lowest k bits",
+          "expression": "x and ((1 shl k) - 1)",
+          "note": "Same as x % 2^k for non-negative x"
+        },
+        {
+          "goal": "Multiply or divide by 2^k",
+          "expression": "x shl k, x shr k",
+          "note": "Division rounds toward negative infinity for negatives"
+        },
+        {
+          "goal": "Is x odd?",
+          "expression": "(x and 1) == 1",
+          "note": "Check the lowest bit"
+        },
+        {
+          "goal": "Swap two numbers",
+          "expression": "a = a xor b; b = a xor b; a = a xor b",
+          "note": "Cute, but a temporary variable is clearer"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "XOR Properties",
+      "rows": [
+        {
+          "property": "x xor 0 = x",
+          "use": "XOR with zero changes nothing, so 0 is the starting value"
+        },
+        {
+          "property": "x xor x = 0",
+          "use": "Equal pairs cancel out"
+        },
+        {
+          "property": "a xor b = b xor a",
+          "use": "Order does not matter"
+        },
+        {
+          "property": "(a xor b) xor c = a xor (b xor c)",
+          "use": "Any grouping works"
+        },
+        {
+          "property": "a xor b xor b = a",
+          "use": "XOR twice with the same value undoes it (encryption, swapping)"
+        },
+        {
+          "property": "XOR of an array",
+          "use": "Everything that appears an even number of times vanishes, leaving the odd-count element"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Count Set Bits (Brian Kernighan)",
+      "language": "kotlin",
+      "code": "fun countSetBits(n: Int): Int {\n    var x = n\n    var count = 0\n    while (x != 0) {\n        x = x and (x - 1)                  // removes the lowest set bit\n        count++\n    }\n    return count\n}\n// Time: O(number of set bits)   Space: O(1)\n// Built in: n.countOneBits()"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: XOR Everything (Find the Odd One Out)",
+      "language": "kotlin",
+      "code": "fun singleNumber(nums: IntArray): Int {\n    var result = 0\n    for (x in nums) result = result xor x      // pairs cancel, the single number remains\n    return result\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Enumerate All Subsets With a Bitmask",
+      "language": "kotlin",
+      "code": "fun allSubsets(nums: IntArray): List<List<Int>> {\n    val n = nums.size\n    val result = mutableListOf<List<Int>>()\n    for (mask in 0 until (1 shl n)) {          // each mask is one subset\n        val subset = ArrayList<Int>()\n        for (i in 0 until n) {\n            if ((mask and (1 shl i)) != 0) subset.add(nums[i])    // bit i means 'take nums[i]'\n        }\n        result.add(subset)\n    }\n    return result\n}\n// Time: O(n * 2^n)   Space: O(n) beyond the output\n// Practical for n up to about 20"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Enumerate Submasks of a Mask",
+      "language": "kotlin",
+      "code": "fun forEachSubmask(mask: Int, action: (Int) -> Unit) {\n    var sub = mask\n    while (sub > 0) {\n        action(sub)\n        sub = (sub - 1) and mask               // next smaller submask\n    }\n    action(0)                                  // the empty submask\n}\n// Time: O(2^k) where k is the number of set bits in mask\n// Summed over all masks this is O(3^n), used in subset-partition DP"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Bitmask as a Set",
+      "language": "kotlin",
+      "code": "// Represent a set of elements 0..n-1 as one Int (or Long for up to 63 elements)\nvar set = 0\nset = set or (1 shl 3)                         // add element 3\nset = set or (1 shl 5)                         // add element 5\nval has5 = (set and (1 shl 5)) != 0            // membership test\nset = set and (1 shl 3).inv()                  // remove element 3\nval size = set.countOneBits()                  // number of elements\nval union = set or 0b1010\nval intersection = set and 0b1010\nval difference = set and 0b1010.inv()\nval isSubset = (set and 0b1010) == set         // is 'set' contained in the other mask?"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Single Number II (Every Other Number Appears Three Times)",
+      "language": "kotlin",
+      "code": "fun singleNumberII(nums: IntArray): Int {\n    var ones = 0                               // bits seen once (mod 3)\n    var twos = 0                               // bits seen twice (mod 3)\n    for (x in nums) {\n        ones = (ones xor x) and twos.inv()\n        twos = (twos xor x) and ones.inv()\n    }\n    return ones\n}\n// Time: O(n)   Space: O(1)\n// Each bit position counts appearances modulo 3 using the two variables"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Single Number III (Two Numbers Appear Once)",
+      "language": "kotlin",
+      "code": "fun singleNumberIII(nums: IntArray): IntArray {\n    var xor = 0\n    for (x in nums) xor = xor xor x            // xor = a xor b, the two unique numbers\n    val diffBit = xor and -xor                 // a bit where a and b differ\n    var a = 0\n    var b = 0\n    for (x in nums) {\n        if ((x and diffBit) == 0) a = a xor x  // split the numbers into two groups by that bit\n        else b = b xor x\n    }\n    return intArrayOf(a, b)\n}\n// Time: O(n)   Space: O(1)\n// Each group contains exactly one unique number plus pairs that cancel"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Missing Number (XOR Version)",
+      "language": "kotlin",
+      "code": "fun missingNumber(nums: IntArray): Int {\n    var result = nums.size                     // start with n, since indices only go up to n - 1\n    for (i in nums.indices) {\n        result = result xor i xor nums[i]      // every present number cancels its index\n    }\n    return result\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Number of 1 Bits and Hamming Distance",
+      "language": "kotlin",
+      "code": "fun hammingWeight(n: Int): Int = n.countOneBits()\n\nfun hammingDistance(x: Int, y: Int): Int = (x xor y).countOneBits()   // differing positions\n\nfun totalHammingDistance(nums: IntArray): Int {\n    var total = 0\n    for (bit in 0 until 32) {\n        var ones = 0\n        for (x in nums) ones += (x shr bit) and 1\n        total += ones * (nums.size - ones)                         // each (one, zero) pair differs here\n    }\n    return total\n}\n// Total Hamming Distance: O(32 * n) instead of O(n²)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Power of Two and Power of Four",
+      "language": "kotlin",
+      "code": "fun isPowerOfTwo(n: Int): Boolean = n > 0 && (n and (n - 1)) == 0\n\nfun isPowerOfFour(n: Int): Boolean =\n    n > 0 &&\n    (n and (n - 1)) == 0 &&                    // exactly one set bit\n    (n and 0x55555555) != 0                    // and that bit is at an even position (0, 2, 4, ...)\n// Time: O(1)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Counting Bits (DP on Bits)",
+      "language": "kotlin",
+      "code": "fun countBitsArray(n: Int): IntArray {\n    val dp = IntArray(n + 1)\n    for (i in 1..n) {\n        dp[i] = dp[i shr 1] + (i and 1)        // bits of i = bits of i / 2, plus the last bit\n    }\n    return dp\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Reverse Bits",
+      "language": "kotlin",
+      "code": "fun reverseBits(n: Int): Int {\n    var x = n\n    var result = 0\n    repeat(32) {\n        result = (result shl 1) or (x and 1)   // append the lowest bit of x to result\n        x = x ushr 1                           // ushr so the sign bit does not smear\n    }\n    return result\n}\n// Time: O(32)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Sum of Two Integers (Without + or -)",
+      "language": "kotlin",
+      "code": "fun getSum(a: Int, b: Int): Int {\n    var x = a\n    var y = b\n    while (y != 0) {\n        val carry = (x and y) shl 1            // positions where both bits are 1 carry to the left\n        x = x xor y                            // addition without the carry\n        y = carry\n    }\n    return x\n}\n// Time: O(32)   Space: O(1)\n// Works for negative numbers because of two's complement"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Bitwise AND of Numbers Range",
+      "language": "kotlin",
+      "code": "fun rangeBitwiseAnd(left: Int, right: Int): Int {\n    var l = left\n    var r = right\n    var shift = 0\n    while (l != r) {                           // keep only the common binary prefix\n        l = l shr 1\n        r = r shr 1\n        shift++\n    }\n    return l shl shift\n}\n// Time: O(32)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Maximum Product of Word Lengths (Bitmask per Word)",
+      "language": "kotlin",
+      "code": "fun maxProduct(words: Array<String>): Int {\n    val masks = IntArray(words.size)\n    for ((i, w) in words.withIndex()) {\n        for (c in w) masks[i] = masks[i] or (1 shl (c - 'a'))      // one bit per letter\n    }\n    var best = 0\n    for (i in words.indices) {\n        for (j in i + 1 until words.size) {\n            if ((masks[i] and masks[j]) == 0) {                      // no shared letters\n                best = maxOf(best, words[i].length * words[j].length)\n            }\n        }\n    }\n    return best\n}\n// Time: O(total letters + n²)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Gray Code",
+      "language": "kotlin",
+      "code": "fun grayCode(n: Int): List<Int> = List(1 shl n) { it xor (it shr 1) }\n// Consecutive values differ in exactly one bit\n// Time: O(2^n)   Space: O(2^n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: UTF-8 Validation (Bit Patterns)",
+      "language": "kotlin",
+      "code": "fun validUtf8(data: IntArray): Boolean {\n    var remaining = 0                                  // continuation bytes still expected\n    for (item in data) {\n        val b = item and 0xFF                          // only the lowest 8 bits matter\n        if (remaining == 0) {\n            remaining = when {\n                (b shr 7) == 0b0 -> 0                  // 0xxxxxxx\n                (b shr 5) == 0b110 -> 1                // 110xxxxx\n                (b shr 4) == 0b1110 -> 2               // 1110xxxx\n                (b shr 3) == 0b11110 -> 3              // 11110xxx\n                else -> return false\n            }\n        } else {\n            if ((b shr 6) != 0b10) return false        // continuation byte: 10xxxxxx\n            remaining--\n        }\n    }\n    return remaining == 0\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Shortest Path Visiting All Nodes (BFS Over Bitmask States)",
+      "language": "kotlin",
+      "code": "fun shortestPathLength(graph: Array<IntArray>): Int {\n    val n = graph.size\n    val full = (1 shl n) - 1                            // all nodes visited\n    val visited = Array(n) { BooleanArray(1 shl n) }    // state = (current node, set of visited nodes)\n    val queue = ArrayDeque<IntArray>()\n    for (i in 0 until n) {                              // start from every node at once\n        queue.addLast(intArrayOf(i, 1 shl i, 0))\n        visited[i][1 shl i] = true\n    }\n    while (queue.isNotEmpty()) {\n        val (node, mask, dist) = queue.removeFirst()\n        if (mask == full) return dist\n        for (next in graph[node]) {\n            val newMask = mask or (1 shl next)\n            if (!visited[next][newMask]) {\n                visited[next][newMask] = true\n                queue.addLast(intArrayOf(next, newMask, dist + 1))\n            }\n        }\n    }\n    return 0\n}\n// Time: O(2^n * n * degree)   Space: O(2^n * n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Traveling Salesman (Bitmask DP)",
+      "language": "kotlin",
+      "code": "fun tsp(dist: Array<IntArray>): Int {\n    val n = dist.size\n    if (n == 1) return 0\n    val inf = Int.MAX_VALUE / 2\n    // dp[mask][last] = cheapest way to visit the cities in mask, ending at last\n    val dp = Array(1 shl n) { IntArray(n) { inf } }\n    dp[1][0] = 0                                        // start at city 0, only city 0 visited\n\n    for (mask in 1 until (1 shl n)) {\n        for (last in 0 until n) {\n            if ((mask and (1 shl last)) == 0 || dp[mask][last] >= inf) continue\n            for (next in 0 until n) {\n                if ((mask and (1 shl next)) != 0) continue            // already visited\n                val newMask = mask or (1 shl next)\n                dp[newMask][next] = minOf(dp[newMask][next], dp[mask][last] + dist[last][next])\n            }\n        }\n    }\n\n    var best = inf\n    val full = (1 shl n) - 1\n    for (last in 1 until n) {\n        best = minOf(best, dp[full][last] + dist[last][0])             // return to the start\n    }\n    return best\n}\n// Time: O(2^n * n²)   Space: O(2^n * n)\n// Practical for n up to about 20"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Subset Sum Using Bitmasks (Meet in the Middle Preview)",
+      "language": "kotlin",
+      "code": "fun subsetSumCount(nums: IntArray, target: Int): Int {\n    val n = nums.size\n    var count = 0\n    for (mask in 0 until (1 shl n)) {\n        var sum = 0\n        for (i in 0 until n) {\n            if ((mask and (1 shl i)) != 0) sum += nums[i]\n        }\n        if (sum == target) count++\n    }\n    return count\n}\n// Time: O(n * 2^n)   Fine for n <= 20; use DP when the target is small and n is large"
+    },
+    {
+      "type": "table",
+      "heading": "Common Patterns and Their Trick",
+      "rows": [
+        {
+          "problem": "Single Number, Missing Number",
+          "trick": "XOR all values (and indices)",
+          "why": "Pairs cancel out"
+        },
+        {
+          "problem": "Single Number II",
+          "trick": "Two accumulators counting modulo 3",
+          "why": "Each bit appears 3k or 3k + 1 times"
+        },
+        {
+          "problem": "Single Number III",
+          "trick": "XOR, isolate a differing bit, split into two groups",
+          "why": "The two answers fall into different groups"
+        },
+        {
+          "problem": "Number of 1 Bits, Hamming Distance",
+          "trick": "n and (n - 1), or countOneBits()",
+          "why": "Each step removes one set bit"
+        },
+        {
+          "problem": "Power of Two / Four",
+          "trick": "x and (x - 1) == 0",
+          "why": "Only one set bit"
+        },
+        {
+          "problem": "Counting Bits",
+          "trick": "dp[i] = dp[i shr 1] + (i and 1)",
+          "why": "Reuse the answer for i / 2"
+        },
+        {
+          "problem": "Subsets, Gray Code",
+          "trick": "Loop mask from 0 to 2^n - 1",
+          "why": "Each mask is a unique subset"
+        },
+        {
+          "problem": "Bitwise AND of Range",
+          "trick": "Common binary prefix",
+          "why": "Changing bits make the lower part zero"
+        },
+        {
+          "problem": "Sum without +",
+          "trick": "XOR for the sum, AND shifted for the carry",
+          "why": "Mimics manual addition"
+        },
+        {
+          "problem": "TSP, assignment, visit-all",
+          "trick": "Bitmask DP with a visited set",
+          "why": "State is (visited set, current item)"
+        },
+        {
+          "problem": "Maximum XOR",
+          "trick": "Binary trie",
+          "why": "Greedily prefer the opposite bit at each level"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Single Number I, II, III",
+          "technique": "XOR and accumulators",
+          "complexity": "O(n) time, O(1) space"
+        },
+        {
+          "problem": "Missing Number",
+          "technique": "XOR with indices",
+          "complexity": "O(n) time, O(1) space"
+        },
+        {
+          "problem": "Number of 1 Bits",
+          "technique": "Kernighan or countOneBits",
+          "complexity": "O(bits)"
+        },
+        {
+          "problem": "Counting Bits",
+          "technique": "dp[i shr 1] + (i and 1)",
+          "complexity": "O(n)"
+        },
+        {
+          "problem": "Reverse Bits",
+          "technique": "Shift and append 32 times",
+          "complexity": "O(32)"
+        },
+        {
+          "problem": "Power of Two",
+          "technique": "x and (x - 1)",
+          "complexity": "O(1)"
+        },
+        {
+          "problem": "Sum of Two Integers",
+          "technique": "XOR plus carry loop",
+          "complexity": "O(32)"
+        },
+        {
+          "problem": "Subsets",
+          "technique": "Mask enumeration",
+          "complexity": "O(n * 2^n)"
+        },
+        {
+          "problem": "Maximum Product of Word Lengths",
+          "technique": "Letter masks",
+          "complexity": "O(n²) with O(1) checks"
+        },
+        {
+          "problem": "Shortest Path Visiting All Nodes",
+          "technique": "BFS over (node, mask)",
+          "complexity": "O(2^n * n)"
+        },
+        {
+          "problem": "Maximum XOR of Two Numbers",
+          "technique": "Binary trie or prefix set",
+          "complexity": "O(32 * n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Forgetting parentheses: Kotlin infix functions such as and, or, shl all share one precedence level and are evaluated left to right",
+        "Using shr instead of ushr when you want zeros shifted in for negative numbers",
+        "Using 1 shl i with i >= 31 on an Int (it overflows to a negative number); use 1L shl i with a Long",
+        "Shift counts are taken modulo 32 for Int (and 64 for Long), so x shl 32 equals x",
+        "Using && or || on integers; the bitwise operators are and, or, xor",
+        "Calling x and -x on Int.MIN_VALUE and expecting a positive result",
+        "Using bitmasks for more than about 20 to 25 items (the 2^n states become too large)",
+        "Forgetting that XOR tricks need the 'everything else appears an even or fixed number of times' guarantee",
+        "Dividing negative numbers with shr and expecting rounding toward zero (shr rounds toward negative infinity)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "operation": "Single bit operation, shift, AND, OR, XOR",
+          "time": "O(1)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Count set bits with Kernighan",
+          "time": "O(k) for k set bits",
+          "space": "O(1)"
+        },
+        {
+          "operation": "XOR over an array",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Enumerate all subsets",
+          "time": "O(n * 2^n)",
+          "space": "O(n)"
+        },
+        {
+          "operation": "Enumerate submasks of all masks",
+          "time": "O(3^n)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Bitmask DP (TSP)",
+          "time": "O(2^n * n²)",
+          "space": "O(2^n * n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Single Number, Single Number II and Single Number III",
+        "Missing Number",
+        "Number of 1 Bits",
+        "Counting Bits",
+        "Reverse Bits",
+        "Power of Two and Power of Four",
+        "Hamming Distance and Total Hamming Distance",
+        "Sum of Two Integers",
+        "Bitwise AND of Numbers Range",
+        "Maximum Product of Word Lengths",
+        "Gray Code",
+        "UTF-8 Validation",
+        "Maximum XOR of Two Numbers in an Array",
+        "Shortest Path Visiting All Nodes",
+        "Subsets (bitmask approach)"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Bitwise operators work on the binary form of numbers in O(1) time",
+        "XOR cancels equal pairs, which solves 'find the odd one out' problems with O(1) space",
+        "x and (x - 1) clears the lowest set bit, and x and -x isolates it",
+        "A bitmask is a compact set: bit i means item i is in the set, enabling subset enumeration and bitmask DP",
+        "Always parenthesize bit expressions in Kotlin, and use ushr for zero-fill shifts",
+        "Use Long (1L shl i) when you need more than 31 bits, and avoid bitmasks beyond about 20 to 25 items"
+      ]
+    }
+  ]
+}
