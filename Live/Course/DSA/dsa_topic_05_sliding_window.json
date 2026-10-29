@@ -1,0 +1,325 @@
+{
+  "title": "Sliding Window (Fixed & Variable)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Sliding Window Pattern?",
+      "content": "Sliding Window keeps a contiguous range (the window) over an array or string and moves it forward one step at a time. Instead of recomputing the answer for every range from scratch, you update it by adding the new element and removing the old one. This turns O(n * k) or O(n²) solutions into O(n)."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "The problem asks about a contiguous subarray or substring",
+        "Keywords: longest, shortest, maximum, minimum, at most K, exactly K, window of size K",
+        "You can update the answer cheaply when one element enters or leaves",
+        "Input is an array or string (all positives for sum-based shrinking)",
+        "You want O(n) time instead of checking every subarray"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Two Types of Sliding Window",
+      "rows": [
+        {
+          "type": "Fixed Size",
+          "window": "Always exactly k elements",
+          "movement": "Add right, remove left, both move together",
+          "example": "Max sum of subarray of size k"
+        },
+        {
+          "type": "Variable Size",
+          "window": "Grows and shrinks based on a condition",
+          "movement": "Expand right always, shrink left while invalid",
+          "example": "Longest substring without repeating characters"
+        }
+      ]
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 1: Fixed Size Window",
+      "language": "kotlin",
+      "code": "fun fixedWindow(a: IntArray, k: Int): Int {\n    var windowSum = 0\n    var best = Int.MIN_VALUE\n    for (right in a.indices) {\n        windowSum += a[right]                 // add new element\n        if (right >= k - 1) {                 // window is full\n            best = maxOf(best, windowSum)\n            windowSum -= a[right - (k - 1)]   // remove the oldest element\n        }\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 2: Variable Window (Longest Valid)",
+      "language": "kotlin",
+      "code": "fun longestValid(a: IntArray): Int {\n    var left = 0\n    var best = 0\n    for (right in a.indices) {\n        // 1. add a[right] to the window state\n\n        while (/* window is invalid */ false) {\n            // 2. remove a[left] from the window state\n            left++\n        }\n        // 3. window is valid here, update the answer\n        best = maxOf(best, right - left + 1)\n    }\n    return best\n}\n// Time: O(n)   Space: depends on window state"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 3: Variable Window (Shortest Valid)",
+      "language": "kotlin",
+      "code": "fun shortestValid(a: IntArray): Int {\n    var left = 0\n    var best = Int.MAX_VALUE\n    for (right in a.indices) {\n        // 1. add a[right] to the window state\n\n        while (/* window is valid */ false) {\n            best = minOf(best, right - left + 1)   // update before shrinking\n            // 2. remove a[left] from the window state\n            left++\n        }\n    }\n    return if (best == Int.MAX_VALUE) 0 else best\n}"
+    },
+    {
+      "type": "table",
+      "heading": "Longest vs Shortest: Where to Update the Answer",
+      "rows": [
+        {
+          "goal": "Longest valid window",
+          "shrink_while": "Window is invalid",
+          "update_answer": "After the while loop"
+        },
+        {
+          "goal": "Shortest valid window",
+          "shrink_while": "Window is valid",
+          "update_answer": "Inside the while loop"
+        },
+        {
+          "goal": "Count of valid windows",
+          "shrink_while": "Window is invalid",
+          "update_answer": "Add (right - left + 1) after the loop"
+        }
+      ]
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 1: Maximum Sum Subarray of Size K",
+      "language": "kotlin",
+      "code": "fun maxSumSubarray(nums: IntArray, k: Int): Int {\n    var sum = 0\n    for (i in 0 until k) sum += nums[i]\n    var best = sum\n    for (i in k until nums.size) {\n        sum += nums[i] - nums[i - k]\n        best = maxOf(best, sum)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 2: Longest Substring Without Repeating Characters",
+      "language": "kotlin",
+      "code": "fun lengthOfLongestSubstring(s: String): Int {\n    val seen = HashSet<Char>()\n    var left = 0\n    var best = 0\n    for (right in s.indices) {\n        while (s[right] in seen) {\n            seen.remove(s[left])\n            left++\n        }\n        seen.add(s[right])\n        best = maxOf(best, right - left + 1)\n    }\n    return best\n}\n// Time: O(n)   Space: O(min(n, alphabet))"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 3: Minimum Size Subarray Sum",
+      "language": "kotlin",
+      "code": "fun minSubArrayLen(target: Int, nums: IntArray): Int {\n    var left = 0\n    var sum = 0\n    var best = Int.MAX_VALUE\n    for (right in nums.indices) {\n        sum += nums[right]\n        while (sum >= target) {\n            best = minOf(best, right - left + 1)\n            sum -= nums[left]\n            left++\n        }\n    }\n    return if (best == Int.MAX_VALUE) 0 else best\n}\n// Time: O(n)   Space: O(1)\n// Works because all numbers are positive"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 4: Longest Substring with At Most K Distinct Characters",
+      "language": "kotlin",
+      "code": "fun longestKDistinct(s: String, k: Int): Int {\n    val count = HashMap<Char, Int>()\n    var left = 0\n    var best = 0\n    for (right in s.indices) {\n        count[s[right]] = (count[s[right]] ?: 0) + 1\n        while (count.size > k) {\n            val c = s[left]\n            count[c] = count[c]!! - 1\n            if (count[c] == 0) count.remove(c)\n            left++\n        }\n        best = maxOf(best, right - left + 1)\n    }\n    return best\n}\n// Time: O(n)   Space: O(k)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 5: Longest Repeating Character Replacement",
+      "language": "kotlin",
+      "code": "fun characterReplacement(s: String, k: Int): Int {\n    val count = IntArray(26)\n    var left = 0\n    var maxFreq = 0\n    var best = 0\n    for (right in s.indices) {\n        count[s[right] - 'A']++\n        maxFreq = maxOf(maxFreq, count[s[right] - 'A'])\n        // replacements needed = window size - most frequent char\n        while ((right - left + 1) - maxFreq > k) {\n            count[s[left] - 'A']--\n            left++\n        }\n        best = maxOf(best, right - left + 1)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 6: Permutation in String (Fixed Window)",
+      "language": "kotlin",
+      "code": "fun checkInclusion(s1: String, s2: String): Boolean {\n    if (s1.length > s2.length) return false\n    val need = IntArray(26)\n    val have = IntArray(26)\n    for (c in s1) need[c - 'a']++\n    for (i in s2.indices) {\n        have[s2[i] - 'a']++\n        if (i >= s1.length) have[s2[i - s1.length] - 'a']--\n        if (need.contentEquals(have)) return true\n    }\n    return false\n}\n// Time: O(n * 26)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 7: Find All Anagrams in a String",
+      "language": "kotlin",
+      "code": "fun findAnagrams(s: String, p: String): List<Int> {\n    val result = mutableListOf<Int>()\n    if (p.length > s.length) return result\n    val need = IntArray(26)\n    val have = IntArray(26)\n    for (c in p) need[c - 'a']++\n    for (i in s.indices) {\n        have[s[i] - 'a']++\n        if (i >= p.length) have[s[i - p.length] - 'a']--\n        if (i >= p.length - 1 && need.contentEquals(have)) {\n            result.add(i - p.length + 1)\n        }\n    }\n    return result\n}\n// Time: O(n * 26)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 8: Max Consecutive Ones III",
+      "language": "kotlin",
+      "code": "fun longestOnes(nums: IntArray, k: Int): Int {\n    var left = 0\n    var zeros = 0\n    var best = 0\n    for (right in nums.indices) {\n        if (nums[right] == 0) zeros++\n        while (zeros > k) {\n            if (nums[left] == 0) zeros--\n            left++\n        }\n        best = maxOf(best, right - left + 1)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 9: Fruit Into Baskets",
+      "language": "kotlin",
+      "code": "fun totalFruit(fruits: IntArray): Int {\n    val basket = HashMap<Int, Int>()\n    var left = 0\n    var best = 0\n    for (right in fruits.indices) {\n        basket[fruits[right]] = (basket[fruits[right]] ?: 0) + 1\n        while (basket.size > 2) {\n            val f = fruits[left]\n            basket[f] = basket[f]!! - 1\n            if (basket[f] == 0) basket.remove(f)\n            left++\n        }\n        best = maxOf(best, right - left + 1)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 10: Minimum Window Substring",
+      "language": "kotlin",
+      "code": "fun minWindow(s: String, t: String): String {\n    if (t.isEmpty() || s.length < t.length) return \"\"\n    val need = HashMap<Char, Int>()\n    for (c in t) need[c] = (need[c] ?: 0) + 1\n    val window = HashMap<Char, Int>()\n    var have = 0\n    val required = need.size\n    var left = 0\n    var bestLen = Int.MAX_VALUE\n    var bestStart = 0\n\n    for (right in s.indices) {\n        val c = s[right]\n        window[c] = (window[c] ?: 0) + 1\n        if (c in need && window[c] == need[c]) have++\n\n        while (have == required) {\n            if (right - left + 1 < bestLen) {\n                bestLen = right - left + 1\n                bestStart = left\n            }\n            val l = s[left]\n            window[l] = window[l]!! - 1\n            if (l in need && window[l]!! < need[l]!!) have--\n            left++\n        }\n    }\n    return if (bestLen == Int.MAX_VALUE) \"\" else s.substring(bestStart, bestStart + bestLen)\n}\n// Time: O(n + m)   Space: O(m)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 11: Subarrays with Exactly K Distinct (At Most Trick)",
+      "language": "kotlin",
+      "code": "fun subarraysWithKDistinct(nums: IntArray, k: Int): Int =\n    atMost(nums, k) - atMost(nums, k - 1)\n\nfun atMost(nums: IntArray, k: Int): Int {\n    val count = HashMap<Int, Int>()\n    var left = 0\n    var total = 0\n    for (right in nums.indices) {\n        count[nums[right]] = (count[nums[right]] ?: 0) + 1\n        while (count.size > k) {\n            val x = nums[left]\n            count[x] = count[x]!! - 1\n            if (count[x] == 0) count.remove(x)\n            left++\n        }\n        total += right - left + 1   // all windows ending at right\n    }\n    return total\n}\n// Time: O(n)   Space: O(k)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 12: Sliding Window Maximum (Deque)",
+      "language": "kotlin",
+      "code": "fun maxSlidingWindow(nums: IntArray, k: Int): IntArray {\n    val result = IntArray(nums.size - k + 1)\n    val dq = ArrayDeque<Int>()          // stores indices, values decreasing\n    for (i in nums.indices) {\n        if (dq.isNotEmpty() && dq.first() <= i - k) dq.removeFirst()\n        while (dq.isNotEmpty() && nums[dq.last()] < nums[i]) dq.removeLast()\n        dq.addLast(i)\n        if (i >= k - 1) result[i - k + 1] = nums[dq.first()]\n    }\n    return result\n}\n// Time: O(n)   Space: O(k)\n// See the Monotonic Queue topic for details"
+    },
+    {
+      "type": "table",
+      "heading": "Window State: What to Track",
+      "rows": [
+        {
+          "problem_type": "Sum of window",
+          "state": "Single Int (running sum)"
+        },
+        {
+          "problem_type": "No repeating characters",
+          "state": "HashSet or last-seen index map"
+        },
+        {
+          "problem_type": "At most K distinct",
+          "state": "HashMap of counts, check map.size"
+        },
+        {
+          "problem_type": "Anagram / permutation",
+          "state": "IntArray(26) counts, compare arrays"
+        },
+        {
+          "problem_type": "Count zeros / flips allowed",
+          "state": "Counter of invalid items"
+        },
+        {
+          "problem_type": "Cover all required characters",
+          "state": "Need map + have counter"
+        },
+        {
+          "problem_type": "Max or min of window",
+          "state": "Monotonic deque"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Max Sum Subarray of Size K",
+          "type": "Fixed",
+          "key_idea": "Add new, subtract old"
+        },
+        {
+          "problem": "Longest Substring Without Repeating",
+          "type": "Variable (longest)",
+          "key_idea": "Shrink while duplicate exists"
+        },
+        {
+          "problem": "Minimum Size Subarray Sum",
+          "type": "Variable (shortest)",
+          "key_idea": "Shrink while sum >= target"
+        },
+        {
+          "problem": "Longest with At Most K Distinct",
+          "type": "Variable (longest)",
+          "key_idea": "Map size > K means shrink"
+        },
+        {
+          "problem": "Character Replacement",
+          "type": "Variable (longest)",
+          "key_idea": "Window size - max freq <= K"
+        },
+        {
+          "problem": "Permutation in String",
+          "type": "Fixed",
+          "key_idea": "Compare 26-letter counts"
+        },
+        {
+          "problem": "Minimum Window Substring",
+          "type": "Variable (shortest)",
+          "key_idea": "Track have vs required"
+        },
+        {
+          "problem": "Max Consecutive Ones III",
+          "type": "Variable (longest)",
+          "key_idea": "At most K zeros"
+        },
+        {
+          "problem": "Subarrays with Exactly K",
+          "type": "At most trick",
+          "key_idea": "atMost(k) - atMost(k - 1)"
+        },
+        {
+          "problem": "Sliding Window Maximum",
+          "type": "Fixed + deque",
+          "key_idea": "Monotonic decreasing deque"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Sliding Window vs Prefix Sum",
+      "items": [
+        "Sliding window needs a condition that gets better or worse as the window grows (monotonic)",
+        "With only positive numbers, a larger window always has a larger sum, so shrinking works",
+        "With negative numbers, shrinking does not always reduce the sum, so use Prefix Sum + HashMap",
+        "For 'subarray sum equals K' with negatives, do not use sliding window"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using sliding window on arrays with negative numbers for sum problems",
+        "Updating the answer in the wrong place (longest: after loop, shortest: inside loop)",
+        "Forgetting to remove a key from the map when its count reaches 0",
+        "Off by one: window size is right - left + 1",
+        "Using if instead of while when shrinking, so the window stays invalid",
+        "Not handling k larger than the array length",
+        "Forgetting that exactly K is atMost(K) - atMost(K - 1)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Brute force (all subarrays)",
+          "time": "O(n²) or O(n³)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Fixed window",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Variable window with counter or set",
+          "time": "O(n)",
+          "space": "O(k) or O(alphabet)"
+        },
+        {
+          "approach": "Window with deque (max/min)",
+          "time": "O(n)",
+          "space": "O(k)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Why Variable Window is O(n)",
+      "content": "It looks like a nested loop, but each element enters the window once (right pointer) and leaves at most once (left pointer). That is at most 2n pointer moves in total, so the time is O(n)."
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Maximum Average Subarray I",
+        "Longest Substring Without Repeating Characters",
+        "Minimum Size Subarray Sum",
+        "Longest Substring with At Most K Distinct Characters",
+        "Longest Repeating Character Replacement",
+        "Permutation in String",
+        "Find All Anagrams in a String",
+        "Max Consecutive Ones III",
+        "Fruit Into Baskets",
+        "Minimum Window Substring",
+        "Subarrays with K Different Integers",
+        "Sliding Window Maximum",
+        "Substring with Concatenation of All Words"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Sliding window is for contiguous subarrays and substrings",
+        "Fixed window: add one, remove one, update the answer",
+        "Variable window: expand right, shrink left while the condition is broken",
+        "Longest: update after shrinking. Shortest: update while valid",
+        "Exactly K equals atMost(K) minus atMost(K - 1)",
+        "Each element enters and leaves once, so the time is O(n)"
+      ]
+    }
+  ]
+}

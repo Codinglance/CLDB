@@ -1,0 +1,421 @@
+{
+  "title": "Segment Tree & Fenwick Tree (Intro)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Segment Trees and Fenwick Trees?",
+      "content": "Both structures answer range queries (such as the sum or minimum of a[l..r]) while still allowing the array to change. A plain prefix sum array answers a range query in O(1) but needs O(n) to rebuild after a single update. Scanning the range each time needs O(n) per query. Segment trees and Fenwick trees (also called Binary Indexed Trees, or BIT) balance the two: both queries and point updates cost O(log n). A Fenwick tree is shorter and faster to write but supports fewer operations. A segment tree is more flexible and handles minimum, maximum, GCD, custom merges and range updates with lazy propagation."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Many range queries mixed with updates to individual elements (mutable range sum)",
+        "Range minimum, maximum or GCD queries with updates",
+        "Range updates (add a value to every element in a range) followed by range queries",
+        "Counting how many earlier or later elements are smaller (inversions, count of smaller numbers after self)",
+        "Order statistics on a dynamic set (kth smallest)",
+        "Prefix sums that change over time",
+        "DP optimization where each state needs the best value over a changing range (LIS with values as indexes)",
+        "Keywords: range sum query mutable, update and query, count smaller after self, inversions, range minimum, lazy propagation"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Instead of storing every element or every prefix, store partial answers for blocks whose sizes are powers of two. Any range can be assembled from about log n such blocks, and changing one element only affects about log n blocks that contain it. A segment tree makes the blocks explicit: each node covers a segment and stores its answer, and the children cover the two halves. A Fenwick tree packs the same idea into one array, using the lowest set bit of an index to decide how many elements each cell is responsible for."
+    },
+    {
+      "type": "table",
+      "heading": "Choosing a Structure",
+      "rows": [
+        {
+          "structure": "Prefix sum array",
+          "build": "O(n)",
+          "point_update": "O(n)",
+          "range_query": "O(1)",
+          "best_for": "Static arrays"
+        },
+        {
+          "structure": "Fenwick tree (BIT)",
+          "build": "O(n)",
+          "point_update": "O(log n)",
+          "range_query": "O(log n)",
+          "best_for": "Sums, counts, XOR with updates; short code"
+        },
+        {
+          "structure": "Segment tree",
+          "build": "O(n)",
+          "point_update": "O(log n)",
+          "range_query": "O(log n)",
+          "best_for": "Min, max, GCD, custom merges; flexible"
+        },
+        {
+          "structure": "Segment tree with lazy propagation",
+          "build": "O(n)",
+          "point_update": "O(log n)",
+          "range_query": "O(log n)",
+          "best_for": "Range updates plus range queries (range add, range sum)"
+        },
+        {
+          "structure": "Sqrt decomposition",
+          "build": "O(n)",
+          "point_update": "O(1)",
+          "range_query": "O(sqrt n)",
+          "best_for": "Simpler idea, slower queries"
+        },
+        {
+          "structure": "Sparse table",
+          "build": "O(n log n)",
+          "point_update": "Not supported",
+          "range_query": "O(1)",
+          "best_for": "Static range minimum or maximum"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "What Can Each Tree Answer?",
+      "rows": [
+        {
+          "operation_type": "Invertible (sum, count, XOR)",
+          "fenwick": "Yes: range = prefix(r) - prefix(l - 1)",
+          "segment_tree": "Yes"
+        },
+        {
+          "operation_type": "Associative but not invertible (min, max, GCD)",
+          "fenwick": "Only for prefix queries without updates that lower the value",
+          "segment_tree": "Yes, natural fit"
+        },
+        {
+          "operation_type": "Custom merge (maximum subarray, matrix product)",
+          "fenwick": "No",
+          "segment_tree": "Yes, define a node and a merge"
+        },
+        {
+          "operation_type": "Range update, point query",
+          "fenwick": "Yes, with a difference array",
+          "segment_tree": "Yes"
+        },
+        {
+          "operation_type": "Range update, range query",
+          "fenwick": "Yes, with two BITs",
+          "segment_tree": "Yes, with lazy propagation"
+        },
+        {
+          "operation_type": "Find the kth element",
+          "fenwick": "Yes, by binary descent",
+          "segment_tree": "Yes, by walking down the tree"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Index Arithmetic You Need",
+      "rows": [
+        {
+          "structure": "Fenwick tree (1-indexed)",
+          "rule": "Cell i covers the last (i and -i) elements ending at i",
+          "move": "Go up: i += i and -i (update). Go down: i -= i and -i (query)"
+        },
+        {
+          "structure": "Segment tree (recursive, 1-indexed nodes)",
+          "rule": "Node 1 is the root; node i has children 2i and 2i + 1",
+          "move": "Allocate 4n cells to be safe"
+        },
+        {
+          "structure": "Segment tree (iterative, bottom-up)",
+          "rule": "Leaves live at n + i; node i has children 2i and 2i + 1",
+          "move": "Allocate 2n cells, parent of i is i / 2"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Fenwick Tree (Point Update, Prefix and Range Sum)",
+      "language": "kotlin",
+      "code": "class FenwickTree(private val n: Int) {\n    private val tree = LongArray(n + 1)                  // 1-indexed internally\n\n    constructor(values: IntArray) : this(values.size) {  // O(n) build\n        for (i in values.indices) tree[i + 1] += values[i].toLong()\n        for (i in 1..n) {\n            val parent = i + (i and -i)\n            if (parent <= n) tree[parent] += tree[i]     // push each cell's total into its parent\n        }\n    }\n\n    // add delta to position index (0-based)\n    fun update(index: Int, delta: Long) {\n        var i = index + 1\n        while (i <= n) {\n            tree[i] += delta\n            i += i and -i                                // jump to the next cell that covers this index\n        }\n    }\n\n    // sum of positions 0..index\n    fun prefixSum(index: Int): Long {\n        var i = index + 1\n        var sum = 0L\n        while (i > 0) {\n            sum += tree[i]\n            i -= i and -i                                // drop the lowest set bit\n        }\n        return sum\n    }\n\n    // sum of positions l..r (inclusive)\n    fun rangeSum(l: Int, r: Int): Long = prefixSum(r) - (if (l > 0) prefixSum(l - 1) else 0L)\n}\n// update / prefixSum / rangeSum: O(log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Fenwick Tree for Range Update and Point Query",
+      "language": "kotlin",
+      "code": "class RangeUpdateBIT(private val n: Int) {\n    private val bit = LongArray(n + 2)                   // stores a difference array\n\n    private fun add(index: Int, delta: Long) {\n        var i = index + 1\n        while (i <= n + 1) {\n            bit[i] += delta\n            i += i and -i\n        }\n    }\n\n    fun rangeAdd(l: Int, r: Int, delta: Long) {          // add delta to a[l..r]\n        add(l, delta)\n        add(r + 1, -delta)\n    }\n\n    fun pointQuery(index: Int): Long {                   // value at one position = prefix sum of the differences\n        var i = index + 1\n        var sum = 0L\n        while (i > 0) {\n            sum += bit[i]\n            i -= i and -i\n        }\n        return sum\n    }\n}\n// Each operation: O(log n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Fenwick Trees for Range Update and Range Sum",
+      "language": "kotlin",
+      "code": "class RangeBIT(private val n: Int) {\n    private val b1 = LongArray(n + 2)\n    private val b2 = LongArray(n + 2)\n\n    private fun add(b: LongArray, i1: Int, v: Long) {    // i1 is 1-indexed\n        var i = i1\n        while (i <= n + 1) {\n            b[i] += v\n            i += i and -i\n        }\n    }\n\n    private fun sum(b: LongArray, i1: Int): Long {\n        var i = i1\n        var s = 0L\n        while (i > 0) {\n            s += b[i]\n            i -= i and -i\n        }\n        return s\n    }\n\n    fun rangeAdd(l: Int, r: Int, x: Long) {              // a[l..r] += x, 0-based\n        val left = l + 1\n        val right = r + 1\n        add(b1, left, x)\n        add(b1, right + 1, -x)\n        add(b2, left, x * (left - 1))\n        add(b2, right + 1, -x * right)\n    }\n\n    private fun prefix(p1: Int): Long = sum(b1, p1) * p1 - sum(b2, p1)   // sum of the first p1 elements\n\n    fun rangeSum(l: Int, r: Int): Long = prefix(r + 1) - prefix(l)\n}\n// Each operation: O(log n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Segment Tree (Recursive, Sum)",
+      "language": "kotlin",
+      "code": "class SegmentTree(private val nums: IntArray) {\n    private val n = nums.size\n    private val tree = LongArray(4 * n)\n\n    init {\n        if (n > 0) build(1, 0, n - 1)\n    }\n\n    private fun build(node: Int, l: Int, r: Int) {\n        if (l == r) {\n            tree[node] = nums[l].toLong()                // leaf\n            return\n        }\n        val mid = (l + r) / 2\n        build(node * 2, l, mid)\n        build(node * 2 + 1, mid + 1, r)\n        tree[node] = tree[node * 2] + tree[node * 2 + 1] // combine the two halves\n    }\n\n    fun update(index: Int, value: Int) = update(1, 0, n - 1, index, value)\n\n    private fun update(node: Int, l: Int, r: Int, index: Int, value: Int) {\n        if (l == r) {\n            tree[node] = value.toLong()\n            return\n        }\n        val mid = (l + r) / 2\n        if (index <= mid) update(node * 2, l, mid, index, value)\n        else update(node * 2 + 1, mid + 1, r, index, value)\n        tree[node] = tree[node * 2] + tree[node * 2 + 1]\n    }\n\n    fun query(ql: Int, qr: Int): Long = query(1, 0, n - 1, ql, qr)\n\n    private fun query(node: Int, l: Int, r: Int, ql: Int, qr: Int): Long {\n        if (qr < l || r < ql) return 0                   // no overlap: contributes nothing\n        if (ql <= l && r <= qr) return tree[node]        // full overlap: use the stored answer\n        val mid = (l + r) / 2\n        return query(node * 2, l, mid, ql, qr) + query(node * 2 + 1, mid + 1, r, ql, qr)   // partial overlap\n    }\n}\n// build: O(n)   update / query: O(log n)   Space: O(4n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Iterative Segment Tree (Any Associative Operation)",
+      "language": "kotlin",
+      "code": "class IterativeSegmentTree(\n    private val n: Int,\n    private val identity: Int,\n    private val combine: (Int, Int) -> Int\n) {\n    private val tree = IntArray(2 * n) { identity }\n\n    constructor(values: IntArray, identity: Int, combine: (Int, Int) -> Int) :\n        this(values.size, identity, combine) {\n        for (i in values.indices) tree[n + i] = values[i]                // leaves\n        for (i in n - 1 downTo 1) tree[i] = combine(tree[2 * i], tree[2 * i + 1])\n    }\n\n    fun update(index: Int, value: Int) {\n        var i = index + n\n        tree[i] = value\n        while (i > 1) {\n            i /= 2\n            tree[i] = combine(tree[2 * i], tree[2 * i + 1])\n        }\n    }\n\n    // query the inclusive range [l, r]\n    fun query(l: Int, r: Int): Int {\n        var lo = l + n\n        var hi = r + n + 1                                               // half-open [lo, hi)\n        var left = identity\n        var right = identity\n        while (lo < hi) {\n            if ((lo and 1) == 1) left = combine(left, tree[lo++])        // lo is a right child: take it\n            if ((hi and 1) == 1) right = combine(tree[--hi], right)      // hi - 1 is a left child: take it\n            lo /= 2\n            hi /= 2\n        }\n        return combine(left, right)\n    }\n}\n\n// Usage\n// val sumTree = IterativeSegmentTree(values, 0) { a, b -> a + b }\n// val minTree = IterativeSegmentTree(values, Int.MAX_VALUE) { a, b -> minOf(a, b) }\n// val maxTree = IterativeSegmentTree(values, Int.MIN_VALUE) { a, b -> maxOf(a, b) }\n// val gcdTree = IterativeSegmentTree(values, 0) { a, b -> gcd(a, b) }\n// build: O(n)   update / query: O(log n)   Space: O(2n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Lazy Propagation (Range Add, Range Sum)",
+      "language": "kotlin",
+      "code": "class LazySegmentTree(private val n: Int) {\n    private val sum = LongArray(4 * n)\n    private val lazy = LongArray(4 * n)                  // pending addition for the whole segment of a node\n\n    private fun applyTag(node: Int, l: Int, r: Int, v: Long) {\n        sum[node] += v * (r - l + 1)                     // every element in the segment gains v\n        lazy[node] += v                                  // remember to pass it to the children later\n    }\n\n    private fun push(node: Int, l: Int, r: Int) {\n        if (lazy[node] != 0L) {\n            val mid = (l + r) / 2\n            applyTag(node * 2, l, mid, lazy[node])\n            applyTag(node * 2 + 1, mid + 1, r, lazy[node])\n            lazy[node] = 0\n        }\n    }\n\n    fun rangeAdd(ql: Int, qr: Int, v: Long) = rangeAdd(1, 0, n - 1, ql, qr, v)\n\n    private fun rangeAdd(node: Int, l: Int, r: Int, ql: Int, qr: Int, v: Long) {\n        if (qr < l || r < ql) return\n        if (ql <= l && r <= qr) {\n            applyTag(node, l, r, v)                      // fully covered: stop here and leave a tag\n            return\n        }\n        push(node, l, r)                                 // push pending work down before going deeper\n        val mid = (l + r) / 2\n        rangeAdd(node * 2, l, mid, ql, qr, v)\n        rangeAdd(node * 2 + 1, mid + 1, r, ql, qr, v)\n        sum[node] = sum[node * 2] + sum[node * 2 + 1]\n    }\n\n    fun rangeSum(ql: Int, qr: Int): Long = rangeSum(1, 0, n - 1, ql, qr)\n\n    private fun rangeSum(node: Int, l: Int, r: Int, ql: Int, qr: Int): Long {\n        if (qr < l || r < ql) return 0\n        if (ql <= l && r <= qr) return sum[node]\n        push(node, l, r)\n        val mid = (l + r) / 2\n        return rangeSum(node * 2, l, mid, ql, qr) + rangeSum(node * 2 + 1, mid + 1, r, ql, qr)\n    }\n}\n// rangeAdd / rangeSum: O(log n)   Space: O(8n)\n// Rule: push before descending, recompute from the children on the way back up"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: Coordinate Compression (For Large or Negative Values)",
+      "language": "kotlin",
+      "code": "// Map arbitrary values to ranks 1..m so they can be Fenwick or segment tree indexes\nfun compress(nums: IntArray): Pair<IntArray, (Int) -> Int> {\n    val sorted = nums.toSortedSet().toIntArray()                         // distinct values in order\n    val rank: (Int) -> Int = { x -> java.util.Arrays.binarySearch(sorted, x) + 1 }   // 1-based rank\n    return Pair(sorted, rank)\n}\n// Build: O(n log n)   rank(x): O(log n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Range Sum Query - Mutable (Fenwick Tree)",
+      "language": "kotlin",
+      "code": "class NumArray(nums: IntArray) {\n    private val values = nums.copyOf()\n    private val bit = FenwickTree(nums)\n\n    fun update(index: Int, value: Int) {\n        val delta = (value - values[index]).toLong()     // the tree stores differences\n        values[index] = value\n        bit.update(index, delta)\n    }\n\n    fun sumRange(left: Int, right: Int): Int = bit.rangeSum(left, right).toInt()\n}\n// Constructor: O(n)   update / sumRange: O(log n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Range Minimum Query With Updates",
+      "language": "kotlin",
+      "code": "class RangeMin(values: IntArray) {\n    private val tree = IterativeSegmentTree(values, Int.MAX_VALUE) { a, b -> minOf(a, b) }\n\n    fun update(index: Int, value: Int) = tree.update(index, value)\n\n    fun minInRange(l: Int, r: Int): Int = tree.query(l, r)\n}\n// Fenwick trees cannot do this once values may increase, a segment tree can"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Count of Smaller Numbers After Self (Fenwick + Compression)",
+      "language": "kotlin",
+      "code": "fun countSmaller(nums: IntArray): List<Int> {\n    val sorted = nums.toSortedSet().toIntArray()\n    val m = sorted.size\n    val bit = IntArray(m + 1)                            // counts of values seen so far, by rank\n\n    fun add(rank: Int) {\n        var i = rank\n        while (i <= m) {\n            bit[i]++\n            i += i and -i\n        }\n    }\n\n    fun countLess(rank: Int): Int {                      // how many inserted values have rank < given rank\n        var i = rank - 1\n        var s = 0\n        while (i > 0) {\n            s += bit[i]\n            i -= i and -i\n        }\n        return s\n    }\n\n    val result = IntArray(nums.size)\n    for (i in nums.indices.reversed()) {                 // scan from the right\n        val rank = java.util.Arrays.binarySearch(sorted, nums[i]) + 1\n        result[i] = countLess(rank)                      // smaller values already to the right\n        add(rank)\n    }\n    return result.toList()\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Count Inversions",
+      "language": "kotlin",
+      "code": "fun countInversions(nums: IntArray): Long {\n    val sorted = nums.toSortedSet().toIntArray()\n    val m = sorted.size\n    val bit = IntArray(m + 1)\n\n    fun add(rank: Int) {\n        var i = rank\n        while (i <= m) { bit[i]++; i += i and -i }\n    }\n\n    fun countAtMost(rank: Int): Int {\n        var i = rank\n        var s = 0\n        while (i > 0) { s += bit[i]; i -= i and -i }\n        return s\n    }\n\n    var inversions = 0L\n    for ((idx, x) in nums.withIndex()) {\n        val rank = java.util.Arrays.binarySearch(sorted, x) + 1\n        inversions += idx - countAtMost(rank)            // earlier elements that are strictly greater\n        add(rank)\n    }\n    return inversions\n}\n// Time: O(n log n)   Space: O(n)\n// An inversion is a pair i < j with nums[i] > nums[j]"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Longest Increasing Subsequence With a Max Segment Tree",
+      "language": "kotlin",
+      "code": "fun lengthOfLIS(nums: IntArray): Int {\n    val sorted = nums.toSortedSet().toIntArray()\n    val tree = IterativeSegmentTree(sorted.size, 0) { a, b -> maxOf(a, b) }   // best LIS length ending at each value rank\n    var best = 0\n    for (x in nums) {\n        val rank = java.util.Arrays.binarySearch(sorted, x)                    // 0-based\n        val prev = if (rank == 0) 0 else tree.query(0, rank - 1)               // best among strictly smaller values\n        val len = prev + 1\n        tree.update(rank, maxOf(tree.query(rank, rank), len))\n        best = maxOf(best, len)\n    }\n    return best\n}\n// Time: O(n log n)   Space: O(n)\n// Useful when the DP needs 'best over all smaller values' with updates"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Kth Smallest in a Dynamic Set (Fenwick Descent)",
+      "language": "kotlin",
+      "code": "class FenwickKth(private val n: Int) {\n    private val tree = IntArray(n + 1)\n    private val topBit = if (n > 0) 31 - Integer.numberOfLeadingZeros(n) else -1\n\n    fun add(value: Int, delta: Int) {                    // value in 1..n, delta +1 inserts, -1 removes\n        var i = value\n        while (i <= n) {\n            tree[i] += delta\n            i += i and -i\n        }\n    }\n\n    fun kth(k: Int): Int {                               // smallest value whose prefix count is at least k\n        var pos = 0\n        var remaining = k\n        for (pw in topBit downTo 0) {\n            val next = pos + (1 shl pw)\n            if (next <= n && tree[next] < remaining) {\n                pos = next                               // skip this whole block\n                remaining -= tree[next]\n            }\n        }\n        return pos + 1\n    }\n}\n// add: O(log n)   kth: O(log n)   Requires values in 1..n (use compression otherwise)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Maximum Subarray Sum With Updates (Custom Node Merge)",
+      "language": "kotlin",
+      "code": "class SubNode(val sum: Long, val prefix: Long, val suffix: Long, val best: Long)\n\nfun leaf(x: Int) = SubNode(x.toLong(), x.toLong(), x.toLong(), x.toLong())\n\nfun merge(a: SubNode, b: SubNode) = SubNode(\n    sum = a.sum + b.sum,\n    prefix = maxOf(a.prefix, a.sum + b.prefix),                      // best prefix of the combined segment\n    suffix = maxOf(b.suffix, b.sum + a.suffix),                      // best suffix of the combined segment\n    best = maxOf(a.best, b.best, a.suffix + b.prefix)                // best may cross the middle\n)\n\nclass MaxSubarrayTree(private val nums: IntArray) {\n    private val n = nums.size\n    private val tree = arrayOfNulls<SubNode>(4 * n)\n\n    init { build(1, 0, n - 1) }\n\n    private fun build(node: Int, l: Int, r: Int) {\n        if (l == r) { tree[node] = leaf(nums[l]); return }\n        val mid = (l + r) / 2\n        build(node * 2, l, mid)\n        build(node * 2 + 1, mid + 1, r)\n        tree[node] = merge(tree[node * 2]!!, tree[node * 2 + 1]!!)\n    }\n\n    fun update(index: Int, value: Int) = update(1, 0, n - 1, index, value)\n\n    private fun update(node: Int, l: Int, r: Int, index: Int, value: Int) {\n        if (l == r) { tree[node] = leaf(value); return }\n        val mid = (l + r) / 2\n        if (index <= mid) update(node * 2, l, mid, index, value)\n        else update(node * 2 + 1, mid + 1, r, index, value)\n        tree[node] = merge(tree[node * 2]!!, tree[node * 2 + 1]!!)\n    }\n\n    fun query(ql: Int, qr: Int): Long = query(1, 0, n - 1, ql, qr)!!.best\n\n    private fun query(node: Int, l: Int, r: Int, ql: Int, qr: Int): SubNode? {\n        if (qr < l || r < ql) return null\n        if (ql <= l && r <= qr) return tree[node]\n        val mid = (l + r) / 2\n        val left = query(node * 2, l, mid, ql, qr)\n        val right = query(node * 2 + 1, mid + 1, r, ql, qr)\n        return when {\n            left == null -> right\n            right == null -> left\n            else -> merge(left, right)\n        }\n    }\n}\n// update / query: O(log n)   The node stores enough facts to merge two halves"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Range Sum Query 2D - Mutable (2D Fenwick Tree)",
+      "language": "kotlin",
+      "code": "class NumMatrix(matrix: Array<IntArray>) {\n    private val rows = matrix.size\n    private val cols = matrix[0].size\n    private val tree = Array(rows + 1) { IntArray(cols + 1) }\n    private val values = Array(rows) { IntArray(cols) }\n\n    init {\n        for (r in 0 until rows) {\n            for (c in 0 until cols) update(r, c, matrix[r][c])\n        }\n    }\n\n    fun update(row: Int, col: Int, value: Int) {\n        val delta = value - values[row][col]\n        values[row][col] = value\n        var i = row + 1\n        while (i <= rows) {\n            var j = col + 1\n            while (j <= cols) {\n                tree[i][j] += delta\n                j += j and -j\n            }\n            i += i and -i\n        }\n    }\n\n    private fun prefix(row: Int, col: Int): Int {                    // sum of the rectangle (0, 0) to (row, col)\n        var sum = 0\n        var i = row + 1\n        while (i > 0) {\n            var j = col + 1\n            while (j > 0) {\n                sum += tree[i][j]\n                j -= j and -j\n            }\n            i -= i and -i\n        }\n        return sum\n    }\n\n    fun sumRegion(r1: Int, c1: Int, r2: Int, c2: Int): Int =\n        prefix(r2, c2) - prefix(r1 - 1, c2) - prefix(r2, c1 - 1) + prefix(r1 - 1, c1 - 1)\n}\n// update / sumRegion: O(log rows * log cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Range Addition (Fenwick Range Update)",
+      "language": "kotlin",
+      "code": "fun applyUpdates(length: Int, updates: Array<IntArray>): LongArray {\n    val bit = RangeUpdateBIT(length)\n    for ((start, end, inc) in updates) {\n        bit.rangeAdd(start, end, inc.toLong())\n    }\n    return LongArray(length) { bit.pointQuery(it) }\n}\n// Time: O((length + updates) log length)\n// A plain difference array does this in O(length + updates) when all updates come before the queries"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Lazy Tree in Use (Range Add, Range Sum)",
+      "language": "kotlin",
+      "code": "fun lazyDemo() {\n    val tree = LazySegmentTree(8)\n    tree.rangeAdd(0, 7, 5)                // every element becomes 5\n    tree.rangeAdd(2, 4, 3)                // elements 2..4 become 8\n    println(tree.rangeSum(0, 7))          // 8 * 5 + 3 * 3 = 49\n    println(tree.rangeSum(2, 3))          // 8 + 8 = 16\n}\n// Both operations are O(log n) because pending additions are applied lazily"
+    },
+    {
+      "type": "table",
+      "heading": "Fenwick Tree vs Segment Tree in Practice",
+      "rows": [
+        {
+          "aspect": "Code length",
+          "fenwick": "About 15 lines",
+          "segment_tree": "30 to 60 lines, more with lazy propagation"
+        },
+        {
+          "aspect": "Memory",
+          "fenwick": "n + 1 cells",
+          "segment_tree": "2n (iterative) or 4n (recursive)"
+        },
+        {
+          "aspect": "Speed",
+          "fenwick": "Smaller constant factor",
+          "segment_tree": "Slightly slower"
+        },
+        {
+          "aspect": "Min, max, GCD",
+          "fenwick": "Awkward",
+          "segment_tree": "Natural"
+        },
+        {
+          "aspect": "Range update + range query",
+          "fenwick": "Possible with two trees",
+          "segment_tree": "Lazy propagation"
+        },
+        {
+          "aspect": "Custom data in nodes",
+          "fenwick": "No",
+          "segment_tree": "Yes, with a merge function"
+        },
+        {
+          "aspect": "Rule of thumb",
+          "fenwick": "Use for sums and counts with point updates",
+          "segment_tree": "Use for everything else"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Range Sum Query - Mutable",
+          "structure": "Fenwick or segment tree",
+          "key_idea": "Store the difference when updating a cell"
+        },
+        {
+          "problem": "Range Sum Query 2D - Mutable",
+          "structure": "2D Fenwick tree",
+          "key_idea": "Nested loops over both indexes"
+        },
+        {
+          "problem": "Count of Smaller Numbers After Self",
+          "structure": "Fenwick + coordinate compression",
+          "key_idea": "Scan from the right, count smaller ranks, then insert"
+        },
+        {
+          "problem": "Count Inversions, Reverse Pairs",
+          "structure": "Fenwick or merge sort",
+          "key_idea": "For each element count earlier greater elements"
+        },
+        {
+          "problem": "Range Minimum or Maximum with updates",
+          "structure": "Segment tree",
+          "key_idea": "Identity element is infinity (min) or negative infinity (max)"
+        },
+        {
+          "problem": "Range Addition with queries",
+          "structure": "Fenwick range update or lazy tree",
+          "key_idea": "Add at l and subtract at r + 1"
+        },
+        {
+          "problem": "LIS with a value-indexed tree",
+          "structure": "Segment tree for max",
+          "key_idea": "Query the best over smaller values, then update at this value"
+        },
+        {
+          "problem": "Kth smallest in a changing set",
+          "structure": "Fenwick with binary descent",
+          "key_idea": "Skip whole blocks while the count is below k"
+        },
+        {
+          "problem": "Maximum subarray with updates",
+          "structure": "Segment tree with a custom node",
+          "key_idea": "Store sum, best prefix, best suffix, best"
+        },
+        {
+          "problem": "My Calendar III, Falling Squares",
+          "structure": "Segment tree (lazy or dynamic)",
+          "key_idea": "Range add and range maximum"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using index 0 in a Fenwick tree: it must be 1-indexed, since i and -i is 0 for i = 0 and the loops never move",
+        "Allocating too little memory for a recursive segment tree (use 4 * n)",
+        "Using the wrong identity element: 0 for sum, Int.MAX_VALUE for min, Int.MIN_VALUE for max, 0 for gcd",
+        "Off-by-one with inclusive versus half-open ranges in queries",
+        "Forgetting to push lazy tags before descending, or forgetting to recompute the parent after the recursive calls",
+        "Updating with the new value instead of the difference in a Fenwick tree",
+        "Forgetting coordinate compression when values are large or negative",
+        "Overflowing Int when summing many values (use LongArray)",
+        "Querying a Fenwick tree for min or max after values can decrease or increase, which it cannot undo",
+        "Calling build on an empty array without a guard"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "structure": "Fenwick tree",
+          "build": "O(n)",
+          "update": "O(log n)",
+          "query": "O(log n)",
+          "space": "O(n)"
+        },
+        {
+          "structure": "Segment tree (recursive)",
+          "build": "O(n)",
+          "update": "O(log n)",
+          "query": "O(log n)",
+          "space": "O(4n)"
+        },
+        {
+          "structure": "Segment tree (iterative)",
+          "build": "O(n)",
+          "update": "O(log n)",
+          "query": "O(log n)",
+          "space": "O(2n)"
+        },
+        {
+          "structure": "Lazy segment tree",
+          "build": "O(n)",
+          "query": "O(log n)",
+          "space": "O(8n)",
+          "update": "O(log n)"
+        },
+        {
+          "structure": "2D Fenwick tree",
+          "build": "O(rows * cols * log * log)",
+          "update": "O(log rows * log cols)",
+          "query": "O(log rows * log cols)",
+          "space": "O(rows * cols)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Range Sum Query - Mutable",
+        "Range Sum Query 2D - Mutable",
+        "Count of Smaller Numbers After Self",
+        "Reverse Pairs",
+        "Count of Range Sum",
+        "Create Sorted Array through Instructions",
+        "Longest Increasing Subsequence (segment tree version)",
+        "My Calendar I, II and III",
+        "Falling Squares",
+        "The Skyline Problem",
+        "Range Addition",
+        "Count Good Triplets in an Array",
+        "Kth Smallest in a Dynamic Set (order statistics)"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Segment trees and Fenwick trees give O(log n) range queries and point updates on a changing array",
+        "A Fenwick tree is short and fast, best for sums, counts and prefix queries, and it must be 1-indexed",
+        "A segment tree handles min, max, GCD and custom merges by storing an answer per segment",
+        "Lazy propagation allows range updates: push pending tags down before descending, and rebuild the parent afterward",
+        "Counting problems (smaller after self, inversions) use a Fenwick tree over compressed ranks",
+        "Choose the identity element carefully (0, infinity or negative infinity) for empty or non-overlapping segments"
+      ]
+    }
+  ]
+}

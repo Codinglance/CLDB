@@ -1,0 +1,314 @@
+{
+  "title": "Binary Search",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Binary Search Pattern?",
+      "content": "Binary Search finds a target in a sorted (or partially ordered) space by repeatedly cutting the search range in half. At each step you compare the middle element with what you want and discard the half that cannot contain the answer. This reduces O(n) to O(log n). The idea goes beyond plain arrays: any time the data has a monotonic property (a yes/no condition that flips only once), you can binary search it."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "The array is sorted (ascending or descending)",
+        "The array is rotated or has a peak (bitonic, mountain)",
+        "You need the first or last position of a value",
+        "You need the insert position, floor or ceiling of a value",
+        "The input is huge and O(n) is too slow, so you need O(log n)",
+        "Keywords: sorted, rotated, find first, find last, peak, minimum in rotated array, search insert position"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Three Search Styles",
+      "rows": [
+        {
+          "style": "Exact match",
+          "loop": "while (left <= right)",
+          "update": "left = mid + 1 or right = mid - 1",
+          "finds": "Index of the target or -1"
+        },
+        {
+          "style": "Lower bound (first true)",
+          "loop": "while (left < right)",
+          "update": "right = mid or left = mid + 1",
+          "finds": "First index where condition is true"
+        },
+        {
+          "style": "Upper bound (last true)",
+          "loop": "while (left < right) with mid rounded up",
+          "update": "left = mid or right = mid - 1",
+          "finds": "Last index where condition is true"
+        }
+      ]
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 1: Classic Binary Search (Exact Match)",
+      "language": "kotlin",
+      "code": "fun binarySearch(nums: IntArray, target: Int): Int {\n    var left = 0\n    var right = nums.size - 1\n    while (left <= right) {\n        val mid = left + (right - left) / 2     // avoids Int overflow\n        when {\n            nums[mid] == target -> return mid\n            nums[mid] < target -> left = mid + 1\n            else -> right = mid - 1\n        }\n    }\n    return -1\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 2: Lower Bound (First Index >= Target)",
+      "language": "kotlin",
+      "code": "fun lowerBound(nums: IntArray, target: Int): Int {\n    var left = 0\n    var right = nums.size          // right = size means 'not found' is possible\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (nums[mid] >= target) right = mid     // mid may be the answer, keep it\n        else left = mid + 1\n    }\n    return left                    // size if every element is smaller\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 3: Upper Bound (First Index > Target)",
+      "language": "kotlin",
+      "code": "fun upperBound(nums: IntArray, target: Int): Int {\n    var left = 0\n    var right = nums.size\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (nums[mid] > target) right = mid\n        else left = mid + 1\n    }\n    return left\n}\n// First index of target = lowerBound, last index = upperBound - 1\n// Count of target = upperBound - lowerBound"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 4: Generic 'Find First True' Search",
+      "language": "kotlin",
+      "code": "// Works whenever the answers look like: false false false true true true\nfun findFirstTrue(low: Int, high: Int, isTrue: (Int) -> Boolean): Int {\n    var left = low\n    var right = high                // high should be a value known to be true\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (isTrue(mid)) right = mid\n        else left = mid + 1\n    }\n    return left\n}"
+    },
+    {
+      "type": "text",
+      "heading": "Which Loop Condition to Choose",
+      "content": "Use left <= right when you search for an exact value and return immediately on a match. Use left < right when you search for a boundary: keep mid inside the range when it might be the answer (right = mid) and shrink only when mid is definitely wrong (left = mid + 1). Mixing the styles is the number one source of infinite loops and off-by-one bugs."
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 1: Search Insert Position",
+      "language": "kotlin",
+      "code": "fun searchInsert(nums: IntArray, target: Int): Int {\n    var left = 0\n    var right = nums.size\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (nums[mid] >= target) right = mid else left = mid + 1\n    }\n    return left\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 2: First and Last Position of Element",
+      "language": "kotlin",
+      "code": "fun searchRange(nums: IntArray, target: Int): IntArray {\n    fun lower(t: Int): Int {\n        var l = 0\n        var r = nums.size\n        while (l < r) {\n            val m = l + (r - l) / 2\n            if (nums[m] >= t) r = m else l = m + 1\n        }\n        return l\n    }\n    val first = lower(target)\n    if (first == nums.size || nums[first] != target) return intArrayOf(-1, -1)\n    val last = lower(target + 1) - 1\n    return intArrayOf(first, last)\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 3: Search in Rotated Sorted Array",
+      "language": "kotlin",
+      "code": "fun searchRotated(nums: IntArray, target: Int): Int {\n    var left = 0\n    var right = nums.size - 1\n    while (left <= right) {\n        val mid = left + (right - left) / 2\n        if (nums[mid] == target) return mid\n        if (nums[left] <= nums[mid]) {                 // left half is sorted\n            if (target >= nums[left] && target < nums[mid]) right = mid - 1\n            else left = mid + 1\n        } else {                                       // right half is sorted\n            if (target > nums[mid] && target <= nums[right]) left = mid + 1\n            else right = mid - 1\n        }\n    }\n    return -1\n}\n// Time: O(log n)   Space: O(1)\n// At least one half is always sorted"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 4: Find Minimum in Rotated Sorted Array",
+      "language": "kotlin",
+      "code": "fun findMin(nums: IntArray): Int {\n    var left = 0\n    var right = nums.size - 1\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (nums[mid] > nums[right]) left = mid + 1    // minimum is on the right\n        else right = mid                                // mid could be the minimum\n    }\n    return nums[left]\n}\n// Time: O(log n)   Space: O(1)\n// Compare with nums[right], not nums[left]"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 5: Find Peak Element",
+      "language": "kotlin",
+      "code": "fun findPeakElement(nums: IntArray): Int {\n    var left = 0\n    var right = nums.size - 1\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (nums[mid] < nums[mid + 1]) left = mid + 1   // climbing: peak is to the right\n        else right = mid                                 // falling: peak is here or left\n    }\n    return left\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 6: Peak Index in a Mountain Array",
+      "language": "kotlin",
+      "code": "fun peakIndexInMountainArray(arr: IntArray): Int {\n    var left = 0\n    var right = arr.size - 1\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (arr[mid] < arr[mid + 1]) left = mid + 1 else right = mid\n    }\n    return left\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 7: Square Root (Integer)",
+      "language": "kotlin",
+      "code": "fun mySqrt(x: Int): Int {\n    var left = 0\n    var right = x\n    var answer = 0\n    while (left <= right) {\n        val mid = left + (right - left) / 2\n        if (mid.toLong() * mid <= x) {          // use Long to avoid overflow\n            answer = mid                         // mid is a valid candidate\n            left = mid + 1\n        } else {\n            right = mid - 1\n        }\n    }\n    return answer\n}\n// Time: O(log x)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 8: Search a 2D Matrix",
+      "language": "kotlin",
+      "code": "fun searchMatrix(matrix: Array<IntArray>, target: Int): Boolean {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    var left = 0\n    var right = rows * cols - 1\n    while (left <= right) {\n        val mid = left + (right - left) / 2\n        val value = matrix[mid / cols][mid % cols]     // flatten index\n        when {\n            value == target -> return true\n            value < target -> left = mid + 1\n            else -> right = mid - 1\n        }\n    }\n    return false\n}\n// Time: O(log(rows * cols))   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 9: Find Smallest Letter Greater Than Target",
+      "language": "kotlin",
+      "code": "fun nextGreatestLetter(letters: CharArray, target: Char): Char {\n    var left = 0\n    var right = letters.size\n    while (left < right) {\n        val mid = left + (right - left) / 2\n        if (letters[mid] > target) right = mid else left = mid + 1\n    }\n    return letters[left % letters.size]               // wrap around\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 10: Single Element in a Sorted Array",
+      "language": "kotlin",
+      "code": "fun singleNonDuplicate(nums: IntArray): Int {\n    var left = 0\n    var right = nums.size - 1\n    while (left < right) {\n        var mid = left + (right - left) / 2\n        if (mid % 2 == 1) mid--                         // make mid even\n        if (nums[mid] == nums[mid + 1]) left = mid + 2  // pairs are intact on the left\n        else right = mid                                 // single is at mid or on the left\n    }\n    return nums[left]\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Using Kotlin and Java Built-ins",
+      "language": "kotlin",
+      "code": "val sorted = intArrayOf(1, 3, 5, 7, 9)\n\n// java.util.Arrays: returns index if found, or -(insertionPoint) - 1 if not\nval idx = java.util.Arrays.binarySearch(sorted, 5)      // 2\nval miss = java.util.Arrays.binarySearch(sorted, 6)     // -4  -> insertion point 3\n\n// Kotlin list version\nval list = listOf(1, 3, 5, 7, 9)\nlist.binarySearch(7)                                    // 3\nlist.binarySearch(6)                                    // -4\n\n// Get the insertion point from a negative result\nval insertion = if (miss >= 0) miss else -(miss + 1)    // 3\n\n// TreeSet / TreeMap give floor, ceiling, lower, higher in O(log n)"
+    },
+    {
+      "type": "table",
+      "heading": "Pick the Right Template",
+      "rows": [
+        {
+          "goal": "Find an exact value",
+          "template": "left <= right, return mid on match",
+          "remember": "Return -1 if the loop ends"
+        },
+        {
+          "goal": "First index >= target",
+          "template": "left < right, right = mid",
+          "remember": "Answer can be size"
+        },
+        {
+          "goal": "First index > target",
+          "template": "left < right, condition nums[mid] > target",
+          "remember": "Last index of x = upper - 1"
+        },
+        {
+          "goal": "Last index <= target",
+          "template": "upperBound(target) - 1",
+          "remember": "Check bounds before reading"
+        },
+        {
+          "goal": "Min in rotated array",
+          "template": "Compare nums[mid] with nums[right]",
+          "remember": "left < right, right = mid"
+        },
+        {
+          "goal": "Search in rotated array",
+          "template": "Find the sorted half, then decide",
+          "remember": "left <= right"
+        },
+        {
+          "goal": "Peak element",
+          "template": "Compare nums[mid] with nums[mid + 1]",
+          "remember": "Move toward the higher side"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Binary Search",
+          "type": "Exact match",
+          "key_idea": "Classic template"
+        },
+        {
+          "problem": "Search Insert Position",
+          "type": "Lower bound",
+          "key_idea": "First index >= target"
+        },
+        {
+          "problem": "First and Last Position",
+          "type": "Two bounds",
+          "key_idea": "lower(t) and lower(t + 1) - 1"
+        },
+        {
+          "problem": "Search in Rotated Array",
+          "type": "Modified exact",
+          "key_idea": "One half is always sorted"
+        },
+        {
+          "problem": "Find Min in Rotated Array",
+          "type": "Boundary",
+          "key_idea": "Compare mid with right end"
+        },
+        {
+          "problem": "Find Peak Element",
+          "type": "Boundary",
+          "key_idea": "Follow the upward slope"
+        },
+        {
+          "problem": "Sqrt(x)",
+          "type": "Last true",
+          "key_idea": "Largest mid where mid * mid <= x"
+        },
+        {
+          "problem": "Search a 2D Matrix",
+          "type": "Exact match on flattened index",
+          "key_idea": "row = mid / cols, col = mid % cols"
+        },
+        {
+          "problem": "Single Element in Sorted Array",
+          "type": "Parity trick",
+          "key_idea": "Pairs break after the single element"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Computing mid as (left + right) / 2, which can overflow; use left + (right - left) / 2",
+        "Mixing left <= right with right = mid, which creates an infinite loop",
+        "Using left = mid when mid is rounded down in a boundary search, which also loops forever",
+        "Off by one in the initial right: size for boundary searches, size - 1 for exact matches",
+        "Forgetting to check bounds before reading nums[result] after a lower bound search",
+        "Comparing with nums[left] instead of nums[right] when finding the rotated minimum",
+        "Overflow in mid * mid; convert to Long first",
+        "Using binary search on data that is not sorted or monotonic"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Linear search",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Binary search (iterative)",
+          "time": "O(log n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Binary search (recursive)",
+          "time": "O(log n)",
+          "space": "O(log n)"
+        },
+        {
+          "approach": "Search in 2D sorted matrix (flattened)",
+          "time": "O(log(r * c))",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Rotated array search",
+          "time": "O(log n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Rotated array with duplicates",
+          "time": "O(n) worst case",
+          "space": "O(1)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Binary Search",
+        "Search Insert Position",
+        "Find First and Last Position of Element in Sorted Array",
+        "Search in Rotated Sorted Array",
+        "Search in Rotated Sorted Array II (with duplicates)",
+        "Find Minimum in Rotated Sorted Array",
+        "Find Peak Element",
+        "Peak Index in a Mountain Array",
+        "Sqrt(x)",
+        "Search a 2D Matrix",
+        "Find Smallest Letter Greater Than Target",
+        "Single Element in a Sorted Array",
+        "Count of Smaller Numbers (using sorted list and binary search)"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Binary search halves the range each step, giving O(log n)",
+        "Use left <= right for exact matches and left < right for boundaries",
+        "Always compute mid as left + (right - left) / 2",
+        "Lower bound is the first index with value >= target, and the pattern gives first and last positions",
+        "In a rotated array, one half is always sorted, so decide using that half",
+        "Anything with a false...false true...true shape can be binary searched"
+      ]
+    }
+  ]
+}

@@ -56,6 +56,12 @@
         "courseTitle": "Android",
         "totalQuestions": "50",
         "icon": " "
+      },
+      {
+        "courseId": "DSA",
+        "courseTitle": "DSA Patterns Cheat Sheet",
+        "totalQuestions": 50,
+        "icon": "🧠"
       }
     ],
     "dsa": [
@@ -63,7 +69,7 @@
         "courseId": "DSA",
         "courseTitle": "DSA",
         "totalQuestions": "454",
-        "icon": " "
+        "icon": "🧠"
       }
     ],
     "cheat_sheets": [

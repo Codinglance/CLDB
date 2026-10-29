@@ -1,0 +1,270 @@
+{
+  "courseId": "DSA",
+  "courseTitle": "DSA Patterns Cheat Sheet",
+  "phases": [
+    {
+      "phaseId": 1,
+      "phaseTitle": "Foundations",
+      "topics": [
+        {
+          "topicId": 1,
+          "title": "Big-O & Complexity Cheat Sheet",
+          "markdownFile": "dsa_topic_01_big_o.json",
+          "order": 1
+        },
+        {
+          "topicId": 2,
+          "title": "Kotlin Collections for DSA",
+          "markdownFile": "dsa_topic_02_kotlin_collections.json",
+          "order": 2
+        },
+        {
+          "topicId": 3,
+          "title": "How to Identify the Right Pattern",
+          "markdownFile": "dsa_topic_03_pattern_selection.json",
+          "order": 3
+        }
+      ]
+    },
+    {
+      "phaseId": 2,
+      "phaseTitle": "Array & String Patterns",
+      "topics": [
+        {
+          "topicId": 4,
+          "title": "Two Pointers",
+          "markdownFile": "dsa_topic_04_two_pointers.json",
+          "order": 1
+        },
+        {
+          "topicId": 5,
+          "title": "Sliding Window (Fixed & Variable)",
+          "markdownFile": "dsa_topic_05_sliding_window.json",
+          "order": 2
+        },
+        {
+          "topicId": 6,
+          "title": "Prefix Sum & Difference Array",
+          "markdownFile": "dsa_topic_06_prefix_sum.json",
+          "order": 3
+        },
+        {
+          "topicId": 7,
+          "title": "Fast & Slow Pointers",
+          "markdownFile": "dsa_topic_07_fast_slow_pointers.json",
+          "order": 4
+        },
+        {
+          "topicId": 8,
+          "title": "Merge Intervals",
+          "markdownFile": "dsa_topic_08_merge_intervals.json",
+          "order": 5
+        },
+        {
+          "topicId": 9,
+          "title": "Cyclic Sort",
+          "markdownFile": "dsa_topic_09_cyclic_sort.json",
+          "order": 6
+        },
+        {
+          "topicId": 10,
+          "title": "In-Place Linked List Reversal",
+          "markdownFile": "dsa_topic_10_linked_list_reversal.json",
+          "order": 7
+        }
+      ]
+    },
+    {
+      "phaseId": 3,
+      "phaseTitle": "Searching & Sorting Patterns",
+      "topics": [
+        {
+          "topicId": 11,
+          "title": "Binary Search",
+          "markdownFile": "dsa_topic_11_binary_search.json",
+          "order": 1
+        },
+        {
+          "topicId": 12,
+          "title": "Binary Search on Answer",
+          "markdownFile": "dsa_topic_12_binary_search_answer.json",
+          "order": 2
+        },
+        {
+          "topicId": 13,
+          "title": "Sorting & Custom Comparators",
+          "markdownFile": "dsa_topic_13_sorting_comparators.json",
+          "order": 3
+        },
+        {
+          "topicId": 14,
+          "title": "Top K Elements (Heap)",
+          "markdownFile": "dsa_topic_14_top_k_elements.json",
+          "order": 4
+        },
+        {
+          "topicId": 15,
+          "title": "K-Way Merge",
+          "markdownFile": "dsa_topic_15_k_way_merge.json",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "phaseId": 4,
+      "phaseTitle": "Stack, Queue & Heap Patterns",
+      "topics": [
+        {
+          "topicId": 16,
+          "title": "Monotonic Stack",
+          "markdownFile": "dsa_topic_16_monotonic_stack.json",
+          "order": 1
+        },
+        {
+          "topicId": 17,
+          "title": "Monotonic Queue (Deque)",
+          "markdownFile": "dsa_topic_17_monotonic_queue.json",
+          "order": 2
+        },
+        {
+          "topicId": 18,
+          "title": "Two Heaps",
+          "markdownFile": "dsa_topic_18_two_heaps.json",
+          "order": 3
+        },
+        {
+          "topicId": 19,
+          "title": "Hashing & Frequency Maps",
+          "markdownFile": "dsa_topic_19_hashing_frequency.json",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "phaseId": 5,
+      "phaseTitle": "Trees & Graph Patterns",
+      "topics": [
+        {
+          "topicId": 20,
+          "title": "Tree BFS (Level Order)",
+          "markdownFile": "dsa_topic_20_tree_bfs.json",
+          "order": 1
+        },
+        {
+          "topicId": 21,
+          "title": "Tree DFS (Pre/In/Post Order)",
+          "markdownFile": "dsa_topic_21_tree_dfs.json",
+          "order": 2
+        },
+        {
+          "topicId": 22,
+          "title": "Binary Search Tree Patterns",
+          "markdownFile": "dsa_topic_22_bst.json",
+          "order": 3
+        },
+        {
+          "topicId": 23,
+          "title": "Trie (Prefix Tree)",
+          "markdownFile": "dsa_topic_23_trie.json",
+          "order": 4
+        },
+        {
+          "topicId": 24,
+          "title": "Graph BFS & DFS",
+          "markdownFile": "dsa_topic_24_graph_bfs_dfs.json",
+          "order": 5
+        },
+        {
+          "topicId": 25,
+          "title": "Union Find (Disjoint Set)",
+          "markdownFile": "dsa_topic_25_union_find.json",
+          "order": 6
+        },
+        {
+          "topicId": 26,
+          "title": "Topological Sort",
+          "markdownFile": "dsa_topic_26_topological_sort.json",
+          "order": 7
+        },
+        {
+          "topicId": 27,
+          "title": "Shortest Path (Dijkstra, Bellman-Ford)",
+          "markdownFile": "dsa_topic_27_shortest_path.json",
+          "order": 8
+        }
+      ]
+    },
+    {
+      "phaseId": 6,
+      "phaseTitle": "Recursion, Backtracking & DP",
+      "topics": [
+        {
+          "topicId": 28,
+          "title": "Backtracking (Subsets, Permutations, Combinations)",
+          "markdownFile": "dsa_topic_28_backtracking.json",
+          "order": 1
+        },
+        {
+          "topicId": 29,
+          "title": "Greedy Patterns",
+          "markdownFile": "dsa_topic_29_greedy.json",
+          "order": 2
+        },
+        {
+          "topicId": 30,
+          "title": "1D Dynamic Programming",
+          "markdownFile": "dsa_topic_30_dp_1d.json",
+          "order": 3
+        },
+        {
+          "topicId": 31,
+          "title": "2D / Grid Dynamic Programming",
+          "markdownFile": "dsa_topic_31_dp_2d.json",
+          "order": 4
+        },
+        {
+          "topicId": 32,
+          "title": "0/1 & Unbounded Knapsack",
+          "markdownFile": "dsa_topic_32_dp_knapsack.json",
+          "order": 5
+        },
+        {
+          "topicId": 33,
+          "title": "LCS, LIS & String DP",
+          "markdownFile": "dsa_topic_33_dp_strings.json",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "phaseId": 7,
+      "phaseTitle": "Advanced & Miscellaneous",
+      "topics": [
+        {
+          "topicId": 34,
+          "title": "Bit Manipulation",
+          "markdownFile": "dsa_topic_34_bit_manipulation.json",
+          "order": 1
+        },
+        {
+          "topicId": 35,
+          "title": "Math & Number Theory",
+          "markdownFile": "dsa_topic_35_math_number_theory.json",
+          "order": 2
+        },
+        {
+          "topicId": 36,
+          "title": "Matrix Traversal Patterns",
+          "markdownFile": "dsa_topic_36_matrix_traversal.json",
+          "order": 3
+        },
+        {
+          "topicId": 37,
+          "title": "Segment Tree & Fenwick Tree (Intro)",
+          "markdownFile": "dsa_topic_37_segment_fenwick.json",
+          "order": 4
+        }
+      ]
+    }
+  ]
+}

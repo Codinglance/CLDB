@@ -1,0 +1,425 @@
+{
+  "title": "0/1 & Unbounded Knapsack",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Knapsack Pattern?",
+      "content": "The knapsack pattern is a family of DP problems where you choose items, each with a cost (weight) and a benefit (value), while staying within a limit (capacity, budget, target sum). In the 0/1 knapsack each item can be used at most once. In the unbounded knapsack an item can be used any number of times. The DP state is dp[w] (or dp[i][w]): the best value, the number of ways, or a yes/no answer for capacity w. Time is O(n * W), where n is the number of items and W is the capacity, which is called pseudo-polynomial because it depends on the numeric value of W."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Choose a subset of items under a weight, cost or sum limit",
+        "Can some subset add up exactly to a target? (subset sum)",
+        "Split an array into two groups with equal or minimum-difference sums",
+        "Count the ways to reach a target with each number used once or many times",
+        "Fewest coins, fewest items or maximum value for a given total",
+        "Assign + or - signs to reach a target (Target Sum)",
+        "Two limits at once (zeros and ones, weight and volume)",
+        "Keywords: capacity, budget, subset sum, partition, target, each item once, unlimited supply, number of ways"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "You are packing a bag with a weight limit. For each item you ask one question: take it or leave it? Leaving it keeps the best value you already had for that capacity. Taking it gives the item's value plus the best you could do with the capacity that remains. dp[w] always stores the best answer for a bag of size w, and you improve it item by item. The only difference between 0/1 and unbounded is whether you are allowed to reuse the same item after taking it."
+    },
+    {
+      "type": "table",
+      "heading": "0/1 vs Unbounded vs Bounded",
+      "rows": [
+        {
+          "type": "0/1 Knapsack",
+          "item_use": "At most once",
+          "capacity_loop_1d": "Descending: w from capacity down to weight",
+          "recurrence": "dp[w] = max(dp[w], dp[w - wt] + val)",
+          "examples": "Subset Sum, Partition Equal Subset, Target Sum"
+        },
+        {
+          "type": "Unbounded Knapsack",
+          "item_use": "Unlimited times",
+          "capacity_loop_1d": "Ascending: w from weight up to capacity",
+          "recurrence": "Same formula, but dp[w - wt] may already include this item",
+          "examples": "Coin Change, Rod Cutting, Perfect Squares"
+        },
+        {
+          "type": "Bounded Knapsack",
+          "item_use": "Up to count[i] times",
+          "capacity_loop_1d": "Expand copies, or split counts in binary (1, 2, 4, ...)",
+          "recurrence": "Treat each copy chunk as a 0/1 item",
+          "examples": "Limited coin supplies, items with stock"
+        },
+        {
+          "type": "Grouped knapsack",
+          "item_use": "One choice per group",
+          "capacity_loop_1d": "Layer by layer, the previous layer is read-only",
+          "recurrence": "next[w] = sum or max over choices in the group",
+          "examples": "Dice rolls to target sum"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Why the Loop Direction Matters",
+      "content": "In a 1D array, dp[w - wt] must hold the value from BEFORE the current item was considered when you want to use each item once. Looping capacity downward guarantees that: the smaller index has not been updated yet for this item. Looping upward does the opposite: dp[w - wt] was already updated with the current item, so the item can be taken again and again. That is exactly the difference between 0/1 and unbounded."
+    },
+    {
+      "type": "text_code",
+      "heading": "Loop Direction Demonstration",
+      "language": "kotlin",
+      "code": "// One item: weight 2, value 3, capacity 4\n//\n// 0/1 (descending: w = 4, 3, 2):\n//   w = 4: dp[4] = max(0, dp[2] + 3) = 3     dp[2] has not been updated yet, so it is still 0\n//   w = 3: dp[3] = max(0, dp[1] + 3) = 3\n//   w = 2: dp[2] = max(0, dp[0] + 3) = 3\n//   result: dp[4] = 3, the item is used once\n//\n// Unbounded (ascending: w = 2, 3, 4):\n//   w = 2: dp[2] = max(0, dp[0] + 3) = 3\n//   w = 3: dp[3] = max(0, dp[1] + 3) = 3\n//   w = 4: dp[4] = max(0, dp[2] + 3) = 6     dp[2] already includes the item\n//   result: dp[4] = 6, the item is used twice"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: 0/1 Knapsack (2D Table)",
+      "language": "kotlin",
+      "code": "fun knapsack2D(weights: IntArray, values: IntArray, capacity: Int): Int {\n    val n = weights.size\n    // dp[i][w] = best value using the first i items with capacity w\n    val dp = Array(n + 1) { IntArray(capacity + 1) }\n    for (i in 1..n) {\n        val wt = weights[i - 1]\n        val value = values[i - 1]\n        for (w in 0..capacity) {\n            dp[i][w] = dp[i - 1][w]                                   // skip item i\n            if (wt <= w) {\n                dp[i][w] = maxOf(dp[i][w], dp[i - 1][w - wt] + value) // take item i\n            }\n        }\n    }\n    return dp[n][capacity]\n}\n// Time: O(n * W)   Space: O(n * W)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: 0/1 Knapsack (1D, Capacity Descending)",
+      "language": "kotlin",
+      "code": "fun knapsack1D(weights: IntArray, values: IntArray, capacity: Int): Int {\n    val dp = IntArray(capacity + 1)                  // dp[w] = best value with capacity w\n    for (i in weights.indices) {\n        for (w in capacity downTo weights[i]) {      // DOWNWARD so each item is used at most once\n            dp[w] = maxOf(dp[w], dp[w - weights[i]] + values[i])\n        }\n    }\n    return dp[capacity]\n}\n// Time: O(n * W)   Space: O(W)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Unbounded Knapsack (1D, Capacity Ascending)",
+      "language": "kotlin",
+      "code": "fun unboundedKnapsack(weights: IntArray, values: IntArray, capacity: Int): Int {\n    val dp = IntArray(capacity + 1)\n    for (i in weights.indices) {\n        for (w in weights[i]..capacity) {            // UPWARD so the item can be reused\n            dp[w] = maxOf(dp[w], dp[w - weights[i]] + values[i])\n        }\n    }\n    return dp[capacity]\n}\n// Time: O(n * W)   Space: O(W)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Subset Sum (Yes or No)",
+      "language": "kotlin",
+      "code": "fun canMakeSum(nums: IntArray, target: Int): Boolean {\n    val dp = BooleanArray(target + 1)\n    dp[0] = true                                     // the empty subset makes 0\n    for (x in nums) {\n        for (s in target downTo x) {\n            if (dp[s - x]) dp[s] = true              // reach s by adding x to a reachable s - x\n        }\n    }\n    return dp[target]\n}\n// Time: O(n * target)   Space: O(target)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Count the Subsets With a Given Sum",
+      "language": "kotlin",
+      "code": "fun countSubsets(nums: IntArray, target: Int): Int {\n    val dp = IntArray(target + 1)\n    dp[0] = 1                                        // one way to make 0: take nothing\n    for (x in nums) {\n        for (s in target downTo x) {\n            dp[s] += dp[s - x]                       // ways without x are already in dp[s]\n        }\n    }\n    return dp[target]\n}\n// Time: O(n * target)   Space: O(target)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Memoized Top-Down 0/1 Knapsack",
+      "language": "kotlin",
+      "code": "fun knapsackMemo(weights: IntArray, values: IntArray, capacity: Int): Int {\n    val n = weights.size\n    val memo = Array(n) { IntArray(capacity + 1) { -1 } }\n\n    fun solve(i: Int, cap: Int): Int {\n        if (i == n) return 0\n        if (memo[i][cap] != -1) return memo[i][cap]\n        var best = solve(i + 1, cap)                                     // skip item i\n        if (weights[i] <= cap) {\n            best = maxOf(best, values[i] + solve(i + 1, cap - weights[i]))   // take item i\n        }\n        memo[i][cap] = best\n        return best\n    }\n\n    return solve(0, capacity)\n}\n// Time: O(n * W)   Space: O(n * W) plus recursion"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: Recover Which Items Were Chosen",
+      "language": "kotlin",
+      "code": "fun knapsackItems(weights: IntArray, values: IntArray, capacity: Int): List<Int> {\n    val n = weights.size\n    val dp = Array(n + 1) { IntArray(capacity + 1) }\n    for (i in 1..n) {\n        for (w in 0..capacity) {\n            dp[i][w] = dp[i - 1][w]\n            if (weights[i - 1] <= w) {\n                dp[i][w] = maxOf(dp[i][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])\n            }\n        }\n    }\n\n    val chosen = mutableListOf<Int>()\n    var w = capacity\n    for (i in n downTo 1) {\n        if (dp[i][w] != dp[i - 1][w]) {              // the value changed, so item i - 1 was taken\n            chosen.add(i - 1)\n            w -= weights[i - 1]\n        }\n    }\n    chosen.reverse()\n    return chosen\n}\n// Time: O(n * W)   Space: O(n * W), the full table is needed for reconstruction"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 8: Bounded Knapsack (Binary Splitting)",
+      "language": "kotlin",
+      "code": "fun boundedKnapsack(weights: IntArray, values: IntArray, counts: IntArray, capacity: Int): Int {\n    val dp = IntArray(capacity + 1)\n    for (i in weights.indices) {\n        var remaining = counts[i]\n        var chunk = 1\n        while (remaining > 0) {                      // chunks of 1, 2, 4, ... plus a remainder\n            val take = minOf(chunk, remaining)\n            val w = weights[i] * take\n            val v = values[i] * take\n            for (c in capacity downTo w) {           // each chunk acts like one 0/1 item\n                dp[c] = maxOf(dp[c], dp[c - w] + v)\n            }\n            remaining -= take\n            chunk *= 2\n        }\n    }\n    return dp[capacity]\n}\n// Time: O(W * sum of log(counts[i]))   Space: O(W)"
+    },
+    {
+      "type": "table",
+      "heading": "Disguised Knapsack: Recognize the Mapping",
+      "rows": [
+        {
+          "problem": "Partition Equal Subset Sum",
+          "mapping": "Subset sum with target = total / 2",
+          "dp_type": "Boolean 0/1"
+        },
+        {
+          "problem": "Target Sum (+ or - on each number)",
+          "mapping": "Count subsets with sum (total + target) / 2",
+          "dp_type": "Count 0/1"
+        },
+        {
+          "problem": "Last Stone Weight II",
+          "mapping": "Split into two groups with minimum difference, so find the best subset sum up to total / 2",
+          "dp_type": "Boolean 0/1"
+        },
+        {
+          "problem": "Ones and Zeroes",
+          "mapping": "Items with two costs (zeros, ones), capacity (m, n)",
+          "dp_type": "2D capacity 0/1"
+        },
+        {
+          "problem": "Coin Change (fewest coins)",
+          "mapping": "Unlimited coins, minimize count",
+          "dp_type": "Min unbounded"
+        },
+        {
+          "problem": "Coin Change II (number of ways)",
+          "mapping": "Unlimited coins, count combinations (coins outer)",
+          "dp_type": "Count unbounded"
+        },
+        {
+          "problem": "Rod Cutting",
+          "mapping": "Piece of length i has price p[i], unlimited pieces",
+          "dp_type": "Max unbounded"
+        },
+        {
+          "problem": "Perfect Squares",
+          "mapping": "Coins are the perfect squares",
+          "dp_type": "Min unbounded"
+        },
+        {
+          "problem": "Number of Dice Rolls With Target Sum",
+          "mapping": "One face per die, one die per layer",
+          "dp_type": "Grouped count"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Classic 0/1 Knapsack (Run on Sample Data)",
+      "language": "kotlin",
+      "code": "fun main() {\n    val weights = intArrayOf(1, 3, 4, 5)\n    val values = intArrayOf(1, 4, 5, 7)\n    println(knapsack1D(weights, values, 7))          // 9: take weights 3 and 4 (values 4 + 5)\n}\n// Take items 2 and 3: weight 3 + 4 = 7, value 4 + 5 = 9"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Partition Equal Subset Sum",
+      "language": "kotlin",
+      "code": "fun canPartition(nums: IntArray): Boolean {\n    val total = nums.sum()\n    if (total % 2 != 0) return false                 // an odd total cannot split evenly\n    val target = total / 2\n    val dp = BooleanArray(target + 1)\n    dp[0] = true\n    for (x in nums) {\n        for (s in target downTo x) {\n            if (dp[s - x]) dp[s] = true\n        }\n        if (dp[target]) return true                  // early exit\n    }\n    return dp[target]\n}\n// Time: O(n * total / 2)   Space: O(total / 2)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Target Sum (Count Sign Assignments)",
+      "language": "kotlin",
+      "code": "import kotlin.math.abs\n\nfun findTargetSumWays(nums: IntArray, target: Int): Int {\n    val total = nums.sum()\n    // P - N = target and P + N = total, so P = (target + total) / 2\n    if (abs(target) > total || (target + total) % 2 != 0) return 0\n    val subsetSum = (target + total) / 2\n    val dp = IntArray(subsetSum + 1)\n    dp[0] = 1\n    for (x in nums) {\n        for (s in subsetSum downTo x) {\n            dp[s] += dp[s - x]\n        }\n    }\n    return dp[subsetSum]\n}\n// Time: O(n * subsetSum)   Space: O(subsetSum)\n// Zeros are handled correctly: each zero doubles the count"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Count Subsets With a Given Difference",
+      "language": "kotlin",
+      "code": "fun countSubsetsWithDiff(nums: IntArray, diff: Int): Int {\n    val total = nums.sum()\n    if (total < diff || (total + diff) % 2 != 0) return 0\n    return countSubsets(nums, (total + diff) / 2)     // subset sum S1 = (total + diff) / 2\n}\n// Time: O(n * total)   Space: O(total)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Last Stone Weight II (Minimum Difference Partition)",
+      "language": "kotlin",
+      "code": "fun lastStoneWeightII(stones: IntArray): Int {\n    val total = stones.sum()\n    val half = total / 2\n    val dp = BooleanArray(half + 1)\n    dp[0] = true\n    for (x in stones) {\n        for (s in half downTo x) {\n            if (dp[s - x]) dp[s] = true\n        }\n    }\n    for (s in half downTo 0) {\n        if (dp[s]) return total - 2 * s              // the best group sum closest to half\n    }\n    return total\n}\n// Time: O(n * total / 2)   Space: O(total / 2)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Ones and Zeroes (Two Capacities)",
+      "language": "kotlin",
+      "code": "fun findMaxForm(strs: Array<String>, m: Int, n: Int): Int {\n    // dp[i][j] = most strings we can pick using at most i zeros and j ones\n    val dp = Array(m + 1) { IntArray(n + 1) }\n    for (s in strs) {\n        val zeros = s.count { it == '0' }\n        val ones = s.length - zeros\n        for (i in m downTo zeros) {                  // both loops descend: each string used once\n            for (j in n downTo ones) {\n                dp[i][j] = maxOf(dp[i][j], dp[i - zeros][j - ones] + 1)\n            }\n        }\n    }\n    return dp[m][n]\n}\n// Time: O(len * m * n)   Space: O(m * n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Coin Change (Unbounded, Fewest Coins)",
+      "language": "kotlin",
+      "code": "fun coinChange(coins: IntArray, amount: Int): Int {\n    val inf = amount + 1\n    val dp = IntArray(amount + 1) { inf }\n    dp[0] = 0\n    for (c in coins) {\n        for (a in c..amount) {                       // ascending: each coin can be reused\n            if (dp[a - c] + 1 < dp[a]) dp[a] = dp[a - c] + 1\n        }\n    }\n    return if (dp[amount] >= inf) -1 else dp[amount]\n}\n// Time: O(amount * coins)   Space: O(amount)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Coin Change II (Unbounded, Count Combinations)",
+      "language": "kotlin",
+      "code": "fun change(amount: Int, coins: IntArray): Int {\n    val dp = IntArray(amount + 1)\n    dp[0] = 1\n    for (c in coins) {                               // coins OUTER counts combinations\n        for (a in c..amount) {\n            dp[a] += dp[a - c]\n        }\n    }\n    return dp[amount]\n}\n// Time: O(amount * coins)   Space: O(amount)\n// Putting amounts in the outer loop would count permutations (Combination Sum IV)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Rod Cutting (Unbounded Maximum Value)",
+      "language": "kotlin",
+      "code": "fun rodCutting(prices: IntArray, n: Int): Int {\n    // prices[i] is the price of a piece of length i + 1\n    val dp = IntArray(n + 1)\n    for (len in 1..n) {\n        for (cut in 1..minOf(len, prices.size)) {\n            dp[len] = maxOf(dp[len], dp[len - cut] + prices[cut - 1])\n        }\n    }\n    return dp[n]\n}\n// Time: O(n²)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Number of Dice Rolls With Target Sum (Grouped Knapsack)",
+      "language": "kotlin",
+      "code": "fun numRollsToTarget(n: Int, k: Int, target: Int): Int {\n    val mod = 1_000_000_007\n    var dp = IntArray(target + 1)\n    dp[0] = 1                                        // zero dice make sum zero\n    repeat(n) {                                      // one layer per die\n        val next = IntArray(target + 1)\n        for (s in 1..target) {\n            for (face in 1..minOf(k, s)) {\n                next[s] = (next[s] + dp[s - face]) % mod\n            }\n        }\n        dp = next                                    // the previous layer stays read-only while building the next\n    }\n    return dp[target]\n}\n// Time: O(n * target * k)   Space: O(target)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Minimum Subset Sum Difference",
+      "language": "kotlin",
+      "code": "fun minSubsetSumDifference(nums: IntArray): Int {\n    val total = nums.sum()\n    val half = total / 2\n    val dp = BooleanArray(half + 1)\n    dp[0] = true\n    for (x in nums) {\n        for (s in half downTo x) {\n            if (dp[s - x]) dp[s] = true\n        }\n    }\n    var best = 0\n    for (s in 0..half) if (dp[s]) best = s           // the largest reachable sum not exceeding half\n    return total - 2 * best\n}\n// Time: O(n * total / 2)   Space: O(total / 2)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Perfect Squares as Unbounded Knapsack",
+      "language": "kotlin",
+      "code": "fun numSquares(n: Int): Int {\n    val dp = IntArray(n + 1) { Int.MAX_VALUE }\n    dp[0] = 0\n    var j = 1\n    while (j * j <= n) {\n        val sq = j * j\n        for (a in sq..n) {                           // unbounded: a square can be reused\n            if (dp[a - sq] != Int.MAX_VALUE && dp[a - sq] + 1 < dp[a]) dp[a] = dp[a - sq] + 1\n        }\n        j++\n    }\n    return dp[n]\n}\n// Time: O(n * sqrt(n))   Space: O(n)"
+    },
+    {
+      "type": "table",
+      "heading": "Knapsack Cheat Sheet: What to Store",
+      "rows": [
+        {
+          "question_asked": "Can we reach exactly this total?",
+          "dp_value": "Boolean",
+          "init": "dp[0] = true",
+          "combine": "dp[s] = dp[s] or dp[s - x]"
+        },
+        {
+          "question_asked": "How many ways to reach this total?",
+          "dp_value": "Count",
+          "init": "dp[0] = 1",
+          "combine": "dp[s] += dp[s - x]"
+        },
+        {
+          "question_asked": "Fewest items to reach this total?",
+          "dp_value": "Min count",
+          "init": "dp[0] = 0, rest = infinity",
+          "combine": "dp[s] = min(dp[s], dp[s - x] + 1)"
+        },
+        {
+          "question_asked": "Best value within this capacity?",
+          "dp_value": "Max value",
+          "init": "All zeros",
+          "combine": "dp[w] = max(dp[w], dp[w - wt] + value)"
+        },
+        {
+          "question_asked": "Best value for exactly this capacity?",
+          "dp_value": "Max value or -infinity",
+          "init": "dp[0] = 0, rest = -infinity",
+          "combine": "Same formula, skip unreachable states"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "0/1 Knapsack",
+          "type": "0/1, max value",
+          "loop": "Capacity descending"
+        },
+        {
+          "problem": "Subset Sum",
+          "type": "0/1, boolean",
+          "loop": "Capacity descending"
+        },
+        {
+          "problem": "Partition Equal Subset Sum",
+          "type": "0/1, boolean, target = total / 2",
+          "loop": "Capacity descending"
+        },
+        {
+          "problem": "Target Sum",
+          "type": "0/1, count, target = (total + target) / 2",
+          "loop": "Capacity descending"
+        },
+        {
+          "problem": "Last Stone Weight II",
+          "type": "0/1, boolean, then closest to half",
+          "loop": "Capacity descending"
+        },
+        {
+          "problem": "Ones and Zeroes",
+          "type": "0/1 with two capacities",
+          "loop": "Both capacities descending"
+        },
+        {
+          "problem": "Coin Change",
+          "type": "Unbounded, min",
+          "loop": "Capacity ascending"
+        },
+        {
+          "problem": "Coin Change II",
+          "type": "Unbounded, count combinations",
+          "loop": "Coins outer, capacity ascending"
+        },
+        {
+          "problem": "Combination Sum IV",
+          "type": "Unbounded, count permutations",
+          "loop": "Capacity outer, items inner"
+        },
+        {
+          "problem": "Rod Cutting",
+          "type": "Unbounded, max",
+          "loop": "Length ascending"
+        },
+        {
+          "problem": "Dice Rolls to Target",
+          "type": "Grouped, count",
+          "loop": "Layer per die, previous layer read-only"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Looping capacity upward in a 0/1 problem, which silently reuses items",
+        "Looping capacity downward in an unbounded problem, which stops reuse and gives wrong answers",
+        "Forgetting dp[0] = 1 (counting) or dp[0] = true (boolean) as the base case",
+        "Using Int.MAX_VALUE as infinity and adding 1 to it, which overflows",
+        "Swapping the loops in counting problems and counting permutations instead of combinations",
+        "Allocating a table of size total when the target is only total / 2",
+        "Not checking whether total is odd before halving in the partition problems",
+        "Applying greedy by value-per-weight to the 0/1 knapsack (it is only correct for the fractional version)",
+        "Calling O(n * W) polynomial: it is pseudo-polynomial, so a huge capacity needs another approach"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "variant": "0/1 knapsack, 2D table",
+          "time": "O(n * W)",
+          "space": "O(n * W)"
+        },
+        {
+          "variant": "0/1 knapsack, 1D array",
+          "time": "O(n * W)",
+          "space": "O(W)"
+        },
+        {
+          "variant": "Unbounded knapsack",
+          "time": "O(n * W)",
+          "space": "O(W)"
+        },
+        {
+          "variant": "Bounded knapsack with binary splitting",
+          "time": "O(W * sum of log(count))",
+          "space": "O(W)"
+        },
+        {
+          "variant": "Two capacities (Ones and Zeroes)",
+          "time": "O(items * m * n)",
+          "space": "O(m * n)"
+        },
+        {
+          "variant": "Large W with small values",
+          "time": "Swap the roles: dp over value, minimize weight",
+          "space": "O(total value)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Partition Equal Subset Sum",
+        "Target Sum",
+        "Last Stone Weight II",
+        "Ones and Zeroes",
+        "Coin Change",
+        "Coin Change II",
+        "Combination Sum IV",
+        "Perfect Squares",
+        "Number of Dice Rolls With Target Sum",
+        "Minimum Subset Sum Difference",
+        "Profitable Schemes",
+        "Partition to K Equal Sum Subsets",
+        "Rod Cutting",
+        "Maximum Value of K Coins From Piles"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Knapsack problems pick items under a limit, and dp[w] stores the best answer for limit w",
+        "0/1 knapsack loops capacity downward, and unbounded knapsack loops capacity upward",
+        "Many problems are disguised: partition becomes subset sum, and target sum becomes counting subsets",
+        "Decide what dp stores: a boolean, a count, a minimum or a maximum, and initialize dp[0] accordingly",
+        "In counting problems, items outer gives combinations and the limit outer gives permutations",
+        "The running time O(n * W) is pseudo-polynomial, so it depends on the size of the capacity"
+      ]
+    }
+  ]
+}

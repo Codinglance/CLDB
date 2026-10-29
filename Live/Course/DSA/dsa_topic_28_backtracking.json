@@ -1,0 +1,433 @@
+{
+  "title": "Backtracking (Subsets, Permutations, Combinations)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Backtracking?",
+      "content": "Backtracking builds a solution one choice at a time and abandons (backtracks from) a partial solution as soon as it cannot lead to a valid answer. It explores a tree of decisions using DFS: at each step you choose an option, explore everything that follows, then undo the choice and try the next option. It is the standard way to generate all subsets, permutations and combinations, and to solve constraint puzzles such as N-Queens and Sudoku. The worst case is exponential, so pruning (cutting branches early) is what makes it practical."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Generate all subsets, permutations or combinations",
+        "Find all solutions, or any one solution, that satisfy constraints",
+        "Placement puzzles: N-Queens, Sudoku, word search in a grid",
+        "Partition problems: palindrome partitioning, restore IP addresses, split into equal-sum groups",
+        "Build strings by rules: generate parentheses, phone letter combinations",
+        "Decision at each step has a small number of options and the depth is limited",
+        "Keywords: all possible, generate, list every, combinations, permutations, subsets, partition, place, valid arrangement"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Think of exploring a maze with a ball of string. At every fork you pick a corridor and keep walking. If you hit a dead end, or realize the path cannot reach the exit, you walk back to the last fork (undoing your choices) and take a different corridor. The choose, explore, undo cycle is the heart of backtracking. The set of all possible decision sequences forms a tree, and backtracking walks that tree depth first, cutting off any branch that is already invalid."
+    },
+    {
+      "type": "table",
+      "heading": "Choose, Explore, Unchoose",
+      "rows": [
+        {
+          "step": "1. Base case",
+          "what_to_do": "If the partial solution is complete, record a COPY of it and return"
+        },
+        {
+          "step": "2. Loop over choices",
+          "what_to_do": "Try each option available at this step"
+        },
+        {
+          "step": "3. Check validity (prune)",
+          "what_to_do": "Skip an option that already breaks a rule, or cannot lead to a solution"
+        },
+        {
+          "step": "4. Choose",
+          "what_to_do": "Add the option to the current path and update any state (used, counts, sums)"
+        },
+        {
+          "step": "5. Explore",
+          "what_to_do": "Recurse to the next decision"
+        },
+        {
+          "step": "6. Unchoose",
+          "what_to_do": "Remove the option and restore the state exactly as before"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Generic Backtracking Template",
+      "language": "kotlin",
+      "text_code": "fun <T> backtrack(\n    path: MutableList<T>,\n    result: MutableList<List<T>>\n) {\n    if (isSolution(path)) {\n        result.add(ArrayList(path))               // copy, because path keeps changing\n        return\n    }\n    for (choice in candidates(path)) {\n        if (!isValid(path, choice)) continue      // prune\n        path.add(choice)                          // choose\n        backtrack(path, result)                   // explore\n        path.removeAt(path.lastIndex)             // unchoose\n    }\n}\n// Fill in isSolution, candidates and isValid for each problem"
+    },
+    {
+      "type": "table",
+      "heading": "The Three Classic Shapes",
+      "rows": [
+        {
+          "shape": "Subsets",
+          "count": "2^n",
+          "tree_idea": "Every node of the tree is an answer; loop from a start index to avoid reordering",
+          "start_index": "Yes: recurse with i + 1"
+        },
+        {
+          "shape": "Combinations",
+          "count": "C(n, k)",
+          "tree_idea": "Choose k items, order does not matter",
+          "start_index": "Yes: recurse with i + 1 (or i when reuse is allowed)"
+        },
+        {
+          "shape": "Permutations",
+          "count": "n!",
+          "tree_idea": "Choose an order of all items; any unused item can go next",
+          "start_index": "No: loop over all items and track which are used"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Subsets (Start Index)",
+      "language": "kotlin",
+      "text_code": "fun subsets(nums: IntArray): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int) {\n        result.add(ArrayList(path))               // every path is a valid subset\n        for (i in start until nums.size) {\n            path.add(nums[i])\n            backtrack(i + 1)                      // next choices come only after i\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: O(n * 2^n)   Space: O(n) recursion plus the output"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Subsets (Include or Exclude)",
+      "language": "kotlin",
+      "text_code": "fun subsetsIncludeExclude(nums: IntArray): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun dfs(i: Int) {\n        if (i == nums.size) {\n            result.add(ArrayList(path))\n            return\n        }\n        path.add(nums[i])                         // include nums[i]\n        dfs(i + 1)\n        path.removeAt(path.lastIndex)\n        dfs(i + 1)                                // exclude nums[i]\n    }\n\n    dfs(0)\n    return result\n}\n// Same answers, a binary decision tree of depth n"
+    },
+    {
+      "type": "text_code",
+      "heading": "Alternative: Subsets With a Bitmask",
+      "language": "kotlin",
+      "text_code": "fun subsetsBitmask(nums: IntArray): List<List<Int>> {\n    val n = nums.size\n    val result = mutableListOf<List<Int>>()\n    for (mask in 0 until (1 shl n)) {\n        val subset = ArrayList<Int>()\n        for (i in 0 until n) {\n            if (mask and (1 shl i) != 0) subset.add(nums[i])\n        }\n        result.add(subset)\n    }\n    return result\n}\n// Time: O(n * 2^n)   Works for n up to about 20"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Subsets With Duplicates (Sort and Skip)",
+      "language": "kotlin",
+      "text_code": "fun subsetsWithDup(nums: IntArray): List<List<Int>> {\n    nums.sort()                                   // equal values become neighbors\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int) {\n        result.add(ArrayList(path))\n        for (i in start until nums.size) {\n            if (i > start && nums[i] == nums[i - 1]) continue   // skip a duplicate at the same level\n            path.add(nums[i])\n            backtrack(i + 1)\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: O(n * 2^n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Permutations (Used Array)",
+      "language": "kotlin",
+      "text_code": "fun permute(nums: IntArray): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n    val used = BooleanArray(nums.size)\n\n    fun backtrack() {\n        if (path.size == nums.size) {\n            result.add(ArrayList(path))\n            return\n        }\n        for (i in nums.indices) {\n            if (used[i]) continue\n            used[i] = true                        // choose\n            path.add(nums[i])\n            backtrack()                           // explore\n            path.removeAt(path.lastIndex)         // unchoose\n            used[i] = false\n        }\n    }\n\n    backtrack()\n    return result\n}\n// Time: O(n * n!)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Permutations (Swap in Place)",
+      "language": "kotlin",
+      "text_code": "fun permuteSwap(nums: IntArray): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n\n    fun swap(i: Int, j: Int) {\n        val t = nums[i]; nums[i] = nums[j]; nums[j] = t\n    }\n\n    fun backtrack(start: Int) {\n        if (start == nums.size) {\n            result.add(nums.toList())             // copy the current arrangement\n            return\n        }\n        for (i in start until nums.size) {\n            swap(start, i)                        // put nums[i] in position 'start'\n            backtrack(start + 1)\n            swap(start, i)                        // undo\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: O(n * n!)   Space: O(n), no used array needed"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Permutations With Duplicates",
+      "language": "kotlin",
+      "text_code": "fun permuteUnique(nums: IntArray): List<List<Int>> {\n    nums.sort()\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n    val used = BooleanArray(nums.size)\n\n    fun backtrack() {\n        if (path.size == nums.size) {\n            result.add(ArrayList(path))\n            return\n        }\n        for (i in nums.indices) {\n            if (used[i]) continue\n            // skip a duplicate unless its earlier twin is already in the path\n            if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) continue\n            used[i] = true\n            path.add(nums[i])\n            backtrack()\n            path.removeAt(path.lastIndex)\n            used[i] = false\n        }\n    }\n\n    backtrack()\n    return result\n}\n// Time: O(n * n!) worst case   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: Combinations (n choose k) With Pruning",
+      "language": "kotlin",
+      "text_code": "fun combine(n: Int, k: Int): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int) {\n        if (path.size == k) {\n            result.add(ArrayList(path))\n            return\n        }\n        val need = k - path.size\n        // prune: if fewer than 'need' numbers remain, this branch cannot finish\n        for (i in start..n - need + 1) {\n            path.add(i)\n            backtrack(i + 1)\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(1)\n    return result\n}\n// Time: O(k * C(n, k))   Space: O(k)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 8: Combination Sum (Reuse Allowed)",
+      "language": "kotlin",
+      "text_code": "fun combinationSum(candidates: IntArray, target: Int): List<List<Int>> {\n    candidates.sort()\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int, remaining: Int) {\n        if (remaining == 0) {\n            result.add(ArrayList(path))\n            return\n        }\n        for (i in start until candidates.size) {\n            if (candidates[i] > remaining) break          // sorted: every later value is too big as well\n            path.add(candidates[i])\n            backtrack(i, remaining - candidates[i])       // i, not i + 1: the same number may be reused\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(0, target)\n    return result\n}\n// Time: O(N^(T / M)) where T = target and M = smallest candidate   Space: O(T / M)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 9: Combination Sum II (Each Number Once, With Duplicates)",
+      "language": "kotlin",
+      "text_code": "fun combinationSum2(candidates: IntArray, target: Int): List<List<Int>> {\n    candidates.sort()\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int, remaining: Int) {\n        if (remaining == 0) {\n            result.add(ArrayList(path))\n            return\n        }\n        for (i in start until candidates.size) {\n            if (candidates[i] > remaining) break\n            if (i > start && candidates[i] == candidates[i - 1]) continue   // skip duplicates at this level\n            path.add(candidates[i])\n            backtrack(i + 1, remaining - candidates[i])                      // i + 1: no reuse\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(0, target)\n    return result\n}\n// Time: O(2^n)   Space: O(n)"
+    },
+    {
+      "type": "bullet",
+      "heading": "How Duplicates and Reuse Change the Code",
+      "items": [
+        "Reuse allowed (Combination Sum): recurse with i",
+        "No reuse (subsets, combinations): recurse with i + 1",
+        "Input has duplicates and order does not matter: sort, then skip when i > start and nums[i] == nums[i - 1]",
+        "Permutations with duplicates: sort, then skip when nums[i] == nums[i - 1] and the earlier twin is not used",
+        "Always sort before using the skip rule, since it only compares neighbors"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Letter Combinations of a Phone Number",
+      "language": "kotlin",
+      "text_code": "fun letterCombinations(digits: String): List<String> {\n    if (digits.isEmpty()) return emptyList()\n    val map = arrayOf(\"\", \"\", \"abc\", \"def\", \"ghi\", \"jkl\", \"mno\", \"pqrs\", \"tuv\", \"wxyz\")\n    val result = mutableListOf<String>()\n    val sb = StringBuilder()\n\n    fun backtrack(i: Int) {\n        if (i == digits.length) {\n            result.add(sb.toString())\n            return\n        }\n        for (c in map[digits[i] - '0']) {\n            sb.append(c)\n            backtrack(i + 1)\n            sb.deleteCharAt(sb.length - 1)            // undo\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: O(4^n * n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Generate Parentheses",
+      "language": "kotlin",
+      "text_code": "fun generateParenthesis(n: Int): List<String> {\n    val result = mutableListOf<String>()\n    val sb = StringBuilder()\n\n    fun backtrack(open: Int, close: Int) {\n        if (sb.length == 2 * n) {\n            result.add(sb.toString())\n            return\n        }\n        if (open < n) {                               // can still open\n            sb.append('(')\n            backtrack(open + 1, close)\n            sb.deleteCharAt(sb.length - 1)\n        }\n        if (close < open) {                           // can close only what is open\n            sb.append(')')\n            backtrack(open, close + 1)\n            sb.deleteCharAt(sb.length - 1)\n        }\n    }\n\n    backtrack(0, 0)\n    return result\n}\n// Time: O(4^n / sqrt(n)) (Catalan number)   Space: O(n)\n// Pruning with the two rules means only valid strings are ever built"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Combination Sum III",
+      "language": "kotlin",
+      "text_code": "fun combinationSum3(k: Int, n: Int): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int, remaining: Int) {\n        if (path.size == k) {\n            if (remaining == 0) result.add(ArrayList(path))\n            return\n        }\n        for (i in start..9) {\n            if (i > remaining) break                  // later digits are even larger\n            path.add(i)\n            backtrack(i + 1, remaining - i)\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(1, n)\n    return result\n}\n// Time: O(C(9, k) * k)   Space: O(k)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Palindrome Partitioning",
+      "language": "kotlin",
+      "text_code": "fun partition(s: String): List<List<String>> {\n    val result = mutableListOf<List<String>>()\n    val path = ArrayList<String>()\n\n    fun isPalindrome(l: Int, r: Int): Boolean {\n        var i = l\n        var j = r\n        while (i < j) {\n            if (s[i] != s[j]) return false\n            i++\n            j--\n        }\n        return true\n    }\n\n    fun backtrack(start: Int) {\n        if (start == s.length) {\n            result.add(ArrayList(path))\n            return\n        }\n        for (end in start until s.length) {\n            if (isPalindrome(start, end)) {           // only cut where the piece is a palindrome\n                path.add(s.substring(start, end + 1))\n                backtrack(end + 1)\n                path.removeAt(path.lastIndex)\n            }\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: O(n * 2^n)   Space: O(n)\n// Precompute a palindrome table with DP to make each check O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Word Search (Grid Backtracking)",
+      "language": "kotlin",
+      "text_code": "fun exist(board: Array<CharArray>, word: String): Boolean {\n    val rows = board.size\n    val cols = board[0].size\n\n    fun dfs(r: Int, c: Int, i: Int): Boolean {\n        if (i == word.length) return true                       // matched every letter\n        if (r !in 0 until rows || c !in 0 until cols || board[r][c] != word[i]) return false\n        val saved = board[r][c]\n        board[r][c] = '#'                                       // mark as used on this path\n        val found = dfs(r + 1, c, i + 1) || dfs(r - 1, c, i + 1) ||\n                    dfs(r, c + 1, i + 1) || dfs(r, c - 1, i + 1)\n        board[r][c] = saved                                     // restore for other paths\n        return found\n    }\n\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            if (dfs(r, c, 0)) return true\n        }\n    }\n    return false\n}\n// Time: O(rows * cols * 3^L)   Space: O(L)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: N-Queens",
+      "language": "kotlin",
+      "text_code": "fun solveNQueens(n: Int): List<List<String>> {\n    val result = mutableListOf<List<String>>()\n    val cols = BooleanArray(n)\n    val diag1 = BooleanArray(2 * n)                   // row - col + n identifies a diagonal\n    val diag2 = BooleanArray(2 * n)                   // row + col identifies an anti-diagonal\n    val queens = IntArray(n)                          // queens[row] = column of that row's queen\n\n    fun backtrack(row: Int) {\n        if (row == n) {\n            result.add(List(n) { r -> \".\".repeat(queens[r]) + \"Q\" + \".\".repeat(n - queens[r] - 1) })\n            return\n        }\n        for (c in 0 until n) {\n            val d1 = row - c + n\n            val d2 = row + c\n            if (cols[c] || diag1[d1] || diag2[d2]) continue     // attacked: prune\n            cols[c] = true\n            diag1[d1] = true\n            diag2[d2] = true\n            queens[row] = c\n            backtrack(row + 1)\n            cols[c] = false                                      // unchoose\n            diag1[d1] = false\n            diag2[d2] = false\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: roughly O(n!)   Space: O(n)\n// Boolean arrays make each attack check O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Sudoku Solver",
+      "language": "kotlin",
+      "text_code": "fun solveSudoku(board: Array<CharArray>) {\n    val rows = Array(9) { BooleanArray(10) }\n    val cols = Array(9) { BooleanArray(10) }\n    val boxes = Array(9) { BooleanArray(10) }\n\n    for (r in 0 until 9) {\n        for (c in 0 until 9) {\n            if (board[r][c] != '.') {\n                val d = board[r][c] - '0'\n                rows[r][d] = true\n                cols[c][d] = true\n                boxes[(r / 3) * 3 + c / 3][d] = true\n            }\n        }\n    }\n\n    fun solve(pos: Int): Boolean {\n        if (pos == 81) return true                              // every cell is filled\n        val r = pos / 9\n        val c = pos % 9\n        if (board[r][c] != '.') return solve(pos + 1)\n        val b = (r / 3) * 3 + c / 3\n        for (d in 1..9) {\n            if (rows[r][d] || cols[c][d] || boxes[b][d]) continue\n            board[r][c] = '0' + d                                // choose\n            rows[r][d] = true; cols[c][d] = true; boxes[b][d] = true\n            if (solve(pos + 1)) return true                      // stop at the first full solution\n            board[r][c] = '.'                                    // unchoose\n            rows[r][d] = false; cols[c][d] = false; boxes[b][d] = false\n        }\n        return false                                             // no digit fits: backtrack\n    }\n\n    solve(0)\n}\n// Time: exponential in the worst case, fast in practice   Space: O(1) extra"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Restore IP Addresses",
+      "language": "kotlin",
+      "text_code": "fun restoreIpAddresses(s: String): List<String> {\n    val result = mutableListOf<String>()\n    val parts = ArrayList<String>()\n\n    fun backtrack(start: Int) {\n        if (parts.size == 4) {\n            if (start == s.length) result.add(parts.joinToString(\".\"))\n            return\n        }\n        for (len in 1..3) {\n            if (start + len > s.length) break\n            val part = s.substring(start, start + len)\n            if (part.length > 1 && part[0] == '0') break         // no leading zeros\n            if (part.toInt() > 255) break\n            parts.add(part)\n            backtrack(start + len)\n            parts.removeAt(parts.lastIndex)\n        }\n    }\n\n    backtrack(0)\n    return result\n}\n// Time: O(3^4) = constant for a bounded input   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Partition to K Equal Sum Subsets",
+      "language": "kotlin",
+      "text_code": "fun canPartitionKSubsets(nums: IntArray, k: Int): Boolean {\n    val total = nums.sum()\n    if (total % k != 0) return false\n    val target = total / k\n    nums.sortDescending()                                       // place big numbers first to fail fast\n    if (nums[0] > target) return false\n    val buckets = IntArray(k)\n\n    fun backtrack(i: Int): Boolean {\n        if (i == nums.size) return true\n        val tried = HashSet<Int>()                              // symmetry: identical buckets are equivalent\n        for (b in 0 until k) {\n            if (buckets[b] + nums[i] > target) continue\n            if (!tried.add(buckets[b])) continue                // already tried a bucket with this sum\n            buckets[b] += nums[i]\n            if (backtrack(i + 1)) return true\n            buckets[b] -= nums[i]\n        }\n        return false\n    }\n\n    return backtrack(0)\n}\n// Time: O(k^n) worst case, far less with pruning   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Generate All Subsets Summing to a Target (Pruned)",
+      "language": "kotlin",
+      "text_code": "fun subsetsWithSum(nums: IntArray, target: Int): List<List<Int>> {\n    nums.sort()\n    val result = mutableListOf<List<Int>>()\n    val path = ArrayList<Int>()\n\n    fun backtrack(start: Int, remaining: Int) {\n        if (remaining == 0) {\n            result.add(ArrayList(path))                         // keep going is unnecessary for positives\n            return\n        }\n        for (i in start until nums.size) {\n            if (nums[i] > remaining) break                      // prune: sorted, so all later values are too big\n            path.add(nums[i])\n            backtrack(i + 1, remaining - nums[i])\n            path.removeAt(path.lastIndex)\n        }\n    }\n\n    backtrack(0, target)\n    return result\n}\n// Assumes positive numbers. Zeros or negatives need a different stopping rule"
+    },
+    {
+      "type": "table",
+      "heading": "Common Pruning Techniques",
+      "rows": [
+        {
+          "technique": "Constraint check before choosing",
+          "example": "N-Queens: skip a column or diagonal that is already attacked"
+        },
+        {
+          "technique": "Sort and break early",
+          "example": "Combination Sum: stop the loop when candidates[i] > remaining"
+        },
+        {
+          "technique": "Remaining-capacity bound",
+          "example": "Combinations: stop when fewer than k - path.size numbers remain"
+        },
+        {
+          "technique": "Skip duplicates",
+          "example": "Sort, then skip equal neighbors at the same level"
+        },
+        {
+          "technique": "Symmetry breaking",
+          "example": "Equal-sum partition: do not try two buckets with the same current sum"
+        },
+        {
+          "technique": "Order of attempts",
+          "example": "Try big or most constrained items first to fail faster"
+        },
+        {
+          "technique": "Incremental state",
+          "example": "Keep used flags and counts instead of rescanning the path each time"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Size of the Search Space",
+      "rows": [
+        {
+          "problem": "Subsets",
+          "outputs": "2^n",
+          "time": "O(n * 2^n)"
+        },
+        {
+          "problem": "Permutations",
+          "outputs": "n!",
+          "time": "O(n * n!)"
+        },
+        {
+          "problem": "Combinations C(n, k)",
+          "outputs": "n! / (k! (n - k)!)",
+          "time": "O(k * C(n, k))"
+        },
+        {
+          "problem": "Combination Sum",
+          "outputs": "Depends on target and candidates",
+          "time": "O(N^(T / M))"
+        },
+        {
+          "problem": "N-Queens",
+          "outputs": "Number of valid boards",
+          "time": "About O(n!)"
+        },
+        {
+          "problem": "Generate Parentheses",
+          "outputs": "Catalan number C(n)",
+          "time": "O(4^n / sqrt(n))"
+        },
+        {
+          "problem": "Sudoku",
+          "outputs": "1 solution",
+          "time": "Exponential, pruned heavily"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Subsets / Subsets II",
+          "shape": "Start index",
+          "key_idea": "Record at every node, sort and skip duplicates"
+        },
+        {
+          "problem": "Permutations / Permutations II",
+          "shape": "Used array",
+          "key_idea": "Loop over all items, skip duplicates only if the twin is unused"
+        },
+        {
+          "problem": "Combinations",
+          "shape": "Start index with a size cap",
+          "key_idea": "Stop when path.size == k, prune with the remaining count"
+        },
+        {
+          "problem": "Combination Sum I, II, III",
+          "shape": "Start index with a remaining target",
+          "key_idea": "Recurse with i for reuse, i + 1 for no reuse, break when too big"
+        },
+        {
+          "problem": "Letter Combinations of a Phone Number",
+          "shape": "One position per digit",
+          "key_idea": "Loop over the letters of the current digit"
+        },
+        {
+          "problem": "Generate Parentheses",
+          "shape": "Two counters",
+          "key_idea": "open < n and close < open"
+        },
+        {
+          "problem": "Palindrome Partitioning",
+          "shape": "Cut positions",
+          "key_idea": "Only cut after a palindromic piece"
+        },
+        {
+          "problem": "Word Search",
+          "shape": "Grid DFS",
+          "key_idea": "Mark the cell, explore 4 ways, restore the cell"
+        },
+        {
+          "problem": "N-Queens",
+          "shape": "One queen per row",
+          "key_idea": "Column and diagonal boolean arrays"
+        },
+        {
+          "problem": "Sudoku Solver",
+          "shape": "Cell by cell",
+          "key_idea": "Row, column and box masks, return true at the first solution"
+        },
+        {
+          "problem": "Restore IP Addresses",
+          "shape": "4 parts of length 1 to 3",
+          "key_idea": "No leading zeros, each part at most 255"
+        },
+        {
+          "problem": "Partition to K Equal Sum Subsets",
+          "shape": "Item to bucket",
+          "key_idea": "Sort descending, skip equal buckets"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Adding the same list object to the result instead of a copy (use ArrayList(path)), so every answer ends up empty",
+        "Forgetting to undo the choice (removeAt, used[i] = false, restoring the cell) after the recursive call",
+        "Using i instead of i + 1 (or the other way around) and producing repeated or missing answers",
+        "Not sorting before applying the duplicate-skip rule",
+        "Skipping duplicates with i > 0 instead of i > start in subsets and combinations",
+        "Forgetting the base case, or checking it after the loop instead of before",
+        "Pruning too late, which turns a fast solution into a timeout",
+        "Modifying a shared collection while iterating over it",
+        "Returning from the base case without recording when the solution is complete"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "aspect": "Time",
+          "detail": "Number of nodes in the decision tree times the work per node, usually exponential or factorial"
+        },
+        {
+          "aspect": "Space",
+          "detail": "O(depth) for the recursion stack and the current path, not counting the stored output"
+        },
+        {
+          "aspect": "Output size",
+          "detail": "Often dominates: 2^n subsets or n! permutations must be written out"
+        },
+        {
+          "aspect": "Pruning",
+          "detail": "Does not change the worst case but often cuts the real running time dramatically"
+        },
+        {
+          "aspect": "When it is too slow",
+          "detail": "If subproblems repeat, switch to dynamic programming (memoization)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Subsets and Subsets II",
+        "Permutations and Permutations II",
+        "Combinations",
+        "Combination Sum, Combination Sum II and Combination Sum III",
+        "Letter Combinations of a Phone Number",
+        "Generate Parentheses",
+        "Palindrome Partitioning",
+        "Word Search",
+        "N-Queens and N-Queens II",
+        "Sudoku Solver",
+        "Restore IP Addresses",
+        "Partition to K Equal Sum Subsets",
+        "Letter Case Permutation",
+        "Expression Add Operators"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Backtracking is DFS over a decision tree: choose, explore, unchoose",
+        "Always store a copy of the path when you record a solution",
+        "Use a start index for subsets and combinations, and a used array (or swaps) for permutations",
+        "Sort first and skip equal neighbors to avoid duplicate answers",
+        "Prune early with constraints, bounds and symmetry checks to avoid exploring hopeless branches",
+        "If the same subproblems keep reappearing, memoize and move to dynamic programming"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,374 @@
+{
+  "title": "Tree BFS (Level Order)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Tree BFS Pattern?",
+      "content": "Tree BFS (Breadth-First Search) visits a tree level by level, from the root downward and from left to right. It uses a queue: take a node from the front, process it, then add its children to the back. Because the queue always holds the current level followed by the next one, you can count how many nodes belong to the current level and handle each level as a group. It runs in O(n) time and uses O(w) space, where w is the maximum width of the tree."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Traverse a tree level by level (level order traversal)",
+        "Find the minimum depth or the shallowest node that meets a condition",
+        "Return one value per level (average, maximum, rightmost, leftmost)",
+        "Connect nodes on the same level (next pointers)",
+        "Zigzag or bottom-up level order",
+        "Find the nearest node, the level of a node, or cousins",
+        "Compute the width of a tree or check if it is complete",
+        "Keywords: level, level by level, depth, minimum depth, right side view, nearest, width, zigzag"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "TreeNode Definition",
+      "language": "kotlin",
+      "code": "class TreeNode(var `val`: Int) {\n    var left: TreeNode? = null\n    var right: TreeNode? = null\n}"
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Imagine dropping a stone into water. The ripples spread outward one ring at a time. BFS works the same way: first the root, then all nodes one step away, then all nodes two steps away, and so on. Since the first time BFS reaches a node is always along the shortest path (fewest edges), BFS is the natural choice for minimum depth and shortest-path questions in unweighted trees and graphs."
+    },
+    {
+      "type": "table",
+      "heading": "Tree BFS vs Tree DFS",
+      "rows": [
+        {
+          "aspect": "Data structure",
+          "bfs": "Queue",
+          "dfs": "Stack or recursion"
+        },
+        {
+          "aspect": "Visit order",
+          "bfs": "Level by level",
+          "dfs": "Branch by branch"
+        },
+        {
+          "aspect": "Best for",
+          "bfs": "Levels, minimum depth, nearest node",
+          "dfs": "Paths, subtree properties, backtracking"
+        },
+        {
+          "aspect": "Space",
+          "bfs": "O(width), up to n / 2",
+          "dfs": "O(height), up to n for a skewed tree"
+        },
+        {
+          "aspect": "Early exit",
+          "bfs": "Stops at the shallowest match",
+          "dfs": "May explore deep branches first"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Level Order Traversal (Level Size Trick)",
+      "language": "kotlin",
+      "code": "fun levelOrder(root: TreeNode?): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    if (root == null) return result\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val size = queue.size                       // number of nodes in this level\n        val level = ArrayList<Int>(size)\n        repeat(size) {\n            val node = queue.removeFirst()\n            level.add(node.`val`)\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        result.add(level)\n    }\n    return result\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Plain BFS (No Level Grouping)",
+      "language": "kotlin",
+      "code": "fun bfs(root: TreeNode?) {\n    if (root == null) return\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        // process node\n        node.left?.let { queue.addLast(it) }\n        node.right?.let { queue.addLast(it) }\n    }\n}\n// Use this when you do not care which level a node belongs to"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: BFS With Depth Tracking",
+      "language": "kotlin",
+      "code": "fun bfsWithDepth(root: TreeNode?) {\n    if (root == null) return\n    val queue = ArrayDeque<Pair<TreeNode, Int>>()\n    queue.addLast(Pair(root, 1))\n    while (queue.isNotEmpty()) {\n        val (node, depth) = queue.removeFirst()\n        // process node at 'depth'\n        node.left?.let { queue.addLast(Pair(it, depth + 1)) }\n        node.right?.let { queue.addLast(Pair(it, depth + 1)) }\n    }\n}\n// Alternative to the level size trick when you need the depth per node"
+    },
+    {
+      "type": "bullet",
+      "heading": "The Four Steps Inside Every Level Loop",
+      "items": [
+        "1. Read queue.size before the inner loop, because the queue changes while you add children",
+        "2. Remove exactly that many nodes with removeFirst()",
+        "3. Process each node (collect value, compare, link)",
+        "4. Add its non-null children to the back of the queue"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Binary Tree Level Order Traversal II (Bottom Up)",
+      "language": "kotlin",
+      "code": "fun levelOrderBottom(root: TreeNode?): List<List<Int>> {\n    val result = ArrayDeque<List<Int>>()\n    if (root == null) return result\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val level = ArrayList<Int>()\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            level.add(node.`val`)\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        result.addFirst(level)                      // newest level goes to the front\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Zigzag Level Order Traversal",
+      "language": "kotlin",
+      "code": "fun zigzagLevelOrder(root: TreeNode?): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    if (root == null) return result\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    var leftToRight = true\n    while (queue.isNotEmpty()) {\n        val level = ArrayList<Int>()\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            level.add(node.`val`)\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        if (!leftToRight) level.reverse()\n        result.add(level)\n        leftToRight = !leftToRight\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Average of Levels",
+      "language": "kotlin",
+      "code": "fun averageOfLevels(root: TreeNode?): List<Double> {\n    val result = mutableListOf<Double>()\n    if (root == null) return result\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val size = queue.size\n        var sum = 0L                                // Long avoids overflow\n        repeat(size) {\n            val node = queue.removeFirst()\n            sum += node.`val`\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        result.add(sum.toDouble() / size)\n    }\n    return result\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Binary Tree Right Side View",
+      "language": "kotlin",
+      "code": "fun rightSideView(root: TreeNode?): List<Int> {\n    val result = mutableListOf<Int>()\n    if (root == null) return result\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val size = queue.size\n        for (i in 0 until size) {\n            val node = queue.removeFirst()\n            if (i == size - 1) result.add(node.`val`)   // last node of the level\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n    }\n    return result\n}\n// Time: O(n)   Space: O(w)\n// For the left side view, take i == 0 instead"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Find Largest Value in Each Row",
+      "language": "kotlin",
+      "code": "fun largestValues(root: TreeNode?): List<Int> {\n    val result = mutableListOf<Int>()\n    if (root == null) return result\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        var best = Int.MIN_VALUE\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            best = maxOf(best, node.`val`)\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        result.add(best)\n    }\n    return result\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Minimum Depth of Binary Tree",
+      "language": "kotlin",
+      "code": "fun minDepth(root: TreeNode?): Int {\n    if (root == null) return 0\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    var depth = 1\n    while (queue.isNotEmpty()) {\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            if (node.left == null && node.right == null) return depth   // first leaf found\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        depth++\n    }\n    return depth\n}\n// Time: O(n) worst case, often much less   Space: O(w)\n// BFS stops at the shallowest leaf, while DFS must check every branch"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Maximum Depth (BFS)",
+      "language": "kotlin",
+      "code": "fun maxDepth(root: TreeNode?): Int {\n    if (root == null) return 0\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    var depth = 0\n    while (queue.isNotEmpty()) {\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n        depth++                                     // one full level processed\n    }\n    return depth\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Populating Next Right Pointers (Any Binary Tree)",
+      "language": "kotlin",
+      "code": "class Node(var `val`: Int) {\n    var left: Node? = null\n    var right: Node? = null\n    var next: Node? = null\n}\n\nfun connect(root: Node?): Node? {\n    if (root == null) return null\n    val queue = ArrayDeque<Node>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        var prev: Node? = null\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            prev?.next = node                       // link previous node to this one\n            prev = node\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n    }\n    return root\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Next Right Pointers in a Perfect Tree (O(1) Space)",
+      "language": "kotlin",
+      "code": "fun connectPerfect(root: Node?): Node? {\n    var leftmost = root\n    while (leftmost?.left != null) {\n        var head = leftmost\n        while (head != null) {\n            head.left!!.next = head.right\n            val nextHead = head.next\n            if (nextHead != null) head.right!!.next = nextHead.left\n            head = nextHead\n        }\n        leftmost = leftmost.left\n    }\n    return root\n}\n// Time: O(n)   Space: O(1)\n// Uses the next pointers built on the previous level instead of a queue"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Level Order Successor",
+      "language": "kotlin",
+      "code": "fun levelOrderSuccessor(root: TreeNode?, key: Int): TreeNode? {\n    if (root == null) return null\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        node.left?.let { queue.addLast(it) }\n        node.right?.let { queue.addLast(it) }\n        if (node.`val` == key) return queue.firstOrNull()   // next node in the queue\n    }\n    return null\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Cousins in a Binary Tree",
+      "language": "kotlin",
+      "code": "fun isCousins(root: TreeNode?, x: Int, y: Int): Boolean {\n    if (root == null) return false\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        var foundX = false\n        var foundY = false\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            if (node.`val` == x) foundX = true\n            if (node.`val` == y) foundY = true\n            val l = node.left\n            val r = node.right\n            // same parent means siblings, not cousins\n            if (l != null && r != null &&\n                ((l.`val` == x && r.`val` == y) || (l.`val` == y && r.`val` == x))) return false\n            if (l != null) queue.addLast(l)\n            if (r != null) queue.addLast(r)\n        }\n        if (foundX && foundY) return true           // same level, different parents\n        if (foundX || foundY) return false          // found on different levels\n    }\n    return false\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Maximum Width of Binary Tree",
+      "language": "kotlin",
+      "code": "fun widthOfBinaryTree(root: TreeNode?): Int {\n    if (root == null) return 0\n    var best = 0L\n    val queue = ArrayDeque<Pair<TreeNode, Long>>()\n    queue.addLast(Pair(root, 0L))\n    while (queue.isNotEmpty()) {\n        val first = queue.first().second            // index of the leftmost node\n        var lastNorm = 0L\n        repeat(queue.size) {\n            val (node, idx) = queue.removeFirst()\n            val norm = idx - first                  // normalize to avoid overflow\n            lastNorm = norm\n            node.left?.let { queue.addLast(Pair(it, 2 * norm)) }\n            node.right?.let { queue.addLast(Pair(it, 2 * norm + 1)) }\n        }\n        best = maxOf(best, lastNorm + 1)\n    }\n    return best.toInt()\n}\n// Time: O(n)   Space: O(w)\n// Index children like a heap: left = 2i, right = 2i + 1, nulls are counted implicitly"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Check Completeness of a Binary Tree",
+      "language": "kotlin",
+      "code": "fun isCompleteTree(root: TreeNode?): Boolean {\n    if (root == null) return true\n    val queue = ArrayDeque<TreeNode?>()\n    queue.addLast(root)\n    var seenNull = false\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        if (node == null) {\n            seenNull = true                         // after the first gap there must be no nodes\n        } else {\n            if (seenNull) return false\n            queue.addLast(node.left)                // null children are added too\n            queue.addLast(node.right)\n        }\n    }\n    return true\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Vertical Order Traversal (BFS With Columns)",
+      "language": "kotlin",
+      "code": "import java.util.TreeMap\n\nfun verticalOrder(root: TreeNode?): List<List<Int>> {\n    if (root == null) return emptyList()\n    val columns = TreeMap<Int, MutableList<Int>>()\n    val queue = ArrayDeque<Pair<TreeNode, Int>>()\n    queue.addLast(Pair(root, 0))\n    while (queue.isNotEmpty()) {\n        val (node, col) = queue.removeFirst()\n        columns.getOrPut(col) { mutableListOf() }.add(node.`val`)\n        node.left?.let { queue.addLast(Pair(it, col - 1)) }\n        node.right?.let { queue.addLast(Pair(it, col + 1)) }\n    }\n    return columns.values.toList()\n}\n// Time: O(n log n) because of TreeMap   Space: O(n)\n// BFS keeps nodes in the same column in top-to-bottom, left-to-right order"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Level Order of an N-ary Tree",
+      "language": "kotlin",
+      "code": "class NaryNode(var `val`: Int) {\n    var children: List<NaryNode> = emptyList()\n}\n\nfun levelOrderNary(root: NaryNode?): List<List<Int>> {\n    val result = mutableListOf<List<Int>>()\n    if (root == null) return result\n    val queue = ArrayDeque<NaryNode>()\n    queue.addLast(root)\n    while (queue.isNotEmpty()) {\n        val level = ArrayList<Int>()\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            level.add(node.`val`)\n            for (child in node.children) queue.addLast(child)\n        }\n        result.add(level)\n    }\n    return result\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 16: Deepest Leaves Sum",
+      "language": "kotlin",
+      "code": "fun deepestLeavesSum(root: TreeNode?): Int {\n    if (root == null) return 0\n    val queue = ArrayDeque<TreeNode>()\n    queue.addLast(root)\n    var levelSum = 0\n    while (queue.isNotEmpty()) {\n        levelSum = 0                                // reset for each level\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            levelSum += node.`val`\n            node.left?.let { queue.addLast(it) }\n            node.right?.let { queue.addLast(it) }\n        }\n    }\n    return levelSum                                 // the last level processed\n}\n// Time: O(n)   Space: O(w)"
+    },
+    {
+      "type": "table",
+      "heading": "What to Do With Each Level",
+      "rows": [
+        {
+          "goal": "Collect all values",
+          "per_level_action": "Add node values to a list",
+          "result": "List<List<Int>>"
+        },
+        {
+          "goal": "Right side view",
+          "per_level_action": "Take the last node (i == size - 1)",
+          "result": "One value per level"
+        },
+        {
+          "goal": "Left side view",
+          "per_level_action": "Take the first node (i == 0)",
+          "result": "One value per level"
+        },
+        {
+          "goal": "Average",
+          "per_level_action": "Sum as Long, divide by size",
+          "result": "One Double per level"
+        },
+        {
+          "goal": "Maximum or minimum",
+          "per_level_action": "Track a running max or min",
+          "result": "One value per level"
+        },
+        {
+          "goal": "Zigzag",
+          "per_level_action": "Reverse every other level",
+          "result": "Alternating direction"
+        },
+        {
+          "goal": "Connect siblings",
+          "per_level_action": "Link each node to the previous one",
+          "result": "next pointers"
+        },
+        {
+          "goal": "Minimum depth",
+          "per_level_action": "Stop at the first leaf",
+          "result": "Depth counter"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Binary Tree Level Order Traversal",
+          "technique": "Queue + level size",
+          "key_idea": "Read size, process exactly that many nodes"
+        },
+        {
+          "problem": "Zigzag Level Order",
+          "technique": "Level order + flag",
+          "key_idea": "Reverse every second level"
+        },
+        {
+          "problem": "Level Order Bottom Up",
+          "technique": "Level order + addFirst",
+          "key_idea": "Put each new level at the front"
+        },
+        {
+          "problem": "Right Side View",
+          "technique": "Last node per level",
+          "key_idea": "i == size - 1"
+        },
+        {
+          "problem": "Average of Levels",
+          "technique": "Level sum / size",
+          "key_idea": "Use Long for the sum"
+        },
+        {
+          "problem": "Minimum Depth",
+          "technique": "BFS early exit",
+          "key_idea": "Return at the first leaf"
+        },
+        {
+          "problem": "Populating Next Right Pointers",
+          "technique": "Link nodes in a level",
+          "key_idea": "prev.next = current"
+        },
+        {
+          "problem": "Maximum Width",
+          "technique": "Index nodes like a heap",
+          "key_idea": "Normalize indices per level"
+        },
+        {
+          "problem": "Cousins in Binary Tree",
+          "technique": "Level + parent check",
+          "key_idea": "Same level, different parent"
+        },
+        {
+          "problem": "Check Completeness",
+          "technique": "BFS with null markers",
+          "key_idea": "No node may appear after a null"
+        },
+        {
+          "problem": "Vertical Order Traversal",
+          "technique": "BFS with column index",
+          "key_idea": "TreeMap from column to values"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using queue.size inside the loop condition instead of saving it first, which mixes levels",
+        "Adding null children to the queue (except in problems that need null markers)",
+        "Using DFS recursion for minimum depth and exploring the whole tree",
+        "Forgetting that minimum depth ends at a leaf, not at a node with one missing child",
+        "Not checking for an empty tree (root == null) before starting",
+        "Integer overflow when summing node values or indexing nodes for width (use Long)",
+        "Using a List with removeAt(0) as a queue (O(n) per removal); use ArrayDeque",
+        "Mixing up addFirst and addLast, which reverses the traversal order"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "BFS on a binary tree",
+          "time": "O(n)",
+          "space": "O(w), at most n / 2"
+        },
+        {
+          "approach": "BFS on a skewed tree",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "BFS on a perfect tree",
+          "time": "O(n)",
+          "space": "O(n / 2) for the last level"
+        },
+        {
+          "approach": "Next pointers on a perfect tree without a queue",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Vertical order with TreeMap",
+          "time": "O(n log n)",
+          "space": "O(n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Binary Tree Level Order Traversal",
+        "Binary Tree Level Order Traversal II",
+        "Binary Tree Zigzag Level Order Traversal",
+        "Average of Levels in Binary Tree",
+        "Binary Tree Right Side View",
+        "Find Largest Value in Each Tree Row",
+        "Minimum Depth of Binary Tree",
+        "Maximum Depth of Binary Tree",
+        "Populating Next Right Pointers in Each Node I and II",
+        "Cousins in Binary Tree",
+        "Maximum Width of Binary Tree",
+        "Check Completeness of a Binary Tree",
+        "N-ary Tree Level Order Traversal",
+        "Deepest Leaves Sum"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Tree BFS uses a queue and visits the tree level by level",
+        "The level size trick (read queue.size, then process that many nodes) separates levels",
+        "BFS is the best fit for minimum depth, nearest node and anything that asks for a level",
+        "Time is O(n) and space is O(width of the tree)",
+        "Use ArrayDeque for the queue, never removeAt(0) on a list",
+        "Only add non-null children, unless the problem needs null markers such as the completeness check"
+      ]
+    }
+  ]
+}

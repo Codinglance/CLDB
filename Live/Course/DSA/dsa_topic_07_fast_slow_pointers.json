@@ -1,0 +1,243 @@
+{
+  "title": "Fast & Slow Pointers",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Fast & Slow Pointers Pattern?",
+      "content": "Fast & Slow Pointers (also called Floyd's Tortoise and Hare) uses two pointers that move through a sequence at different speeds. The slow pointer moves one step at a time and the fast pointer moves two steps. Because of the speed difference, the pointers reveal structure such as cycles and midpoints without extra memory. It runs in O(n) time with O(1) space."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Detect a cycle in a linked list or a sequence",
+        "Find the start of a cycle or the cycle length",
+        "Find the middle of a linked list",
+        "Find the Nth node from the end",
+        "Check if a linked list is a palindrome",
+        "Problems where a value repeats and forms a loop (Happy Number, Find the Duplicate)",
+        "You cannot use a HashSet because of O(1) space limits"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Imagine two runners on a circular track. The faster runner will eventually lap the slower one, so they must meet. On a straight track the fast runner just reaches the end first. So if the two pointers ever meet, there is a cycle. If the fast pointer reaches null, there is none. When the fast pointer reaches the end of a list, the slow pointer is exactly at the middle."
+    },
+    {
+       "type": "text_code",
+      "heading": "Linked List Node Definition",
+      "language": "kotlin",
+      "code": "class ListNode(var `val`: Int) {\n    var next: ListNode? = null\n}"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 1: Detect a Cycle",
+      "language": "kotlin",
+      "code": "fun hasCycle(head: ListNode?): Boolean {\n    var slow = head\n    var fast = head\n    while (fast?.next != null) {\n        slow = slow!!.next\n        fast = fast.next!!.next\n        if (slow === fast) return true     // pointers met inside a cycle\n    }\n    return false                           // fast reached the end\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 2: Find the Middle Node",
+      "language": "kotlin",
+      "code": "fun middleNode(head: ListNode?): ListNode? {\n    var slow = head\n    var fast = head\n    while (fast?.next != null) {\n        slow = slow!!.next\n        fast = fast.next!!.next\n    }\n    return slow    // second middle when the length is even\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 3: Find the Start of the Cycle",
+      "language": "kotlin",
+      "code": "fun detectCycle(head: ListNode?): ListNode? {\n    var slow = head\n    var fast = head\n    while (fast?.next != null) {\n        slow = slow!!.next\n        fast = fast.next!!.next\n        if (slow === fast) {\n            // Phase 2: reset one pointer to head, move both one step\n            var start = head\n            while (start !== slow) {\n                start = start!!.next\n                slow = slow!!.next\n            }\n            return start      // cycle entrance\n        }\n    }\n    return null\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text",
+      "heading": "Why Phase 2 Finds the Cycle Start",
+      "content": "Let the distance from head to the cycle start be a, and the distance from the cycle start to the meeting point be b. At the meeting, the slow pointer has walked a + b and the fast pointer has walked twice that. The extra distance walked by fast is a whole number of cycle lengths, which means walking a more steps from the meeting point lands exactly on the cycle start. So a pointer from head and a pointer from the meeting point meet at the cycle start."
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 1: Linked List Cycle Length",
+      "language": "kotlin",
+      "code": "fun cycleLength(head: ListNode?): Int {\n    var slow = head\n    var fast = head\n    while (fast?.next != null) {\n        slow = slow!!.next\n        fast = fast.next!!.next\n        if (slow === fast) {\n            var length = 1\n            var cur = slow!!.next\n            while (cur !== slow) {\n                cur = cur!!.next\n                length++\n            }\n            return length\n        }\n    }\n    return 0\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 2: Happy Number",
+      "language": "kotlin",
+      "code": "fun isHappy(n: Int): Boolean {\n    fun next(x: Int): Int {\n        var num = x\n        var sum = 0\n        while (num > 0) {\n            val d = num % 10\n            sum += d * d\n            num /= 10\n        }\n        return sum\n    }\n\n    var slow = n\n    var fast = next(n)\n    while (fast != 1 && slow != fast) {\n        slow = next(slow)\n        fast = next(next(fast))\n    }\n    return fast == 1\n}\n// Time: O(log n)   Space: O(1)\n// The sequence either reaches 1 or enters a cycle"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 3: Find the Duplicate Number",
+      "language": "kotlin",
+      "code": "fun findDuplicate(nums: IntArray): Int {\n    // Treat nums[i] as a pointer to index nums[i]\n    var slow = nums[0]\n    var fast = nums[0]\n    do {\n        slow = nums[slow]\n        fast = nums[nums[fast]]\n    } while (slow != fast)\n\n    slow = nums[0]\n    while (slow != fast) {\n        slow = nums[slow]\n        fast = nums[fast]\n    }\n    return slow\n}\n// Time: O(n)   Space: O(1)\n// Array has n + 1 numbers in range 1..n, so a cycle must exist"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 4: Remove Nth Node From End",
+      "language": "kotlin",
+      "code": "fun removeNthFromEnd(head: ListNode?, n: Int): ListNode? {\n    val dummy = ListNode(0)\n    dummy.next = head\n    var fast: ListNode? = dummy\n    var slow: ListNode? = dummy\n    repeat(n + 1) { fast = fast?.next }       // create a gap of n nodes\n    while (fast != null) {\n        fast = fast?.next\n        slow = slow?.next\n    }\n    slow!!.next = slow.next?.next             // skip the target node\n    return dummy.next\n}\n// Time: O(n)   Space: O(1)\n// Gap technique: pointers move at the same speed"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 5: Palindrome Linked List",
+      "language": "kotlin",
+      "code": "fun isPalindrome(head: ListNode?): Boolean {\n    // 1. Find the middle\n    var slow = head\n    var fast = head\n    while (fast?.next != null) {\n        slow = slow!!.next\n        fast = fast.next!!.next\n    }\n    // 2. Reverse the second half\n    var prev: ListNode? = null\n    var cur = slow\n    while (cur != null) {\n        val next = cur.next\n        cur.next = prev\n        prev = cur\n        cur = next\n    }\n    // 3. Compare both halves\n    var left = head\n    var right = prev\n    while (right != null) {\n        if (left!!.`val` != right.`val`) return false\n        left = left.next\n        right = right.next\n    }\n    return true\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 6: Reorder List",
+      "language": "kotlin",
+      "code": "fun reorderList(head: ListNode?) {\n    if (head?.next == null) return\n    // 1. Find the middle\n    var slow = head\n    var fast = head\n    while (fast?.next != null && fast.next?.next != null) {\n        slow = slow!!.next\n        fast = fast.next!!.next\n    }\n    // 2. Reverse the second half\n    var prev: ListNode? = null\n    var cur = slow!!.next\n    slow.next = null\n    while (cur != null) {\n        val next = cur.next\n        cur.next = prev\n        prev = cur\n        cur = next\n    }\n    // 3. Merge alternately: L0, Ln, L1, Ln-1, ...\n    var first = head\n    var second = prev\n    while (second != null) {\n        val t1 = first!!.next\n        val t2 = second.next\n        first.next = second\n        second.next = t1\n        first = t1\n        second = t2\n    }\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 7: Circular Array Loop (Idea)",
+      "language": "kotlin",
+      "code": "fun circularArrayLoop(nums: IntArray): Boolean {\n    val n = nums.size\n    fun next(i: Int): Int = ((i + nums[i]) % n + n) % n\n\n    for (i in nums.indices) {\n        var slow = i\n        var fast = i\n        val forward = nums[i] > 0\n        while (true) {\n            val s = next(slow)\n            if ((nums[s] > 0) != forward || s == slow) break\n            val f1 = next(fast)\n            if ((nums[f1] > 0) != forward || f1 == fast) break\n            val f2 = next(f1)\n            if ((nums[f2] > 0) != forward || f2 == f1) break\n            slow = s\n            fast = f2\n            if (slow == fast) return true\n        }\n    }\n    return false\n}\n// Time: O(n²) worst case here   Space: O(1)\n// Rule: a valid loop has the same direction and length > 1"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 8: Middle of Linked List, Even vs Odd",
+      "language": "kotlin",
+      "code": "// 1 -> 2 -> 3 -> 4 -> 5\n// slow stops at 3 (single middle)\n//\n// 1 -> 2 -> 3 -> 4\n// slow stops at 3 (second middle)\n//\n// To get the first middle on even lists, use:\n//   while (fast?.next != null && fast.next?.next != null)"
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Linked List Cycle",
+          "variant": "Fast 2x, slow 1x",
+          "key_idea": "They meet only if a cycle exists"
+        },
+        {
+          "problem": "Linked List Cycle II",
+          "variant": "Meeting point, then reset",
+          "key_idea": "Head and meeting point walk at the same speed to the entrance"
+        },
+        {
+          "problem": "Middle of Linked List",
+          "variant": "Fast 2x, slow 1x",
+          "key_idea": "Slow is in the middle when fast ends"
+        },
+        {
+          "problem": "Happy Number",
+          "variant": "Cycle in a number sequence",
+          "key_idea": "Reaches 1 or loops forever"
+        },
+        {
+          "problem": "Find the Duplicate Number",
+          "variant": "Array as a linked list",
+          "key_idea": "Index to value pointers form a cycle"
+        },
+        {
+          "problem": "Remove Nth From End",
+          "variant": "Gap of n nodes",
+          "key_idea": "When fast ends, slow is before the target"
+        },
+        {
+          "problem": "Palindrome Linked List",
+          "variant": "Middle + reverse",
+          "key_idea": "Compare first half with reversed second half"
+        },
+        {
+          "problem": "Reorder List",
+          "variant": "Middle + reverse + merge",
+          "key_idea": "Interleave both halves"
+        },
+        {
+          "problem": "Circular Array Loop",
+          "variant": "Cycle with direction check",
+          "key_idea": "Same sign and length greater than 1"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Types of Pointer Speed",
+      "rows": [
+        {
+          "type": "Fast 2x, Slow 1x",
+          "use": "Cycle detection, middle node, cycle start"
+        },
+        {
+          "type": "Gap of k, same speed",
+          "use": "Nth node from end, sliding gap problems"
+        },
+        {
+          "type": "Reset one pointer to head",
+          "use": "Find the cycle entrance, find the duplicate"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Not checking fast and fast.next for null, which causes NullPointerException",
+        "Comparing node values instead of node references (use === in Kotlin)",
+        "Forgetting that the middle is the second middle on even lists with the basic template",
+        "Not using a dummy node when the head itself might be removed",
+        "Moving both pointers after the meeting in phase 2 at different speeds",
+        "Forgetting to cut the list (slow.next = null) before reversing the second half",
+        "Using !! carelessly in Kotlin without confirming the node is not null"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "HashSet to detect a cycle",
+          "time": "O(n)",
+          "space": "O(n)"
+        },
+        {
+          "approach": "Fast & Slow pointers",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Two passes to find the middle",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "One pass with fast & slow for the middle",
+          "time": "O(n)",
+          "space": "O(1)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Linked List Cycle",
+        "Linked List Cycle II",
+        "Middle of the Linked List",
+        "Happy Number",
+        "Find the Duplicate Number",
+        "Remove Nth Node From End of List",
+        "Palindrome Linked List",
+        "Reorder List",
+        "Circular Array Loop",
+        "Intersection of Two Linked Lists",
+        "Sort List (find the middle for merge sort)",
+        "Delete the Middle Node of a Linked List"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Fast moves two steps and slow moves one, so they meet only if there is a cycle",
+        "When fast reaches the end, slow is at the middle",
+        "After the meeting point, reset one pointer to head and move both one step to find the cycle start",
+        "A gap of n between pointers finds the Nth node from the end",
+        "Any sequence where next is a function of the current value can be treated like a linked list",
+        "This pattern gives O(1) space where a HashSet would need O(n)"
+      ]
+    }
+  ]
+}

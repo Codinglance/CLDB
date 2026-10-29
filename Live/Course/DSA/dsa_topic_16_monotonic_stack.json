@@ -1,0 +1,312 @@
+{
+  "title": "Monotonic Stack",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Monotonic Stack Pattern?",
+      "content": "A monotonic stack is a stack whose elements are always kept in sorted order (either increasing or decreasing from bottom to top). Before pushing a new element, you pop every element that would break the order. Each popped element has just found its answer: the new element is its next greater (or next smaller) neighbor. Every element is pushed once and popped once, so the whole scan is O(n)."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Find the next greater or next smaller element for every position",
+        "Find the previous greater or previous smaller element",
+        "Compute spans or distances to the next warmer day or taller building",
+        "Find the largest rectangle in a histogram or in a binary matrix",
+        "Trap rain water, or sum the minimum of every subarray",
+        "Remove digits or duplicates to form the smallest or largest result",
+        "Keywords: next greater, next smaller, nearest, span, warmer, taller, histogram, remove K digits"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Two Types of Monotonic Stack",
+      "rows": [
+        {
+          "type": "Decreasing stack (big to small, bottom to top)",
+          "pop_when": "Current element is greater than the top",
+          "finds": "Next greater element",
+          "example": "Daily Temperatures"
+        },
+        {
+          "type": "Increasing stack (small to big, bottom to top)",
+          "pop_when": "Current element is smaller than the top",
+          "finds": "Next smaller element",
+          "example": "Largest Rectangle in Histogram"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Think of people standing in a line looking right. A person is blocked by anyone taller than them. A decreasing stack keeps only the people who have not yet found someone taller. When a taller person arrives, everyone shorter on the stack has found their answer and is popped. Whoever remains on the stack still waits for a taller person to appear."
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 1: Next Greater Element (Decreasing Stack)",
+      "language": "kotlin",
+      "code": "fun nextGreater(nums: IntArray): IntArray {\n    val result = IntArray(nums.size) { -1 }         // -1 means no greater element\n    val stack = ArrayDeque<Int>()                    // stores indices\n    for (i in nums.indices) {\n        while (stack.isNotEmpty() && nums[i] > nums[stack.last()]) {\n            val idx = stack.removeLast()\n            result[idx] = nums[i]                    // nums[i] is the next greater of idx\n        }\n        stack.addLast(i)\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 2: Next Smaller Element (Increasing Stack)",
+      "language": "kotlin",
+      "code": "fun nextSmaller(nums: IntArray): IntArray {\n    val result = IntArray(nums.size) { -1 }\n    val stack = ArrayDeque<Int>()\n    for (i in nums.indices) {\n        while (stack.isNotEmpty() && nums[i] < nums[stack.last()]) {\n            val idx = stack.removeLast()\n            result[idx] = nums[i]\n        }\n        stack.addLast(i)\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 3: Previous Greater / Smaller (Answer Read From the Stack)",
+      "language": "kotlin",
+      "code": "fun previousSmaller(nums: IntArray): IntArray {\n    val result = IntArray(nums.size) { -1 }\n    val stack = ArrayDeque<Int>()\n    for (i in nums.indices) {\n        while (stack.isNotEmpty() && nums[stack.last()] >= nums[i]) {\n            stack.removeLast()                       // these cannot be the answer for i\n        }\n        if (stack.isNotEmpty()) result[i] = nums[stack.last()]\n        stack.addLast(i)\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)\n// After popping, the top of the stack is the nearest smaller element on the left"
+    },
+    {
+      "type": "bullet",
+      "heading": "Quick Rules for Choosing the Stack",
+      "items": [
+        "Next greater to the right: scan left to right, pop smaller elements, they get their answer",
+        "Next smaller to the right: scan left to right, pop larger elements",
+        "Previous greater or smaller: after popping, read the answer from the stack top",
+        "Store indices instead of values when you need distances or positions",
+        "Use > or >= carefully when equal values exist, since this decides ties",
+        "For circular arrays, loop through 2n positions using i % n"
+      ]
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 1: Daily Temperatures",
+      "language": "kotlin",
+      "code": "fun dailyTemperatures(temps: IntArray): IntArray {\n    val answer = IntArray(temps.size)\n    val stack = ArrayDeque<Int>()\n    for (i in temps.indices) {\n        while (stack.isNotEmpty() && temps[i] > temps[stack.last()]) {\n            val prev = stack.removeLast()\n            answer[prev] = i - prev                  // days to wait\n        }\n        stack.addLast(i)\n    }\n    return answer\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 2: Next Greater Element I (Subset With HashMap)",
+      "language": "kotlin",
+      "code": "fun nextGreaterElement(nums1: IntArray, nums2: IntArray): IntArray {\n    val nextGreater = HashMap<Int, Int>()\n    val stack = ArrayDeque<Int>()\n    for (x in nums2) {\n        while (stack.isNotEmpty() && x > stack.last()) {\n            nextGreater[stack.removeLast()] = x\n        }\n        stack.addLast(x)\n    }\n    return IntArray(nums1.size) { nextGreater[nums1[it]] ?: -1 }\n}\n// Time: O(n + m)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 3: Next Greater Element II (Circular Array)",
+      "language": "kotlin",
+      "code": "fun nextGreaterCircular(nums: IntArray): IntArray {\n    val n = nums.size\n    val result = IntArray(n) { -1 }\n    val stack = ArrayDeque<Int>()\n    for (i in 0 until 2 * n) {                       // go around twice\n        val x = nums[i % n]\n        while (stack.isNotEmpty() && x > nums[stack.last()]) {\n            result[stack.removeLast()] = x\n        }\n        if (i < n) stack.addLast(i)                  // push only in the first pass\n    }\n    return result\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 4: Largest Rectangle in Histogram",
+      "language": "kotlin",
+      "code": "fun largestRectangleArea(heights: IntArray): Int {\n    val stack = ArrayDeque<Int>()                    // increasing heights (indices)\n    var best = 0\n    for (i in 0..heights.size) {\n        val h = if (i == heights.size) 0 else heights[i]      // sentinel 0 flushes the stack\n        while (stack.isNotEmpty() && h < heights[stack.last()]) {\n            val height = heights[stack.removeLast()]\n            val left = if (stack.isEmpty()) -1 else stack.last()\n            val width = i - left - 1                           // between left and i\n            best = maxOf(best, height * width)\n        }\n        stack.addLast(i)\n    }\n    return best\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 5: Maximal Rectangle in a Binary Matrix",
+      "language": "kotlin",
+      "code": "fun maximalRectangle(matrix: Array<CharArray>): Int {\n    if (matrix.isEmpty()) return 0\n    val cols = matrix[0].size\n    val heights = IntArray(cols)\n    var best = 0\n    for (row in matrix) {\n        for (c in 0 until cols) {\n            heights[c] = if (row[c] == '1') heights[c] + 1 else 0\n        }\n        best = maxOf(best, largestRectangleArea(heights))   // reuse the histogram solution\n    }\n    return best\n}\n// Time: O(rows * cols)   Space: O(cols)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 6: Trapping Rain Water (Stack Version)",
+      "language": "kotlin",
+      "code": "fun trap(height: IntArray): Int {\n    val stack = ArrayDeque<Int>()\n    var water = 0\n    for (i in height.indices) {\n        while (stack.isNotEmpty() && height[i] > height[stack.last()]) {\n            val bottom = stack.removeLast()\n            if (stack.isEmpty()) break\n            val left = stack.last()\n            val width = i - left - 1\n            val bounded = minOf(height[i], height[left]) - height[bottom]\n            water += width * bounded\n        }\n        stack.addLast(i)\n    }\n    return water\n}\n// Time: O(n)   Space: O(n)\n// The two pointers version uses O(1) space"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 7: Online Stock Span",
+      "language": "kotlin",
+      "code": "class StockSpanner {\n    private val stack = ArrayDeque<IntArray>()        // [price, span]\n\n    fun next(price: Int): Int {\n        var span = 1\n        while (stack.isNotEmpty() && stack.last()[0] <= price) {\n            span += stack.removeLast()[1]             // absorb smaller or equal days\n        }\n        stack.addLast(intArrayOf(price, span))\n        return span\n    }\n}\n// Amortized O(1) per call   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 8: Remove K Digits",
+      "language": "kotlin",
+      "code": "fun removeKdigits(num: String, k: Int): String {\n    val stack = StringBuilder()\n    var remaining = k\n    for (c in num) {\n        while (remaining > 0 && stack.isNotEmpty() && stack.last() > c) {\n            stack.deleteCharAt(stack.length - 1)      // drop a bigger digit before a smaller one\n            remaining--\n        }\n        stack.append(c)\n    }\n    while (remaining > 0 && stack.isNotEmpty()) {     // still need to remove from the end\n        stack.deleteCharAt(stack.length - 1)\n        remaining--\n    }\n    val result = stack.toString().trimStart('0')      // remove leading zeros\n    return if (result.isEmpty()) \"0\" else result\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 9: Remove Duplicate Letters (Smallest Subsequence)",
+      "language": "kotlin",
+      "code": "fun removeDuplicateLetters(s: String): String {\n    val last = IntArray(26)\n    for (i in s.indices) last[s[i] - 'a'] = i          // last position of each letter\n    val inStack = BooleanArray(26)\n    val stack = StringBuilder()\n    for (i in s.indices) {\n        val c = s[i]\n        if (inStack[c - 'a']) continue\n        while (stack.isNotEmpty() && stack.last() > c && last[stack.last() - 'a'] > i) {\n            inStack[stack.last() - 'a'] = false\n            stack.deleteCharAt(stack.length - 1)\n        }\n        stack.append(c)\n        inStack[c - 'a'] = true\n    }\n    return stack.toString()\n}\n// Time: O(n)   Space: O(1) (26 letters)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 10: Sum of Subarray Minimums",
+      "language": "kotlin",
+      "code": "fun sumSubarrayMins(arr: IntArray): Int {\n    val mod = 1_000_000_007L\n    val n = arr.size\n    val left = IntArray(n)      // distance to previous smaller element\n    val right = IntArray(n)     // distance to next smaller-or-equal element\n    val stack = ArrayDeque<Int>()\n    for (i in 0 until n) {\n        while (stack.isNotEmpty() && arr[stack.last()] > arr[i]) stack.removeLast()\n        left[i] = if (stack.isEmpty()) i + 1 else i - stack.last()\n        stack.addLast(i)\n    }\n    stack.clear()\n    for (i in n - 1 downTo 0) {\n        while (stack.isNotEmpty() && arr[stack.last()] >= arr[i]) stack.removeLast()\n        right[i] = if (stack.isEmpty()) n - i else stack.last() - i\n        stack.addLast(i)\n    }\n    var total = 0L\n    for (i in 0 until n) {\n        total = (total + arr[i].toLong() * left[i] * right[i]) % mod\n    }\n    return total.toInt()\n}\n// Time: O(n)   Space: O(n)\n// Each element is the minimum of left[i] * right[i] subarrays\n// One side uses strict and the other non-strict comparison to avoid double counting"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 11: Asteroid Collision",
+      "language": "kotlin",
+      "code": "fun asteroidCollision(asteroids: IntArray): IntArray {\n    val stack = ArrayDeque<Int>()\n    for (a in asteroids) {\n        var alive = true\n        while (alive && a < 0 && stack.isNotEmpty() && stack.last() > 0) {\n            val top = stack.last()\n            when {\n                top < -a -> stack.removeLast()           // top explodes, keep checking\n                top == -a -> { stack.removeLast(); alive = false }   // both explode\n                else -> alive = false                    // new asteroid explodes\n            }\n        }\n        if (alive) stack.addLast(a)\n    }\n    return stack.toIntArray()\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 12: 132 Pattern",
+      "language": "kotlin",
+      "code": "fun find132pattern(nums: IntArray): Boolean {\n    val stack = ArrayDeque<Int>()\n    var third = Int.MIN_VALUE                           // the '2' in the 132 pattern\n    for (i in nums.indices.reversed()) {\n        if (nums[i] < third) return true                // found the '1'\n        while (stack.isNotEmpty() && stack.last() < nums[i]) {\n            third = stack.removeLast()                  // largest popped value becomes '2'\n        }\n        stack.addLast(nums[i])\n    }\n    return false\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "table",
+      "heading": "Pop Condition Cheat Sheet",
+      "rows": [
+        {
+          "goal": "Next greater element (right)",
+          "scan": "Left to right",
+          "pop_while": "nums[i] > stack top",
+          "stack_order": "Decreasing"
+        },
+        {
+          "goal": "Next smaller element (right)",
+          "scan": "Left to right",
+          "pop_while": "nums[i] < stack top",
+          "stack_order": "Increasing"
+        },
+        {
+          "goal": "Previous greater element (left)",
+          "scan": "Left to right",
+          "pop_while": "stack top <= nums[i]",
+          "stack_order": "Decreasing"
+        },
+        {
+          "goal": "Previous smaller element (left)",
+          "scan": "Left to right",
+          "pop_while": "stack top >= nums[i]",
+          "stack_order": "Increasing"
+        },
+        {
+          "goal": "Smallest number after removing digits",
+          "scan": "Left to right",
+          "pop_while": "stack top > current digit",
+          "stack_order": "Increasing"
+        },
+        {
+          "goal": "Largest rectangle",
+          "scan": "Left to right with sentinel 0",
+          "pop_while": "current < stack top",
+          "stack_order": "Increasing"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Daily Temperatures",
+          "stack": "Decreasing, indices",
+          "key_idea": "Answer is i - poppedIndex"
+        },
+        {
+          "problem": "Next Greater Element I / II",
+          "stack": "Decreasing",
+          "key_idea": "Circular: iterate 2n times"
+        },
+        {
+          "problem": "Largest Rectangle in Histogram",
+          "stack": "Increasing, indices",
+          "key_idea": "Width from the new top to the current index"
+        },
+        {
+          "problem": "Maximal Rectangle",
+          "stack": "Histogram per row",
+          "key_idea": "Build heights row by row"
+        },
+        {
+          "problem": "Trapping Rain Water",
+          "stack": "Decreasing",
+          "key_idea": "Fill water layer by layer between walls"
+        },
+        {
+          "problem": "Online Stock Span",
+          "stack": "Decreasing with counts",
+          "key_idea": "Merge spans of popped days"
+        },
+        {
+          "problem": "Remove K Digits",
+          "stack": "Increasing",
+          "key_idea": "Drop larger digits that come before smaller ones"
+        },
+        {
+          "problem": "Remove Duplicate Letters",
+          "stack": "Increasing with last-seen index",
+          "key_idea": "Pop only if the letter appears again later"
+        },
+        {
+          "problem": "Sum of Subarray Minimums",
+          "stack": "Increasing, two passes",
+          "key_idea": "Contribution of each element as the minimum"
+        },
+        {
+          "problem": "Asteroid Collision",
+          "stack": "Mixed signs",
+          "key_idea": "Collide while the top moves right and the current moves left"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using the wrong comparison direction (greater versus smaller) for the stack type",
+        "Storing values when you need indices (distances and widths need positions)",
+        "Mishandling equal values: > versus >= changes which duplicate gets the answer",
+        "Forgetting the sentinel (extra 0) in the histogram problem, so the stack is never flushed",
+        "Calling stack.last() on an empty stack",
+        "Computing the width in the histogram incorrectly after popping (use the new top, not the popped index)",
+        "Forgetting to loop twice for circular arrays",
+        "Using the pattern when a window shrinks from the left; that needs a monotonic queue instead"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Brute force (scan for each element)",
+          "time": "O(n²)",
+          "space": "O(1)"
+        },
+        {
+          "approach": "Monotonic stack",
+          "time": "O(n)",
+          "space": "O(n)"
+        },
+        {
+          "approach": "Why O(n)",
+          "time": "Each element is pushed once and popped once",
+          "space": "Stack holds at most n items"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Next Greater Element I and II",
+        "Daily Temperatures",
+        "Online Stock Span",
+        "Largest Rectangle in Histogram",
+        "Maximal Rectangle",
+        "Trapping Rain Water",
+        "Remove K Digits",
+        "Remove Duplicate Letters",
+        "Sum of Subarray Minimums",
+        "Asteroid Collision",
+        "132 Pattern",
+        "Car Fleet",
+        "Final Prices With a Special Discount in a Shop"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "A monotonic stack keeps elements in sorted order by popping those that break the order",
+        "Popped elements have just found their next greater or next smaller neighbor",
+        "Use a decreasing stack for next greater and an increasing stack for next smaller",
+        "Store indices so you can compute distances and widths",
+        "Each element is pushed and popped once, giving O(n) overall",
+        "Histogram, rain water and subarray minimum problems are all contribution-style uses of this pattern"
+      ]
+    }
+  ]
+}

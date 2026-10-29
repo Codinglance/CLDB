@@ -1,0 +1,348 @@
+{
+  "title": "Topological Sort",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is Topological Sort?",
+      "content": "Topological sort orders the nodes of a directed graph so that for every edge u → v, node u appears before node v. It models tasks with prerequisites: you cannot start a task until everything it depends on is finished. A valid ordering exists only when the graph is a DAG (Directed Acyclic Graph), which means it has no cycles. If a cycle exists, no ordering is possible, so the same algorithm also detects cycles. Both common methods run in O(V + E)."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Order tasks, courses, builds or jobs that depend on each other",
+        "Detect whether dependencies contain a cycle (can everything be finished?)",
+        "Find the minimum number of rounds or semesters when independent tasks run in parallel",
+        "Recover an order from partial information (alien dictionary, sequence reconstruction)",
+        "Compute the longest path or earliest finish time in a DAG",
+        "Process nodes only after all of their dependencies are resolved",
+        "Keywords: prerequisites, dependencies, order, before, after, schedule, build order, DAG"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Think of getting dressed. Socks must go on before shoes, and underwear before trousers. Some items have no requirements at all, so you can start with them. Once an item is done, everything that was only waiting on it becomes available. Kahn's algorithm does exactly this: it repeatedly takes any item with zero unmet requirements, then reduces the requirement count of the items that depend on it. If you run out of available items while some remain, the remaining ones wait on each other in a cycle."
+    },
+    {
+      "type": "table",
+      "heading": "Two Standard Methods",
+      "rows": [
+        {
+          "method": "Kahn's algorithm (BFS)",
+          "how_it_works": "Track indegree (number of unmet prerequisites), repeatedly remove nodes with indegree 0",
+          "cycle_signal": "Fewer than V nodes were processed",
+          "good_for": "Level-by-level rounds, lexicographic order, unique-order checks"
+        },
+        {
+          "method": "DFS with 3 states",
+          "how_it_works": "Run DFS, add a node to the list after all its descendants are finished, then reverse the list",
+          "cycle_signal": "Reached a node that is currently on the recursion path",
+          "good_for": "Short recursive code, cycle detection, safe-state problems"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Key Terms",
+      "rows": [
+        {
+          "term": "Indegree",
+          "meaning": "Number of edges coming into a node, which equals the number of unmet prerequisites"
+        },
+        {
+          "term": "Source node",
+          "meaning": "Node with indegree 0, ready to be processed"
+        },
+        {
+          "term": "DAG",
+          "meaning": "Directed graph with no cycles, the only kind that has a topological order"
+        },
+        {
+          "term": "Edge u to v",
+          "meaning": "u must come before v"
+        },
+        {
+          "term": "Multiple valid orders",
+          "meaning": "When more than one node is available at the same time, any of them may come next"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Kahn's Algorithm (BFS)",
+      "language": "kotlin",
+      "code": "fun topologicalSort(n: Int, edges: Array<IntArray>): List<Int> {\n    val graph = List(n) { mutableListOf<Int>() }\n    val indegree = IntArray(n)\n    for ((u, v) in edges) {                          // edge u -> v: u comes before v\n        graph[u].add(v)\n        indegree[v]++\n    }\n\n    val queue = ArrayDeque<Int>()\n    for (i in 0 until n) {\n        if (indegree[i] == 0) queue.addLast(i)       // nodes with no prerequisites\n    }\n\n    val order = mutableListOf<Int>()\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        order.add(node)\n        for (next in graph[node]) {\n            indegree[next]--                         // one prerequisite is now done\n            if (indegree[next] == 0) queue.addLast(next)\n        }\n    }\n    return if (order.size == n) order else emptyList()   // fewer than n means a cycle\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: DFS With 3 States (Postorder Reversed)",
+      "language": "kotlin",
+      "code": "fun topologicalSortDfs(n: Int, edges: Array<IntArray>): List<Int> {\n    val graph = List(n) { mutableListOf<Int>() }\n    for ((u, v) in edges) graph[u].add(v)\n\n    val state = IntArray(n)                          // 0 = unvisited, 1 = on current path, 2 = finished\n    val order = ArrayList<Int>()\n\n    fun dfs(node: Int): Boolean {                    // returns false when a cycle is found\n        if (state[node] == 1) return false           // back edge: cycle\n        if (state[node] == 2) return true            // already handled\n        state[node] = 1\n        for (next in graph[node]) {\n            if (!dfs(next)) return false\n        }\n        state[node] = 2\n        order.add(node)                              // added after all its dependents\n        return true\n    }\n\n    for (i in 0 until n) {\n        if (state[i] == 0 && !dfs(i)) return emptyList()\n    }\n    order.reverse()                                  // reverse postorder is a topological order\n    return order\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Kahn's Level by Level (Rounds or Semesters)",
+      "language": "kotlin",
+      "code": "fun topologicalLevels(n: Int, edges: Array<IntArray>): Int {\n    val graph = List(n) { mutableListOf<Int>() }\n    val indegree = IntArray(n)\n    for ((u, v) in edges) {\n        graph[u].add(v)\n        indegree[v]++\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 0 until n) if (indegree[i] == 0) queue.addLast(i)\n\n    var rounds = 0\n    var processed = 0\n    while (queue.isNotEmpty()) {\n        rounds++                                     // everything in the queue can run in parallel\n        repeat(queue.size) {\n            val node = queue.removeFirst()\n            processed++\n            for (next in graph[node]) {\n                indegree[next]--\n                if (indegree[next] == 0) queue.addLast(next)\n            }\n        }\n    }\n    return if (processed == n) rounds else -1        // -1 means a cycle\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Lexicographically Smallest Order (Priority Queue)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun smallestTopologicalOrder(n: Int, edges: Array<IntArray>): List<Int> {\n    val graph = List(n) { mutableListOf<Int>() }\n    val indegree = IntArray(n)\n    for ((u, v) in edges) {\n        graph[u].add(v)\n        indegree[v]++\n    }\n    val heap = PriorityQueue<Int>()                  // always pick the smallest available node\n    for (i in 0 until n) if (indegree[i] == 0) heap.add(i)\n\n    val order = mutableListOf<Int>()\n    while (heap.isNotEmpty()) {\n        val node = heap.poll()\n        order.add(node)\n        for (next in graph[node]) {\n            indegree[next]--\n            if (indegree[next] == 0) heap.add(next)\n        }\n    }\n    return if (order.size == n) order else emptyList()\n}\n// Time: O((V + E) log V)   Space: O(V + E)"
+    },
+    {
+      "type": "bullet",
+      "heading": "Direction of Edges: Read Carefully",
+      "items": [
+        "Course Schedule gives pairs [course, prerequisite], so the edge is prerequisite → course",
+        "Parallel Courses gives [previous, next], so the edge is previous → next",
+        "Always write down what u → v means in your own words before building the graph",
+        "Reversing every edge gives the reverse of a valid order, and swapping the direction by mistake is the most common bug",
+        "indegree counts prerequisites for a node, and outdegree counts dependents"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Course Schedule (Can Finish All Courses?)",
+      "language": "kotlin",
+      "code": "fun canFinish(numCourses: Int, prerequisites: Array<IntArray>): Boolean {\n    val graph = List(numCourses) { mutableListOf<Int>() }\n    val indegree = IntArray(numCourses)\n    for ((course, pre) in prerequisites) {\n        graph[pre].add(course)                       // pre must come before course\n        indegree[course]++\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 0 until numCourses) if (indegree[i] == 0) queue.addLast(i)\n\n    var taken = 0\n    while (queue.isNotEmpty()) {\n        val c = queue.removeFirst()\n        taken++\n        for (next in graph[c]) {\n            indegree[next]--\n            if (indegree[next] == 0) queue.addLast(next)\n        }\n    }\n    return taken == numCourses\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Course Schedule II (Return an Order)",
+      "language": "kotlin",
+      "code": "fun findOrder(numCourses: Int, prerequisites: Array<IntArray>): IntArray {\n    val graph = List(numCourses) { mutableListOf<Int>() }\n    val indegree = IntArray(numCourses)\n    for ((course, pre) in prerequisites) {\n        graph[pre].add(course)\n        indegree[course]++\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 0 until numCourses) if (indegree[i] == 0) queue.addLast(i)\n\n    val order = mutableListOf<Int>()\n    while (queue.isNotEmpty()) {\n        val c = queue.removeFirst()\n        order.add(c)\n        for (next in graph[c]) {\n            indegree[next]--\n            if (indegree[next] == 0) queue.addLast(next)\n        }\n    }\n    return if (order.size == numCourses) order.toIntArray() else intArrayOf()\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Alien Dictionary",
+      "language": "kotlin",
+      "code": "fun alienOrder(words: Array<String>): String {\n    val graph = HashMap<Char, MutableSet<Char>>()\n    val indegree = HashMap<Char, Int>()\n    for (w in words) {\n        for (c in w) {\n            graph.getOrPut(c) { mutableSetOf() }\n            indegree.getOrPut(c) { 0 }               // every letter is a node\n        }\n    }\n\n    // each adjacent pair of words gives at most one ordering rule\n    for (i in 0 until words.size - 1) {\n        val a = words[i]\n        val b = words[i + 1]\n        if (a.length > b.length && a.startsWith(b)) return \"\"   // invalid input\n        val len = minOf(a.length, b.length)\n        for (j in 0 until len) {\n            if (a[j] != b[j]) {\n                if (graph[a[j]]!!.add(b[j])) {                  // avoid counting a duplicate edge\n                    indegree[b[j]] = indegree[b[j]]!! + 1\n                }\n                break                                            // only the first difference matters\n            }\n        }\n    }\n\n    val queue = ArrayDeque<Char>()\n    for ((c, d) in indegree) if (d == 0) queue.addLast(c)\n\n    val sb = StringBuilder()\n    while (queue.isNotEmpty()) {\n        val c = queue.removeFirst()\n        sb.append(c)\n        for (next in graph[c]!!) {\n            indegree[next] = indegree[next]!! - 1\n            if (indegree[next] == 0) queue.addLast(next)\n        }\n    }\n    return if (sb.length == indegree.size) sb.toString() else \"\"   // shorter means a cycle\n}\n// Time: O(total characters + alphabet²)   Space: O(alphabet)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Parallel Courses (Minimum Semesters)",
+      "language": "kotlin",
+      "code": "fun minimumSemesters(n: Int, relations: Array<IntArray>): Int {\n    val graph = List(n + 1) { mutableListOf<Int>() }          // courses are 1-indexed\n    val indegree = IntArray(n + 1)\n    for ((prev, next) in relations) {\n        graph[prev].add(next)\n        indegree[next]++\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 1..n) if (indegree[i] == 0) queue.addLast(i)\n\n    var semesters = 0\n    var taken = 0\n    while (queue.isNotEmpty()) {\n        semesters++                                            // one BFS level is one semester\n        repeat(queue.size) {\n            val course = queue.removeFirst()\n            taken++\n            for (nxt in graph[course]) {\n                indegree[nxt]--\n                if (indegree[nxt] == 0) queue.addLast(nxt)\n            }\n        }\n    }\n    return if (taken == n) semesters else -1\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Parallel Courses III (Minimum Time With Durations)",
+      "language": "kotlin",
+      "code": "fun minimumTime(n: Int, relations: Array<IntArray>, time: IntArray): Int {\n    val graph = List(n + 1) { mutableListOf<Int>() }\n    val indegree = IntArray(n + 1)\n    for ((prev, next) in relations) {\n        graph[prev].add(next)\n        indegree[next]++\n    }\n    val finish = IntArray(n + 1)                               // earliest finish time of each course\n    val queue = ArrayDeque<Int>()\n    for (i in 1..n) {\n        if (indegree[i] == 0) {\n            queue.addLast(i)\n            finish[i] = time[i - 1]\n        }\n    }\n\n    var answer = 0\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        answer = maxOf(answer, finish[node])\n        for (next in graph[node]) {\n            // a course starts when its slowest prerequisite finishes\n            finish[next] = maxOf(finish[next], finish[node] + time[next - 1])\n            indegree[next]--\n            if (indegree[next] == 0) queue.addLast(next)\n        }\n    }\n    return answer\n}\n// Time: O(V + E)   Space: O(V + E)\n// This is the longest path in a DAG, computed in topological order"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Minimum Height Trees (Peeling Leaves)",
+      "language": "kotlin",
+      "code": "fun findMinHeightTrees(n: Int, edges: Array<IntArray>): List<Int> {\n    if (n == 1) return listOf(0)\n    val graph = List(n) { mutableSetOf<Int>() }\n    for ((a, b) in edges) {\n        graph[a].add(b)\n        graph[b].add(a)\n    }\n    var leaves = (0 until n).filter { graph[it].size == 1 }\n    var remaining = n\n    while (remaining > 2) {                                    // the center has 1 or 2 nodes\n        remaining -= leaves.size\n        val newLeaves = mutableListOf<Int>()\n        for (leaf in leaves) {\n            val neighbor = graph[leaf].first()\n            graph[neighbor].remove(leaf)\n            if (graph[neighbor].size == 1) newLeaves.add(neighbor)\n        }\n        leaves = newLeaves\n    }\n    return leaves\n}\n// Time: O(n)   Space: O(n)\n// Same layer-by-layer idea as Kahn's, applied to an undirected tree"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Sequence Reconstruction (Is the Order Unique?)",
+      "language": "kotlin",
+      "code": "fun sequenceReconstruction(nums: IntArray, sequences: List<List<Int>>): Boolean {\n    val n = nums.size\n    val graph = List(n + 1) { mutableListOf<Int>() }\n    val indegree = IntArray(n + 1)\n    for (seq in sequences) {\n        for (i in 0 until seq.size - 1) {\n            graph[seq[i]].add(seq[i + 1])\n            indegree[seq[i + 1]]++\n        }\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 1..n) if (indegree[i] == 0) queue.addLast(i)\n\n    var index = 0\n    while (queue.isNotEmpty()) {\n        if (queue.size > 1) return false                       // two choices: not unique\n        val node = queue.removeFirst()\n        if (nums[index++] != node) return false\n        for (next in graph[node]) {\n            indegree[next]--\n            if (indegree[next] == 0) queue.addLast(next)\n        }\n    }\n    return index == n\n}\n// Time: O(n + total sequence length)   Space: O(n + total sequence length)\n// The order is unique exactly when the queue never holds more than one node"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Find All Possible Recipes",
+      "language": "kotlin",
+      "code": "fun findAllRecipes(\n    recipes: Array<String>,\n    ingredients: List<List<String>>,\n    supplies: Array<String>\n): List<String> {\n    val needs = HashMap<String, MutableList<String>>()         // ingredient -> recipes using it\n    val indegree = HashMap<String, Int>()\n    for ((i, recipe) in recipes.withIndex()) {\n        indegree[recipe] = ingredients[i].size                 // missing ingredients count\n        for (ing in ingredients[i]) {\n            needs.getOrPut(ing) { mutableListOf() }.add(recipe)\n        }\n    }\n\n    val recipeSet = recipes.toHashSet()\n    val queue = ArrayDeque<String>(supplies.toList())          // start with what we already have\n    val result = mutableListOf<String>()\n    while (queue.isNotEmpty()) {\n        val item = queue.removeFirst()\n        if (item in recipeSet) result.add(item)\n        for (r in needs[item] ?: emptyList()) {\n            indegree[r] = indegree[r]!! - 1\n            if (indegree[r] == 0) queue.addLast(r)             // all ingredients available\n        }\n    }\n    return result\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Find Eventual Safe States (Reverse Graph)",
+      "language": "kotlin",
+      "code": "fun eventualSafeNodes(graph: Array<IntArray>): List<Int> {\n    val n = graph.size\n    val reverse = List(n) { mutableListOf<Int>() }\n    val outdegree = IntArray(n)\n    for (u in 0 until n) {\n        outdegree[u] = graph[u].size\n        for (v in graph[u]) reverse[v].add(u)                  // flip every edge\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 0 until n) if (outdegree[i] == 0) queue.addLast(i)   // terminal nodes are safe\n\n    val safe = BooleanArray(n)\n    while (queue.isNotEmpty()) {\n        val node = queue.removeFirst()\n        safe[node] = true\n        for (prev in reverse[node]) {\n            outdegree[prev]--\n            if (outdegree[prev] == 0) queue.addLast(prev)      // all its exits lead to safe nodes\n        }\n    }\n    return (0 until n).filter { safe[it] }\n}\n// Time: O(V + E)   Space: O(V + E)\n// Nodes on or leading into a cycle are never added"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Longest Increasing Path in a Matrix (Topological Layers)",
+      "language": "kotlin",
+      "code": "fun longestIncreasingPath(matrix: Array<IntArray>): Int {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val dirs = arrayOf(intArrayOf(1, 0), intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(0, -1))\n    val indegree = Array(rows) { IntArray(cols) }\n\n    // edge from a smaller cell to a larger neighbor\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            for ((dr, dc) in dirs) {\n                val nr = r + dr\n                val nc = c + dc\n                if (nr in 0 until rows && nc in 0 until cols && matrix[nr][nc] < matrix[r][c]) {\n                    indegree[r][c]++\n                }\n            }\n        }\n    }\n\n    val queue = ArrayDeque<IntArray>()\n    for (r in 0 until rows) for (c in 0 until cols) {\n        if (indegree[r][c] == 0) queue.addLast(intArrayOf(r, c))\n    }\n\n    var length = 0\n    while (queue.isNotEmpty()) {\n        length++                                               // each layer extends the path by one\n        repeat(queue.size) {\n            val (r, c) = queue.removeFirst()\n            for ((dr, dc) in dirs) {\n                val nr = r + dr\n                val nc = c + dc\n                if (nr in 0 until rows && nc in 0 until cols && matrix[nr][nc] > matrix[r][c]) {\n                    indegree[nr][nc]--\n                    if (indegree[nr][nc] == 0) queue.addLast(intArrayOf(nr, nc))\n                }\n            }\n        }\n    }\n    return length\n}\n// Time: O(rows * cols)   Space: O(rows * cols)\n// A DFS with memoization gives the same complexity"
+    },
+    {
+      "type": "table",
+      "heading": "Cycle Detection Summary",
+      "rows": [
+        {
+          "method": "Kahn's algorithm",
+          "signal": "order.size < n after the queue empties",
+          "note": "Unprocessed nodes are in or behind a cycle"
+        },
+        {
+          "method": "DFS with 3 states",
+          "signal": "Visit a node whose state is 1 (on the current path)",
+          "note": "Needs the third state, a simple visited flag is not enough in a directed graph"
+        },
+        {
+          "method": "Level counting",
+          "signal": "processed < n",
+          "note": "Same as Kahn's, reports -1 for impossible schedules"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Multiple Orders: What Can You Control?",
+      "rows": [
+        {
+          "goal": "Any valid order",
+          "how": "Plain Kahn's queue",
+          "detail": "Whatever order nodes become available"
+        },
+        {
+          "goal": "Lexicographically smallest order",
+          "how": "PriorityQueue instead of a queue",
+          "detail": "Always take the smallest available node"
+        },
+        {
+          "goal": "Check if the order is unique",
+          "how": "Queue size must be 1 at every step",
+          "detail": "Two available nodes means two valid orders"
+        },
+        {
+          "goal": "Fewest rounds with parallel work",
+          "how": "Process the queue level by level",
+          "detail": "Number of levels is the answer"
+        },
+        {
+          "goal": "Earliest finish time",
+          "how": "finish[next] = max(finish[next], finish[node] + duration)",
+          "detail": "Longest path in the DAG"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Course Schedule",
+          "technique": "Kahn's, count processed",
+          "key_idea": "All courses taken means no cycle"
+        },
+        {
+          "problem": "Course Schedule II",
+          "technique": "Kahn's, return order",
+          "key_idea": "Empty array when a cycle exists"
+        },
+        {
+          "problem": "Alien Dictionary",
+          "technique": "Build graph from adjacent words, then Kahn's",
+          "key_idea": "First differing letter gives an edge, handle the prefix trap"
+        },
+        {
+          "problem": "Parallel Courses I and III",
+          "technique": "Level-by-level Kahn's, longest path DP",
+          "key_idea": "Semesters = levels, time = max prerequisite finish + own time"
+        },
+        {
+          "problem": "Minimum Height Trees",
+          "technique": "Peel leaves layer by layer",
+          "key_idea": "The last 1 or 2 nodes are the roots"
+        },
+        {
+          "problem": "Sequence Reconstruction",
+          "technique": "Kahn's with queue size check",
+          "key_idea": "Unique order means one available node at each step"
+        },
+        {
+          "problem": "Find All Possible Recipes",
+          "technique": "Kahn's with supplies as sources",
+          "key_idea": "Indegree is the number of missing ingredients"
+        },
+        {
+          "problem": "Eventual Safe States",
+          "technique": "Kahn's on the reversed graph",
+          "key_idea": "Safe nodes are those with all exits leading to safe nodes"
+        },
+        {
+          "problem": "Longest Increasing Path in a Matrix",
+          "technique": "Topological layers on a grid",
+          "key_idea": "Edges point from smaller to larger cells"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Building edges in the wrong direction, which reverses the order or hides a cycle",
+        "Forgetting to check order.size == n, which silently returns a partial order when a cycle exists",
+        "Using a plain visited flag for directed cycle detection (you need the on-current-path state)",
+        "Missing isolated nodes that never appear in any edge (initialize all n nodes)",
+        "Adding duplicate edges and inflating the indegree (use a set when duplicates are possible)",
+        "Forgetting to register every character as a node in Alien Dictionary",
+        "Ignoring the invalid prefix case in Alien Dictionary, such as 'abc' appearing before 'ab'",
+        "Using 0-indexed arrays for 1-indexed courses (allocate n + 1)",
+        "Expecting a topological order to be unique, since most DAGs have many"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Kahn's algorithm",
+          "time": "O(V + E)",
+          "space": "O(V + E)"
+        },
+        {
+          "approach": "DFS with 3 states",
+          "time": "O(V + E)",
+          "space": "O(V + E)"
+        },
+        {
+          "approach": "Kahn's with a PriorityQueue",
+          "time": "O((V + E) log V)",
+          "space": "O(V + E)"
+        },
+        {
+          "approach": "Longest path in a DAG",
+          "time": "O(V + E)",
+          "space": "O(V)"
+        },
+        {
+          "approach": "Grid as a DAG",
+          "time": "O(rows * cols)",
+          "space": "O(rows * cols)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Course Schedule",
+        "Course Schedule II",
+        "Course Schedule IV",
+        "Alien Dictionary",
+        "Parallel Courses",
+        "Parallel Courses III",
+        "Minimum Height Trees",
+        "Sequence Reconstruction",
+        "Find All Possible Recipes from Given Supplies",
+        "Find Eventual Safe States",
+        "Longest Increasing Path in a Matrix",
+        "Sort Items by Groups Respecting Dependencies",
+        "Build a Matrix With Conditions",
+        "Largest Color Value in a Directed Graph"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Topological sort orders a DAG so every edge u → v has u before v",
+        "Kahn's algorithm repeatedly removes nodes with indegree 0 and lowers the indegree of their dependents",
+        "If fewer than all nodes are processed, the graph has a cycle and no order exists",
+        "The DFS version uses 3 states and reverses the postorder",
+        "Process the queue level by level for the minimum number of rounds, and use a PriorityQueue for the smallest order",
+        "Always confirm which direction the problem's pairs describe before building the graph"
+      ]
+    }
+  ]
+}

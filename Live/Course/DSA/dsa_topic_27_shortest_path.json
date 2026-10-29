@@ -1,0 +1,408 @@
+{
+  "title": "Shortest Path (Dijkstra, Bellman-Ford)",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Shortest Path Algorithms?",
+      "content": "A shortest path problem asks for the cheapest way to get from one node to another in a graph whose edges have costs (weights), such as distance, time, price or risk. BFS already solves this when every edge costs the same. Once edges have different weights you need a different tool: Dijkstra for non-negative weights, Bellman-Ford when weights can be negative or the number of edges is limited, Floyd-Warshall for all pairs, and 0-1 BFS when weights are only 0 or 1. All of them rely on one idea called relaxation: if going through node u gives a shorter route to v, update the best known distance to v."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Find the cheapest, fastest or shortest route between nodes in a weighted graph",
+        "Compute the distance from one source to every other node (single-source)",
+        "Find shortest paths between every pair of nodes (all-pairs)",
+        "Route with a limit on the number of stops or edges",
+        "Detect negative cycles (currency arbitrage, impossible constraints)",
+        "Minimize the largest edge on a path (effort, risk, bottleneck problems)",
+        "Count the number of shortest paths",
+        "Keywords: shortest, cheapest, minimum cost, minimum time, network delay, flights with K stops, maximum probability"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Core Idea: Relaxation",
+      "content": "Keep an array dist[] where dist[v] is the best distance found so far to v (infinity at the start, 0 at the source). For an edge u → v with weight w, if dist[u] + w < dist[v], you have found a shorter way to v, so you update dist[v] = dist[u] + w. That update is called relaxing the edge. Every shortest path algorithm is a different strategy for choosing the order in which edges are relaxed. Dijkstra picks the closest unfinished node each time, Bellman-Ford relaxes every edge repeatedly, and Floyd-Warshall relaxes through every possible middle node."
+    },
+    {
+      "type": "table",
+      "heading": "Choosing the Right Algorithm",
+      "rows": [
+        {
+          "situation": "All edges cost the same (unweighted)",
+          "algorithm": "BFS",
+          "time": "O(V + E)",
+          "notes": "Covered in Graph BFS & DFS"
+        },
+        {
+          "situation": "Edge weights are only 0 or 1",
+          "algorithm": "0-1 BFS (deque)",
+          "time": "O(V + E)",
+          "notes": "Weight 0 goes to the front, weight 1 to the back"
+        },
+        {
+          "situation": "Non-negative weights, single source",
+          "algorithm": "Dijkstra (min heap)",
+          "time": "O((V + E) log V)",
+          "notes": "The default choice"
+        },
+        {
+          "situation": "Negative weights allowed, single source",
+          "algorithm": "Bellman-Ford",
+          "time": "O(V * E)",
+          "notes": "Also detects negative cycles"
+        },
+        {
+          "situation": "At most K edges (stops) allowed",
+          "algorithm": "Bellman-Ford with K rounds, or BFS by level",
+          "time": "O(K * E)",
+          "notes": "Copy the distance array each round"
+        },
+        {
+          "situation": "All pairs, small V (up to about 400)",
+          "algorithm": "Floyd-Warshall",
+          "time": "O(V³)",
+          "notes": "Three nested loops, k outermost"
+        },
+        {
+          "situation": "Directed acyclic graph",
+          "algorithm": "Relax in topological order",
+          "time": "O(V + E)",
+          "notes": "Works with negative weights too"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Dijkstra vs Bellman-Ford",
+      "rows": [
+        {
+          "aspect": "Negative edges",
+          "dijkstra": "Not allowed, gives wrong answers",
+          "bellman_ford": "Allowed"
+        },
+        {
+          "aspect": "Negative cycles",
+          "dijkstra": "Cannot detect",
+          "bellman_ford": "Detects them with one extra pass"
+        },
+        {
+          "aspect": "Speed",
+          "dijkstra": "O((V + E) log V)",
+          "bellman_ford": "O(V * E)"
+        },
+        {
+          "aspect": "Idea",
+          "dijkstra": "Greedy: finalize the closest unfinished node",
+          "bellman_ford": "Relax all edges V - 1 times"
+        },
+        {
+          "aspect": "Edge limit (K stops)",
+          "dijkstra": "Needs extra state in the heap",
+          "bellman_ford": "Natural: run only K rounds"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Why Dijkstra Fails With Negative Edges",
+      "content": "Dijkstra assumes that once the closest unfinished node is taken from the heap, no later path can reach it more cheaply, because every extra edge only adds cost. A negative edge breaks that assumption: a longer route could become cheaper after crossing the negative edge, but Dijkstra has already finalized the node. Use Bellman-Ford in that case."
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Dijkstra With a Priority Queue",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\n// graph[u] = list of (neighbor, weight)\nfun dijkstra(graph: List<List<Pair<Int, Int>>>, source: Int): IntArray {\n    val dist = IntArray(graph.size) { Int.MAX_VALUE }\n    dist[source] = 0\n    val heap = PriorityQueue<IntArray>(compareBy { it[0] })      // [distance, node]\n    heap.add(intArrayOf(0, source))\n\n    while (heap.isNotEmpty()) {\n        val (d, node) = heap.poll()\n        if (d > dist[node]) continue                              // stale entry, a better one was already processed\n        for ((next, w) in graph[node]) {\n            val nd = d + w\n            if (nd < dist[next]) {                                // relax the edge\n                dist[next] = nd\n                heap.add(intArrayOf(nd, next))\n            }\n        }\n    }\n    return dist                                                   // Int.MAX_VALUE means unreachable\n}\n// Time: O((V + E) log V)   Space: O(V + E)\n// Use LongArray and Long weights when distances can exceed about 2 billion"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Dijkstra With Path Reconstruction",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\nfun shortestPath(graph: List<List<Pair<Int, Int>>>, source: Int, target: Int): List<Int> {\n    val n = graph.size\n    val dist = IntArray(n) { Int.MAX_VALUE }\n    val parent = IntArray(n) { -1 }                               // previous node on the best path\n    dist[source] = 0\n    val heap = PriorityQueue<IntArray>(compareBy { it[0] })\n    heap.add(intArrayOf(0, source))\n\n    while (heap.isNotEmpty()) {\n        val (d, node) = heap.poll()\n        if (d > dist[node]) continue\n        if (node == target) break                                 // early exit: target is finalized\n        for ((next, w) in graph[node]) {\n            if (d + w < dist[next]) {\n                dist[next] = d + w\n                parent[next] = node\n                heap.add(intArrayOf(dist[next], next))\n            }\n        }\n    }\n\n    if (dist[target] == Int.MAX_VALUE) return emptyList()         // no path\n    val path = ArrayList<Int>()\n    var cur = target\n    while (cur != -1) {\n        path.add(cur)\n        cur = parent[cur]\n    }\n    path.reverse()\n    return path\n}\n// Time: O((V + E) log V)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Bellman-Ford (With Negative Cycle Detection)",
+      "language": "kotlin",
+      "text_code": "// edges[i] = [from, to, weight]\nfun bellmanFord(n: Int, edges: Array<IntArray>, source: Int): IntArray? {\n    val dist = IntArray(n) { Int.MAX_VALUE }\n    dist[source] = 0\n\n    repeat(n - 1) {                                               // a shortest path has at most n - 1 edges\n        var changed = false\n        for ((u, v, w) in edges) {\n            if (dist[u] != Int.MAX_VALUE && dist[u] + w < dist[v]) {\n                dist[v] = dist[u] + w\n                changed = true\n            }\n        }\n        if (!changed) return dist                                 // early stop: nothing more to improve\n    }\n\n    // one more pass: any further improvement means a negative cycle\n    for ((u, v, w) in edges) {\n        if (dist[u] != Int.MAX_VALUE && dist[u] + w < dist[v]) return null\n    }\n    return dist\n}\n// Time: O(V * E)   Space: O(V)\n// Returns null when a negative cycle is reachable from the source"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Bellman-Ford With at Most K Edges",
+      "language": "kotlin",
+      "text_code": "fun bellmanFordAtMostK(n: Int, edges: Array<IntArray>, source: Int, k: Int): IntArray {\n    var dist = IntArray(n) { Int.MAX_VALUE }\n    dist[source] = 0\n\n    repeat(k) {\n        val next = dist.copyOf()                                  // read old values, write new ones\n        for ((u, v, w) in edges) {\n            if (dist[u] != Int.MAX_VALUE && dist[u] + w < next[v]) {\n                next[v] = dist[u] + w\n            }\n        }\n        dist = next\n    }\n    return dist\n}\n// Time: O(K * E)   Space: O(V)\n// Copying the array stops a round from using edges that were just relaxed in the same round"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Floyd-Warshall (All Pairs)",
+      "language": "kotlin",
+      "text_code": "fun floydWarshall(n: Int, edges: Array<IntArray>): Array<LongArray> {\n    val inf = Long.MAX_VALUE / 4                                  // large, but sums do not overflow\n    val dist = Array(n) { LongArray(n) { inf } }\n    for (i in 0 until n) dist[i][i] = 0\n    for ((u, v, w) in edges) {                                    // directed edges\n        dist[u][v] = minOf(dist[u][v], w.toLong())\n    }\n\n    for (k in 0 until n) {                                        // k (the middle node) must be the OUTER loop\n        for (i in 0 until n) {\n            for (j in 0 until n) {\n                if (dist[i][k] + dist[k][j] < dist[i][j]) {\n                    dist[i][j] = dist[i][k] + dist[k][j]\n                }\n            }\n        }\n    }\n    return dist\n}\n// Time: O(V³)   Space: O(V²)\n// A negative value on the diagonal dist[i][i] < 0 means a negative cycle"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: 0-1 BFS (Weights 0 or 1)",
+      "language": "kotlin",
+      "text_code": "fun zeroOneBfs(graph: List<List<Pair<Int, Int>>>, source: Int): IntArray {\n    val dist = IntArray(graph.size) { Int.MAX_VALUE }\n    val deque = ArrayDeque<Int>()\n    dist[source] = 0\n    deque.addFirst(source)\n\n    while (deque.isNotEmpty()) {\n        val node = deque.removeFirst()\n        for ((next, w) in graph[node]) {\n            if (dist[node] + w < dist[next]) {\n                dist[next] = dist[node] + w\n                if (w == 0) deque.addFirst(next)                  // free move: process right away\n                else deque.addLast(next)\n            }\n        }\n    }\n    return dist\n}\n// Time: O(V + E)   Space: O(V)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: Shortest Path in a DAG (Topological Order)",
+      "language": "kotlin",
+      "text_code": "fun dagShortestPath(n: Int, edges: Array<IntArray>, source: Int): IntArray {\n    val graph = List(n) { mutableListOf<Pair<Int, Int>>() }\n    val indegree = IntArray(n)\n    for ((u, v, w) in edges) {\n        graph[u].add(Pair(v, w))\n        indegree[v]++\n    }\n    val queue = ArrayDeque<Int>()\n    for (i in 0 until n) if (indegree[i] == 0) queue.addLast(i)\n\n    val dist = IntArray(n) { Int.MAX_VALUE }\n    dist[source] = 0\n    while (queue.isNotEmpty()) {\n        val u = queue.removeFirst()\n        for ((v, w) in graph[u]) {\n            if (dist[u] != Int.MAX_VALUE && dist[u] + w < dist[v]) dist[v] = dist[u] + w\n            indegree[v]--\n            if (indegree[v] == 0) queue.addLast(v)\n        }\n    }\n    return dist\n}\n// Time: O(V + E)   Space: O(V + E)\n// Works with negative weights because every node is finalized after all its predecessors"
+    },
+    {
+      "type": "bullet",
+      "heading": "Dijkstra Variants You Will See",
+      "items": [
+        "Minimize the sum of weights: the standard version",
+        "Minimize the largest edge on the path (minimum effort, swim in rising water): replace d + w with max(d, w)",
+        "Maximize a product of probabilities: use a max heap and multiply instead of add",
+        "Count shortest paths: keep a ways[] array, copy ways on a strictly better distance and add ways on an equal distance",
+        "Extra state in the node (stops left, fuel, keys): make the state (node, extra) part of the heap entry and the dist table",
+        "Grid shortest path with costs per cell: treat each cell as a node and use the same structure"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Network Delay Time",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\nfun networkDelayTime(times: Array<IntArray>, n: Int, k: Int): Int {\n    val graph = List(n + 1) { mutableListOf<Pair<Int, Int>>() }  // nodes are 1-indexed\n    for ((u, v, w) in times) graph[u].add(Pair(v, w))\n\n    val dist = IntArray(n + 1) { Int.MAX_VALUE }\n    dist[k] = 0\n    val heap = PriorityQueue<IntArray>(compareBy { it[0] })\n    heap.add(intArrayOf(0, k))\n    while (heap.isNotEmpty()) {\n        val (d, node) = heap.poll()\n        if (d > dist[node]) continue\n        for ((next, w) in graph[node]) {\n            if (d + w < dist[next]) {\n                dist[next] = d + w\n                heap.add(intArrayOf(dist[next], next))\n            }\n        }\n    }\n\n    var answer = 0\n    for (i in 1..n) {\n        if (dist[i] == Int.MAX_VALUE) return -1                   // some node is unreachable\n        answer = maxOf(answer, dist[i])                           // the signal reaches everyone at the max distance\n    }\n    return answer\n}\n// Time: O((V + E) log V)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Path With Minimum Effort (Minimize the Maximum Edge)",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\nimport kotlin.math.abs\n\nfun minimumEffortPath(heights: Array<IntArray>): Int {\n    val rows = heights.size\n    val cols = heights[0].size\n    val dirs = arrayOf(intArrayOf(1, 0), intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(0, -1))\n    val effort = Array(rows) { IntArray(cols) { Int.MAX_VALUE } }\n    effort[0][0] = 0\n    val heap = PriorityQueue<IntArray>(compareBy { it[0] })       // [effort, row, col]\n    heap.add(intArrayOf(0, 0, 0))\n\n    while (heap.isNotEmpty()) {\n        val (e, r, c) = heap.poll()\n        if (r == rows - 1 && c == cols - 1) return e\n        if (e > effort[r][c]) continue\n        for ((dr, dc) in dirs) {\n            val nr = r + dr\n            val nc = c + dc\n            if (nr in 0 until rows && nc in 0 until cols) {\n                val ne = maxOf(e, abs(heights[nr][nc] - heights[r][c]))   // path cost is the largest step\n                if (ne < effort[nr][nc]) {\n                    effort[nr][nc] = ne\n                    heap.add(intArrayOf(ne, nr, nc))\n                }\n            }\n        }\n    }\n    return 0\n}\n// Time: O(rows * cols * log(rows * cols))   Space: O(rows * cols)\n// Binary search on the answer with a BFS check is an alternative"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Cheapest Flights Within K Stops (Bellman-Ford by Rounds)",
+      "language": "kotlin",
+      "text_code": "fun findCheapestPrice(n: Int, flights: Array<IntArray>, src: Int, dst: Int, k: Int): Int {\n    var prices = IntArray(n) { Int.MAX_VALUE }\n    prices[src] = 0\n\n    repeat(k + 1) {                                               // k stops means k + 1 flights\n        val next = prices.copyOf()\n        for ((from, to, price) in flights) {\n            if (prices[from] != Int.MAX_VALUE && prices[from] + price < next[to]) {\n                next[to] = prices[from] + price\n            }\n        }\n        prices = next\n    }\n    return if (prices[dst] == Int.MAX_VALUE) -1 else prices[dst]\n}\n// Time: O(K * E)   Space: O(V)\n// Plain Dijkstra can fail here because the cheapest route may use too many stops"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Path With Maximum Probability (Max Heap)",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\nfun maxProbability(n: Int, edges: Array<IntArray>, succProb: DoubleArray, start: Int, end: Int): Double {\n    val graph = List(n) { mutableListOf<Pair<Int, Double>>() }\n    for ((i, e) in edges.withIndex()) {\n        graph[e[0]].add(Pair(e[1], succProb[i]))\n        graph[e[1]].add(Pair(e[0], succProb[i]))\n    }\n    val best = DoubleArray(n)\n    best[start] = 1.0\n    val heap = PriorityQueue<Pair<Double, Int>>(compareByDescending { it.first })\n    heap.add(Pair(1.0, start))\n\n    while (heap.isNotEmpty()) {\n        val (p, node) = heap.poll()\n        if (node == end) return p\n        if (p < best[node]) continue                              // stale entry\n        for ((next, prob) in graph[node]) {\n            val np = p * prob\n            if (np > best[next]) {\n                best[next] = np\n                heap.add(Pair(np, next))\n            }\n        }\n    }\n    return 0.0\n}\n// Time: O((V + E) log V)   Space: O(V + E)\n// Works because every probability is at most 1, so extending a path never improves it"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: City With Fewest Neighbors in a Threshold (Floyd-Warshall)",
+      "language": "kotlin",
+      "text_code": "fun findTheCity(n: Int, edges: Array<IntArray>, distanceThreshold: Int): Int {\n    val inf = 1_000_000_000                                       // 2 * inf still fits in Int\n    val dist = Array(n) { IntArray(n) { inf } }\n    for (i in 0 until n) dist[i][i] = 0\n    for ((a, b, w) in edges) {\n        dist[a][b] = w\n        dist[b][a] = w                                            // undirected\n    }\n\n    for (k in 0 until n) {\n        for (i in 0 until n) {\n            for (j in 0 until n) {\n                if (dist[i][k] + dist[k][j] < dist[i][j]) dist[i][j] = dist[i][k] + dist[k][j]\n            }\n        }\n    }\n\n    var bestCity = -1\n    var fewest = Int.MAX_VALUE\n    for (i in 0 until n) {\n        var count = 0\n        for (j in 0 until n) {\n            if (i != j && dist[i][j] <= distanceThreshold) count++\n        }\n        if (count <= fewest) {                                    // <= prefers the larger index on ties\n            fewest = count\n            bestCity = i\n        }\n    }\n    return bestCity\n}\n// Time: O(n³)   Space: O(n²)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Number of Ways to Arrive at Destination (Count Shortest Paths)",
+      "language": "kotlin",
+      "text_code": "import java.util.PriorityQueue\n\nfun countPaths(n: Int, roads: Array<IntArray>): Int {\n    val mod = 1_000_000_007L\n    val graph = List(n) { mutableListOf<Pair<Int, Long>>() }\n    for ((u, v, t) in roads) {\n        graph[u].add(Pair(v, t.toLong()))\n        graph[v].add(Pair(u, t.toLong()))\n    }\n\n    val dist = LongArray(n) { Long.MAX_VALUE }\n    val ways = LongArray(n)\n    dist[0] = 0\n    ways[0] = 1\n    val heap = PriorityQueue<Pair<Long, Int>>(compareBy { it.first })\n    heap.add(Pair(0L, 0))\n\n    while (heap.isNotEmpty()) {\n        val (d, node) = heap.poll()\n        if (d > dist[node]) continue\n        for ((next, w) in graph[node]) {\n            val nd = d + w\n            if (nd < dist[next]) {                                // strictly better: reset the count\n                dist[next] = nd\n                ways[next] = ways[node]\n                heap.add(Pair(nd, next))\n            } else if (nd == dist[next]) {                        // equally good: add the new routes\n                ways[next] = (ways[next] + ways[node]) % mod\n            }\n        }\n    }\n    return (ways[n - 1] % mod).toInt()\n}\n// Time: O((V + E) log V)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Minimum Obstacle Removal to Reach Corner (0-1 BFS on a Grid)",
+      "language": "kotlin",
+      "text_code": "fun minimumObstacles(grid: Array<IntArray>): Int {\n    val rows = grid.size\n    val cols = grid[0].size\n    val dirs = arrayOf(intArrayOf(1, 0), intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(0, -1))\n    val dist = Array(rows) { IntArray(cols) { Int.MAX_VALUE } }\n    dist[0][0] = 0\n    val deque = ArrayDeque<IntArray>()\n    deque.addFirst(intArrayOf(0, 0))\n\n    while (deque.isNotEmpty()) {\n        val (r, c) = deque.removeFirst()\n        for ((dr, dc) in dirs) {\n            val nr = r + dr\n            val nc = c + dc\n            if (nr in 0 until rows && nc in 0 until cols) {\n                val cost = dist[r][c] + grid[nr][nc]              // entering an obstacle costs 1\n                if (cost < dist[nr][nc]) {\n                    dist[nr][nc] = cost\n                    if (grid[nr][nc] == 0) deque.addFirst(intArrayOf(nr, nc))\n                    else deque.addLast(intArrayOf(nr, nc))\n                }\n            }\n        }\n    }\n    return dist[rows - 1][cols - 1]\n}\n// Time: O(rows * cols)   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Shortest Path With Obstacle Elimination (BFS With State)",
+      "language": "kotlin",
+      "text_code": "fun shortestPath(grid: Array<IntArray>, k: Int): Int {\n    val rows = grid.size\n    val cols = grid[0].size\n    if (rows == 1 && cols == 1) return 0\n    val dirs = arrayOf(intArrayOf(1, 0), intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(0, -1))\n    val visited = Array(rows) { Array(cols) { BooleanArray(k + 1) } }   // state = (row, col, removals left)\n    val queue = ArrayDeque<IntArray>()\n    queue.addLast(intArrayOf(0, 0, k))\n    visited[0][0][k] = true\n\n    var steps = 0\n    while (queue.isNotEmpty()) {\n        steps++\n        repeat(queue.size) {\n            val (r, c, left) = queue.removeFirst()\n            for ((dr, dc) in dirs) {\n                val nr = r + dr\n                val nc = c + dc\n                if (nr !in 0 until rows || nc !in 0 until cols) continue\n                val remaining = left - grid[nr][nc]\n                if (remaining < 0 || visited[nr][nc][remaining]) continue\n                if (nr == rows - 1 && nc == cols - 1) return steps\n                visited[nr][nc][remaining] = true\n                queue.addLast(intArrayOf(nr, nc, remaining))\n            }\n        }\n    }\n    return -1\n}\n// Time: O(rows * cols * k)   Space: O(rows * cols * k)\n// When the state has extra information, the visited table needs that extra dimension"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Shortest Path With Alternating Colors",
+      "language": "kotlin",
+      "text_code": "fun shortestAlternatingPaths(n: Int, redEdges: Array<IntArray>, blueEdges: Array<IntArray>): IntArray {\n    val graph = Array(2) { List(n) { mutableListOf<Int>() } }     // 0 = red, 1 = blue\n    for ((a, b) in redEdges) graph[0][a].add(b)\n    for ((a, b) in blueEdges) graph[1][a].add(b)\n\n    val dist = IntArray(n) { -1 }\n    val visited = Array(2) { BooleanArray(n) }\n    val queue = ArrayDeque<IntArray>()                            // [node, color of the last edge, steps]\n    queue.addLast(intArrayOf(0, 0, 0))\n    queue.addLast(intArrayOf(0, 1, 0))\n    visited[0][0] = true\n    visited[1][0] = true\n\n    while (queue.isNotEmpty()) {\n        val (node, color, steps) = queue.removeFirst()\n        if (dist[node] == -1) dist[node] = steps                  // first arrival is the shortest\n        val nextColor = 1 - color                                 // the next edge must use the other color\n        for (next in graph[nextColor][node]) {\n            if (!visited[nextColor][next]) {\n                visited[nextColor][next] = true\n                queue.addLast(intArrayOf(next, nextColor, steps + 1))\n            }\n        }\n    }\n    return dist\n}\n// Time: O(V + E)   Space: O(V + E)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Currency Arbitrage (Negative Cycle With Logs)",
+      "language": "kotlin",
+      "text_code": "import kotlin.math.ln\n\n// rates[i][j] = amount of currency j you get for 1 unit of currency i\nfun hasArbitrage(n: Int, rates: Array<DoubleArray>): Boolean {\n    // A cycle with product of rates > 1 is a cycle with sum of -ln(rate) < 0\n    val dist = DoubleArray(n)                                     // all zeros acts like a virtual source\n    for (iteration in 0 until n) {\n        var changed = false\n        for (i in 0 until n) {\n            for (j in 0 until n) {\n                if (i == j) continue\n                val w = -ln(rates[i][j])\n                if (dist[i] + w < dist[j] - 1e-12) {\n                    dist[j] = dist[i] + w\n                    changed = true\n                }\n            }\n        }\n        if (!changed) return false                                // settled: no negative cycle\n    }\n    return true                                                   // still improving after n rounds\n}\n// Time: O(n³)   Space: O(n)"
+    },
+    {
+      "type": "table",
+      "heading": "Relaxation Cheat Sheet",
+      "rows": [
+        {
+          "problem_type": "Sum of weights",
+          "relax_when": "d + w < dist[next]",
+          "combine": "d + w"
+        },
+        {
+          "problem_type": "Minimize the maximum edge",
+          "relax_when": "max(d, w) < dist[next]",
+          "combine": "max(d, w)"
+        },
+        {
+          "problem_type": "Maximize a probability",
+          "relax_when": "p * prob > best[next]",
+          "combine": "p * prob (max heap)"
+        },
+        {
+          "problem_type": "Count shortest paths",
+          "relax_when": "Better: reset ways. Equal: add ways",
+          "combine": "ways[next] = ways[node]"
+        },
+        {
+          "problem_type": "At most K edges",
+          "relax_when": "Use the previous round's array",
+          "combine": "Copy dist each round"
+        },
+        {
+          "problem_type": "Extra state (fuel, keys, removals)",
+          "relax_when": "State = (node, extra)",
+          "combine": "Visited and dist indexed by state"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Network Delay Time",
+          "technique": "Dijkstra",
+          "key_idea": "Answer is the largest shortest distance, or -1 if any node is unreachable"
+        },
+        {
+          "problem": "Path With Minimum Effort / Swim in Rising Water",
+          "technique": "Dijkstra with max()",
+          "key_idea": "Path cost is its largest step, not the sum"
+        },
+        {
+          "problem": "Cheapest Flights Within K Stops",
+          "technique": "Bellman-Ford with K + 1 rounds",
+          "key_idea": "Copy the array each round"
+        },
+        {
+          "problem": "Path With Maximum Probability",
+          "technique": "Dijkstra with a max heap",
+          "key_idea": "Multiply probabilities, which are at most 1"
+        },
+        {
+          "problem": "Find the City With Fewest Neighbors",
+          "technique": "Floyd-Warshall",
+          "key_idea": "All pairs with small n"
+        },
+        {
+          "problem": "Number of Ways to Arrive at Destination",
+          "technique": "Dijkstra with a ways[] array",
+          "key_idea": "Equal distance adds counts"
+        },
+        {
+          "problem": "Minimum Obstacle Removal",
+          "technique": "0-1 BFS",
+          "key_idea": "Cost 0 to the front, cost 1 to the back"
+        },
+        {
+          "problem": "Shortest Path With Obstacle Elimination",
+          "technique": "BFS with state",
+          "key_idea": "State includes removals left"
+        },
+        {
+          "problem": "Alternating Colors Path",
+          "technique": "BFS on (node, last color)",
+          "key_idea": "Each node has two states"
+        },
+        {
+          "problem": "Currency Arbitrage",
+          "technique": "Bellman-Ford on -ln(rate)",
+          "key_idea": "Negative cycle means profit"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using Dijkstra with negative edge weights (use Bellman-Ford)",
+        "Using plain BFS on a weighted graph, which counts edges instead of cost",
+        "Forgetting the stale-entry check (if d > dist[node] continue), which wastes time and can repeat work",
+        "Integer overflow when adding to Int.MAX_VALUE (check for unreachable first, or use Long)",
+        "Forgetting to add the edge in both directions for an undirected graph",
+        "In Bellman-Ford with a K-edge limit, updating dist in place so a round uses edges relaxed in the same round",
+        "Putting the k loop inside in Floyd-Warshall (k must be the outermost loop)",
+        "Treating the minimize-the-maximum problem as a sum problem",
+        "Using plain Dijkstra when the state has extra information such as stops left",
+        "Returning dist values of Int.MAX_VALUE as a real distance instead of reporting unreachable"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "algorithm": "BFS (unweighted)",
+          "time": "O(V + E)",
+          "space": "O(V)"
+        },
+        {
+          "algorithm": "0-1 BFS",
+          "time": "O(V + E)",
+          "space": "O(V)"
+        },
+        {
+          "algorithm": "Dijkstra with a binary heap",
+          "time": "O((V + E) log V)",
+          "space": "O(V + E)"
+        },
+        {
+          "algorithm": "Bellman-Ford",
+          "time": "O(V * E)",
+          "space": "O(V)"
+        },
+        {
+          "algorithm": "Bellman-Ford with K rounds",
+          "time": "O(K * E)",
+          "space": "O(V)"
+        },
+        {
+          "algorithm": "Floyd-Warshall",
+          "time": "O(V³)",
+          "space": "O(V²)"
+        },
+        {
+          "algorithm": "Shortest path in a DAG",
+          "time": "O(V + E)",
+          "space": "O(V + E)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Network Delay Time",
+        "Cheapest Flights Within K Stops",
+        "Path With Minimum Effort",
+        "Swim in Rising Water",
+        "Path With Maximum Probability",
+        "Find the City With the Smallest Number of Neighbors at a Threshold Distance",
+        "Number of Ways to Arrive at Destination",
+        "Minimum Obstacle Removal to Reach Corner",
+        "Shortest Path in a Grid with Obstacles Elimination",
+        "Shortest Path with Alternating Colors",
+        "Reachable Nodes In Subdivided Graph",
+        "Minimum Cost to Make at Least One Valid Path in a Grid",
+        "Bus Routes",
+        "Evaluate Division (graph version)"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Relaxation is the core step: update dist[v] when dist[u] + w is smaller",
+        "Use BFS for equal weights, 0-1 BFS for weights 0 and 1, Dijkstra for non-negative weights, and Bellman-Ford for negative weights",
+        "Dijkstra uses a min heap, finalizes the closest node each time, and skips stale heap entries",
+        "Bellman-Ford relaxes all edges V - 1 times and detects negative cycles with one extra pass",
+        "Limit on edges or stops: run Bellman-Ford rounds with a copied array, or add the count to the state",
+        "Variants change only the combine step: max for bottleneck paths, multiplication for probabilities, an extra array for counting paths"
+      ]
+    }
+  ]
+}

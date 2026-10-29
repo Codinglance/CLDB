@@ -1,0 +1,332 @@
+{
+  "title": "Kotlin Collections for DSA",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Collections Matter in DSA",
+      "content": "Almost every DSA pattern is built on a few data structures: arrays, lists, hash maps, sets, stacks, queues and heaps. Kotlin gives you all of them through its standard library and a few Java classes. Picking the right one is often half of the solution."
+    },
+    {
+      "type": "table",
+      "heading": "Which Collection for Which Job?",
+      "rows": [
+        {
+          "need": "Fixed-size indexed data",
+          "use": "IntArray / Array<T>",
+          "note": "Fastest, no boxing for primitives"
+        },
+        {
+          "need": "Growable indexed data",
+          "use": "MutableList (ArrayList)",
+          "note": "O(1) append, O(1) index"
+        },
+        {
+          "need": "Fast lookup by key",
+          "use": "HashMap",
+          "note": "O(1) average"
+        },
+        {
+          "need": "Unique values / membership test",
+          "use": "HashSet",
+          "note": "O(1) average contains"
+        },
+        {
+          "need": "Sorted keys, floor/ceiling",
+          "use": "TreeMap / TreeSet",
+          "note": "O(log n) operations"
+        },
+        {
+          "need": "Stack (LIFO)",
+          "use": "ArrayDeque",
+          "note": "addLast / removeLast"
+        },
+        {
+          "need": "Queue (FIFO) / Deque",
+          "use": "ArrayDeque",
+          "note": "addLast / removeFirst"
+        },
+        {
+          "need": "Min or max element repeatedly",
+          "use": "PriorityQueue",
+          "note": "O(log n) add / poll"
+        },
+        {
+          "need": "Keep insertion order",
+          "use": "LinkedHashMap / LinkedHashSet",
+          "note": "Used in LRU cache"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Arrays",
+      "rows": [
+        {
+          "task": "Create with size",
+          "code": "val a = IntArray(n)"
+        },
+        {
+          "task": "Create with fill value",
+          "code": "val a = IntArray(n) { -1 }"
+        },
+        {
+          "task": "Create from values",
+          "code": "val a = intArrayOf(1, 2, 3)"
+        },
+        {
+          "task": "2D array",
+          "code": "val g = Array(r) { IntArray(c) }"
+        },
+        {
+          "task": "Copy",
+          "code": "a.copyOf() / a.copyOfRange(from, to)"
+        },
+        {
+          "task": "Fill",
+          "code": "a.fill(0)"
+        },
+        {
+          "task": "Sort in place",
+          "code": "a.sort()"
+        },
+        {
+          "task": "Sum / max / min",
+          "code": "a.sum() / a.max() / a.min()"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Array Examples",
+      "language": "kotlin",
+      "code": "val arr = intArrayOf(5, 2, 9, 1)\narr.sort()// [1, 2, 5, 9]\nval last = arr[arr.size - 1]  // 9\nval grid = Array(3) { IntArray(4) }   // 3 x 4 grid of zeros\ngrid[1][2] = 7\n\n// Loop styles\nfor (x in arr) { }\nfor (i in arr.indices) { }\nfor ((i, x) in arr.withIndex()) { }"
+    },
+    {
+      "type": "bullet",
+      "heading": "Array Tips",
+      "items": [
+        "Use IntArray / LongArray instead of Array<Int> to avoid boxing",
+        "Arrays have a fixed size; use a list when the size changes",
+        "Printing an array directly shows a reference; use arr.contentToString()",
+        "Compare arrays with contentEquals(), not ==",
+        "Array<Array<Int>> is slower than Array(r) { IntArray(c) }"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Lists",
+      "language": "kotlin",
+      "code": "val list = mutableListOf<Int>()\nlist.add(10)               // O(1) amortized\nlist.add(0, 5)             // O(n) - shifts everything\nlist.removeAt(list.lastIndex)  // O(1)\nlist.removeAt(0)           // O(n)\nval x = list[2]            // O(1)\nlist.sort()                // O(n log n)\nlist.reverse()             // O(n), in place\n\nval copy = list.toMutableList()   // new copy\nval sub = list.subList(1, 3)      // view, not a copy"
+    },
+    {
+      "type": "bullet",
+      "heading": "List Tips",
+      "items": [
+        "listOf() is read-only, mutableListOf() allows changes",
+        "contains() and indexOf() are O(n); use a set for repeated checks",
+        "subList() shares memory with the original list",
+        "Use list.lastIndex instead of list.size - 1",
+        "Use list.getOrNull(i) to avoid IndexOutOfBounds"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "HashMap: Frequency Counting",
+      "language": "kotlin",
+      "code": "val freq = HashMap<Char, Int>()\nfor (c in \"banana\") {\n    freq[c] = (freq[c] ?: 0) + 1\n}\n// {b=1, a=3, n=2}\n\n// Shorter versions\nval freq2 = HashMap<Char, Int>()\nfor (c in \"banana\") freq2[c] = freq2.getOrDefault(c, 0) + 1\n\nval freq3 = \"banana\".groupingBy { it }.eachCount()"
+    },
+    {
+      "type": "text_code",
+      "heading": "HashMap: Group by Key",
+      "language": "kotlin",
+      "code": "val groups = HashMap<String, MutableList<String>>()\nfor (word in listOf(\"eat\", \"tea\", \"tan\", \"ate\", \"nat\")) {\n    val key = String(word.toCharArray().sortedArray())\n    groups.getOrPut(key) { mutableListOf() }.add(word)\n}\n// {aet=[eat, tea, ate], ant=[tan, nat]}"
+    },
+    {
+      "type": "text_code",
+      "heading": "HashMap: Common Operations",
+      "language": "kotlin",
+      "code": "val map = HashMap<Int, Int>()\nmap[1] = 100                       // put\nval v = map[1]                     // Int? (null if missing)\nval v2 = map.getOrDefault(2, 0)\nmap.containsKey(1)                 // O(1)\nmap.remove(1)\nmap.merge(3, 1) { old, new -> old + new }   // increment pattern\n\nfor ((key, value) in map) { }\nfor (key in map.keys) { }\nfor (value in map.values) { }"
+    },
+    {
+      "type": "text_code",
+      "heading": "HashSet",
+      "language": "kotlin",
+      "code": "val seen = HashSet<Int>()\nseen.add(4)                  // returns false if already present\nif (4 in seen) { }           // O(1) average\nseen.remove(4)\n\nval unique = listOf(1, 2, 2, 3).toSet()      // {1, 2, 3}\nval common = setA intersect setB\nval all = setA union setB\nval diff = setA subtract setB"
+    },
+    {
+      "type": "text_code",
+      "heading": "TreeMap & TreeSet (Sorted)",
+      "language": "kotlin",
+      "code": "import java.util.TreeMap\nimport java.util.TreeSet\n\nval tm = TreeMap<Int, String>()\ntm[10] = \"a\"; tm[20] = \"b\"; tm[30] = \"c\"\ntm.firstKey()          // 10\ntm.lastKey()           // 30\ntm.floorKey(25)        // 20  (largest <= 25)\ntm.ceilingKey(25)      // 30  (smallest >= 25)\ntm.lowerKey(20)        // 10  (largest < 20)\ntm.higherKey(20)       // 30  (smallest > 20)\n\nval ts = TreeSet<Int>(listOf(5, 1, 9))\nts.first()             // 1\nts.floor(6)            // 5"
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use TreeMap / TreeSet",
+      "items": [
+        "You need the closest smaller or larger value",
+        "You need keys always sorted",
+        "Interval problems and calendar booking",
+        "Sliding window with sorted contents",
+        "Every operation is O(log n), so do not use it when HashMap is enough"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Stack with ArrayDeque",
+      "language": "kotlin",
+      "code": "val stack = ArrayDeque<Int>()\nstack.addLast(1)         // push\nstack.addLast(2)\nval top = stack.last()   // peek -> 2\nval popped = stack.removeLast()   // pop -> 2\nstack.isEmpty()\n\n// Avoid java.util.Stack: it is slow and legacy"
+    },
+    {
+      "type": "text_code",
+      "heading": "Queue with ArrayDeque",
+      "language": "kotlin",
+      "code": "val queue = ArrayDeque<Int>()\nqueue.addLast(1)          // enqueue\nqueue.addLast(2)\nval front = queue.first() // peek -> 1\nval next = queue.removeFirst()   // dequeue -> 1\n\n// BFS template\nwhile (queue.isNotEmpty()) {\n    val node = queue.removeFirst()\n    // process node, add neighbours with addLast\n}"
+    },
+    {
+      "type": "text_code",
+      "heading": "PriorityQueue (Heap)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nval minHeap = PriorityQueue<Int>()                        // smallest first\nval maxHeap = PriorityQueue<Int>(compareByDescending { it })  // largest first\n\nminHeap.add(5)           // O(log n)\nminHeap.add(1)\nminHeap.peek()           // 1, O(1)\nminHeap.poll()           // removes and returns 1, O(log n)\nminHeap.size\n\n// Heap of pairs, ordered by the second value\nval pq = PriorityQueue<Pair<Int, Int>>(compareBy { it.second })\npq.add(Pair(1, 50))\npq.add(Pair(2, 10))\npq.poll()                // (2, 10)"
+    },
+    {
+      "type": "bullet",
+      "heading": "Heap Tips",
+      "items": [
+        "Kotlin and Java PriorityQueue is a min-heap by default",
+        "For max-heap use compareByDescending { it } (do not use negative numbers unless needed)",
+        "peek() returns null when empty, so check isEmpty() or use peek()!!",
+        "remove(x) on a PriorityQueue is O(n), avoid it in loops",
+        "Subtracting values in a custom comparator can overflow; use compareValues or Integer.compare"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Custom Sorting",
+      "language": "kotlin",
+      "code": "val nums = mutableListOf(5, 2, 8)\nnums.sort()                                // ascending\nnums.sortDescending()\nval sorted = nums.sortedDescending()       // new list\n\nval people = listOf(\"bob\" to 25, \"amy\" to 30, \"cat\" to 25)\npeople.sortedBy { it.second }              // by age\npeople.sortedWith(compareBy({ it.second }, { it.first }))  // age, then name\n\n// Sort 2D array / intervals by start\nval intervals = arrayOf(intArrayOf(5, 8), intArrayOf(1, 3))\nintervals.sortBy { it[0] }\nintervals.sortWith(compareBy({ it[0] }, { -it[1] }))"
+    },
+    {
+      "type": "text_code",
+      "heading": "Strings and StringBuilder",
+      "language": "kotlin",
+      "code": "val s = \"hello\"\ns[0]                        // 'h'\ns.length\ns.substring(1, 3)           // \"el\"  (end exclusive)\ns.toCharArray()             // CharArray\ns.reversed()\ns.lowercase()\n\nval sb = StringBuilder()\nsb.append(\"ab\").append('c')\nsb.insert(0, \"x\")\nsb.deleteCharAt(sb.length - 1)\nsb.reverse()\nsb.toString()\n\n// Char helpers\nc.isDigit(); c.isLetter(); c - 'a'    // index 0..25\n'a' + 2                               // 'c'"
+    },
+    {
+      "type": "table",
+      "heading": "Useful Built-in Functions",
+      "rows": [
+        {
+          "function": "count { cond }",
+          "use": "Count elements matching a condition"
+        },
+        {
+          "function": "any { } / all { } / none { }",
+          "use": "Boolean checks over a collection"
+        },
+        {
+          "function": "maxOrNull() / minOrNull()",
+          "use": "Safe max/min on possibly empty data"
+        },
+        {
+          "function": "sumOf { }",
+          "use": "Sum of a computed value"
+        },
+        {
+          "function": "windowed(k)",
+          "use": "Sliding windows of size k"
+        },
+        {
+          "function": "chunked(k)",
+          "use": "Split into blocks of size k"
+        },
+        {
+          "function": "zipWithNext()",
+          "use": "Pairs of adjacent elements"
+        },
+        {
+          "function": "groupBy { }",
+          "use": "Map of key to list of items"
+        },
+        {
+          "function": "associateWith { } / associateBy { }",
+          "use": "Build a map from a list"
+        },
+        {
+          "function": "distinct()",
+          "use": "Remove duplicates, keep order"
+        },
+        {
+          "function": "binarySearch(x)",
+          "use": "Binary search on a sorted list"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Useful Built-ins in Action",
+      "language": "kotlin",
+      "code": "val nums = listOf(3, 1, 4, 1, 5)\nnums.windowed(3)               // [[3,1,4], [1,4,1], [4,1,5]]\nnums.zipWithNext()             // [(3,1), (1,4), (4,1), (1,5)]\nnums.distinct()                // [3, 1, 4, 5]\nnums.maxOrNull()               // 5\nnums.indices.maxByOrNull { nums[it] }   // index of max -> 4\nnums.sorted().binarySearch(4)  // index of 4 in sorted list"
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "structure": "Array / ArrayList",
+          "access": "O(1)",
+          "search": "O(n)",
+          "insert_delete": "O(n) middle, O(1) end"
+        },
+        {
+          "structure": "HashMap / HashSet",
+          "access": "O(1)",
+          "search": "O(1)",
+          "insert_delete": "O(1)"
+        },
+        {
+          "structure": "TreeMap / TreeSet",
+          "access": "O(log n)",
+          "search": "O(log n)",
+          "insert_delete": "O(log n)"
+        },
+        {
+          "structure": "ArrayDeque",
+          "access": "O(1) ends",
+          "search": "O(n)",
+          "insert_delete": "O(1) ends"
+        },
+        {
+          "structure": "PriorityQueue",
+          "access": "O(1) peek",
+          "search": "O(n)",
+          "insert_delete": "O(log n)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using List.contains() inside a loop instead of a HashSet",
+        "Using removeAt(0) for queues instead of ArrayDeque",
+        "Using java.util.Stack instead of ArrayDeque",
+        "Comparing boxed Integers with === instead of ==",
+        "Forgetting that map[key] returns a nullable value",
+        "Modifying a collection while iterating over it",
+        "Using Array<Int> instead of IntArray in performance-critical code"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "IntArray for fixed data, MutableList for growing data",
+        "HashMap and HashSet give O(1) average lookups",
+        "ArrayDeque works as both stack and queue",
+        "PriorityQueue is a min-heap by default",
+        "TreeMap and TreeSet give sorted order and floor/ceiling queries",
+        "Choose the structure based on the operations you need most"
+      ]
+    }
+  ]
+}

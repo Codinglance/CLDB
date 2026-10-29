@@ -1,0 +1,430 @@
+{
+  "title": "1D Dynamic Programming",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is 1D Dynamic Programming?",
+      "content": "Dynamic Programming (DP) solves a problem by breaking it into smaller overlapping subproblems, solving each one only once and storing its answer. In 1D DP the state needs just a single index or value, so the answers fit in a one-dimensional array: dp[i] is the answer for the first i elements, for amount i, or for position i. Plain recursion would recompute the same subproblems exponentially many times, while DP computes each one once, usually giving O(n) or O(n * k) time."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "The problem asks for a count, a minimum, a maximum or a yes/no over choices",
+        "The answer for size n can be built from answers for smaller sizes (n - 1, n - 2, ...)",
+        "Plain recursion repeats the same calls (the recursion tree has overlapping subproblems)",
+        "You make a sequence of decisions where each depends only on a small amount of earlier state",
+        "Typical shapes: climbing stairs, house robber, coin change, longest increasing subsequence, word break, maximum subarray",
+        "Keywords: number of ways, minimum cost, maximum profit, can you reach, longest, fewest coins"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "If you computed 5 + 5 + 5 + 5 and someone asks you to add one more 5, you do not start over: you take your previous result and add 5. DP is exactly that habit. You write down the answer to each smaller problem in a table, and every bigger answer is assembled from table entries you already have. The skill is choosing what dp[i] means so that the next value follows from earlier ones."
+    },
+    {
+      "type": "table",
+      "heading": "The Five-Step DP Recipe",
+      "rows": [
+        {
+          "step": "1. Define the state",
+          "question": "What does dp[i] mean exactly?",
+          "example": "dp[i] = fewest coins to make amount i"
+        },
+        {
+          "step": "2. Write the recurrence",
+          "question": "How does dp[i] come from smaller states?",
+          "example": "dp[i] = min(dp[i - coin] + 1) over all coins"
+        },
+        {
+          "step": "3. Set the base cases",
+          "question": "What are the smallest answers you know directly?",
+          "example": "dp[0] = 0"
+        },
+        {
+          "step": "4. Choose the order",
+          "question": "Which states must be ready before dp[i]?",
+          "example": "Compute i from 1 up to amount"
+        },
+        {
+          "step": "5. Find the answer",
+          "question": "Which cell holds the final result?",
+          "example": "dp[amount], or the max over all dp[i]"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Top-Down vs Bottom-Up",
+      "rows": [
+        {
+          "style": "Top-down (memoization)",
+          "how": "Write the recursion, cache each result",
+          "pros": "Natural to write, computes only reachable states",
+          "cons": "Recursion depth limits, call overhead"
+        },
+        {
+          "style": "Bottom-up (tabulation)",
+          "how": "Fill the table from base cases upward with loops",
+          "pros": "No recursion, easy to optimize memory",
+          "cons": "Must get the loop order right"
+        },
+        {
+          "style": "Space-optimized",
+          "how": "Keep only the last few dp values in variables",
+          "pros": "O(1) space for dp[i] depending on a few previous cells",
+          "cons": "Cannot rebuild the path or look far back"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Top-Down With Memoization",
+      "language": "kotlin",
+      "text_code": "fun fibMemo(n: Int): Long {\n    val memo = LongArray(n + 1) { -1L }              // -1 means not computed yet\n\n    fun f(i: Int): Long {\n        if (i <= 1) return i.toLong()                // base cases\n        if (memo[i] != -1L) return memo[i]           // reuse the stored answer\n        memo[i] = f(i - 1) + f(i - 2)\n        return memo[i]\n    }\n\n    return f(n)\n}\n// Time: O(n)   Space: O(n)   Without the memo this would be O(2^n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Bottom-Up Tabulation",
+      "language": "kotlin",
+      "text_code": "fun fibTab(n: Int): Long {\n    if (n <= 1) return n.toLong()\n    val dp = LongArray(n + 1)\n    dp[0] = 0\n    dp[1] = 1\n    for (i in 2..n) {\n        dp[i] = dp[i - 1] + dp[i - 2]                // each cell comes from earlier cells\n    }\n    return dp[n]\n}\n// Time: O(n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Space Optimization (Rolling Variables)",
+      "language": "kotlin",
+      "text_code": "fun fibOpt(n: Int): Long {\n    var a = 0L                                       // dp[i - 2]\n    var b = 1L                                       // dp[i - 1]\n    repeat(n) {\n        val next = a + b\n        a = b\n        b = next\n    }\n    return a\n}\n// Time: O(n)   Space: O(1)\n// Use when dp[i] depends only on a fixed number of previous cells"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Min Coins Pattern (Unbounded Choices)",
+      "language": "kotlin",
+      "text_code": "fun minCoins(coins: IntArray, amount: Int): Int {\n    val inf = amount + 1                             // larger than any real answer\n    val dp = IntArray(amount + 1) { inf }\n    dp[0] = 0                                        // zero coins make amount zero\n    for (a in 1..amount) {\n        for (c in coins) {\n            if (c <= a && dp[a - c] + 1 < dp[a]) {\n                dp[a] = dp[a - c] + 1                // use coin c, then solve the remainder\n            }\n        }\n    }\n    return if (dp[amount] >= inf) -1 else dp[amount]\n}\n// Time: O(amount * coins)   Space: O(amount)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: LIS in O(n log n) (Patience Sorting)",
+      "language": "kotlin",
+      "text_code": "fun lengthOfLISFast(nums: IntArray): Int {\n    val tails = ArrayList<Int>()                     // tails[k] = smallest tail of an increasing subsequence of length k + 1\n    for (x in nums) {\n        var lo = 0\n        var hi = tails.size\n        while (lo < hi) {                            // first position with tails[pos] >= x\n            val mid = (lo + hi) / 2\n            if (tails[mid] < x) lo = mid + 1 else hi = mid\n        }\n        if (lo == tails.size) tails.add(x) else tails[lo] = x\n    }\n    return tails.size\n}\n// Time: O(n log n)   Space: O(n)\n// tails is not the actual subsequence, only its length is correct"
+    },
+    {
+      "type": "table",
+      "heading": "Common 1D DP Families",
+      "rows": [
+        {
+          "family": "Counting ways (Fibonacci-like)",
+          "recurrence": "dp[i] = dp[i - 1] + dp[i - 2]",
+          "problems": "Climbing Stairs, Decode Ways, Tribonacci"
+        },
+        {
+          "family": "Take or skip",
+          "recurrence": "dp[i] = max(dp[i - 1], dp[i - 2] + value[i])",
+          "problems": "House Robber, Delete and Earn"
+        },
+        {
+          "family": "Minimum or maximum cost",
+          "recurrence": "dp[i] = min over choices of dp[i - choice] + cost",
+          "problems": "Min Cost Climbing Stairs, Coin Change, Perfect Squares"
+        },
+        {
+          "family": "Count combinations or permutations",
+          "recurrence": "Loop order decides which one you count",
+          "problems": "Coin Change II, Combination Sum IV"
+        },
+        {
+          "family": "Subsequence ending at i",
+          "recurrence": "dp[i] = best over j < i of dp[j] + 1",
+          "problems": "Longest Increasing Subsequence"
+        },
+        {
+          "family": "Prefix can be split",
+          "recurrence": "dp[i] = OR of dp[j] and a check on s[j until i]",
+          "problems": "Word Break, Palindrome Partitioning"
+        },
+        {
+          "family": "Best ending here (Kadane)",
+          "recurrence": "dp[i] = max(x, dp[i - 1] + x)",
+          "problems": "Maximum Subarray, Maximum Product Subarray"
+        },
+        {
+          "family": "State machine",
+          "recurrence": "Several variables, one per state, updated together",
+          "problems": "Stock with cooldown, Paint Fence"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Climbing Stairs",
+      "language": "kotlin",
+      "text_code": "fun climbStairs(n: Int): Int {\n    if (n <= 2) return n\n    var prev2 = 1                                    // ways to reach step i - 2\n    var prev1 = 2                                    // ways to reach step i - 1\n    for (i in 3..n) {\n        val cur = prev1 + prev2                      // arrive by a 1-step or a 2-step\n        prev2 = prev1\n        prev1 = cur\n    }\n    return prev1\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Min Cost Climbing Stairs",
+      "language": "kotlin",
+      "text_code": "fun minCostClimbingStairs(cost: IntArray): Int {\n    var a = 0                                        // min cost to stand on step i - 2\n    var b = 0                                        // min cost to stand on step i - 1\n    for (i in 2..cost.size) {                        // step cost.size is the top\n        val next = minOf(b + cost[i - 1], a + cost[i - 2])\n        a = b\n        b = next\n    }\n    return b\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: House Robber",
+      "language": "kotlin",
+      "text_code": "fun rob(nums: IntArray): Int {\n    var prev2 = 0                                    // best loot up to house i - 2\n    var prev1 = 0                                    // best loot up to house i - 1\n    for (x in nums) {\n        val cur = maxOf(prev1, prev2 + x)            // skip this house, or rob it and use i - 2\n        prev2 = prev1\n        prev1 = cur\n    }\n    return prev1\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: House Robber II (Circular Street)",
+      "language": "kotlin",
+      "text_code": "fun robCircular(nums: IntArray): Int {\n    if (nums.size == 1) return nums[0]\n\n    fun robRange(lo: Int, hi: Int): Int {\n        var prev2 = 0\n        var prev1 = 0\n        for (i in lo..hi) {\n            val cur = maxOf(prev1, prev2 + nums[i])\n            prev2 = prev1\n            prev1 = cur\n        }\n        return prev1\n    }\n\n    // the first and last houses are neighbors: skip one of them\n    return maxOf(robRange(0, nums.size - 2), robRange(1, nums.size - 1))\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Decode Ways",
+      "language": "kotlin",
+      "text_code": "fun numDecodings(s: String): Int {\n    if (s.isEmpty() || s[0] == '0') return 0\n    var prev2 = 1                                    // dp[0]: one way to decode the empty prefix\n    var prev1 = 1                                    // dp[1]: one way to decode the first character\n    for (i in 2..s.length) {\n        var cur = 0\n        if (s[i - 1] != '0') cur += prev1            // single digit 1..9\n        val two = s.substring(i - 2, i).toInt()\n        if (two in 10..26) cur += prev2              // two digits 10..26\n        prev2 = prev1\n        prev1 = cur\n    }\n    return prev1\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Coin Change (Fewest Coins) With Path Reconstruction",
+      "language": "kotlin",
+      "text_code": "fun coinChangeWithCoins(coins: IntArray, amount: Int): List<Int> {\n    val inf = amount + 1\n    val dp = IntArray(amount + 1) { inf }\n    val lastCoin = IntArray(amount + 1) { -1 }       // which coin gave the best answer\n    dp[0] = 0\n    for (a in 1..amount) {\n        for (c in coins) {\n            if (c <= a && dp[a - c] + 1 < dp[a]) {\n                dp[a] = dp[a - c] + 1\n                lastCoin[a] = c\n            }\n        }\n    }\n    if (dp[amount] >= inf) return emptyList()\n    val used = mutableListOf<Int>()\n    var a = amount\n    while (a > 0) {\n        used.add(lastCoin[a])\n        a -= lastCoin[a]\n    }\n    return used\n}\n// Time: O(amount * coins)   Space: O(amount)\n// Keep a parent or choice array whenever you must return the solution itself"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Coin Change II (Number of Combinations)",
+      "language": "kotlin",
+      "text_code": "fun change(amount: Int, coins: IntArray): Int {\n    val dp = IntArray(amount + 1)\n    dp[0] = 1                                        // one way to make zero: use nothing\n    for (c in coins) {                               // coins OUTER: each combination is counted once\n        for (a in c..amount) {\n            dp[a] += dp[a - c]\n        }\n    }\n    return dp[amount]\n}\n// Time: O(amount * coins)   Space: O(amount)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Combination Sum IV (Number of Orderings)",
+      "language": "kotlin",
+      "text_code": "fun combinationSum4(nums: IntArray, target: Int): Int {\n    val dp = IntArray(target + 1)\n    dp[0] = 1\n    for (t in 1..target) {                           // target OUTER: different orders count separately\n        for (n in nums) {\n            if (n <= t) dp[t] += dp[t - n]\n        }\n    }\n    return dp[target]\n}\n// Time: O(target * n)   Space: O(target)\n// Swapping the two loops switches between counting combinations and counting permutations"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Word Break",
+      "language": "kotlin",
+      "text_code": "fun wordBreak(s: String, wordDict: List<String>): Boolean {\n    val words = wordDict.toHashSet()\n    val maxLen = wordDict.maxOfOrNull { it.length } ?: 0\n    val dp = BooleanArray(s.length + 1)\n    dp[0] = true                                     // empty prefix is always breakable\n    for (i in 1..s.length) {\n        for (len in 1..minOf(i, maxLen)) {\n            if (dp[i - len] && s.substring(i - len, i) in words) {\n                dp[i] = true\n                break\n            }\n        }\n    }\n    return dp[s.length]\n}\n// Time: O(n * maxLen * maxLen) with substring cost   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Longest Increasing Subsequence (O(n²) DP)",
+      "language": "kotlin",
+      "text_code": "fun lengthOfLIS(nums: IntArray): Int {\n    if (nums.isEmpty()) return 0\n    val dp = IntArray(nums.size) { 1 }               // dp[i] = LIS length ending at index i\n    var best = 1\n    for (i in nums.indices) {\n        for (j in 0 until i) {\n            if (nums[j] < nums[i]) {\n                dp[i] = maxOf(dp[i], dp[j] + 1)      // extend the subsequence ending at j\n            }\n        }\n        best = maxOf(best, dp[i])\n    }\n    return best\n}\n// Time: O(n²)   Space: O(n)\n// Use the O(n log n) version from Template 5 for large inputs"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Maximum Subarray (Kadane's Algorithm)",
+      "language": "kotlin",
+      "text_code": "fun maxSubArray(nums: IntArray): Int {\n    var cur = nums[0]                                // best sum of a subarray ending here\n    var best = nums[0]\n    for (i in 1 until nums.size) {\n        cur = maxOf(nums[i], cur + nums[i])          // start fresh or extend\n        best = maxOf(best, cur)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Maximum Product Subarray",
+      "language": "kotlin",
+      "text_code": "fun maxProduct(nums: IntArray): Int {\n    var curMax = nums[0]                             // largest product ending here\n    var curMin = nums[0]                             // smallest product ending here (a negative can flip it)\n    var best = nums[0]\n    for (i in 1 until nums.size) {\n        val x = nums[i]\n        val a = curMax * x\n        val b = curMin * x\n        curMax = maxOf(x, a, b)\n        curMin = minOf(x, a, b)\n        best = maxOf(best, curMax)\n    }\n    return best\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Perfect Squares",
+      "language": "kotlin",
+      "text_code": "fun numSquares(n: Int): Int {\n    val dp = IntArray(n + 1) { Int.MAX_VALUE }\n    dp[0] = 0\n    for (i in 1..n) {\n        var j = 1\n        while (j * j <= i) {\n            dp[i] = minOf(dp[i], dp[i - j * j] + 1)   // use the square j * j\n            j++\n        }\n    }\n    return dp[n]\n}\n// Time: O(n * sqrt(n))   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Delete and Earn (Reduces to House Robber)",
+      "language": "kotlin",
+      "text_code": "fun deleteAndEarn(nums: IntArray): Int {\n    val maxVal = nums.max()                          // use maxOrNull()!! before Kotlin 1.7\n    val points = IntArray(maxVal + 1)\n    for (x in nums) points[x] += x                   // total points for choosing value x\n    var prev2 = 0\n    var prev1 = 0\n    for (v in 0..maxVal) {\n        val cur = maxOf(prev1, prev2 + points[v])    // taking v forbids v - 1 and v + 1\n        prev2 = prev1\n        prev1 = cur\n    }\n    return prev1\n}\n// Time: O(n + maxVal)   Space: O(maxVal)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Integer Break",
+      "language": "kotlin",
+      "text_code": "fun integerBreak(n: Int): Int {\n    val dp = IntArray(n + 1)\n    dp[1] = 1\n    for (i in 2..n) {\n        for (j in 1 until i) {\n            // split off j: either stop splitting (i - j) or keep splitting it (dp[i - j])\n            dp[i] = maxOf(dp[i], j * (i - j), j * dp[i - j])\n        }\n    }\n    return dp[n]\n}\n// Time: O(n²)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 16: Best Time to Buy and Sell Stock With Cooldown (State Machine)",
+      "language": "kotlin",
+      "text_code": "fun maxProfitCooldown(prices: IntArray): Int {\n    if (prices.isEmpty()) return 0\n    var hold = -prices[0]                            // holding a stock\n    var sold = 0                                     // just sold today, so tomorrow is a cooldown\n    var rest = 0                                     // holding nothing and free to buy\n    for (i in 1 until prices.size) {\n        val prevHold = hold\n        val prevSold = sold\n        val prevRest = rest\n        hold = maxOf(prevHold, prevRest - prices[i])         // keep, or buy today\n        sold = prevHold + prices[i]                          // sell today\n        rest = maxOf(prevRest, prevSold)                     // stay idle, or finish the cooldown\n    }\n    return maxOf(sold, rest)\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 17: Paint Fence (Two-State DP)",
+      "language": "kotlin",
+      "text_code": "fun numWays(n: Int, k: Int): Int {\n    if (n == 1) return k\n    var same = k                                     // last two posts have the same color\n    var diff = k * (k - 1)                           // last two posts have different colors\n    for (i in 3..n) {\n        val newSame = diff                           // repeat the color only after a different pair\n        val newDiff = (same + diff) * (k - 1)\n        same = newSame\n        diff = newDiff\n    }\n    return same + diff\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "table",
+      "heading": "Loop Order Matters",
+      "rows": [
+        {
+          "goal": "Number of combinations (order does not matter)",
+          "loop_order": "Items outer, amounts inner",
+          "reason": "Each item is considered once in a fixed sequence",
+          "example": "Coin Change II"
+        },
+        {
+          "goal": "Number of permutations (order matters)",
+          "loop_order": "Amounts outer, items inner",
+          "reason": "Every amount tries all items last",
+          "example": "Combination Sum IV"
+        },
+        {
+          "goal": "Minimum or maximum (order irrelevant)",
+          "loop_order": "Either order works",
+          "reason": "min and max ignore duplicates in counting",
+          "example": "Coin Change"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Climbing Stairs / Fibonacci",
+          "state": "dp[i] = ways to reach i",
+          "recurrence": "dp[i - 1] + dp[i - 2]"
+        },
+        {
+          "problem": "House Robber I and II",
+          "state": "dp[i] = best loot up to house i",
+          "recurrence": "max(dp[i - 1], dp[i - 2] + nums[i])"
+        },
+        {
+          "problem": "Decode Ways",
+          "state": "dp[i] = ways to decode the first i characters",
+          "recurrence": "One-digit and two-digit cases"
+        },
+        {
+          "problem": "Coin Change",
+          "state": "dp[a] = fewest coins for amount a",
+          "recurrence": "min(dp[a - c] + 1)"
+        },
+        {
+          "problem": "Coin Change II",
+          "state": "dp[a] = combinations for amount a",
+          "recurrence": "dp[a] += dp[a - c], coins outer"
+        },
+        {
+          "problem": "Word Break",
+          "state": "dp[i] = prefix of length i is breakable",
+          "recurrence": "dp[j] and s[j until i] in dictionary"
+        },
+        {
+          "problem": "Longest Increasing Subsequence",
+          "state": "dp[i] = LIS ending at i",
+          "recurrence": "max(dp[j] + 1) for nums[j] < nums[i]"
+        },
+        {
+          "problem": "Maximum Subarray",
+          "state": "cur = best sum ending here",
+          "recurrence": "max(x, cur + x)"
+        },
+        {
+          "problem": "Maximum Product Subarray",
+          "state": "Track both the max and the min ending here",
+          "recurrence": "max or min of x, a * x, b * x"
+        },
+        {
+          "problem": "Perfect Squares",
+          "state": "dp[i] = fewest squares summing to i",
+          "recurrence": "min(dp[i - j * j] + 1)"
+        },
+        {
+          "problem": "Stock With Cooldown",
+          "state": "hold, sold, rest",
+          "recurrence": "Update all three from the previous values"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Defining dp[i] vaguely, so the recurrence has no clear meaning (write the definition in words first)",
+        "Wrong or missing base cases, especially dp[0] and the empty input",
+        "Off by one between dp indexes and string or array indexes (dp[i] often means the first i items)",
+        "Using Int.MAX_VALUE as infinity and then adding 1, which overflows",
+        "Wrong loop order in counting problems, producing permutations instead of combinations",
+        "Updating rolling variables in the wrong order and overwriting a value you still need",
+        "Forgetting that Kotlin's % and Int arithmetic can overflow; use Long or take a modulo when the answer is large",
+        "Trying greedy on problems like coin change with arbitrary coins, where DP is required",
+        "Memoizing with a deep recursion on large n and hitting a stack overflow (switch to bottom-up)"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "pattern": "Fibonacci-like, take or skip, Kadane",
+          "time": "O(n)",
+          "space": "O(1) with rolling variables"
+        },
+        {
+          "pattern": "Coin Change, Perfect Squares, Combination Sum IV",
+          "time": "O(n * k)",
+          "space": "O(n)"
+        },
+        {
+          "pattern": "Longest Increasing Subsequence",
+          "time": "O(n²), or O(n log n) with binary search",
+          "space": "O(n)"
+        },
+        {
+          "pattern": "Word Break",
+          "time": "O(n * maxLen)",
+          "space": "O(n)"
+        },
+        {
+          "pattern": "Plain recursion without memoization",
+          "time": "Often O(2^n)",
+          "space": "O(n) stack"
+        },
+        {
+          "pattern": "Memoized recursion",
+          "time": "Number of states times work per state",
+          "space": "O(states) plus the stack"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Climbing Stairs",
+        "Min Cost Climbing Stairs",
+        "House Robber and House Robber II",
+        "Decode Ways",
+        "Coin Change",
+        "Coin Change II",
+        "Combination Sum IV",
+        "Word Break",
+        "Longest Increasing Subsequence",
+        "Maximum Subarray and Maximum Product Subarray",
+        "Perfect Squares",
+        "Delete and Earn",
+        "Integer Break",
+        "Best Time to Buy and Sell Stock with Cooldown",
+        "Paint Fence",
+        "N-th Tribonacci Number"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "DP stores answers to overlapping subproblems so each is computed once",
+        "Start by defining dp[i] in plain words, then write the recurrence and the base cases",
+        "Top-down memoization is easiest to write, bottom-up tabulation avoids recursion",
+        "If dp[i] needs only the last few cells, keep them in variables for O(1) space",
+        "Loop order changes the meaning in counting problems: items outer counts combinations, amounts outer counts permutations",
+        "Keep a choice array when you need to rebuild the actual solution, not just its value"
+      ]
+    }
+  ]
+}

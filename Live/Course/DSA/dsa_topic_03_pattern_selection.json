@@ -1,0 +1,474 @@
+{
+  "title": "How to Identify the Right Pattern",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "Why Pattern Recognition Matters",
+      "content": "Most DSA problems are variations of a small set of patterns. Instead of memorizing hundreds of solutions, learn to read a problem, spot its clues, and map it to a pattern. This topic is your decision guide for the whole course. Come back to it whenever you are stuck."
+    },
+    {
+      "type": "bullet",
+      "heading": "The 5-Step Approach to Any Problem",
+      "items": [
+        "1. Read the input type: array, string, linked list, tree, graph, grid, or numbers",
+        "2. Read the goal: find, count, maximize, minimize, check existence, or list all",
+        "3. Read the constraints: n decides the target time complexity",
+        "4. Match the clues to a pattern using the tables in this topic",
+        "5. Start from brute force, then optimize with the pattern"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Constraints → Target Complexity",
+      "rows": [
+        {
+          "max_n": "n ≤ 10",
+          "target": "O(n!)",
+          "likely_pattern": "Backtracking, permutations"
+        },
+        {
+          "max_n": "n ≤ 20",
+          "target": "O(2ⁿ)",
+          "likely_pattern": "Subsets, bitmask, backtracking"
+        },
+        {
+          "max_n": "n ≤ 500",
+          "target": "O(n³)",
+          "likely_pattern": "3D DP, Floyd-Warshall"
+        },
+        {
+          "max_n": "n ≤ 5,000",
+          "target": "O(n²)",
+          "likely_pattern": "2D DP, nested loops"
+        },
+        {
+          "max_n": "n ≤ 10⁵",
+          "target": "O(n log n)",
+          "likely_pattern": "Sorting, heap, binary search"
+        },
+        {
+          "max_n": "n ≤ 10⁶",
+          "target": "O(n)",
+          "likely_pattern": "Two pointers, sliding window, hashing"
+        },
+        {
+          "max_n": "n ≤ 10⁹+",
+          "target": "O(log n)",
+          "likely_pattern": "Binary search, math"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Array & String Clues",
+      "rows": [
+        {
+          "clue": "Sorted array, find pair or triplet",
+          "pattern": "Two Pointers"
+        },
+        {
+          "clue": "Longest/shortest/max subarray or substring with a condition",
+          "pattern": "Sliding Window"
+        },
+        {
+          "clue": "Subarray sum queries, range sums",
+          "pattern": "Prefix Sum"
+        },
+        {
+          "clue": "Subarray sum equals K (with negatives)",
+          "pattern": "Prefix Sum + HashMap"
+        },
+        {
+          "clue": "Numbers in range 1..n, find missing or duplicate",
+          "pattern": "Cyclic Sort"
+        },
+        {
+          "clue": "Overlapping ranges, meetings, intervals",
+          "pattern": "Merge Intervals"
+        },
+        {
+          "clue": "Count frequency, find duplicates, anagrams",
+          "pattern": "Hashing / Frequency Map"
+        },
+        {
+          "clue": "Palindrome check or expand from center",
+          "pattern": "Two Pointers (inward or outward)"
+        },
+        {
+          "clue": "Move zeros, remove duplicates in place",
+          "pattern": "Two Pointers (read/write)"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Linked List Clues",
+      "rows": [
+        {
+          "clue": "Detect a cycle, find the middle",
+          "pattern": "Fast & Slow Pointers"
+        },
+        {
+          "clue": "Find start of cycle, happy number",
+          "pattern": "Fast & Slow Pointers"
+        },
+        {
+          "clue": "Reverse a list or part of it",
+          "pattern": "In-Place Linked List Reversal"
+        },
+        {
+          "clue": "Nth node from the end",
+          "pattern": "Two Pointers with a gap"
+        },
+        {
+          "clue": "Merge sorted lists",
+          "pattern": "Two Pointers / K-Way Merge"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Searching & Sorting Clues",
+      "rows": [
+        {
+          "clue": "Sorted or rotated sorted array, search a value",
+          "pattern": "Binary Search"
+        },
+        {
+          "clue": "Minimize the maximum, or maximize the minimum",
+          "pattern": "Binary Search on Answer"
+        },
+        {
+          "clue": "Find the smallest valid value (feasibility check)",
+          "pattern": "Binary Search on Answer"
+        },
+        {
+          "clue": "K largest, K smallest, K most frequent",
+          "pattern": "Top K Elements (Heap)"
+        },
+        {
+          "clue": "Merge K sorted lists or arrays",
+          "pattern": "K-Way Merge"
+        },
+        {
+          "clue": "Median of a stream",
+          "pattern": "Two Heaps"
+        },
+        {
+          "clue": "Sort by multiple keys",
+          "pattern": "Custom Comparator"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Stack, Queue & Heap Clues",
+      "rows": [
+        {
+          "clue": "Next greater or smaller element",
+          "pattern": "Monotonic Stack"
+        },
+        {
+          "clue": "Largest rectangle, trapping rain water",
+          "pattern": "Monotonic Stack"
+        },
+        {
+          "clue": "Balanced parentheses, nested structure",
+          "pattern": "Stack"
+        },
+        {
+          "clue": "Sliding window maximum or minimum",
+          "pattern": "Monotonic Queue (Deque)"
+        },
+        {
+          "clue": "Schedule tasks, always pick the best next",
+          "pattern": "Heap / Greedy"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Tree Clues",
+      "rows": [
+        {
+          "clue": "Level by level, minimum depth, right-side view",
+          "pattern": "Tree BFS"
+        },
+        {
+          "clue": "Path sums, depth, diameter, subtree checks",
+          "pattern": "Tree DFS"
+        },
+        {
+          "clue": "Search, insert, validate in a BST",
+          "pattern": "BST Patterns"
+        },
+        {
+          "clue": "Prefix search, autocomplete, word dictionary",
+          "pattern": "Trie"
+        },
+        {
+          "clue": "Lowest common ancestor",
+          "pattern": "Tree DFS"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Graph & Grid Clues",
+      "rows": [
+        {
+          "clue": "Shortest path, unweighted graph or grid",
+          "pattern": "Graph BFS"
+        },
+        {
+          "clue": "Count islands, connected components, flood fill",
+          "pattern": "Graph DFS / BFS or Union Find"
+        },
+        {
+          "clue": "Shortest path with weights",
+          "pattern": "Dijkstra"
+        },
+        {
+          "clue": "Negative weights or limited number of edges",
+          "pattern": "Bellman-Ford"
+        },
+        {
+          "clue": "Task order, prerequisites, dependencies",
+          "pattern": "Topological Sort"
+        },
+        {
+          "clue": "Are two nodes connected, merge groups",
+          "pattern": "Union Find"
+        },
+        {
+          "clue": "Detect a cycle in a graph",
+          "pattern": "DFS or Union Find or Topological Sort"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Recursion & DP Clues",
+      "rows": [
+        {
+          "clue": "Generate all subsets, permutations, combinations",
+          "pattern": "Backtracking"
+        },
+        {
+          "clue": "Place items under constraints (N-Queens, Sudoku)",
+          "pattern": "Backtracking"
+        },
+        {
+          "clue": "Count the number of ways",
+          "pattern": "Dynamic Programming"
+        },
+        {
+          "clue": "Minimum or maximum cost, optimal choice with overlapping subproblems",
+          "pattern": "Dynamic Programming"
+        },
+        {
+          "clue": "Choose or skip each item with a capacity",
+          "pattern": "Knapsack DP"
+        },
+        {
+          "clue": "Two strings, longest common or edit distance",
+          "pattern": "String DP (LCS, Edit Distance)"
+        },
+        {
+          "clue": "Grid paths, min path sum",
+          "pattern": "2D / Grid DP"
+        },
+        {
+          "clue": "Local best choice leads to global best (sort first)",
+          "pattern": "Greedy"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Math & Bit Clues",
+      "rows": [
+        {
+          "clue": "Single number among pairs, power of two, count set bits",
+          "pattern": "Bit Manipulation"
+        },
+        {
+          "clue": "Subsets of a small set (n ≤ 20)",
+          "pattern": "Bitmask"
+        },
+        {
+          "clue": "GCD, primes, modulo arithmetic",
+          "pattern": "Math & Number Theory"
+        },
+        {
+          "clue": "Range updates or range queries with changes",
+          "pattern": "Segment Tree / Fenwick Tree"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Keywords in the Problem Statement",
+      "rows": [
+        {
+          "keyword": "contiguous subarray / substring",
+          "think": "Sliding Window or Prefix Sum"
+        },
+        {
+          "keyword": "sorted",
+          "think": "Binary Search or Two Pointers"
+        },
+        {
+          "keyword": "in-place, O(1) space",
+          "think": "Two Pointers, Cyclic Sort"
+        },
+        {
+          "keyword": "top K / K-th",
+          "think": "Heap or Quickselect"
+        },
+        {
+          "keyword": "all possible / generate all",
+          "think": "Backtracking"
+        },
+        {
+          "keyword": "minimum number of steps",
+          "think": "BFS"
+        },
+        {
+          "keyword": "minimum cost / maximum profit",
+          "think": "DP or Greedy"
+        },
+        {
+          "keyword": "number of ways",
+          "think": "DP"
+        },
+        {
+          "keyword": "prerequisites / dependencies",
+          "think": "Topological Sort"
+        },
+        {
+          "keyword": "connected / groups",
+          "think": "Union Find or DFS"
+        },
+        {
+          "keyword": "next greater / smaller",
+          "think": "Monotonic Stack"
+        },
+        {
+          "keyword": "intervals / overlapping",
+          "think": "Merge Intervals"
+        },
+        {
+          "keyword": "stream of data / running median",
+          "think": "Heap"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Decision Flow: Arrays and Strings",
+      "content": "Ask in this order. Is the array sorted? Try Two Pointers or Binary Search. Is the question about a contiguous range? Try Sliding Window or Prefix Sum. Do you need fast lookups or counts? Use a HashMap. Are values within 1 to n? Try Cyclic Sort. If none fit, sort first and see what changes."
+    },
+    {
+      "type": "text",
+      "heading": "Decision Flow: Trees and Graphs",
+      "content": "Is it a tree? Use DFS for properties of paths or subtrees and BFS for levels. Is it a graph? Use BFS for shortest path with equal weights, Dijkstra for weights, Topological Sort for dependencies, and Union Find for connectivity. A grid is a graph where each cell connects to its 4 or 8 neighbors."
+    },
+    {
+      "type": "text",
+      "heading": "Decision Flow: Optimization Problems",
+      "content": "If you must find the best answer, ask whether a local choice is always safe. If yes, try Greedy. If the choices overlap in subproblems, use DP. If the answer itself can be guessed and verified quickly, use Binary Search on Answer. If you must list every solution, use Backtracking."
+    },
+    {
+      "type": "text_code",
+      "heading": "Brute Force First, Then Optimize",
+      "language": "kotlin",
+      "code": "// Problem: does any pair in a sorted array sum to target?\n\n// Brute force: O(n²)\nfun hasPairBrute(a: IntArray, target: Int): Boolean {\n    for (i in a.indices)\n        for (j in i + 1 until a.size)\n            if (a[i] + a[j] == target) return true\n    return false\n}\n\n// Clue: sorted + pair  ->  Two Pointers: O(n)\nfun hasPair(a: IntArray, target: Int): Boolean {\n    var l = 0\n    var r = a.size - 1\n    while (l < r) {\n        val sum = a[l] + a[r]\n        when {\n            sum == target -> return true\n            sum < target -> l++\n            else -> r--\n        }\n    }\n    return false\n}"
+    },
+    {
+      "type": "table",
+      "heading": "Patterns That Look Similar",
+      "rows": [
+        {
+          "pair": "Sliding Window vs Two Pointers",
+          "difference": "Window tracks a contiguous range and its contents; two pointers often move from opposite ends"
+        },
+        {
+          "pair": "Sliding Window vs Prefix Sum",
+          "difference": "Window needs all positives or a monotonic condition; prefix sum + map handles negatives"
+        },
+        {
+          "pair": "BFS vs DFS",
+          "difference": "BFS gives the shortest path in unweighted graphs; DFS is simpler for exploring everything"
+        },
+        {
+          "pair": "DP vs Greedy",
+          "difference": "Greedy never reconsiders a choice; DP tries all choices and reuses results"
+        },
+        {
+          "pair": "Backtracking vs DP",
+          "difference": "Backtracking lists all answers; DP counts or optimizes when subproblems repeat"
+        },
+        {
+          "pair": "Heap vs Sorting",
+          "difference": "Heap is better for top K on large or streaming data; sorting is simpler for one-time results"
+        },
+        {
+          "pair": "Dijkstra vs BFS",
+          "difference": "BFS needs equal edge weights; Dijkstra handles non-negative weights"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "When You Are Stuck",
+      "items": [
+        "Write a brute force solution and find the repeated work",
+        "Sort the input and see if the problem becomes easier",
+        "Try a HashMap or HashSet to remove an inner loop",
+        "Draw a small example by hand and trace what you do",
+        "Ask if the problem has overlapping subproblems (DP) or a monotonic answer (Binary Search)",
+        "Think about the problem in reverse",
+        "Try small inputs (n = 0, 1, 2) to find the base cases"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Interview Communication Tips",
+      "items": [
+        "Restate the problem and confirm the input and output",
+        "Ask about constraints, duplicates, negatives, and empty input",
+        "Say the brute force idea first, with its complexity",
+        "Name the pattern you plan to use and explain why it fits",
+        "Code cleanly, then test with a normal case and an edge case",
+        "State the final time and space complexity"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Edge Cases Checklist",
+      "items": [
+        "Empty input or a single element",
+        "All elements equal",
+        "Negative numbers and zeros",
+        "Duplicates",
+        "Very large values (use Long to avoid overflow)",
+        "Already sorted or reverse sorted input",
+        "Disconnected graphs and cycles",
+        "Null root in trees"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Identify the input type, goal and constraints before coding",
+        "Constraints tell you the target complexity",
+        "Keywords in the statement point to specific patterns",
+        "Always start with brute force and then optimize",
+        "Many problems combine two patterns, such as Binary Search + Greedy",
+        "Practice naming the pattern before writing any code"
+      ]
+    }
+  ]
+}

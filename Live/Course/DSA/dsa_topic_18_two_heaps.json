@@ -1,0 +1,289 @@
+{
+  "title": "Two Heaps",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What is the Two Heaps Pattern?",
+      "content": "The Two Heaps pattern splits a collection into two halves and keeps each half in a heap. A max heap holds the smaller half, so its top is the largest of the small numbers. A min heap holds the larger half, so its top is the smallest of the large numbers. The two tops sit right at the middle of the data, which gives you the median or any middle-based answer in O(1), with O(log n) per insertion."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Find the median of a data stream or sliding window",
+        "Find the median of two sorted arrays or a dynamic set",
+        "Schedule problems that need both the cheapest and the largest option (IPO, project selection)",
+        "Balance two groups where you need the largest of one and the smallest of the other",
+        "Any problem that says 'running median', 'middle', 'split into two halves'",
+        "Sliding window median or sliding window with a balancing condition",
+        "Keywords: median, stream, balance, two halves, capital and profit, IPO"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Sort all numbers and cut the list in the middle. Everything left of the cut is smaller than everything right of the cut. You only care about the biggest number on the left and the smallest number on the right, because those are the two items next to the middle. A max heap gives you the biggest of the left half instantly, and a min heap gives you the smallest of the right half instantly. Keep the halves equal in size (or the left half one bigger) and the median is always at the tops."
+    },
+    {
+      "type": "table",
+      "heading": "The Two Heaps and Their Roles",
+      "rows": [
+        {
+          "heap": "Max heap (small half)",
+          "contains": "The smaller half of the numbers",
+          "top": "Largest of the small numbers",
+          "kotlin": "PriorityQueue<Int>(compareByDescending { it })"
+        },
+        {
+          "heap": "Min heap (large half)",
+          "contains": "The larger half of the numbers",
+          "top": "Smallest of the large numbers",
+          "kotlin": "PriorityQueue<Int>()"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Invariants to Maintain",
+      "rows": [
+        {
+          "rule": "Order",
+          "statement": "Every element in the max heap is <= every element in the min heap"
+        },
+        {
+          "rule": "Size",
+          "statement": "maxHeap.size == minHeap.size, or maxHeap.size == minHeap.size + 1"
+        },
+        {
+          "rule": "Median (odd count)",
+          "statement": "maxHeap.peek()"
+        },
+        {
+          "rule": "Median (even count)",
+          "statement": "(maxHeap.peek() + minHeap.peek()) / 2.0"
+        }
+      ]
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 1: Find Median From Data Stream",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nclass MedianFinder {\n    private val small = PriorityQueue<Int>(compareByDescending { it })   // max heap\n    private val large = PriorityQueue<Int>()                              // min heap\n\n    fun addNum(num: Int) {\n        // 1. push through the small heap, then move its largest to the large heap\n        small.add(num)\n        large.add(small.poll())\n        // 2. rebalance so that small has the same size or one more\n        if (large.size > small.size) {\n            small.add(large.poll())\n        }\n    }\n\n    fun findMedian(): Double =\n        if (small.size > large.size) small.peek().toDouble()\n        else (small.peek() + large.peek()) / 2.0\n}\n// addNum: O(log n)   findMedian: O(1)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Template 2: Alternate Insert Logic (Compare With the Top)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nclass MedianFinder2 {\n    private val small = PriorityQueue<Int>(compareByDescending { it })\n    private val large = PriorityQueue<Int>()\n\n    fun addNum(num: Int) {\n        if (small.isEmpty() || num <= small.peek()) small.add(num)\n        else large.add(num)\n\n        // rebalance\n        if (small.size > large.size + 1) large.add(small.poll())\n        else if (large.size > small.size) small.add(large.poll())\n    }\n\n    fun findMedian(): Double =\n        if (small.size > large.size) small.peek().toDouble()\n        else (small.peek() + large.peek()) / 2.0\n}\n// Same complexity, easier to extend with removals"
+    },
+    {
+      "type": "text",
+      "heading": "Overflow Warning When Averaging",
+      "content": "If values can be near Int.MAX_VALUE, small.peek() + large.peek() can overflow. Convert to Long or Double before adding, for example small.peek().toDouble() / 2 + large.peek().toDouble() / 2, or use small.peek().toLong() + large.peek()."
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 1: Sliding Window Median (Two Heaps With Lazy Removal)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun medianSlidingWindow(nums: IntArray, k: Int): DoubleArray {\n    val small = PriorityQueue<Int>(compareByDescending { it })\n    val large = PriorityQueue<Int>()\n    val result = DoubleArray(nums.size - k + 1)\n\n    fun median(): Double =\n        if (k % 2 == 1) small.peek().toDouble()\n        else small.peek().toDouble() / 2 + large.peek().toDouble() / 2\n\n    // Simple version: PriorityQueue.remove(x) is O(k), fine for moderate k\n    for (i in nums.indices) {\n        // add the new number\n        if (small.isEmpty() || nums[i] <= small.peek()) small.add(nums[i]) else large.add(nums[i])\n\n        // remove the number leaving the window\n        if (i >= k) {\n            val out = nums[i - k]\n            if (out <= small.peek()) small.remove(out) else large.remove(out)\n        }\n        // rebalance\n        while (small.size > large.size + 1) large.add(small.poll())\n        while (large.size > small.size) small.add(large.poll())\n\n        if (i >= k - 1) result[i - k + 1] = median()\n    }\n    return result\n}\n// Time: O(n * k) because of remove(); use lazy deletion or two TreeMaps for O(n log k)\n// Space: O(k)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 2: IPO (Maximize Capital)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun findMaximizedCapital(k: Int, w: Int, profits: IntArray, capital: IntArray): Int {\n    // min heap: projects ordered by required capital\n    val byCapital = PriorityQueue<Int>(compareBy { capital[it] })\n    for (i in profits.indices) byCapital.add(i)\n    // max heap: profits of affordable projects\n    val byProfit = PriorityQueue<Int>(compareByDescending { it })\n\n    var money = w\n    repeat(k) {\n        // move every affordable project into the profit heap\n        while (byCapital.isNotEmpty() && capital[byCapital.peek()] <= money) {\n            byProfit.add(profits[byCapital.poll()])\n        }\n        if (byProfit.isEmpty()) return money\n        money += byProfit.poll()                       // take the most profitable one\n    }\n    return money\n}\n// Time: O((n + k) log n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 3: Maximize Capital With Pairs",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun maximumCapital(k: Int, w: Int, profits: IntArray, capital: IntArray): Int {\n    val projects = profits.indices.sortedBy { capital[it] }     // sort by capital once\n    val maxProfit = PriorityQueue<Int>(compareByDescending { it })\n    var money = w\n    var idx = 0\n    repeat(k) {\n        while (idx < projects.size && capital[projects[idx]] <= money) {\n            maxProfit.add(profits[projects[idx]])\n            idx++\n        }\n        if (maxProfit.isEmpty()) return money\n        money += maxProfit.poll()\n    }\n    return money\n}\n// Time: O(n log n + k log n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 4: Find Median in a Sorted Stream With Counts",
+      "language": "kotlin",
+      "code": "// Median of a stream where every value is between 0 and 100:\n// a counting array gives O(100) per query with no heaps.\nclass MedianCounting {\n    private val counts = IntArray(101)\n    private var total = 0\n\n    fun add(x: Int) { counts[x]++; total++ }\n\n    fun median(): Double {\n        fun kth(k: Int): Int {                 // k is 1-based\n            var seen = 0\n            for (v in 0..100) {\n                seen += counts[v]\n                if (seen >= k) return v\n            }\n            return -1\n        }\n        return if (total % 2 == 1) kth(total / 2 + 1).toDouble()\n        else (kth(total / 2) + kth(total / 2 + 1)) / 2.0\n    }\n}\n// Use this trick when the value range is small"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 5: Next Interval / Meeting Rooms With Two Heaps",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\n// Minimum number of rooms: one heap of end times is enough,\n// but two heaps of sorted starts and ends also work:\nfun minMeetingRooms(intervals: Array<IntArray>): Int {\n    val starts = PriorityQueue<Int>()\n    val ends = PriorityQueue<Int>()\n    for ((s, e) in intervals) { starts.add(s); ends.add(e) }\n    var rooms = 0\n    var best = 0\n    while (starts.isNotEmpty()) {\n        if (starts.peek() < ends.peek()) {\n            starts.poll()\n            rooms++\n            best = maxOf(best, rooms)\n        } else {\n            ends.poll()\n            rooms--\n        }\n    }\n    return best\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 6: Maximum Performance of a Team (Sort + Min Heap)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun maxPerformance(n: Int, speed: IntArray, efficiency: IntArray, k: Int): Int {\n    val mod = 1_000_000_007L\n    val order = (0 until n).sortedByDescending { efficiency[it] }   // best efficiency first\n    val minSpeed = PriorityQueue<Int>()                              // keeps the k fastest\n    var speedSum = 0L\n    var best = 0L\n    for (i in order) {\n        minSpeed.add(speed[i])\n        speedSum += speed[i]\n        if (minSpeed.size > k) speedSum -= minSpeed.poll()          // drop the slowest\n        best = maxOf(best, speedSum * efficiency[i])                // efficiency[i] is the minimum so far\n    }\n    return (best % mod).toInt()\n}\n// Time: O(n log n)   Space: O(n)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 7: Smallest Range Using Two Heaps Idea (Min and Max Tracking)",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\n// Track both the smallest and the largest of the current candidates.\nfun minRangeOfK(lists: List<IntArray>): IntArray {\n    val minHeap = PriorityQueue<IntArray>(compareBy { it[0] })       // [value, list, index]\n    var currentMax = Int.MIN_VALUE\n    for ((i, list) in lists.withIndex()) {\n        minHeap.add(intArrayOf(list[0], i, 0))\n        currentMax = maxOf(currentMax, list[0])\n    }\n    var start = 0\n    var end = Int.MAX_VALUE\n    while (minHeap.size == lists.size) {\n        val (value, li, idx) = minHeap.poll()\n        if (currentMax - value < end - start) { start = value; end = currentMax }\n        if (idx + 1 == lists[li].size) break\n        val next = lists[li][idx + 1]\n        minHeap.add(intArrayOf(next, li, idx + 1))\n        currentMax = maxOf(currentMax, next)\n    }\n    return intArrayOf(start, end)\n}\n// Time: O(N log K)   Space: O(K)"
+    },
+    {
+       "type": "text_code",
+      "heading": "Example 8: Median Using One TreeMap (Alternative View)",
+      "language": "kotlin",
+      "code": "import java.util.TreeMap\n\n// A TreeMap of counts supports add, remove and k-th lookup in O(log n)\n// (counting elements while walking the keys is O(distinct values)).\nclass SortedCounter {\n    private val map = TreeMap<Int, Int>()\n    var size = 0\n        private set\n\n    fun add(x: Int) { map[x] = (map[x] ?: 0) + 1; size++ }\n\n    fun remove(x: Int) {\n        val c = map[x] ?: return\n        if (c == 1) map.remove(x) else map[x] = c - 1\n        size--\n    }\n\n    fun kth(k: Int): Int {               // 1-based\n        var seen = 0\n        for ((value, count) in map) {\n            seen += count\n            if (seen >= k) return value\n        }\n        throw NoSuchElementException()\n    }\n}\n// Good for sliding window median with removals; heaps need lazy deletion"
+    },
+    {
+      "type": "table",
+      "heading": "Which Heap Gets the New Number?",
+      "rows": [
+        {
+          "condition": "Heap is empty, or num <= small.peek()",
+          "action": "Add to the small half (max heap)"
+        },
+        {
+          "condition": "num > small.peek()",
+          "action": "Add to the large half (min heap)"
+        },
+        {
+          "condition": "small.size > large.size + 1",
+          "action": "Move small.poll() to large"
+        },
+        {
+          "condition": "large.size > small.size",
+          "action": "Move large.poll() to small"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Median by Count Parity",
+      "rows": [
+        {
+          "count": "Odd",
+          "small_heap": "Holds (n + 1) / 2 numbers",
+          "large_heap": "Holds (n - 1) / 2 numbers",
+          "median": "small.peek()"
+        },
+        {
+          "count": "Even",
+          "small_heap": "Holds n / 2 numbers",
+          "large_heap": "Holds n / 2 numbers",
+          "median": "Average of small.peek() and large.peek()"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Find Median From Data Stream",
+          "heaps": "Max heap (small) + min heap (large)",
+          "key_idea": "Keep sizes balanced, read from the tops"
+        },
+        {
+          "problem": "Sliding Window Median",
+          "heaps": "Two heaps with removal, or a sorted structure",
+          "key_idea": "Add, remove the outgoing value, rebalance"
+        },
+        {
+          "problem": "IPO",
+          "heaps": "Min heap by capital + max heap by profit",
+          "key_idea": "Unlock affordable projects, take the best profit"
+        },
+        {
+          "problem": "Maximum Performance of a Team",
+          "heaps": "Sort + min heap of speeds",
+          "key_idea": "Fix the minimum efficiency, keep the K fastest"
+        },
+        {
+          "problem": "Meeting Rooms II",
+          "heaps": "Min heap of ends (or two heaps)",
+          "key_idea": "Reuse a room when the earliest meeting ends"
+        },
+        {
+          "problem": "Smallest Range Covering K Lists",
+          "heaps": "Min heap plus tracked max",
+          "key_idea": "Advance the list with the smallest value"
+        },
+        {
+          "problem": "Find Right Interval",
+          "heaps": "Two heaps or sort + binary search",
+          "key_idea": "Match each end to the nearest start"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Using two min heaps or two max heaps instead of one of each",
+        "Letting the heap sizes drift apart by more than one",
+        "Not rebalancing after every insertion",
+        "Reading the median from the wrong heap when the count is odd",
+        "Integer overflow when adding the two tops for an even count",
+        "Calling peek() on an empty heap (peek returns null)",
+        "Using PriorityQueue.remove(x) in a sliding window without noting it costs O(k)",
+        "Breaking the invariant that every number in the max heap is <= every number in the min heap"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "operation": "Add a number",
+          "time": "O(log n)",
+          "space": "O(n)"
+        },
+        {
+          "operation": "Find the median",
+          "time": "O(1)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Remove from a PriorityQueue (arbitrary)",
+          "time": "O(n)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Sliding window median with lazy deletion",
+          "time": "O(n log k)",
+          "space": "O(k)"
+        },
+        {
+          "operation": "Sort to find the median once",
+          "time": "O(n log n)",
+          "space": "O(1)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Find Median from Data Stream",
+        "Sliding Window Median",
+        "IPO",
+        "Maximum Performance of a Team",
+        "Meeting Rooms II",
+        "Smallest Range Covering Elements from K Lists",
+        "Find Right Interval",
+        "Next Interval",
+        "Minimize Deviation in Array",
+        "Maximum Subsequence Score",
+        "Total Cost to Hire K Workers",
+        "Median of Two Sorted Arrays (compare with binary search)"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Use a max heap for the smaller half and a min heap for the larger half",
+        "Keep their sizes equal, or let the max heap hold one extra element",
+        "The median is at the top of one heap or between the two tops",
+        "Each insertion costs O(log n), and reading the median costs O(1)",
+        "Two heaps also solve scheduling problems where you need the cheapest unlock and the best reward",
+        "For sliding windows with removals, consider lazy deletion or a sorted structure"
+      ]
+    }
+  ]
+}

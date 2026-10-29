@@ -1,0 +1,423 @@
+{
+  "title": "Binary Search Tree Patterns",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Binary Search Tree Patterns?",
+      "content": "A Binary Search Tree (BST) is a binary tree where, for every node, all values in the left subtree are smaller and all values in the right subtree are larger. This ordering lets you discard half of the tree at each step, like binary search, so search, insert and delete take O(h) time, where h is the height. In a balanced tree h is about log n. BST problems either use this property to prune the search or use the fact that an inorder traversal of a BST visits values in sorted order."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Search, insert or delete a value in a BST",
+        "Validate that a tree is a BST",
+        "Find the kth smallest or largest element",
+        "Find the inorder successor or predecessor of a node",
+        "Find the lowest common ancestor in a BST",
+        "Convert a sorted array or list into a balanced BST",
+        "Sum, trim or count values in a range",
+        "Iterate over a BST in sorted order, or recover a BST with two swapped nodes",
+        "Keywords: BST, binary search tree, sorted, kth smallest, successor, range, validate"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "TreeNode Definition",
+      "language": "kotlin",
+      "code": "class TreeNode(var `val`: Int) {\n    var left: TreeNode? = null\n    var right: TreeNode? = null\n}"
+    },
+    {
+      "type": "table",
+      "heading": "The Two Big Ideas",
+      "rows": [
+        {
+          "idea": "Ordering lets you prune",
+          "how": "Compare the target with the node: go left if smaller, right if larger",
+          "gives": "O(h) search, insert, delete, LCA, closest value"
+        },
+        {
+          "idea": "Inorder traversal is sorted",
+          "how": "Left, node, right visits values in ascending order",
+          "gives": "Kth smallest, validate BST, minimum difference, two sum, recover tree"
+        },
+        {
+          "idea": "Reverse inorder is descending",
+          "how": "Right, node, left visits values from largest to smallest",
+          "gives": "Kth largest, convert to greater tree"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "BST Operation Costs",
+      "rows": [
+        {
+          "operation": "Search",
+          "balanced_tree": "O(log n)",
+          "skewed_tree": "O(n)"
+        },
+        {
+          "operation": "Insert",
+          "balanced_tree": "O(log n)",
+          "skewed_tree": "O(n)"
+        },
+        {
+          "operation": "Delete",
+          "balanced_tree": "O(log n)",
+          "skewed_tree": "O(n)"
+        },
+        {
+          "operation": "Find min or max",
+          "balanced_tree": "O(log n)",
+          "skewed_tree": "O(n)"
+        },
+        {
+          "operation": "Inorder traversal",
+          "balanced_tree": "O(n)",
+          "skewed_tree": "O(n)"
+        },
+        {
+          "operation": "Space (recursion)",
+          "balanced_tree": "O(log n)",
+          "skewed_tree": "O(n)"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "Balanced vs Skewed",
+      "content": "Inserting sorted data into a plain BST produces a chain, which behaves like a linked list. Self-balancing trees (AVL and Red-Black trees) rotate nodes to keep the height near log n. In Kotlin you rarely build one yourself, because TreeMap and TreeSet are red-black trees and give O(log n) operations with floor, ceiling, first and last helpers."
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Search in a BST",
+      "language": "kotlin",
+      "code": "fun searchBST(root: TreeNode?, target: Int): TreeNode? {\n    var node = root\n    while (node != null && node.`val` != target) {\n        node = if (target < node.`val`) node.left else node.right\n    }\n    return node\n}\n// Time: O(h)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Insert Into a BST",
+      "language": "kotlin",
+      "code": "fun insertIntoBST(root: TreeNode?, value: Int): TreeNode {\n    if (root == null) return TreeNode(value)\n    if (value < root.`val`) root.left = insertIntoBST(root.left, value)\n    else root.right = insertIntoBST(root.right, value)\n    return root\n}\n// Time: O(h)   Space: O(h) recursion"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Delete From a BST",
+      "language": "kotlin",
+      "code": "fun deleteNode(root: TreeNode?, key: Int): TreeNode? {\n    if (root == null) return null\n    when {\n        key < root.`val` -> root.left = deleteNode(root.left, key)\n        key > root.`val` -> root.right = deleteNode(root.right, key)\n        else -> {\n            // case 1 and 2: zero or one child\n            if (root.left == null) return root.right\n            if (root.right == null) return root.left\n            // case 3: two children, copy the inorder successor, then delete it\n            var successor = root.right!!\n            while (successor.left != null) successor = successor.left!!\n            root.`val` = successor.`val`\n            root.right = deleteNode(root.right, successor.`val`)\n        }\n    }\n    return root\n}\n// Time: O(h)   Space: O(h)"
+    },
+    {
+      "type": "table",
+      "heading": "Three Cases of Deleting a Node",
+      "rows": [
+        {
+          "case": "Leaf (no children)",
+          "action": "Return null so the parent drops it"
+        },
+        {
+          "case": "One child",
+          "action": "Return the child so it replaces the node"
+        },
+        {
+          "case": "Two children",
+          "action": "Copy the inorder successor's value (smallest in the right subtree) into the node, then delete that successor from the right subtree"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Validate a BST (Range Method)",
+      "language": "kotlin",
+      "code": "fun isValidBST(root: TreeNode?): Boolean {\n    fun check(node: TreeNode?, low: Long, high: Long): Boolean {\n        if (node == null) return true\n        if (node.`val` <= low || node.`val` >= high) return false\n        return check(node.left, low, node.`val`.toLong()) &&\n               check(node.right, node.`val`.toLong(), high)\n    }\n    return check(root, Long.MIN_VALUE, Long.MAX_VALUE)\n}\n// Time: O(n)   Space: O(h)\n// Every node must fit inside a (low, high) window inherited from its ancestors"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Inorder Traversal With a Stack (Sorted Order)",
+      "language": "kotlin",
+      "code": "fun inorder(root: TreeNode?): List<Int> {\n    val result = mutableListOf<Int>()\n    val stack = ArrayDeque<TreeNode>()\n    var curr = root\n    while (curr != null || stack.isNotEmpty()) {\n        while (curr != null) {\n            stack.addLast(curr)\n            curr = curr.left\n        }\n        val node = stack.removeLast()\n        result.add(node.`val`)\n        curr = node.right\n    }\n    return result\n}\n// Time: O(n)   Space: O(h)\n// For a valid BST the output is strictly increasing"
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Choices: Which Tool for Which Question?",
+      "items": [
+        "Looking for one value or a boundary: walk down comparing with the target (O(h))",
+        "Need elements in sorted order or by rank: inorder traversal, stop early when possible",
+        "Checking validity: ranges from ancestors, or inorder with a previous value",
+        "Operating on a range [low, high]: prune subtrees that cannot overlap the range",
+        "Building a balanced BST: pick the middle element as the root recursively"
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Validate BST Using Inorder",
+      "language": "kotlin",
+      "code": "fun isValidBSTInorder(root: TreeNode?): Boolean {\n    val stack = ArrayDeque<TreeNode>()\n    var curr = root\n    var prev: Int? = null\n    while (curr != null || stack.isNotEmpty()) {\n        while (curr != null) {\n            stack.addLast(curr)\n            curr = curr.left\n        }\n        val node = stack.removeLast()\n        if (prev != null && node.`val` <= prev) return false   // must be strictly increasing\n        prev = node.`val`\n        curr = node.right\n    }\n    return true\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Kth Smallest Element in a BST",
+      "language": "kotlin",
+      "code": "fun kthSmallest(root: TreeNode?, k: Int): Int {\n    val stack = ArrayDeque<TreeNode>()\n    var curr = root\n    var remaining = k\n    while (curr != null || stack.isNotEmpty()) {\n        while (curr != null) {\n            stack.addLast(curr)\n            curr = curr.left\n        }\n        val node = stack.removeLast()\n        remaining--\n        if (remaining == 0) return node.`val`        // stop early\n        curr = node.right\n    }\n    return -1\n}\n// Time: O(h + k)   Space: O(h)\n// For frequent queries, store subtree sizes in each node to answer in O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Lowest Common Ancestor of a BST",
+      "language": "kotlin",
+      "code": "fun lowestCommonAncestor(root: TreeNode?, p: TreeNode, q: TreeNode): TreeNode? {\n    var node = root\n    while (node != null) {\n        node = when {\n            p.`val` < node.`val` && q.`val` < node.`val` -> node.left     // both on the left\n            p.`val` > node.`val` && q.`val` > node.`val` -> node.right    // both on the right\n            else -> return node                                           // split point\n        }\n    }\n    return null\n}\n// Time: O(h)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Convert Sorted Array to Height-Balanced BST",
+      "language": "kotlin",
+      "code": "fun sortedArrayToBST(nums: IntArray): TreeNode? {\n    fun build(left: Int, right: Int): TreeNode? {\n        if (left > right) return null\n        val mid = left + (right - left) / 2\n        val node = TreeNode(nums[mid])               // middle becomes the root\n        node.left = build(left, mid - 1)\n        node.right = build(mid + 1, right)\n        return node\n    }\n    return build(0, nums.size - 1)\n}\n// Time: O(n)   Space: O(log n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Inorder Successor in a BST",
+      "language": "kotlin",
+      "code": "fun inorderSuccessor(root: TreeNode?, p: TreeNode): TreeNode? {\n    var successor: TreeNode? = null\n    var node = root\n    while (node != null) {\n        if (p.`val` < node.`val`) {\n            successor = node                         // candidate: a bigger value\n            node = node.left\n        } else {\n            node = node.right\n        }\n    }\n    return successor\n}\n// Time: O(h)   Space: O(1)\n// Predecessor: mirror the logic (use p.val > node.val and move right)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Range Sum of BST",
+      "language": "kotlin",
+      "code": "fun rangeSumBST(root: TreeNode?, low: Int, high: Int): Int {\n    if (root == null) return 0\n    if (root.`val` < low) return rangeSumBST(root.right, low, high)    // left subtree is too small\n    if (root.`val` > high) return rangeSumBST(root.left, low, high)    // right subtree is too big\n    return root.`val` +\n        rangeSumBST(root.left, low, high) +\n        rangeSumBST(root.right, low, high)\n}\n// Time: O(n) worst case, less with pruning   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Trim a BST",
+      "language": "kotlin",
+      "code": "fun trimBST(root: TreeNode?, low: Int, high: Int): TreeNode? {\n    if (root == null) return null\n    if (root.`val` < low) return trimBST(root.right, low, high)        // discard node and left subtree\n    if (root.`val` > high) return trimBST(root.left, low, high)        // discard node and right subtree\n    root.left = trimBST(root.left, low, high)\n    root.right = trimBST(root.right, low, high)\n    return root\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Two Sum IV in a BST",
+      "language": "kotlin",
+      "code": "fun findTarget(root: TreeNode?, k: Int): Boolean {\n    val values = ArrayList<Int>()\n\n    fun inorder(node: TreeNode?) {\n        if (node == null) return\n        inorder(node.left)\n        values.add(node.`val`)\n        inorder(node.right)\n    }\n\n    inorder(root)                                    // sorted list\n    var l = 0\n    var r = values.size - 1\n    while (l < r) {\n        val sum = values[l] + values[r]\n        when {\n            sum == k -> return true\n            sum < k -> l++\n            else -> r--\n        }\n    }\n    return false\n}\n// Time: O(n)   Space: O(n)\n// A forward and a backward BSTIterator can do this in O(h) space"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Minimum Absolute Difference in BST",
+      "language": "kotlin",
+      "code": "fun getMinimumDifference(root: TreeNode?): Int {\n    var best = Int.MAX_VALUE\n    var prev: Int? = null\n\n    fun inorder(node: TreeNode?) {\n        if (node == null) return\n        inorder(node.left)\n        prev?.let { best = minOf(best, node.`val` - it) }   // closest values are neighbors in order\n        prev = node.`val`\n        inorder(node.right)\n    }\n\n    inorder(root)\n    return best\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: BST Iterator (Controlled Inorder)",
+      "language": "kotlin",
+      "code": "class BSTIterator(root: TreeNode?) {\n    private val stack = ArrayDeque<TreeNode>()\n\n    init {\n        pushLeft(root)\n    }\n\n    private fun pushLeft(node: TreeNode?) {\n        var cur = node\n        while (cur != null) {\n            stack.addLast(cur)\n            cur = cur.left\n        }\n    }\n\n    fun next(): Int {\n        val node = stack.removeLast()\n        pushLeft(node.right)\n        return node.`val`\n    }\n\n    fun hasNext(): Boolean = stack.isNotEmpty()\n}\n// next(): O(1) amortized   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Recover Binary Search Tree (Two Swapped Nodes)",
+      "language": "kotlin",
+      "code": "fun recoverTree(root: TreeNode?) {\n    var first: TreeNode? = null\n    var second: TreeNode? = null\n    var prev: TreeNode? = null\n\n    fun inorder(node: TreeNode?) {\n        if (node == null) return\n        inorder(node.left)\n        val p = prev\n        if (p != null && p.`val` > node.`val`) {      // order violation\n            if (first == null) first = p              // first violation: earlier node\n            second = node                             // last violation: later node\n        }\n        prev = node\n        inorder(node.right)\n    }\n\n    inorder(root)\n    val a = first\n    val b = second\n    if (a != null && b != null) {\n        val tmp = a.`val`\n        a.`val` = b.`val`\n        b.`val` = tmp\n    }\n}\n// Time: O(n)   Space: O(h)\n// Swapped nodes show up as one or two places where the inorder sequence decreases"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Closest Value in a BST",
+      "language": "kotlin",
+      "code": "import kotlin.math.abs\n\nfun closestValue(root: TreeNode?, target: Double): Int {\n    var closest = root!!.`val`\n    var node: TreeNode? = root\n    while (node != null) {\n        if (abs(node.`val` - target) < abs(closest - target)) closest = node.`val`\n        node = if (target < node.`val`) node.left else node.right\n    }\n    return closest\n}\n// Time: O(h)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Convert BST to Greater Tree (Reverse Inorder)",
+      "language": "kotlin",
+      "code": "fun convertBST(root: TreeNode?): TreeNode? {\n    var sum = 0\n\n    fun reverseInorder(node: TreeNode?) {\n        if (node == null) return\n        reverseInorder(node.right)                    // largest values first\n        sum += node.`val`\n        node.`val` = sum\n        reverseInorder(node.left)\n    }\n\n    reverseInorder(root)\n    return root\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Construct BST From Preorder Traversal",
+      "language": "kotlin",
+      "code": "fun bstFromPreorder(preorder: IntArray): TreeNode? {\n    var idx = 0\n\n    fun build(upperBound: Int): TreeNode? {\n        if (idx == preorder.size || preorder[idx] > upperBound) return null\n        val node = TreeNode(preorder[idx++])\n        node.left = build(node.`val`)                 // left values must be below the node\n        node.right = build(upperBound)                // right values must be below the inherited bound\n        return node\n    }\n\n    return build(Int.MAX_VALUE)\n}\n// Time: O(n)   Space: O(h)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Unique Binary Search Trees (Catalan Numbers)",
+      "language": "kotlin",
+      "code": "fun numTrees(n: Int): Int {\n    val dp = IntArray(n + 2)\n    dp[0] = 1\n    dp[1] = 1\n    for (nodes in 2..n) {\n        for (root in 1..nodes) {\n            // root has (root - 1) smaller values on the left and (nodes - root) larger on the right\n            dp[nodes] += dp[root - 1] * dp[nodes - root]\n        }\n    }\n    return dp[n]\n}\n// Time: O(n²)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Using TreeMap and TreeSet Instead of a Hand-Built BST",
+      "language": "kotlin",
+      "code": "import java.util.TreeMap\nimport java.util.TreeSet\n\nval set = TreeSet<Int>()\nset.add(10); set.add(20); set.add(30)\nset.first()               // 10   smallest\nset.last()                // 30   largest\nset.floor(25)             // 20   largest <= 25\nset.ceiling(25)           // 30   smallest >= 25\nset.lower(20)             // 10   largest < 20\nset.higher(20)            // 30   smallest > 20\nset.headSet(20)           // elements < 20\nset.tailSet(20)           // elements >= 20\nset.subSet(10, 30)        // elements in [10, 30)\n\nval map = TreeMap<Int, String>()\nmap[5] = \"a\"\nmap.floorKey(7)           // 5\nmap.ceilingKey(7)         // null if nothing is >= 7\nmap.firstEntry()\nmap.pollFirstEntry()      // remove and return the smallest\n// Every operation: O(log n)"
+    },
+    {
+      "type": "table",
+      "heading": "Pruning Rules in a BST",
+      "rows": [
+        {
+          "question": "Is the node's value below the lower bound?",
+          "action": "Skip the node and its entire left subtree, go right"
+        },
+        {
+          "question": "Is the node's value above the upper bound?",
+          "action": "Skip the node and its entire right subtree, go left"
+        },
+        {
+          "question": "Is the target smaller than the node?",
+          "action": "Search only the left subtree"
+        },
+        {
+          "question": "Is the target larger than the node?",
+          "action": "Search only the right subtree"
+        },
+        {
+          "question": "Do both targets lie on the same side?",
+          "action": "The LCA is deeper on that side"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Search, Insert, Delete in BST",
+          "technique": "Compare and descend",
+          "key_idea": "Delete with two children copies the inorder successor"
+        },
+        {
+          "problem": "Validate Binary Search Tree",
+          "technique": "Range bounds or inorder",
+          "key_idea": "Compare against ancestors, not only the parent"
+        },
+        {
+          "problem": "Kth Smallest Element",
+          "technique": "Inorder with early stop",
+          "key_idea": "Count nodes as you visit them in order"
+        },
+        {
+          "problem": "LCA of a BST",
+          "technique": "Walk down from the root",
+          "key_idea": "First node where the targets split sides"
+        },
+        {
+          "problem": "Sorted Array to BST",
+          "technique": "Divide and conquer",
+          "key_idea": "Middle element becomes the root"
+        },
+        {
+          "problem": "Inorder Successor",
+          "technique": "Walk down, remember last left turn",
+          "key_idea": "Candidate is the last node where you went left"
+        },
+        {
+          "problem": "Range Sum and Trim BST",
+          "technique": "Prune by the range",
+          "key_idea": "Skip subtrees that cannot overlap"
+        },
+        {
+          "problem": "Two Sum IV",
+          "technique": "Inorder + two pointers",
+          "key_idea": "Sorted order enables two pointers"
+        },
+        {
+          "problem": "Minimum Absolute Difference",
+          "technique": "Inorder neighbors",
+          "key_idea": "Minimum difference is between adjacent values"
+        },
+        {
+          "problem": "Recover BST",
+          "technique": "Inorder violations",
+          "key_idea": "Find the two out-of-order nodes and swap their values"
+        },
+        {
+          "problem": "BST Iterator",
+          "technique": "Stack-based inorder",
+          "key_idea": "Push the left spine, push again on the right child"
+        },
+        {
+          "problem": "Convert BST to Greater Tree",
+          "technique": "Reverse inorder",
+          "key_idea": "Running sum from the largest value"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Validating a BST by comparing only with the parent, which misses violations deeper in the tree",
+        "Using Int bounds with Int.MIN_VALUE or Int.MAX_VALUE as node values (use Long or nullable bounds)",
+        "Treating equal values inconsistently: decide whether duplicates go left, right or are disallowed",
+        "Forgetting to reconnect the child pointer after a recursive insert or delete",
+        "Deleting a two-child node without handling the successor's own removal",
+        "Doing a full O(n) traversal when the BST property allows an O(h) path",
+        "Assuming O(log n) without noting that a skewed tree gives O(n)",
+        "Using a plain list or sorted array when TreeMap or TreeSet would give O(log n) updates"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "approach": "Search / insert / delete in a BST",
+          "time": "O(h)",
+          "space": "O(1) iterative, O(h) recursive"
+        },
+        {
+          "approach": "Inorder traversal",
+          "time": "O(n)",
+          "space": "O(h)"
+        },
+        {
+          "approach": "Kth smallest (inorder, early stop)",
+          "time": "O(h + k)",
+          "space": "O(h)"
+        },
+        {
+          "approach": "Build balanced BST from sorted array",
+          "time": "O(n)",
+          "space": "O(log n)"
+        },
+        {
+          "approach": "TreeMap or TreeSet operation",
+          "time": "O(log n)",
+          "space": "O(n)"
+        },
+        {
+          "approach": "Height h",
+          "time": "log n for a balanced tree, n for a skewed tree",
+          "space": "-"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Search in a Binary Search Tree",
+        "Insert into a Binary Search Tree",
+        "Delete Node in a BST",
+        "Validate Binary Search Tree",
+        "Kth Smallest Element in a BST",
+        "Lowest Common Ancestor of a Binary Search Tree",
+        "Convert Sorted Array to Binary Search Tree",
+        "Inorder Successor in BST",
+        "Range Sum of BST",
+        "Trim a Binary Search Tree",
+        "Two Sum IV - Input is a BST",
+        "Minimum Absolute Difference in BST",
+        "Binary Search Tree Iterator",
+        "Recover Binary Search Tree",
+        "Unique Binary Search Trees I and II"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "In a BST, left values are smaller and right values are larger for every node",
+        "That ordering lets you search, insert and delete in O(h) by discarding one subtree each step",
+        "Inorder traversal of a BST is sorted, which solves kth smallest, validation and neighbor-difference problems",
+        "Validate with ancestor ranges, not only with the parent",
+        "Deleting a node with two children copies the inorder successor and removes it from the right subtree",
+        "A sorted array becomes a balanced BST by choosing the middle as the root, and TreeMap or TreeSet give a ready-made balanced tree"
+      ]
+    }
+  ]
+}
