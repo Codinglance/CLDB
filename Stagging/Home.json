@@ -97,14 +97,14 @@
   },
   "newlyAdded": [
     {
-      "id": "dsa_454",
+      "id": "DSA",
       "tag": "DSA",
       "categoryId": "DSA",
       "badge": "NEW",
       "icon": "🧠",
       "title": "DSA Mastery",
-      "subtitle": "454 Questions with Solutions",
-      "meta": "454 Q • Advanced"
+      "subtitle": "DSA Tips, Patterns & More",
+      "meta": "50 Chapters • 25 hrs"
     },
     {
       "id": "k1",
