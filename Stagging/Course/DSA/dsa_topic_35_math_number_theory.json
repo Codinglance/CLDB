@@ -1,0 +1,483 @@
+{
+  "title": "Math & Number Theory",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Math & Number Theory Patterns?",
+      "content": "Many interview problems can be solved faster by recognizing the mathematics hidden inside them rather than simulating step by step. This topic collects the number-theory tools that appear again and again: GCD and LCM, primes and sieves, factorization, modular arithmetic, fast exponentiation, combinatorics (counting with nCr), digit manipulation, number bases, and careful handling of integer overflow. Each tool replaces a slow brute-force loop with a short formula or an O(log n) or O(sqrt(n)) routine."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Divisibility, remainders, cycles or periodic behavior",
+        "GCD, LCM, simplifying fractions or normalizing slopes and ratios",
+        "Prime numbers, counting primes, prime factorization, number of divisors",
+        "Huge answers that must be returned modulo 1,000,000,007",
+        "Large powers (a^b mod m) or inverse of a number modulo a prime",
+        "Counting arrangements and paths with combinations (nCr)",
+        "Digits of a number: reverse, palindrome, sum of digits, base conversion",
+        "Values that overflow Int: factorials, products, sums, powers",
+        "Keywords: divisible, prime, gcd, lcm, modulo 10^9 + 7, factorial, power, digits, trailing zeros, number of ways"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "Math tricks work because numbers have structure. Every integer is a unique product of primes, so divisibility questions become questions about prime factors. Remainders repeat in cycles, so a huge exponent can be shrunk by working modulo m at every step. Counting problems often have a closed-form answer such as C(n, k) instead of a table. Learning to ask 'is there a formula or a property here?' before coding a simulation is the core skill."
+    },
+    {
+      "type": "table",
+      "heading": "Core Tools and When to Reach for Them",
+      "rows": [
+        {
+          "tool": "GCD (Euclid)",
+          "use_for": "Simplify fractions, common divisors, repeating patterns, normalized slopes",
+          "cost": "O(log min(a, b))"
+        },
+        {
+          "tool": "LCM = a / gcd * b",
+          "use_for": "Synchronizing cycles, common multiples",
+          "cost": "O(log min(a, b))"
+        },
+        {
+          "tool": "Trial division to sqrt(n)",
+          "use_for": "Check if one number is prime, factorize one number",
+          "cost": "O(sqrt(n))"
+        },
+        {
+          "tool": "Sieve of Eratosthenes",
+          "use_for": "All primes up to n, counting primes",
+          "cost": "O(n log log n)"
+        },
+        {
+          "tool": "Smallest prime factor sieve",
+          "use_for": "Factorize many numbers quickly",
+          "cost": "O(n log log n) build, O(log n) per query"
+        },
+        {
+          "tool": "Fast exponentiation",
+          "use_for": "a^b, a^b mod m with huge b",
+          "cost": "O(log b)"
+        },
+        {
+          "tool": "Fermat inverse",
+          "use_for": "Division under a prime modulus: a^(m - 2) mod m",
+          "cost": "O(log m)"
+        },
+        {
+          "tool": "Factorial and inverse factorial tables",
+          "use_for": "Many nCr queries modulo a prime",
+          "cost": "O(n) build, O(1) per query"
+        },
+        {
+          "tool": "Digit loop (% 10, / 10)",
+          "use_for": "Reverse, palindrome, digit sums, base conversion",
+          "cost": "O(number of digits)"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Modular Arithmetic Rules",
+      "rows": [
+        {
+          "rule": "(a + b) % m = ((a % m) + (b % m)) % m",
+          "note": "Reduce before or after adding"
+        },
+        {
+          "rule": "(a - b) % m = ((a % m) - (b % m) + m) % m",
+          "note": "Add m to avoid a negative result, since Kotlin's % keeps the sign of the dividend"
+        },
+        {
+          "rule": "(a * b) % m = ((a % m) * (b % m)) % m",
+          "note": "Use Long: the product of two values below 10^9 + 7 reaches about 10^18"
+        },
+        {
+          "rule": "a^b % m = fast exponentiation",
+          "note": "Never compute a^b first"
+        },
+        {
+          "rule": "a / b % m = a * b^(m - 2) % m",
+          "note": "Only when m is prime and b is not a multiple of m"
+        },
+        {
+          "rule": "Common modulus",
+          "note": "1_000_000_007 and 998_244_353 are both prime"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Handy Formulas",
+      "rows": [
+        {
+          "formula": "1 + 2 + ... + n = n(n + 1) / 2",
+          "use": "Missing number, arithmetic sums"
+        },
+        {
+          "formula": "1² + 2² + ... + n² = n(n + 1)(2n + 1) / 6",
+          "use": "Sum of squares"
+        },
+        {
+          "formula": "a + ar + ... + ar^(n-1) = a(r^n - 1) / (r - 1)",
+          "use": "Geometric series"
+        },
+        {
+          "formula": "C(n, k) = n! / (k! (n - k)!)",
+          "use": "Choose k from n; grid paths C(m + n - 2, m - 1)"
+        },
+        {
+          "formula": "Catalan(n) = C(2n, n) / (n + 1)",
+          "use": "Valid parentheses, unique BSTs, non-crossing structures"
+        },
+        {
+          "formula": "Trailing zeros of n! = n/5 + n/25 + n/125 + ...",
+          "use": "Counts factors of 5"
+        },
+        {
+          "formula": "gcd(a, b) * lcm(a, b) = a * b",
+          "use": "Derive LCM from GCD"
+        },
+        {
+          "formula": "Number of divisors = product of (exponent + 1) over the prime factorization",
+          "use": "Divisor counting"
+        },
+        {
+          "formula": "Josephus: f(i) = (f(i - 1) + k) % i",
+          "use": "Last survivor in a circle"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: GCD and LCM",
+      "language": "kotlin",
+      "code": "fun gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)\n\nfun gcdIterative(a: Long, b: Long): Long {\n    var x = a\n    var y = b\n    while (y != 0L) {\n        val t = x % y\n        x = y\n        y = t\n    }\n    return x\n}\n\nfun lcm(a: Int, b: Int): Long = (a / gcd(a, b)).toLong() * b      // divide first to reduce overflow\n// Time: O(log min(a, b))   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Primality Test by Trial Division",
+      "language": "kotlin",
+      "code": "fun isPrime(n: Int): Boolean {\n    if (n < 2) return false\n    if (n < 4) return true                    // 2 and 3\n    if (n % 2 == 0) return false\n    var i = 3\n    while (i.toLong() * i <= n) {            // only test up to sqrt(n)\n        if (n % i == 0) return false\n        i += 2                                // skip even divisors\n    }\n    return true\n}\n// Time: O(sqrt(n))   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Sieve of Eratosthenes",
+      "language": "kotlin",
+      "code": "fun sieve(n: Int): BooleanArray {\n    val isPrime = BooleanArray(n + 1) { true }\n    if (n >= 0) isPrime[0] = false\n    if (n >= 1) isPrime[1] = false\n    var i = 2\n    while (i.toLong() * i <= n) {\n        if (isPrime[i]) {\n            var j = i * i                      // smaller multiples were crossed out by smaller primes\n            while (j <= n) {\n                isPrime[j] = false\n                j += i\n            }\n        }\n        i++\n    }\n    return isPrime\n}\n// Time: O(n log log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Prime Factorization (Trial Division and SPF Sieve)",
+      "language": "kotlin",
+      "code": "fun primeFactors(n: Int): Map<Int, Int> {           // prime -> exponent\n    var x = n\n    val factors = LinkedHashMap<Int, Int>()\n    var p = 2\n    while (p.toLong() * p <= x) {\n        while (x % p == 0) {\n            factors[p] = (factors[p] ?: 0) + 1\n            x /= p\n        }\n        p++\n    }\n    if (x > 1) factors[x] = (factors[x] ?: 0) + 1      // what remains is a prime larger than sqrt\n    return factors\n}\n// Time: O(sqrt(n))\n\n// For many queries: smallest prime factor table\nfun smallestPrimeFactors(n: Int): IntArray {\n    val spf = IntArray(n + 1) { it }\n    var i = 2\n    while (i.toLong() * i <= n) {\n        if (spf[i] == i) {\n            var j = i * i\n            while (j <= n) {\n                if (spf[j] == j) spf[j] = i\n                j += i\n            }\n        }\n        i++\n    }\n    return spf\n}\n\nfun factorize(x: Int, spf: IntArray): Map<Int, Int> {\n    var n = x\n    val factors = HashMap<Int, Int>()\n    while (n > 1) {\n        val p = spf[n]\n        factors[p] = (factors[p] ?: 0) + 1\n        n /= p\n    }\n    return factors\n}\n// Build: O(n log log n)   Each factorization: O(log n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Fast Exponentiation (Power Mod)",
+      "language": "kotlin",
+      "code": "fun powMod(base: Long, exp: Long, mod: Long): Long {\n    var result = 1L\n    var b = base % mod\n    var e = exp\n    while (e > 0) {\n        if ((e and 1L) == 1L) result = result * b % mod    // use this power of b\n        b = b * b % mod                                    // b, b², b⁴, b⁸, ...\n        e = e shr 1\n    }\n    return result\n}\n// Time: O(log exp)   Space: O(1)\n// Requires mod up to about 3 * 10^9 so that b * b fits in a Long"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Modular Inverse and nCr Modulo a Prime",
+      "language": "kotlin",
+      "code": "const val MOD = 1_000_000_007L\n\nfun modInverse(a: Long, mod: Long = MOD): Long = powMod(a, mod - 2, mod)    // Fermat's little theorem\n\nclass Combinatorics(maxN: Int, private val mod: Long = MOD) {\n    private val fact = LongArray(maxN + 1)\n    private val invFact = LongArray(maxN + 1)\n\n    init {\n        fact[0] = 1\n        for (i in 1..maxN) fact[i] = fact[i - 1] * i % mod\n        invFact[maxN] = powMod(fact[maxN], mod - 2, mod)\n        for (i in maxN downTo 1) invFact[i - 1] = invFact[i] * i % mod\n    }\n\n    fun nCr(n: Int, r: Int): Long {\n        if (r < 0 || r > n) return 0\n        return fact[n] * invFact[r] % mod * invFact[n - r] % mod\n    }\n}\n// Build: O(maxN)   Each nCr: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: Exact nCr Without a Modulus",
+      "language": "kotlin",
+      "code": "fun nCrExact(n: Int, r: Int): Long {\n    val k = minOf(r, n - r)                    // C(n, r) = C(n, n - r)\n    var result = 1L\n    for (i in 1..k) {\n        result = result * (n - k + i) / i      // stays an integer at every step\n    }\n    return result\n}\n// Time: O(min(r, n - r))   Fits in Long for results up to about 9 * 10^18"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 8: Extended Euclid (Inverse for Any Coprime Modulus)",
+      "language": "kotlin",
+      "code": "// Returns (g, x, y) such that a * x + b * y = g = gcd(a, b)\nfun extGcd(a: Long, b: Long): Triple<Long, Long, Long> {\n    if (b == 0L) return Triple(a, 1L, 0L)\n    val (g, x1, y1) = extGcd(b, a % b)\n    return Triple(g, y1, x1 - (a / b) * y1)\n}\n\nfun modInverseAny(a: Long, m: Long): Long? {\n    val (g, x, _) = extGcd(a, m)\n    return if (g != 1L) null else ((x % m) + m) % m       // an inverse exists only when gcd(a, m) = 1\n}\n// Time: O(log m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 9: Digits and Base Conversion",
+      "language": "kotlin",
+      "code": "fun digitsOf(n: Int): List<Int> {\n    if (n == 0) return listOf(0)\n    var x = n\n    val digits = ArrayList<Int>()\n    while (x > 0) {\n        digits.add(x % 10)                     // last digit\n        x /= 10                                // drop the last digit\n    }\n    digits.reverse()\n    return digits\n}\n\nfun toBase(n: Int, base: Int): String {\n    if (n == 0) return \"0\"\n    var x = n\n    val sb = StringBuilder()\n    while (x > 0) {\n        sb.append(Character.forDigit(x % base, base))\n        x /= base\n    }\n    return sb.reverse().toString()\n}\n// Built-ins: Integer.toString(n, base) and Integer.parseInt(s, base)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 10: Overflow-Safe Arithmetic",
+      "language": "kotlin",
+      "code": "fun safeExamples() {\n    val a = Int.MAX_VALUE\n    // 1. Promote to Long before multiplying\n    val product = a.toLong() * a.toLong()\n\n    // 2. Throw on overflow instead of silently wrapping\n    try {\n        Math.addExact(a, 1)\n    } catch (e: ArithmeticException) {\n        println(\"overflow detected\")\n    }\n\n    // 3. Check before the operation\n    fun addWouldOverflow(x: Int, y: Int): Boolean =\n        (y > 0 && x > Int.MAX_VALUE - y) || (y < 0 && x < Int.MIN_VALUE - y)\n\n    // 4. Math.abs(Int.MIN_VALUE) is still negative: use Long\n    val absMin = Math.abs(Int.MIN_VALUE.toLong())\n}"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Count Primes",
+      "language": "kotlin",
+      "code": "fun countPrimes(n: Int): Int {\n    if (n < 3) return 0\n    val composite = BooleanArray(n)\n    var count = 0\n    for (i in 2 until n) {\n        if (!composite[i]) {\n            count++\n            var j = i.toLong() * i             // start at i * i, use Long to avoid overflow\n            while (j < n) {\n                composite[j.toInt()] = true\n                j += i\n            }\n        }\n    }\n    return count\n}\n// Time: O(n log log n)   Space: O(n)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Pow(x, n)",
+      "language": "kotlin",
+      "code": "fun myPow(x: Double, n: Int): Double {\n    var base = x\n    var e = n.toLong()                         // Long so that -Int.MIN_VALUE does not overflow\n    if (e < 0) {\n        base = 1 / base\n        e = -e\n    }\n    var result = 1.0\n    while (e > 0) {\n        if ((e and 1L) == 1L) result *= base\n        base *= base\n        e = e shr 1\n    }\n    return result\n}\n// Time: O(log n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Integer Square Root (Newton's Method)",
+      "language": "kotlin",
+      "code": "fun mySqrt(x: Int): Int {\n    if (x < 2) return x\n    var r = x.toLong()\n    while (r * r > x) {\n        r = (r + x / r) / 2                    // average r with x / r, converges quickly from above\n    }\n    return r.toInt()\n}\n// Time: O(log x)   Space: O(1)\n// Binary search on the answer also works, see the Binary Search topic"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Reverse Integer (Overflow Check)",
+      "language": "kotlin",
+      "code": "fun reverse(x: Int): Int {\n    var n = x\n    var rev = 0\n    while (n != 0) {\n        val digit = n % 10\n        n /= 10\n        // check before rev * 10 + digit would overflow\n        if (rev > Int.MAX_VALUE / 10 || (rev == Int.MAX_VALUE / 10 && digit > 7)) return 0\n        if (rev < Int.MIN_VALUE / 10 || (rev == Int.MIN_VALUE / 10 && digit < -8)) return 0\n        rev = rev * 10 + digit\n    }\n    return rev\n}\n// Time: O(digits)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Palindrome Number (Reverse Half)",
+      "language": "kotlin",
+      "code": "fun isPalindrome(x: Int): Boolean {\n    if (x < 0 || (x % 10 == 0 && x != 0)) return false\n    var n = x\n    var rev = 0\n    while (n > rev) {                          // reverse only half the digits\n        rev = rev * 10 + n % 10\n        n /= 10\n    }\n    return n == rev || n == rev / 10           // even or odd number of digits\n}\n// Time: O(digits)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Factorial Trailing Zeroes",
+      "language": "kotlin",
+      "code": "fun trailingZeroes(n: Int): Int {\n    var x = n\n    var count = 0\n    while (x > 0) {\n        x /= 5                                 // multiples of 5, then 25, then 125, ...\n        count += x\n    }\n    return count\n}\n// Time: O(log n)   Space: O(1)\n// Zeros come from pairs of 2 and 5, and there are always more 2s than 5s"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Excel Sheet Column Title and Number",
+      "language": "kotlin",
+      "code": "fun convertToTitle(columnNumber: Int): String {\n    var n = columnNumber\n    val sb = StringBuilder()\n    while (n > 0) {\n        n--                                    // shift to 0-based: A = 0, ..., Z = 25\n        sb.append('A' + n % 26)\n        n /= 26\n    }\n    return sb.reverse().toString()\n}\n\nfun titleToNumber(s: String): Int {\n    var result = 0\n    for (c in s) result = result * 26 + (c - 'A' + 1)\n    return result\n}\n// Time: O(log26 n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Add Strings and Multiply Strings",
+      "language": "kotlin",
+      "code": "fun addStrings(a: String, b: String): String {\n    var i = a.length - 1\n    var j = b.length - 1\n    var carry = 0\n    val sb = StringBuilder()\n    while (i >= 0 || j >= 0 || carry > 0) {\n        val x = if (i >= 0) a[i--] - '0' else 0\n        val y = if (j >= 0) b[j--] - '0' else 0\n        val sum = x + y + carry\n        sb.append(sum % 10)\n        carry = sum / 10\n    }\n    return sb.reverse().toString()\n}\n\nfun multiply(num1: String, num2: String): String {\n    if (num1 == \"0\" || num2 == \"0\") return \"0\"\n    val res = IntArray(num1.length + num2.length)\n    for (i in num1.indices.reversed()) {\n        for (j in num2.indices.reversed()) {\n            val prod = (num1[i] - '0') * (num2[j] - '0')\n            val sum = prod + res[i + j + 1]\n            res[i + j + 1] = sum % 10\n            res[i + j] += sum / 10\n        }\n    }\n    val sb = StringBuilder()\n    for (d in res) {\n        if (!(sb.isEmpty() && d == 0)) sb.append(d)     // skip leading zeros\n    }\n    return sb.toString()\n}\n// addStrings: O(n + m)   multiply: O(n * m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Fraction to Recurring Decimal",
+      "language": "kotlin",
+      "code": "fun fractionToDecimal(numerator: Int, denominator: Int): String {\n    if (numerator == 0) return \"0\"\n    val sb = StringBuilder()\n    if ((numerator < 0) != (denominator < 0)) sb.append('-')\n    val num = Math.abs(numerator.toLong())\n    val den = Math.abs(denominator.toLong())\n    sb.append(num / den)\n    var rem = num % den\n    if (rem == 0L) return sb.toString()\n    sb.append('.')\n    val seen = HashMap<Long, Int>()                    // remainder -> position in the output\n    while (rem != 0L) {\n        if (rem in seen) {                             // a repeated remainder means a repeating cycle\n            sb.insert(seen[rem]!!, \"(\")\n            sb.append(')')\n            break\n        }\n        seen[rem] = sb.length\n        rem *= 10\n        sb.append(rem / den)\n        rem %= den\n    }\n    return sb.toString()\n}\n// Time: O(den)   Space: O(den)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Greatest Common Divisor of Strings",
+      "language": "kotlin",
+      "code": "fun gcdOfStrings(str1: String, str2: String): String {\n    if (str1 + str2 != str2 + str1) return \"\"          // no common building block\n    val g = gcd(str1.length, str2.length)\n    return str1.substring(0, g)\n}\n// Time: O(n + m)   Space: O(n + m)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Water and Jug Problem (GCD)",
+      "language": "kotlin",
+      "code": "fun canMeasureWater(x: Int, y: Int, target: Int): Boolean {\n    if (x + y < target) return false\n    if (x == 0 || y == 0) return target == 0 || x + y == target\n    return target % gcd(x, y) == 0                     // any multiple of gcd(x, y) is reachable\n}\n// Time: O(log min(x, y))   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Max Points on a Line (Slopes With GCD)",
+      "language": "kotlin",
+      "code": "fun maxPoints(points: Array<IntArray>): Int {\n    val n = points.size\n    if (n <= 2) return n\n    var best = 2\n    for (i in 0 until n) {\n        val slopes = HashMap<String, Int>()\n        var localBest = 0\n        for (j in i + 1 until n) {\n            var dx = points[j][0] - points[i][0]\n            var dy = points[j][1] - points[i][1]\n            val g = gcd(Math.abs(dx), Math.abs(dy))\n            dx /= g                                    // reduce the slope to lowest terms\n            dy /= g\n            if (dx < 0 || (dx == 0 && dy < 0)) {       // normalize the sign so equal slopes match\n                dx = -dx\n                dy = -dy\n            }\n            val key = \"$dx/$dy\"\n            val c = (slopes[key] ?: 0) + 1\n            slopes[key] = c\n            localBest = maxOf(localBest, c)\n        }\n        best = maxOf(best, localBest + 1)              // plus the anchor point\n    }\n    return best\n}\n// Time: O(n² log C)   Space: O(n)\n// Using floating-point slopes can give wrong results, a reduced fraction is exact"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Unique Paths With a Formula",
+      "language": "kotlin",
+      "code": "fun uniquePaths(m: Int, n: Int): Int {\n    // choose which (m - 1) of the (m + n - 2) moves go down\n    return nCrExact(m + n - 2, m - 1).toInt()\n}\n// Time: O(min(m, n))   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Last Remaining Person (Josephus)",
+      "language": "kotlin",
+      "code": "fun lastRemaining(n: Int, k: Int): Int {\n    var pos = 0                                // survivor index (0-based) in a circle of size 1\n    for (size in 2..n) {\n        pos = (pos + k) % size                 // re-index after the next person is removed\n    }\n    return pos + 1                             // 1-based position\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 15: Divide Two Integers (Without / or *)",
+      "language": "kotlin",
+      "code": "fun divide(dividend: Int, divisor: Int): Int {\n    if (dividend == Int.MIN_VALUE && divisor == -1) return Int.MAX_VALUE\n    val negative = (dividend < 0) != (divisor < 0)\n    var a = Math.abs(dividend.toLong())\n    val b = Math.abs(divisor.toLong())\n    var result = 0L\n    while (a >= b) {\n        var temp = b\n        var multiple = 1L\n        while (a >= (temp shl 1)) {            // double the divisor while it still fits\n            temp = temp shl 1\n            multiple = multiple shl 1\n        }\n        a -= temp\n        result += multiple\n    }\n    return if (negative) (-result).toInt() else result.toInt()\n}\n// Time: O(log² n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 16: Super Pow (a^b mod 1337 With a Digit Array)",
+      "language": "kotlin",
+      "code": "fun superPow(a: Int, b: IntArray): Int {\n    val mod = 1337L\n    var result = 1L\n    var base = a.toLong() % mod\n    for (i in b.indices.reversed()) {                  // process digits from the least significant\n        result = result * powMod(base, b[i].toLong(), mod) % mod\n        base = powMod(base, 10, mod)                   // base becomes base^10 for the next digit\n    }\n    return result.toInt()\n}\n// Time: O(len(b) * log 10)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 17: Count Distinct Prime Factors of Many Numbers",
+      "language": "kotlin",
+      "code": "fun distinctPrimeFactorCounts(nums: IntArray): IntArray {\n    val maxVal = nums.maxOrNull() ?: return IntArray(0)\n    val spf = smallestPrimeFactors(maxVal)\n    return IntArray(nums.size) { idx ->\n        factorize(nums[idx], spf).size                 // number of distinct primes\n    }\n}\n// Build: O(M log log M)   Each number: O(log M)"
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Count Primes",
+          "tool": "Sieve of Eratosthenes",
+          "key_idea": "Cross out multiples starting at i * i"
+        },
+        {
+          "problem": "Pow(x, n), Super Pow",
+          "tool": "Fast exponentiation",
+          "key_idea": "Square the base, halve the exponent"
+        },
+        {
+          "problem": "Sqrt(x)",
+          "tool": "Newton or binary search",
+          "key_idea": "Converges in O(log x)"
+        },
+        {
+          "problem": "Reverse Integer",
+          "tool": "Digit loop with overflow check",
+          "key_idea": "Check against MAX / 10 before multiplying"
+        },
+        {
+          "problem": "Palindrome Number",
+          "tool": "Reverse half the digits",
+          "key_idea": "Stop when the reversed half meets the rest"
+        },
+        {
+          "problem": "Factorial Trailing Zeroes",
+          "tool": "Count factors of 5",
+          "key_idea": "n / 5 + n / 25 + ..."
+        },
+        {
+          "problem": "Excel Column Title",
+          "tool": "Bijective base 26",
+          "key_idea": "Subtract 1 before each division"
+        },
+        {
+          "problem": "Add and Multiply Strings",
+          "tool": "Digit arithmetic with carry",
+          "key_idea": "Index i + j and i + j + 1 for products"
+        },
+        {
+          "problem": "Fraction to Recurring Decimal",
+          "tool": "Long division with a remainder map",
+          "key_idea": "A repeated remainder starts the cycle"
+        },
+        {
+          "problem": "GCD of Strings, Water and Jug",
+          "tool": "GCD",
+          "key_idea": "Reachable amounts are multiples of the gcd"
+        },
+        {
+          "problem": "Max Points on a Line",
+          "tool": "GCD-reduced slopes",
+          "key_idea": "Normalize signs, avoid floating point"
+        },
+        {
+          "problem": "Unique Paths, Catalan counts",
+          "tool": "nCr",
+          "key_idea": "Choose which steps go in one direction"
+        },
+        {
+          "problem": "Last Remaining (Josephus)",
+          "tool": "Recurrence f(i) = (f(i - 1) + k) % i",
+          "key_idea": "Re-index the circle after each removal"
+        },
+        {
+          "problem": "Divide Two Integers",
+          "tool": "Shift and subtract",
+          "key_idea": "Double the divisor, subtract the largest multiple"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Multiplying two Ints before taking the modulus, which overflows (convert to Long first)",
+        "Getting a negative result from % in Kotlin and not adding the modulus back",
+        "Computing a^b first and then taking the modulus (use fast exponentiation with mod at every step)",
+        "Using Fermat's inverse with a modulus that is not prime",
+        "Looping i * i <= n with Int i, which overflows near Int.MAX_VALUE (use i.toLong() * i)",
+        "Using Math.sqrt on large values and trusting the floating-point result for exact answers",
+        "Math.abs(Int.MIN_VALUE) is still negative, so convert to Long first",
+        "Forgetting the edge cases 0, 1, negative numbers and Int.MIN_VALUE",
+        "Comparing floating-point slopes or ratios instead of reduced fractions",
+        "Starting the sieve inner loop at 2 * i instead of i * i, which is correct but slower"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "tool": "GCD / LCM",
+          "time": "O(log min(a, b))",
+          "space": "O(1)"
+        },
+        {
+          "tool": "Primality check, single factorization",
+          "time": "O(sqrt(n))",
+          "space": "O(1)"
+        },
+        {
+          "tool": "Sieve of Eratosthenes",
+          "time": "O(n log log n)",
+          "space": "O(n)"
+        },
+        {
+          "tool": "SPF sieve factorization",
+          "time": "O(log n) per number",
+          "space": "O(n)"
+        },
+        {
+          "tool": "Fast exponentiation",
+          "time": "O(log exponent)",
+          "space": "O(1)"
+        },
+        {
+          "tool": "nCr with factorial tables",
+          "time": "O(1) per query",
+          "space": "O(n)"
+        },
+        {
+          "tool": "Digit loop",
+          "time": "O(number of digits)",
+          "space": "O(1)"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Count Primes",
+        "Pow(x, n)",
+        "Sqrt(x)",
+        "Reverse Integer",
+        "Palindrome Number",
+        "Factorial Trailing Zeroes",
+        "Excel Sheet Column Title and Number",
+        "Add Strings and Multiply Strings",
+        "Fraction to Recurring Decimal",
+        "Greatest Common Divisor of Strings",
+        "Water and Jug Problem",
+        "Max Points on a Line",
+        "Unique Paths",
+        "The Last Remaining Soldier / Josephus Problem",
+        "Divide Two Integers",
+        "Super Pow",
+        "Ugly Number I and II"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Look for the math first: a formula, a cycle or a divisibility property often beats simulation",
+        "GCD by Euclid runs in O(log n) and is the basis of LCM, fractions and normalized slopes",
+        "Use trial division up to sqrt(n) for one number and a sieve for many numbers",
+        "Fast exponentiation computes powers in O(log exponent), and with a prime modulus Fermat gives inverses",
+        "Always promote to Long before multiplying, and reduce modulo m at every step",
+        "Guard digit-manipulation problems against overflow and against Int.MIN_VALUE"
+      ]
+    }
+  ]
+}

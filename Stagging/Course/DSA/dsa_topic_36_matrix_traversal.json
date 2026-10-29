@@ -1,0 +1,468 @@
+{
+  "title": "Matrix Traversal Patterns",
+  "sections": [
+    {
+      "type": "text",
+      "heading": "What are Matrix Traversal Patterns?",
+      "content": "A matrix (2D grid) is stored as an array of rows, and many problems are really about visiting its cells in a particular order or transforming it in place: spiral order, diagonals, layer by layer, rotation, transposition, searching a sorted matrix and simulating cell updates. Unlike graph search (BFS and DFS on grids) or grid DP, the focus here is on index arithmetic, boundaries and in-place manipulation. Mastering a few coordinate relationships turns these problems from fiddly to mechanical."
+    },
+    {
+      "type": "bullet",
+      "heading": "When to Use It",
+      "items": [
+        "Visit cells in a specific order: spiral, diagonal, zigzag, boundary, layer by layer",
+        "Rotate, flip or transpose a matrix, often in place",
+        "Modify cells based on rows or columns (set zeroes, flip and invert)",
+        "Search a matrix that is sorted by rows and columns",
+        "Simulate cell updates from neighbors (Game of Life, image smoothing)",
+        "Validate a board (Sudoku) or compare patterns along diagonals (Toeplitz)",
+        "Count or sum along rows, columns or diagonals",
+        "Keywords: matrix, grid, spiral, diagonal, rotate, transpose, in place, layer, boundary, neighbors"
+      ]
+    },
+    {
+      "type": "text",
+      "heading": "The Intuition",
+      "content": "A matrix is just a coordinate system, so almost every pattern is a statement about (row, column). Cells on the same anti-diagonal share r + c, cells on the same diagonal share r - c, and a layer is the ring of cells at the same distance from the border. Once you know which coordinate stays fixed and which one changes, you can write the loops directly. For transformations, draw a tiny 3 x 3 example, track where one corner goes, and the index formula follows."
+    },
+    {
+      "type": "table",
+      "heading": "Coordinate Relationships",
+      "rows": [
+        {
+          "idea": "Row-major index",
+          "formula": "index = r * cols + c, then r = index / cols and c = index % cols",
+          "use": "Flatten a matrix, binary search on a matrix"
+        },
+        {
+          "idea": "Same diagonal",
+          "formula": "r - c is constant",
+          "use": "Toeplitz, sort diagonals, main diagonal sum"
+        },
+        {
+          "idea": "Same anti-diagonal",
+          "formula": "r + c is constant",
+          "use": "Diagonal traverse, anti-diagonal grouping"
+        },
+        {
+          "idea": "Layer of cell (r, c) in an n x m matrix",
+          "formula": "min(r, c, n - 1 - r, m - 1 - c)",
+          "use": "Layer by layer processing, rotation"
+        },
+        {
+          "idea": "Mirror across the main diagonal (transpose)",
+          "formula": "(r, c) goes to (c, r)",
+          "use": "Transpose, rotation step"
+        },
+        {
+          "idea": "Neighbors",
+          "formula": "(r + dr, c + dc) with a direction array and a bounds check",
+          "use": "Simulation, flood fill, smoothing"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Rotation and Flip Mappings (R rows, C columns)",
+      "rows": [
+        {
+          "operation": "Transpose",
+          "new_position": "(r, c) goes to (c, r)",
+          "shortcut": "Swap across the main diagonal"
+        },
+        {
+          "operation": "Rotate 90 degrees clockwise",
+          "new_position": "(r, c) goes to (c, R - 1 - r)",
+          "shortcut": "Transpose, then reverse each row"
+        },
+        {
+          "operation": "Rotate 90 degrees counterclockwise",
+          "new_position": "(r, c) goes to (C - 1 - c, r)",
+          "shortcut": "Transpose, then reverse each column (or reverse each row, then transpose)"
+        },
+        {
+          "operation": "Rotate 180 degrees",
+          "new_position": "(r, c) goes to (R - 1 - r, C - 1 - c)",
+          "shortcut": "Reverse the rows, then reverse each row"
+        },
+        {
+          "operation": "Flip horizontally (mirror left to right)",
+          "new_position": "(r, c) goes to (r, C - 1 - c)",
+          "shortcut": "Reverse each row"
+        },
+        {
+          "operation": "Flip vertically (mirror top to bottom)",
+          "new_position": "(r, c) goes to (R - 1 - r, c)",
+          "shortcut": "Reverse the order of the rows"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Traversal Patterns Overview",
+      "rows": [
+        {
+          "pattern": "Row by row (row-major)",
+          "how": "for r, for c",
+          "note": "Cache friendly, the default"
+        },
+        {
+          "pattern": "Column by column",
+          "how": "for c, for r",
+          "note": "Slower on large matrices because of memory layout"
+        },
+        {
+          "pattern": "Spiral",
+          "how": "Shrink four boundaries (top, bottom, left, right), or turn at walls",
+          "note": "Beware repeats on non-square matrices"
+        },
+        {
+          "pattern": "Diagonals",
+          "how": "Loop over r - c (diagonal) or r + c (anti-diagonal)",
+          "note": "Compute the start and end row for each line"
+        },
+        {
+          "pattern": "Zigzag diagonal",
+          "how": "Alternate direction by parity of r + c",
+          "note": "Handle the four wall cases"
+        },
+        {
+          "pattern": "Layer by layer",
+          "how": "layer from 0 to min(R, C) / 2, walk the four sides of the ring",
+          "note": "Used for in-place rotation"
+        },
+        {
+          "pattern": "Staircase",
+          "how": "Start at a corner and move row or column depending on a comparison",
+          "note": "Sorted matrices, O(R + C)"
+        }
+      ]
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 1: Direction Arrays and Bounds Check",
+      "language": "kotlin",
+      "code": "// up, right, down, left (clockwise order)\nval DIRS4 = arrayOf(intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(1, 0), intArrayOf(0, -1))\n\n// four sides plus four diagonals\nval DIRS8 = arrayOf(\n    intArrayOf(-1, -1), intArrayOf(-1, 0), intArrayOf(-1, 1),\n    intArrayOf(0, -1),                      intArrayOf(0, 1),\n    intArrayOf(1, -1),  intArrayOf(1, 0),  intArrayOf(1, 1)\n)\n\nfun inBounds(r: Int, c: Int, rows: Int, cols: Int): Boolean =\n    r in 0 until rows && c in 0 until cols\n\n// Usage\nfun neighborSum(grid: Array<IntArray>, r: Int, c: Int): Int {\n    var sum = 0\n    for ((dr, dc) in DIRS8) {\n        val nr = r + dr\n        val nc = c + dc\n        if (inBounds(nr, nc, grid.size, grid[0].size)) sum += grid[nr][nc]\n    }\n    return sum\n}"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 2: Spiral Order With Four Boundaries",
+      "language": "kotlin",
+      "code": "fun spiralOrder(matrix: Array<IntArray>): List<Int> {\n    val result = ArrayList<Int>()\n    if (matrix.isEmpty()) return result\n    var top = 0\n    var bottom = matrix.size - 1\n    var left = 0\n    var right = matrix[0].size - 1\n\n    while (top <= bottom && left <= right) {\n        for (c in left..right) result.add(matrix[top][c])             // top row, left to right\n        top++\n        for (r in top..bottom) result.add(matrix[r][right])           // right column, top to bottom\n        right--\n        if (top <= bottom) {                                          // avoid repeating a single row\n            for (c in right downTo left) result.add(matrix[bottom][c])\n            bottom--\n        }\n        if (left <= right) {                                          // avoid repeating a single column\n            for (r in bottom downTo top) result.add(matrix[r][left])\n            left++\n        }\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(1) beyond the output"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 3: Spiral Order by Turning at Walls",
+      "language": "kotlin",
+      "code": "fun spiralOrderTurning(matrix: Array<IntArray>): List<Int> {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val visited = Array(rows) { BooleanArray(cols) }\n    val dr = intArrayOf(0, 1, 0, -1)                     // right, down, left, up\n    val dc = intArrayOf(1, 0, -1, 0)\n    val result = ArrayList<Int>()\n    var r = 0\n    var c = 0\n    var d = 0\n    repeat(rows * cols) {\n        result.add(matrix[r][c])\n        visited[r][c] = true\n        val nr = r + dr[d]\n        val nc = c + dc[d]\n        if (nr !in 0 until rows || nc !in 0 until cols || visited[nr][nc]) {\n            d = (d + 1) % 4                              // turn clockwise at a wall or a visited cell\n        }\n        r += dr[d]\n        c += dc[d]\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(rows * cols) for visited\n// No special cases for thin matrices, but uses extra memory"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 4: Traverse All Diagonals and Anti-Diagonals",
+      "language": "kotlin",
+      "code": "fun antiDiagonals(matrix: Array<IntArray>): List<List<Int>> {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val result = ArrayList<List<Int>>()\n    for (s in 0..rows + cols - 2) {                       // s = r + c\n        val line = ArrayList<Int>()\n        for (r in maxOf(0, s - cols + 1)..minOf(s, rows - 1)) {\n            line.add(matrix[r][s - r])\n        }\n        result.add(line)\n    }\n    return result\n}\n\nfun mainDiagonals(matrix: Array<IntArray>): List<List<Int>> {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val result = ArrayList<List<Int>>()\n    for (d in -(rows - 1) until cols) {                   // d = c - r\n        val line = ArrayList<Int>()\n        for (r in maxOf(0, -d)..minOf(rows - 1, cols - 1 - d)) {\n            line.add(matrix[r][r + d])\n        }\n        result.add(line)\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(rows * cols) for the output"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 5: Rotate 90 Degrees Clockwise (Transpose + Reverse)",
+      "language": "kotlin",
+      "code": "fun rotate(matrix: Array<IntArray>) {\n    val n = matrix.size\n    for (i in 0 until n) {                                // transpose: swap across the main diagonal\n        for (j in i + 1 until n) {\n            val tmp = matrix[i][j]\n            matrix[i][j] = matrix[j][i]\n            matrix[j][i] = tmp\n        }\n    }\n    for (row in matrix) row.reverse()                     // then reverse each row\n}\n// Time: O(n²)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 6: Rotate by Layers (Four-Way Swap)",
+      "language": "kotlin",
+      "code": "fun rotateLayers(matrix: Array<IntArray>) {\n    val n = matrix.size\n    for (layer in 0 until n / 2) {\n        val first = layer\n        val last = n - 1 - layer\n        for (i in first until last) {\n            val offset = i - first\n            val top = matrix[first][i]\n            matrix[first][i] = matrix[last - offset][first]               // left to top\n            matrix[last - offset][first] = matrix[last][last - offset]    // bottom to left\n            matrix[last][last - offset] = matrix[i][last]                 // right to bottom\n            matrix[i][last] = top                                         // top to right\n        }\n    }\n}\n// Time: O(n²)   Space: O(1)\n// Each group of four cells moves in a cycle"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 7: In-Place Markers (First Row and Column as Flags)",
+      "language": "kotlin",
+      "code": "fun setZeroes(matrix: Array<IntArray>) {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    var firstRowZero = false\n    var firstColZero = false\n    for (c in 0 until cols) if (matrix[0][c] == 0) firstRowZero = true\n    for (r in 0 until rows) if (matrix[r][0] == 0) firstColZero = true\n\n    for (r in 1 until rows) {                              // record which rows and columns need zeroing\n        for (c in 1 until cols) {\n            if (matrix[r][c] == 0) {\n                matrix[r][0] = 0\n                matrix[0][c] = 0\n            }\n        }\n    }\n    for (r in 1 until rows) {                              // apply the flags\n        for (c in 1 until cols) {\n            if (matrix[r][0] == 0 || matrix[0][c] == 0) matrix[r][c] = 0\n        }\n    }\n    if (firstRowZero) for (c in 0 until cols) matrix[0][c] = 0\n    if (firstColZero) for (r in 0 until rows) matrix[r][0] = 0\n}\n// Time: O(rows * cols)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 8: Staircase Search (Rows and Columns Sorted)",
+      "language": "kotlin",
+      "code": "fun searchMatrix(matrix: Array<IntArray>, target: Int): Boolean {\n    var r = 0\n    var c = matrix[0].size - 1                             // start at the top-right corner\n    while (r < matrix.size && c >= 0) {\n        when {\n            matrix[r][c] == target -> return true\n            matrix[r][c] > target -> c--                   // everything below in this column is bigger: move left\n            else -> r++                                    // everything to the left in this row is smaller: move down\n        }\n    }\n    return false\n}\n// Time: O(rows + cols)   Space: O(1)\n// The top-right (or bottom-left) corner is the only start with a clear decision at every step"
+    },
+    {
+      "type": "text_code",
+      "heading": "Template 9: Simulation With In-Place State Encoding",
+      "language": "kotlin",
+      "code": "// Store the next state in a higher bit so neighbors can still read the current state.\n// bit 0 = current state, bit 1 = next state\nfun gameOfLife(board: Array<IntArray>) {\n    val rows = board.size\n    val cols = board[0].size\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            var live = 0\n            for (dr in -1..1) {\n                for (dc in -1..1) {\n                    if (dr == 0 && dc == 0) continue\n                    val nr = r + dr\n                    val nc = c + dc\n                    if (nr in 0 until rows && nc in 0 until cols) live += board[nr][nc] and 1   // read bit 0 only\n                }\n            }\n            if (board[r][c] == 1 && (live == 2 || live == 3)) board[r][c] = board[r][c] or 2\n            if (board[r][c] == 0 && live == 3) board[r][c] = board[r][c] or 2\n        }\n    }\n    for (r in 0 until rows) {\n        for (c in 0 until cols) board[r][c] = board[r][c] shr 1     // move the next state into place\n    }\n}\n// Time: O(rows * cols * 8)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 1: Spiral Matrix II (Generate)",
+      "language": "kotlin",
+      "code": "fun generateMatrix(n: Int): Array<IntArray> {\n    val matrix = Array(n) { IntArray(n) }\n    var top = 0\n    var bottom = n - 1\n    var left = 0\n    var right = n - 1\n    var num = 1\n    while (top <= bottom && left <= right) {\n        for (c in left..right) matrix[top][c] = num++\n        top++\n        for (r in top..bottom) matrix[r][right] = num++\n        right--\n        if (top <= bottom) {\n            for (c in right downTo left) matrix[bottom][c] = num++\n            bottom--\n        }\n        if (left <= right) {\n            for (r in bottom downTo top) matrix[r][left] = num++\n            left++\n        }\n    }\n    return matrix\n}\n// Time: O(n²)   Space: O(1) beyond the output"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 2: Transpose Matrix (Non-Square)",
+      "language": "kotlin",
+      "code": "fun transpose(matrix: Array<IntArray>): Array<IntArray> {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val result = Array(cols) { IntArray(rows) }           // dimensions swap for a non-square matrix\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            result[c][r] = matrix[r][c]\n        }\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(rows * cols)\n// A square matrix can be transposed in place, a rectangular one cannot"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 3: Diagonal Traverse (Zigzag)",
+      "language": "kotlin",
+      "code": "fun findDiagonalOrder(mat: Array<IntArray>): IntArray {\n    val rows = mat.size\n    val cols = mat[0].size\n    val result = IntArray(rows * cols)\n    var r = 0\n    var c = 0\n    for (i in result.indices) {\n        result[i] = mat[r][c]\n        if ((r + c) % 2 == 0) {                            // moving up and to the right\n            when {\n                c == cols - 1 -> r++                       // hit the right wall: go down\n                r == 0 -> c++                              // hit the top wall: go right\n                else -> { r--; c++ }\n            }\n        } else {                                           // moving down and to the left\n            when {\n                r == rows - 1 -> c++                       // hit the bottom wall: go right\n                c == 0 -> r++                              // hit the left wall: go down\n                else -> { r++; c-- }\n            }\n        }\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(1) beyond the output"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 4: Count Negative Numbers in a Sorted Matrix",
+      "language": "kotlin",
+      "code": "fun countNegatives(grid: Array<IntArray>): Int {\n    val cols = grid[0].size\n    var count = 0\n    var r = grid.size - 1\n    var c = 0                                              // start at the bottom-left corner\n    while (r >= 0 && c < cols) {\n        if (grid[r][c] < 0) {\n            count += cols - c                              // this and everything to its right are negative\n            r--                                            // go up to a larger row\n        } else {\n            c++                                            // go right to a smaller value\n        }\n    }\n    return count\n}\n// Time: O(rows + cols)   Space: O(1)\n// Rows and columns are sorted in non-increasing order"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 5: Valid Sudoku",
+      "language": "kotlin",
+      "code": "fun isValidSudoku(board: Array<CharArray>): Boolean {\n    val rows = Array(9) { BooleanArray(9) }\n    val cols = Array(9) { BooleanArray(9) }\n    val boxes = Array(9) { BooleanArray(9) }\n    for (r in 0 until 9) {\n        for (c in 0 until 9) {\n            val ch = board[r][c]\n            if (ch == '.') continue\n            val d = ch - '1'                               // digit 1..9 becomes index 0..8\n            val b = (r / 3) * 3 + c / 3                    // which 3 x 3 box\n            if (rows[r][d] || cols[c][d] || boxes[b][d]) return false\n            rows[r][d] = true\n            cols[c][d] = true\n            boxes[b][d] = true\n        }\n    }\n    return true\n}\n// Time: O(81)   Space: O(81)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 6: Toeplitz Matrix",
+      "language": "kotlin",
+      "code": "fun isToeplitzMatrix(matrix: Array<IntArray>): Boolean {\n    for (r in 1 until matrix.size) {\n        for (c in 1 until matrix[0].size) {\n            if (matrix[r][c] != matrix[r - 1][c - 1]) return false   // each cell equals its upper-left neighbor\n        }\n    }\n    return true\n}\n// Time: O(rows * cols)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 7: Sort the Matrix Diagonally",
+      "language": "kotlin",
+      "code": "import java.util.PriorityQueue\n\nfun diagonalSort(mat: Array<IntArray>): Array<IntArray> {\n    val rows = mat.size\n    val cols = mat[0].size\n    val diagonals = HashMap<Int, PriorityQueue<Int>>()\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            diagonals.getOrPut(r - c) { PriorityQueue() }.add(mat[r][c])   // key r - c identifies a diagonal\n        }\n    }\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            mat[r][c] = diagonals[r - c]!!.poll()                           // smallest first\n        }\n    }\n    return mat\n}\n// Time: O(rows * cols * log(min(rows, cols)))   Space: O(rows * cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 8: Flip and Invert Image",
+      "language": "kotlin",
+      "code": "fun flipAndInvertImage(image: Array<IntArray>): Array<IntArray> {\n    for (row in image) {\n        var l = 0\n        var r = row.size - 1\n        while (l <= r) {\n            val a = row[l] xor 1                          // invert while swapping\n            val b = row[r] xor 1\n            row[l] = b\n            row[r] = a\n            l++\n            r--\n        }\n    }\n    return image\n}\n// Time: O(rows * cols)   Space: O(1)\n// When l == r the middle cell is inverted once, which is correct"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 9: Lucky Numbers in a Matrix",
+      "language": "kotlin",
+      "code": "fun luckyNumbers(matrix: Array<IntArray>): List<Int> {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val rowMin = IntArray(rows) { r -> matrix[r].minOrNull()!! }\n    val colMax = IntArray(cols) { c -> (0 until rows).maxOf { r -> matrix[r][c] } }\n    val result = mutableListOf<Int>()\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            if (matrix[r][c] == rowMin[r] && matrix[r][c] == colMax[c]) result.add(matrix[r][c])\n        }\n    }\n    return result\n}\n// Time: O(rows * cols)   Space: O(rows + cols)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 10: Island Perimeter (Counting Neighbors)",
+      "language": "kotlin",
+      "code": "fun islandPerimeter(grid: Array<IntArray>): Int {\n    var perimeter = 0\n    for (r in grid.indices) {\n        for (c in grid[0].indices) {\n            if (grid[r][c] == 1) {\n                perimeter += 4                                    // each land cell starts with 4 edges\n                if (r > 0 && grid[r - 1][c] == 1) perimeter -= 2  // a shared edge hides 2 sides\n                if (c > 0 && grid[r][c - 1] == 1) perimeter -= 2\n            }\n        }\n    }\n    return perimeter\n}\n// Time: O(rows * cols)   Space: O(1)\n// Only look up and left, so each shared edge is counted once"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 11: Image Smoother (Neighbor Averaging)",
+      "language": "kotlin",
+      "code": "fun imageSmoother(img: Array<IntArray>): Array<IntArray> {\n    val rows = img.size\n    val cols = img[0].size\n    val result = Array(rows) { IntArray(cols) }\n    for (r in 0 until rows) {\n        for (c in 0 until cols) {\n            var sum = 0\n            var count = 0\n            for (dr in -1..1) {\n                for (dc in -1..1) {\n                    val nr = r + dr\n                    val nc = c + dc\n                    if (nr in 0 until rows && nc in 0 until cols) {\n                        sum += img[nr][nc]\n                        count++\n                    }\n                }\n            }\n            result[r][c] = sum / count                         // integer division rounds down\n        }\n    }\n    return result\n}\n// Time: O(rows * cols * 9)   Space: O(rows * cols)\n// A separate output array is needed so updated cells do not affect neighbors"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 12: Matrix Diagonal Sum",
+      "language": "kotlin",
+      "code": "fun diagonalSum(mat: Array<IntArray>): Int {\n    val n = mat.size\n    var sum = 0\n    for (i in 0 until n) {\n        sum += mat[i][i]                                      // main diagonal\n        sum += mat[i][n - 1 - i]                              // anti-diagonal\n    }\n    if (n % 2 == 1) sum -= mat[n / 2][n / 2]                  // the center was counted twice\n    return sum\n}\n// Time: O(n)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 13: Rotate Counterclockwise and 180 Degrees",
+      "language": "kotlin",
+      "code": "fun rotateCounterclockwise(matrix: Array<IntArray>) {\n    val n = matrix.size\n    for (row in matrix) row.reverse()                         // reverse each row first\n    for (i in 0 until n) {                                    // then transpose\n        for (j in i + 1 until n) {\n            val tmp = matrix[i][j]\n            matrix[i][j] = matrix[j][i]\n            matrix[j][i] = tmp\n        }\n    }\n}\n\nfun rotate180(matrix: Array<IntArray>) {\n    matrix.reverse()                                          // reverse the order of the rows\n    for (row in matrix) row.reverse()                         // and each row\n}\n// Time: O(n²)   Space: O(1)"
+    },
+    {
+      "type": "text_code",
+      "heading": "Example 14: Spiral Boundary Walk (Perimeter Only)",
+      "language": "kotlin",
+      "code": "fun boundaryCells(matrix: Array<IntArray>): List<Int> {\n    val rows = matrix.size\n    val cols = matrix[0].size\n    val result = ArrayList<Int>()\n    if (rows == 1) { for (c in 0 until cols) result.add(matrix[0][c]); return result }\n    if (cols == 1) { for (r in 0 until rows) result.add(matrix[r][0]); return result }\n    for (c in 0 until cols) result.add(matrix[0][c])                     // top row\n    for (r in 1 until rows) result.add(matrix[r][cols - 1])              // right column\n    for (c in cols - 2 downTo 0) result.add(matrix[rows - 1][c])         // bottom row\n    for (r in rows - 2 downTo 1) result.add(matrix[r][0])                // left column\n    return result\n}\n// Time: O(rows + cols)   Space: O(rows + cols) for the output"
+    },
+    {
+      "type": "table",
+      "heading": "Which Technique for Which Problem",
+      "rows": [
+        {
+          "problem": "Spiral Matrix I and II",
+          "technique": "Four shrinking boundaries",
+          "detail": "Guard the last two sides with top <= bottom and left <= right"
+        },
+        {
+          "problem": "Rotate Image",
+          "technique": "Transpose + reverse rows, or four-way layer swap",
+          "detail": "Both are O(n²) time and O(1) space"
+        },
+        {
+          "problem": "Set Matrix Zeroes",
+          "technique": "First row and column as flags",
+          "detail": "Remember whether the first row and column themselves need zeroing"
+        },
+        {
+          "problem": "Diagonal Traverse",
+          "technique": "Parity of r + c, wall cases",
+          "detail": "Four boundary conditions"
+        },
+        {
+          "problem": "Search a 2D Matrix II",
+          "technique": "Staircase from a corner",
+          "detail": "Eliminates a row or column each step"
+        },
+        {
+          "problem": "Search a 2D Matrix I",
+          "technique": "Binary search on flattened index",
+          "detail": "row = mid / cols, col = mid % cols"
+        },
+        {
+          "problem": "Game of Life",
+          "technique": "Encode the next state in a higher bit",
+          "detail": "Read neighbors with and 1, finish with shr 1"
+        },
+        {
+          "problem": "Toeplitz, Sort Diagonally",
+          "technique": "r - c identifies a diagonal",
+          "detail": "Compare with the upper-left neighbor, or group by r - c"
+        },
+        {
+          "problem": "Valid Sudoku",
+          "technique": "Row, column and box sets",
+          "detail": "box index = (r / 3) * 3 + c / 3"
+        },
+        {
+          "problem": "Image Smoother, Island Perimeter",
+          "technique": "Neighbor loops with bounds checks",
+          "detail": "Use a separate output or count shared edges once"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Problem Cheat Sheet",
+      "rows": [
+        {
+          "problem": "Spiral Matrix",
+          "key_idea": "Walk the top row, right column, bottom row, left column, then shrink"
+        },
+        {
+          "problem": "Rotate Image",
+          "key_idea": "Transpose, then reverse each row"
+        },
+        {
+          "problem": "Set Matrix Zeroes",
+          "key_idea": "Use matrix[r][0] and matrix[0][c] as markers"
+        },
+        {
+          "problem": "Diagonal Traverse",
+          "key_idea": "Even r + c goes up-right, odd goes down-left"
+        },
+        {
+          "problem": "Search a 2D Matrix II",
+          "key_idea": "Start top-right: bigger means left, smaller means down"
+        },
+        {
+          "problem": "Game of Life",
+          "key_idea": "Two bits per cell avoid a copy"
+        },
+        {
+          "problem": "Valid Sudoku",
+          "key_idea": "Three boolean tables for rows, columns and boxes"
+        },
+        {
+          "problem": "Toeplitz Matrix",
+          "key_idea": "matrix[r][c] == matrix[r - 1][c - 1]"
+        },
+        {
+          "problem": "Transpose Matrix",
+          "key_idea": "result[c][r] = matrix[r][c] with swapped dimensions"
+        },
+        {
+          "problem": "Matrix Diagonal Sum",
+          "key_idea": "Subtract the center once when n is odd"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Common Mistakes",
+      "items": [
+        "Swapping rows and columns when allocating or indexing (Array(cols) { IntArray(rows) } versus the reverse)",
+        "Assuming a square matrix: transposing in place only works when rows == cols",
+        "Repeating the middle row or column in a spiral on non-square matrices (missing the top <= bottom and left <= right guards)",
+        "Updating cells while still reading them as neighbors (Game of Life, smoothing) without a copy or state encoding",
+        "Getting rotation direction wrong: transpose + reverse rows is clockwise, reverse rows + transpose is counterclockwise",
+        "Forgetting the empty matrix or single row and column cases",
+        "Modifying the first row or column too early in the O(1) space set-zeroes approach",
+        "Reading matrix[0].size when the input may be empty",
+        "Looping column by column on large matrices, which is slower because of memory access patterns",
+        "Using the wrong box formula in Sudoku, such as r / 3 + c / 3 instead of (r / 3) * 3 + c / 3"
+      ]
+    },
+    {
+      "type": "table",
+      "heading": "Complexity Summary",
+      "rows": [
+        {
+          "operation": "Full traversal (spiral, diagonal, row by row)",
+          "time": "O(rows * cols)",
+          "space": "O(1) beyond the output"
+        },
+        {
+          "operation": "Rotate or transpose a square matrix in place",
+          "time": "O(n²)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Transpose a rectangular matrix",
+          "time": "O(rows * cols)",
+          "space": "O(rows * cols)"
+        },
+        {
+          "operation": "Staircase search",
+          "time": "O(rows + cols)",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Binary search on a flattened sorted matrix",
+          "time": "O(log(rows * cols))",
+          "space": "O(1)"
+        },
+        {
+          "operation": "Neighbor simulation, 8 directions",
+          "time": "O(rows * cols * 8)",
+          "space": "O(1) with state encoding"
+        }
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Practice Problems",
+      "items": [
+        "Spiral Matrix and Spiral Matrix II",
+        "Rotate Image",
+        "Set Matrix Zeroes",
+        "Diagonal Traverse",
+        "Search a 2D Matrix and Search a 2D Matrix II",
+        "Game of Life",
+        "Valid Sudoku",
+        "Transpose Matrix",
+        "Toeplitz Matrix",
+        "Sort the Matrix Diagonally",
+        "Flipping an Image",
+        "Lucky Numbers in a Matrix",
+        "Island Perimeter",
+        "Image Smoother",
+        "Matrix Diagonal Sum",
+        "Count Negative Numbers in a Sorted Matrix"
+      ]
+    },
+    {
+      "type": "bullet",
+      "heading": "Key Takeaways",
+      "items": [
+        "Matrix problems are coordinate problems: r + c is constant on anti-diagonals, r - c on diagonals, and layers are rings around the border",
+        "Spiral traversal shrinks four boundaries, with guards so a single row or column is not walked twice",
+        "Rotate 90 degrees clockwise by transposing and then reversing each row",
+        "Use the first row and column as markers, or extra bits in each cell, to do in-place work in O(1) space",
+        "For rows and columns sorted in order, a staircase search from a corner runs in O(rows + cols)",
+        "Draw a small 3 x 3 example and track one cell to derive any index formula"
+      ]
+    }
+  ]
+}
